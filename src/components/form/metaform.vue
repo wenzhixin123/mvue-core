@@ -2,9 +2,9 @@
     <div class="meta-form-panel">
         <slot></slot>
         <div class="form-toolbar" slot="toolbar">
-            <button class="ivu-btn ivu-btn-text" type="button"  @click.stop.prevent="handleCancel">取消</button>
-            <button type="button" class="btn btn-primary" @click.stop.prevent="saveModel"><span>保存</span></button>
-            <button class="btn btn-danger" type="button" v-if="id" @click.stop.prevent="onDelete">删除</button>
+            <Button type="text"  @click.stop.prevent="handleCancel">取消</Button>
+            <Button type="primary" @click.stop.prevent="saveModel">保存</Button>
+            <Button type="error" v-if="id" @click.stop.prevent="onDelete">删除</Button>
         </div>
     </div>
 </template>

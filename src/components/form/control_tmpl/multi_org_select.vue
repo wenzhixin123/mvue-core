@@ -74,7 +74,7 @@ export default {
             selectedItem:[],//已经选择的项
             dataItems:[],//远程获取的数据项
             entityResource:entityResource,//获取部门数据的操作resource
-            queryFields:"id,name,ecode"//查询的冗余数据
+            queryFields:"id,name"//查询的冗余数据
         };
     },
     computed:{

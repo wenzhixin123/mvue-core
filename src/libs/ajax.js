@@ -38,8 +38,8 @@ ax.callAjax = function (type, url, data, success, error, _options) {
   options.beforeSend = beforeSend;
   var complete = function (xhr, status) {
     if (_options && _options.showLoading) {
-      // 请求结束关闭加载中
-      _vue.$Spin.hide();
+      // 请求发送前加载中提示
+      _vue.$Spin.show();
     }
     if (_options && _options.complete) {
       _options.complete(xhr, status);
@@ -59,7 +59,7 @@ ax.callAjax = function (type, url, data, success, error, _options) {
           hideError = true;
         }
         session.doLogout();
-        session.gotoLogin(window.location.href);
+        session.doLogin(window.location.href);
         return;
       }
       //如果用户自定义了异常处理，用用户自定义的
@@ -67,7 +67,12 @@ ax.callAjax = function (type, url, data, success, error, _options) {
         error(xhr, textStatus, errorThrown);
         return;
       }
-      if (xhr.status == 400) {
+      if(xhr.status==403){
+        iview$Modal.warning({
+            title: "系统提示",
+            content: "您没有此操作权限"
+        });
+      }else if (xhr.status == 400) {
         iview$Modal.error({
           title: "系统提示",
           content: "服务器异常:" + errorThrown
@@ -132,3 +137,4 @@ ax.patch = function (url, data, success, error, options) {
   ax.callAjax("PATCH", url, data, success, error, options);
 }
 module.exports = ax
+

@@ -1,20 +1,24 @@
 {
   "name": "mvue-core",
-  "version": "1.0.0",
+  "version": "0.0.2",
   "description": "mvue project core components",
-  "main": "dist/mvue-core.js",
+  "main": "src/index.js",
   "scripts": {
     "dev": "webpack-dev-server --content-base test/ --open --inline --hot --compress --history-api-fallback --port 8081 --config build/webpack.dev.config.js",
-    "dist:dev": "webpack --config build/webpack.dist.dev.config.js",
-    "dist:prod": "webpack --config build/webpack.dist.prod.config.js",
-    "dist": "npm run dist:prod",
+    "dev2": "webpack --config build/webpack.dist.dev.config.js",
+    "prod": "webpack --config build/webpack.dist.prod.config.js",
+    "dist": "npm run dev2",
     "lint": "eslint --fix --ext .js,.vue src",
     "unit": "cross-env BABEL_ENV=test karma start test/unit/karma.conf.js --single-run",
     "prepublish": "npm run dist",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "bingosoft",
-  "private": false,
+  "license": "Apache 2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/bingo-oss/mvue-core"
+  },
   "dependencies": {
     "file-size": "^1.0.0",
     "iview": "^2.7.4",

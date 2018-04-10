@@ -39,7 +39,6 @@ import ssoclient from './libs/security/ssoclient';
 import ajax from './libs/ajax';
 var customValidator = require("./libs/extend/custom_validator.js");
 var customVueResource = require("./libs/extend/custom_vue_resource.js");
-var moment = require('moment'); 
 
 //可用的mixins
 import formBase from './components/form/js/form_base';
@@ -63,7 +62,6 @@ let MvueCore={
     ssoclient:ssoclient,
     ajax:ajax,
     customValidator:customValidator,
-    customVueResource:customVueResource,
-    moment:moment//这样开发项目不需要引入moment包了，直接使用就好了
+    customVueResource:customVueResource
 };
 export default MvueCore;

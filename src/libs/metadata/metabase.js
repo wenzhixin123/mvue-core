@@ -296,5 +296,26 @@ export default{
     metabase.synced=false;
     initMetabase();
   },
-  initMetabase:initMetabase
+  initMetabase:initMetabase,
+  routeForEntityList(entityName,params){
+    var router= {name: 'defaultEntityList', params: {entityName:entityName}};
+    if(!_.isEmpty(params)){
+      router.params= _.extend(router.params,params);
+    }
+    return router;
+  },
+  routeForEntityCreateForm(entityName,params){
+    var router= {name: 'defaultCreateForm', params: {entityName:entityName}};
+    if(!_.isEmpty(params)){
+      router.params= _.extend(router.params,params);
+    }
+    return router;
+  },
+  routeForEntityUpdateForm(entityName,id,params){
+    var router= {name: 'defaultEditForm', params: {entityName:entityName,id:id}};
+    if(!_.isEmpty(params)){
+      router.params= _.extend(router.params,params);
+    }
+    return router;
+  }
 }

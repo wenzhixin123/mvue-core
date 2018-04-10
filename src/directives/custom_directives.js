@@ -26,23 +26,31 @@ module.exports = function CustomDirectives(Vue) {
         }
     });
     //固定元素的高度，并设置自动滚动条，如:v-autoscroll='60'
+    function autoscroll(value,el){
+        var windowHeight=$(window).height();
+        console.log('#######top:'+$(el).offset().top);
+        let top=$(el).offset().top;
+        if(!value){
+            $(el).css({
+                height:windowHeight-top+'px',
+                overflow:'auto'
+            });
+        }else{
+            value=_.toNumber(value);
+            let height=windowHeight-top-value>0?windowHeight-top-value:windowHeight;
+            $(el).css({
+                height:height+'px',
+                overflow:'auto'
+            });
+        }
+    }
     Vue.directive('autoscroll', {
         inserted: function (el,binding,vnode,oldVnode) {
             var value=binding.value;
-            var windowHeight=$(window).height();
-            if(!value){
-                $(el).css({
-                    height:windowHeight+'px',
-                    overflow:'auto'
-                });
-            }else{
-                value=_.toNumber(value);
-                let height=windowHeight-value>0?windowHeight-value:windowHeight;
-                $(el).css({
-                    height:height+'px',
-                    overflow:'auto'
-                });
-            }
+            autoscroll(value,el);
+            $(window).resize(function(){
+                autoscroll(value,el);
+            });
         }
     });
 };

@@ -1,4 +1,5 @@
 var Config=require("../../config/config.js");
+var session=require("../security/session");
 module.exports=function CustomVueResource(Vue,VueResource){
     Vue.http.options.root = _.trimEnd(Config.getApiBaseUrl(),"/");
     Vue.resource.actions.update={ method: 'PATCH' };

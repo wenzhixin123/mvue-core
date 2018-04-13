@@ -95,6 +95,7 @@ function formatData(componentType,item,metaField){
     }
     return result;
 }
+
 export default{
     types:orgUserTypes,
     accept:accept,

@@ -47,14 +47,17 @@ var timePrecision={
 //日期相关组件的扩展参数定义
 var componentParams={
     Date:{
-        datePrecision:datePrecision.day
+        datePrecision:datePrecision.day,
+        defaultValueType:null
     },
     Time:{
-        timePrecision:timePrecision.second
+        timePrecision:timePrecision.second,
+        defaultValueType:null
     },
     DateTime:{
         datePrecision:datePrecision.day,
-        timePrecision:timePrecision.second
+        timePrecision:timePrecision.second,
+        defaultValueType:null
     },
     DateTimeRange:{
         datePrecision:datePrecision.day,
@@ -137,6 +140,7 @@ function formatData(componentType,item,metaField){
     }
     return result;
 }
+
 export default{
     types:dateTypes,
     componentParams:componentParams,

@@ -3,7 +3,8 @@
  */
 import controlTypeService from '../../form/js/control_type_service';
 import operationManager from "./metagrid_operation";
-var Config=require("../../../config/config");
+var Config=require("../../../config/config.js");
+
 export default {
   /**
    * 图片上传控件
@@ -67,6 +68,32 @@ export default {
   },
 
   /**
+   * 带操作的标题头显示
+   * @returns {*}
+   */
+  renderForOptsTitle: function (context, metaField) {
+    let btns=context.grid.innerToolbar.singleBtns;
+    return function (h, params) {
+      return h("meta-grid-opts-title", {
+        props: {
+          params: {
+            metaField:metaField,
+            wordlimit:31
+          },
+          btns:btns,
+          item: params.row,
+          grid:context.grid
+        },
+        on: {
+          btnClick:function(btn){
+            btn.onclick.call(_.extend({"op":btn},context),_.extend({"checked":params.row},params));
+          }
+        }
+      });
+    }
+  },
+
+  /**
    * 操作列
    * @param metaField
    * @returns {Function}
@@ -77,15 +104,12 @@ export default {
    * @returns {Function}
    */
   renderForOperation:function (context,metaField) {
-  let btns=[];
-  _.forEach(metaField.btns,function (btn,index) {
-    var mergedBtn=operationManager.fillOperationByMb(context,btn);
-    btns.push(mergedBtn);
-  });
+    let btns=context.grid.innerToolbar.singleBtns;
   return function(h,params){
     return h("meta-grid-operation-btn",{
       props:{
-        btns:btns
+        btns:btns,
+        item: params.row
       },
       on:{
         click:function(btn){

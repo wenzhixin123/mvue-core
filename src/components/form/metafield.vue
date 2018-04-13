@@ -3,9 +3,10 @@
     v-model="innerValue" 
     :validator="validator"
     @exDataChanged="exDataChanged" 
-    :is="'Meta'+formItem.componentType"
+    :is="componentName(formItem)"
     :paths="paths" 
     :model="innerModel"
+    :context="{metaEntity,action:action}"
     :form-item="formItem">
     </component>
 </template>
@@ -29,6 +30,9 @@ export default {
             type:String
         },
         inputType:{
+            type:String
+        },
+        action:{//表示是否查看模式的表单
             type:String
         },
         model:{
@@ -136,6 +140,9 @@ export default {
             if(this.form){
                 this.form.$emit("exDataChanged",newValue,dataField);
             }
+        },
+        componentName(formItem){
+            return metaformUtils.metaComponentType(formItem);
         }
     }
 }

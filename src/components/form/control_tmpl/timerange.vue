@@ -2,7 +2,7 @@
     <div :style="{width:formItem.componentParams.width+'%'}">
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
-            <TimePicker
+            <TimePicker transfer
             v-model="valueObj"
             type="timerange" 
             @on-change="handleChange" 
@@ -14,7 +14,7 @@
             <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
                 <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
                 <div class="col-md-10" :style="{width:controlWidth}">
-                    <TimePicker
+                    <TimePicker transfer
                     v-model="valueObj"
                     type="timerange"  
                     @on-change="handleChange"

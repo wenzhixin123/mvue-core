@@ -1,5 +1,17 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
+        <template v-if="viewMode">
+            <div class="form-item-view-con" v-if="isNotEmpty(defaultList)">
+                <div class="view-title" v-text="formItem.componentParams.title"></div>
+                <ul class="ivu-upload-list">
+                    <li class="ivu-upload-list-file ivu-upload-list-file-finish" style="padding-left:0px;" v-for="item in defaultList" :key="item.url">
+                        <span @click="handlePreview(item)"><i class="ivu-icon ivu-icon-document"></i> {{item.name}}</span>
+                        <span>{{humanFileSize(item.size)}}</span>
+                    </li>
+                </ul>
+            </div>
+        </template>
+        <template v-else>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
             <div>
@@ -62,16 +74,14 @@
                 </div>
             </div>
         </div>
+        </template>
     </div>
 </template>
 <script>
 import controlBase from '../js/control_base';
 import uploadBase from '../js/upload_base';
 export default {
-    mixins: [controlBase,uploadBase],
-    methods:{
-        
-    }
+    mixins: [controlBase,uploadBase]
 }
 </script>
 <style lang="scss" scoped>

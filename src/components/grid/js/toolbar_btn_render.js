@@ -6,11 +6,13 @@ export default {
     functional: true,
     props: {
         render: Function,
-        toolbarBtn: Object
+        toolbarBtn: Object,
+        toolbarType:String
     },
     render: (h, ctx) => {
         const params = {
             toolbarBtn: ctx.props.toolbarBtn,
+            toolbarType:ctx.props.toolbarType
         };
         return ctx.props.render(h, params);
     }

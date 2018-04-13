@@ -1,10 +1,17 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
+        <template v-if="viewMode">
+            <div class="form-item-view-con" v-if="isNotEmpty(selectedItem)">
+                <div class="view-title" v-text="formItem.componentParams.title"></div>
+                <div v-text="selectedItem&&selectedItem[getTitleField()]"></div>
+            </div>
+        </template>
+        <template v-else>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
             <Multiselect v-model="selectedItem"
                         :options="dataItems"
-                        placeholder="选择"
+                        :placeholder="formItem.componentParams.placeholder||'请输入关键字搜索'"
                         :disabled="disabled"
                         select-label="按enter键选择"
                         selected-label="已选"
@@ -34,6 +41,7 @@
                 </div>
             </div>
         </div>
+        </template>
     </div>
 </template>
 <script>
@@ -52,6 +60,7 @@ export default {
             selectedItem:null,//已经选择的项
             dataItems:[],//远程获取的数据项
             entityResource:entityResource,//获取实体数据的操作resource
+            cachedDataItems:null//默认提示的可选数据
         };
     },
     computed:{
@@ -95,23 +104,62 @@ export default {
                 _this.selectedItem=null;
             });
         },
-        doSearch:function(keyword,callback){
+        doSearchForCache:function(callback){
+            if(this.cachedDataItems){
+                callback&&callback(this.cachedDataItems);
+                return;
+            }
             var _this=this;
             var params={};
-            if(!keyword){
-                params.limit=50;
-                if(this.value){
-                    params.filters=`${this.formItem.componentParams.idField} eq ${this.value}`;
-                }
-            }else{
-                params.filters=`${this.formItem.componentParams.titleField} like %${keyword}%`;
+            params.limit=5;
+            if(this.formItem.componentParams.orderbyField){
+                let orderbyType=this.formItem.componentParams.orderbyType||'asc';
+                params.orderby=`${this.formItem.componentParams.orderbyField} ${orderbyType}`;
             }
             if(this.entityResource){
                 Utils.smartSearch(_this,function(){
                     _this.entityResource.query(params)
                     .then(function({data}){
-                        _this.dataItems=data;
-                        callback&&callback();
+                        _this.cachedDataItems=data;
+                        callback&&callback(data)
+                    });
+                });
+            }
+        },
+        doSearch:function(keyword,callback){
+            var _this=this;
+            var params={};
+            if(!keyword){
+                params.limit=5;
+                if(this.value){
+                    params.filters=`${this.formItem.componentParams.idField} eq ${this.value}`;
+                }
+            }else{
+                params.filters=`${this.formItem.componentParams.titleField} like '%${keyword}%'`;
+            }
+            if(this.formItem.componentParams.orderbyField){
+                let orderbyType=this.formItem.componentParams.orderbyType||'asc';
+                params.orderby=`${this.formItem.componentParams.orderbyField} ${orderbyType}`;
+            }
+            if(this.entityResource){
+                Utils.smartSearch(_this,function(){
+                    _this.entityResource.query(params)
+                    .then(function({data}){
+                        if(_this.value){//此时需要补充缓存的数据进去
+                            let id=_this.getIdField();
+                            _this.doSearchForCache(function(citems){
+                                let has=_.find(citems, function(o) { return o[id] ===data[0][id]; });
+                                if(has){//如果当前值在缓存中
+                                    _this.dataItems=citems;
+                                }else{
+                                    _this.dataItems=citems.concat(data);
+                                }
+                                callback&&callback();
+                            });
+                        }else{
+                            _this.dataItems=data;
+                            callback&&callback();
+                        }
                     });
                 });
             }

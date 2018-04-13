@@ -258,7 +258,11 @@ function switchableComponents(formItem){
     }
     return false;
 };
-
+//值可设置的类型：默认值和固定值
+var valueTypes={
+    defaultValue:{id:"defaultValue",title:"默认值"},
+    fixedValue:{id:"fixedValue",title:"固定值"},
+};
 export default{
     componentTypes:componentTypes,
     switchableComponents:switchableComponents,
@@ -299,5 +303,6 @@ export default{
     buildFormLayoutByMetaFields:buildFormLayoutByMetaFields,
     buildFormItemByMetaField:buildFormItemByMetaField,
     formatData:formatData,
-    getMetaFieldComponentType:getMetaFieldComponentType
+    getMetaFieldComponentType:getMetaFieldComponentType,
+    valueTypes:valueTypes
 };

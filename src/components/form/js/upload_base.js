@@ -58,6 +58,9 @@ export default {
                     _oldValidPart.push({name:oldFile.name,url:oldFile.url});
                 });
             }
+            if(!newV||newV.length===0){
+                this.defaultList=[];
+            }
             if(this.uploaded){
                 return;
             }
@@ -95,7 +98,7 @@ export default {
             return formatInfo;
         },
         sizeInfo:function(){
-            var sizeInfo="不超过"+this.maxSize+"M";
+            var sizeInfo="最大"+this.maxSize+"M";
             return sizeInfo;
         },
         fileDescription:function(){
@@ -111,6 +114,9 @@ export default {
             }
         },
         fileRealUrl:function(url){
+            if(_.startsWith(url,"http://")||_.startsWith(url,"https://")){
+                return url;
+            }
             return `${this.paths.uploadUrl}?filePath=${url}`;
         },
         emitValue:function(){

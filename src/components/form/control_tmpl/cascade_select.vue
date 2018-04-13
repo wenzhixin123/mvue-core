@@ -1,5 +1,12 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
+        <template v-if="viewMode">
+            <div class="form-item-view-con" v-if="isNotEmpty(valueObj)">
+                <div class="view-title" v-text="formItem.componentParams.title"></div>
+                <div v-text="viewModeValue()"></div>
+            </div>
+        </template>
+        <template v-else>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label :class="{'ivu-form-item-label':formItem.componentParams.required}" v-text="formItem.componentParams.title"></label>
             <Cascader  @on-change="handleChange" :data="optionsData" v-model="valueObj"></Cascader>
@@ -16,6 +23,7 @@
                 </div>
             </div>
         </div>
+        </template>
     </div>
 </template>
 <script>
@@ -87,11 +95,24 @@ export default {
             this.emitExData(selectedData);
         },
         emitExData:function(selectedData){
+            let _this=this;
             var exData={};
             _.each(selectedData,function(item){
-                exData[item.value]=item.text;
+                exData[item.value]=_this.buildExData(item.text);
             });
             this.$emit("exDataChanged",exData,this.formItem.dataField);
+        },
+        viewModeValue(){
+            if(this.valueObj&&this.valueObj){
+                let texts=[];
+                let _this=this;
+                _.each(this.valueObj,function(id){
+                    let exValue=_this.getExData(id);
+                    texts.push(exValue);
+                });
+                return texts.join("/");
+            }
+            return "";
         }
     }
 }

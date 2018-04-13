@@ -12,6 +12,8 @@ var componentParams={
         entityId:"",//必填
         idField:"",//必填
         titleField:"",//必填
+        orderbyField:"",//排序字段
+        orderbyType:"asc",//排序规则
         entityResourceUrl:""//后端自动生成
     }
 };

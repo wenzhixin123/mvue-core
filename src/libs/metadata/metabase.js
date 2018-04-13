@@ -3,48 +3,92 @@
  * Created by fulsh on 2017/12/12.
  */
 import controlTypeService from '../../components/form/js/control_type_service';
-var Config=require("../../config/config");
+var Config=require("../../config/config.js");
+import metaservice from '../../services/meta/metaservice';
+var store=require("store2");
 
 var MetaEntityCls=require("./metaentity");
-var mbCacheKey="_mb_";
-var mbModule={};
-
-var metabase={
-  synced:false,
-  entities:null,
-  lastUpdate:new Date().getTime()
-};
-if(store.has(mbCacheKey)){
-  metabase=store.get(mbCacheKey);
-  metabase.synced=false;
-}
+//当前项目的id
+var currentProjectId=null;
+//当前项目的engine地址
+var currentEngineUrl=null;
+//所有项目对应的元数据，以项目mbCacheKey存储
+var metabases={};
 
 /**
- * 同步初始化Mb
+ * 根据项目id构建项目元数据访问的key
+ * @param {*} projectId 
  */
-function  initMetabase(){
-  if(metabase.synced){
-    return ;
+function mbCacheKey(projectId){
+  return projectId?`${projectId}/_mb_`:`_mb_`;
+}
+/**
+ * 根据传入的项目id获取项目元数据
+ * @param {*} projectId 
+ */
+function getMetabase(projectId){
+  var cacheKey=mbCacheKey(projectId);
+  //先从内存获取
+  if(metabases[cacheKey]){
+    return metabases[cacheKey];
   }
-  var ajaxAsync=true;
-  if(metabase.entities==null){
-    ajaxAsync=false;
+  //再从本地存储获取
+  if(store.has(cacheKey)){
+    return store.get(cacheKey);
   }
-  var swagger=Config.getApiBaseUrl()+"/swagger.json";
-  return jQuery.ajax({
-    url:swagger,
-    dataType:"json",
-    async:ajaxAsync,
-    statusCode:{404:function () {
-        alert("加载元数据定义失败，请确认以下配置是否正确："+swagger);
-      }},
-    success:function (swaggerJson) {
-      if(metabase.synced){
-        return ;
-      }
-      loadMetabase(swaggerJson);
-      console.log("async("+ajaxAsync+")load metabase from "+swagger);
+  return null;
+}
+/**
+ * 获取当前项目的swagger地址
+ */
+function currentSwagger(projectId){
+  if(!projectId){
+    return new Promise(function(reslove,reject){
+      currentEngineUrl=Config.getApiBaseUrl();
+      var swagger= Config.getApiBaseUrl()+"/swagger.json";
+      reslove(swagger);
+    });
+  }
+  return metaservice.getProject({id:projectId}).then(({data})=>{
+    if(!data.engine||!data.engine.externalUrl){
+      console.log(`项目id为${projectId}的项目engine地址不存在`);
+      return null;
     }
+    currentEngineUrl=data.engine.externalUrl;
+    var swagger=`${data.engine.externalUrl}/swagger.json`;
+    return swagger;
+  });
+}
+/**
+ * 根据项目id从远程加载项目的元数据信息
+ * @param {*} projectId 
+ * @param {*} forceReload 为true表示强制从远程更新元数据信息
+ */
+function  initMetabase(projectId,forceReload){
+  currentProjectId=projectId;
+  var _metabase=getMetabase(projectId);
+  if(_metabase&&!forceReload){//已经在缓存里边存在，不加载
+    return;
+  }
+  //先通过项目id，查询项目的swagger服务地址，在通过swagger地址获取元数据信息
+  return currentSwagger(projectId).then((swagger)=>{
+    if(!swagger){
+      return;
+    }
+    return jQuery.ajax({
+      url:swagger,
+      cache:false,
+      dataType:"json",
+      statusCode:{
+        404:function () {
+          alert("加载元数据定义失败，请确认以下配置是否正确："+swagger);
+        }
+      },
+      success:function (swaggerJson) {
+        loadMetabase(swaggerJson,projectId);
+        console.log("load metabase from "+swagger);
+      }
+    });
   });
 }
 
@@ -52,7 +96,7 @@ function  initMetabase(){
  * 将swagger 转为Metabase
  * @param swagger
  */
-function loadMetabase(swagger){
+function loadMetabase(swagger,projectId){
   var context={
     swagger:swagger
   };
@@ -65,10 +109,11 @@ function loadMetabase(swagger){
     var metaEntity=loadMetaEntityFromMode(context,key,val);
     entities[key.toLowerCase()]=metaEntity;
   });
+  var metabase={};
   metabase.entities=entities;
-  metabase.synced=true;
-  metabase.lastUpdate=new Date().getTime();
-  store.set(mbCacheKey,metabase);
+  var cachedKey=mbCacheKey(projectId);
+  metabases[cachedKey]=metabase;
+  store.set(cachedKey,metabase);
 }
 
 /**
@@ -83,7 +128,8 @@ function loadMetaEntityFromMode(context,modelName,model){
     title:model.title,
     description:model.description,
     _model:model,
-    resourceUrl:`${Config.getApiBaseUrl()}/${entityPath}`
+    resourceUrl:`${currentEngineUrl}/${entityPath}`,
+    projectId:currentProjectId
   };
   var metaEntity=MetaEntityCls(opt);
   var propertyContext=_.extend({
@@ -119,9 +165,9 @@ function loadMetaEntityFromMode(context,modelName,model){
         relationField.relations.push(metaRelation);
         //多对一关系的字段修正为引用实体控件类型
         if(metaRelation.type=="many-to-one"&&
-        ((!relationField.inputType)||
-        (relationField.inputType==controlTypeService.componentTypes.RefEntity.id)||
-        (relationField.inputType==controlTypeService.componentTypes.SingleLineText.id))){
+          ((!relationField.inputType)||
+          (relationField.inputType==controlTypeService.componentTypes.RefEntity.id)||
+          (relationField.inputType==controlTypeService.componentTypes.SingleLineText.id))){
           relationField.inputType=controlTypeService.componentTypes.RefEntity.id;
           relationField.manyToOneRelation=metaRelation;
         }
@@ -154,6 +200,7 @@ function loadMetaFieldFromProperty(context,propertyName,property){
     isDisplay:true,
     displayOrder:0,
     identity:firstNotNaN(property["x-identity"],false),
+    readonly:!!property["readOnly"],
     autoIncrement:false,
     unique:firstNotNaN(property["x-unique"],property["uniqueItems"],false),
     required:firstNotNaN(property["x-required"],false),
@@ -164,6 +211,7 @@ function loadMetaFieldFromProperty(context,propertyName,property){
     inputType:property["x-input"],
     inputTypeParams:{},
     semantics:property["x-meaning"],
+    isTitleField:"title"===property["x-meaning"],
     maxLength:property["maxLength"],
     minLength:property["minLength"],
     pattern:property["pattern"],
@@ -261,10 +309,6 @@ function firstNotNaN(){
   return reval;
 }
 
-
-//初始化metabase
-//initMetabase();
-
 export default{
   /**
    * 根据实体名，查询实体
@@ -275,6 +319,7 @@ export default{
     if(!metaEntityName){
       return null;
     }
+    var metabase=getMetabase(currentProjectId);
     var metaEntity= metabase.entities[metaEntityName.toLowerCase()];
     if(_.isEmpty(metaEntity)){
       return null;
@@ -287,16 +332,11 @@ export default{
    * @returns {null}
    */
   entities:function () {
+    var metabase=getMetabase(currentProjectId);
     return metabase.entities;
   },
-  /**
-   * 刷新实体缓存
-   */
-  refresh:function () {
-    metabase.synced=false;
-    initMetabase();
-  },
   initMetabase:initMetabase,
+  currentSwagger:currentSwagger,
   routeForEntityList(entityName,params){
     var router= {name: 'defaultEntityList', params: {entityName:entityName}};
     if(!_.isEmpty(params)){

@@ -1,10 +1,17 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
+        <template v-if="viewMode">
+            <div class="form-item-view-con" v-if="isNotEmpty(selectedItem)">
+                <div class="view-title" v-text="formItem.componentParams.title"></div>
+                <div v-text="viewModeValue()"></div>
+            </div>
+        </template>
+        <template v-else>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
             <Multiselect :multiple="true" v-model="selectedItem"
                         :options="dataItems"
-                        placeholder="选择部门"
+                        :placeholder="formItem.componentParams.placeholder||'请输入部门名称'"
                         :disabled="disabled"
                         select-label="按enter键选择"
                         selected-label="已选"
@@ -50,6 +57,7 @@
                 </div>
             </div>
         </div>
+        </template>
     </div>
 </template>
 <script>
@@ -74,7 +82,8 @@ export default {
             selectedItem:[],//已经选择的项
             dataItems:[],//远程获取的数据项
             entityResource:entityResource,//获取部门数据的操作resource
-            queryFields:"id,name"//查询的冗余数据
+            queryFields:"id,name",//查询的冗余数据
+            cachedDataItems:null//默认提示的可选数据
         };
     },
     computed:{
@@ -149,6 +158,25 @@ export default {
                 _this.selectedItem=null;
             });
         },
+        doSearchForCache:function(callback){
+            if(this.cachedDataItems){
+                callback&&callback(this.cachedDataItems);
+                return;
+            }
+            var _this=this;
+            var params={select:_this.queryFields};
+            params.limit=50;
+            params.filters=`status eq 1`;
+            if(this.entityResource){
+                Utils.smartSearch(_this,function(){
+                    _this.entityResource.query(params)
+                    .then(function({data}){
+                        _this.cachedDataItems=data;
+                        callback&&callback(data);
+                    });
+                });
+            }
+        },
         doSearch:function(keyword,callback){
             var _this=this;
             var params={select:_this.queryFields};
@@ -161,14 +189,29 @@ export default {
                     params.limit=50;
                 }
             }else{
-                params.filters=`status eq 1 and name like %${keyword}%`;
+                params.filters=`status eq 1 and name like '%${keyword}%'`;
             }
             if(this.entityResource){
                 Utils.smartSearch(_this,function(){
                     _this.entityResource.query(params)
                     .then(function({data}){
-                        _this.dataItems=data;
-                        callback&&callback();
+                        if(_this.value){//此时需要补充缓存的数据进去
+                            let id=_this.getIdField();
+                            _this.doSearchForCache(function(citems){
+                                let _dataItems=_.cloneDeep(citems);
+                                _.each(data,function(dataItem){
+                                    let has=_.find(citems, function(o) { return o[id] ===dataItem[id]; });
+                                    if(!has){//如果当前值不在缓存中
+                                        _dataItems.push(dataItem);
+                                    }
+                                });
+                                _this.dataItems=_dataItems;
+                                callback&&callback();
+                            });
+                        }else{
+                            _this.dataItems=data;
+                            callback&&callback();
+                        }
                     });
                 });
             }
@@ -181,6 +224,19 @@ export default {
         },
         emitExData:function(exData){
             this.$emit("exDataChanged",exData,this.formItem.dataField);
+        },
+        viewModeValue(){
+            if(this.selectedItem&&this.selectedItem){
+                let texts=[];
+                let _this=this;
+                _.each(this.selectedItem,function(item){
+                    let id=item[_this.getIdField()];
+                    let exValue=_this.getExData(id);
+                    texts.push(exValue);
+                });
+                return texts.join(",");
+            }
+            return "";
         }
     }
 }

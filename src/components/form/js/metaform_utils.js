@@ -186,7 +186,11 @@ function exDataChanged(model,newValue,dataField){
         model[rkey][dataField]=newValue;
     }
 }
-
+//根据表单布局项，计算组件对应的渲染组件（pclink将使用原生选人控件）
+function metaComponentType(formItem){
+    var ct=formItem.componentType;
+    return `Meta${ct}`;
+}
 export default{
     getAllFormItems:getAllFormItems,
     getAllFieldItems:getAllFieldItems,
@@ -194,5 +198,6 @@ export default{
     getFormItemById:getFormItemById,
     indexOfFormItem:indexOfFormItem,
     initValidation:initValidation,
-    exDataChanged:exDataChanged
+    exDataChanged:exDataChanged,
+    metaComponentType:metaComponentType
 }

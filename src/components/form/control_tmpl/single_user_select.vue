@@ -1,10 +1,17 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
+        <template v-if="viewMode">
+            <div class="form-item-view-con" v-if="isNotEmpty(selectedItem)">
+                <div class="view-title" v-text="formItem.componentParams.title"></div>
+                <div v-text="selectedItem&&selectedItem[getTitleField()]"></div>
+            </div>
+        </template>
+        <template v-else>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
             <Multiselect v-model="selectedItem"
                         :options="dataItems"
-                        placeholder="选择用户"
+                        :placeholder="formItem.componentParams.placeholder||'请输入用户姓名'"
                         :disabled="disabled"
                         select-label="按enter键选择"
                         selected-label="已选"
@@ -56,6 +63,7 @@
                 </div>
             </div>
         </div>
+        </template>
     </div>
 </template>
 <script>
@@ -74,7 +82,8 @@ export default {
             selectedItem:null,//已经选择的项
             dataItems:[],//远程获取的数据项
             entityResource:entityResource,//获取用户数据的操作resource
-            queryFields:"userId,name,mobile,loginId,email,orgId"//查询的冗余数据
+            queryFields:"userId,name,mobile,loginId,email,orgId",//查询的冗余数据
+            cachedDataItems:null//默认提示的可选数据
         };
     },
     computed:{
@@ -100,14 +109,27 @@ export default {
             var _this=this;
             if(newValue){
                 this.entityResource= Vue.resource(newValue);
-                this.doSearch();
+                this.firstSearch();
             }
         },
     },
     mounted:function(){
-        this.doSearch();
+        this.firstSearch();
     },
     methods: {
+        firstSearch(){
+            let _this=this;
+            this.doSearch(null,function(){//默认值填充
+                if(_this.shouldInitDefault()){
+                    _this.calcField().then((data)=>{
+                        if(!data){
+                            return;
+                        }
+                        _this.setCurrentUserIfCreate(data);
+                    });
+                }
+            });
+        },
         onSelect:function(selectItem){
             var idField=this.getIdField();
             var titleField=this.getTitleField();
@@ -125,6 +147,25 @@ export default {
                 _this.selectedItem=null;
             });
         },
+        doSearchForCache:function(callback){
+            if(this.cachedDataItems){
+                callback&&callback(this.cachedDataItems);
+                return;
+            }
+            var _this=this;
+            var params={select:_this.queryFields};
+            params.limit=5;
+            params.filters=`status eq 1`;
+            if(this.entityResource){
+                Utils.smartSearch(_this,function(){
+                    _this.entityResource.query(params)
+                    .then(function({data}){
+                        _this.cachedDataItems=data;
+                        callback&&callback(data);
+                    });
+                });
+            }
+        },
         doSearch:function(keyword,callback){
             var _this=this;
             var params={select:_this.queryFields};
@@ -133,17 +174,30 @@ export default {
                     let idField=this.getIdField();
                     params.filters=`${idField} eq ${this.value}`;
                 }else{
-                    params.limit=50;
+                    params.limit=5;
                 }
             }else{
-                params.filters=`status eq 1 and name like %${keyword}%`;
+                params.filters=`status eq 1 and name like '%${keyword}%'`;
             }
             if(this.entityResource){
                 Utils.smartSearch(_this,function(){
                     _this.entityResource.query(params)
                     .then(function({data}){
-                        _this.dataItems=data;
-                        callback&&callback();
+                        if(_this.value){//此时需要补充缓存的数据进去
+                            let id=_this.getIdField();
+                            _this.doSearchForCache(function(citems){
+                                let has=_.find(citems, function(o) { return o[id] ===data[0][id]; });
+                                if(has){//如果当前值在缓存中
+                                    _this.dataItems=citems;
+                                }else{
+                                    _this.dataItems=citems.concat(data);
+                                }
+                                callback&&callback();
+                            });
+                        }else{
+                            _this.dataItems=data;
+                            callback&&callback();
+                        }
                     });
                 });
             }

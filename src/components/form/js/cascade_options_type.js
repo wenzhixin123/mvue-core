@@ -36,12 +36,13 @@ function formatData(componentType,item,metaField){
     }
     let rkey=constants.entityModelRedundantKey;
     var $data=(item[rkey]&&item[rkey][fieldName])||{};
+    let titleKey=constants.entityModelTitleKey;
     let optionTexts=[];
     _.each(origin,function(v){
-      let optionText=$data[v];
-      if(!_.isNil(optionText)){
-          optionTexts.push(optionText);
-      }
+        let optionText=$data[v][titleKey];
+        if(!_.isNil(optionText)){
+            optionTexts.push(optionText);
+        }
     });
     return optionTexts.join("/")||origin.join("/");
 }

@@ -1,10 +1,12 @@
 function installGridAndForm(Vue){
-    Vue.component('meta-grid-render-html',require('./components/grid/render_html'));
-    Vue.component('meta-grid-operation-btn',require('./components/grid/operation_btn'));
-    Vue.component('meta-grid-img-title',require('./components/grid/img_title'));
-    Vue.component('meta-grid-pictures',require('./components/grid/pictures'));
-    Vue.component('meta-grid-files',require('./components/grid/files'));
-    Vue.component('meta-grid',require('./components/grid/iview_grid.vue'));
+    Vue.component('meta-grid-render-html',require("./components/grid/render_html"));
+    Vue.component('meta-grid-operation-btn',require("./components/grid/operation_btn"));
+    Vue.component('meta-grid-img-title',require("./components/grid/img_title"));
+    Vue.component('meta-grid-opts-title',require("./components/grid/opts_title"));
+    Vue.component('meta-grid-pictures',require("./components/grid/pictures"));
+    Vue.component('meta-grid-files',require("./components/grid/files"));
+    Vue.component('meta-grid-import-data',require("./components/grid/import_data.vue"));
+    Vue.component('meta-grid',require("./components/grid/iview_grid.vue"));
 
     Vue.component('MetaSingleLineText',require('./components/form/control_tmpl/single_line_text')),
     Vue.component('MetaMultiLineText',require('./components/form/control_tmpl/multi_line_text')),
@@ -42,6 +44,7 @@ var customVueResource = require("./libs/extend/custom_vue_resource.js");
 
 //可用的mixins
 import formBase from './components/form/js/form_base';
+import gridBase from './components/grid/js/entity_grid_base';
 var CustomDirectives = require("./directives/custom_directives");
 //Vue插件安装入口函数
 const install = function(Vue, opts = {}) {
@@ -53,7 +56,8 @@ const install = function(Vue, opts = {}) {
 let MvueCore={
     install:install,
     mixins:{
-        formBase:formBase
+        formBase:formBase,
+        gridBase:gridBase
     },
     utils:utils,
     metaBase:metabase,

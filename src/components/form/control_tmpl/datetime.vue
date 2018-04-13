@@ -1,5 +1,12 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
+        <template v-if="viewMode">
+            <div class="form-item-view-con" v-if="isNotEmpty(valueObj)">
+                <div class="view-title" v-text="formItem.componentParams.title"></div>
+                <div v-text="valueObj"></div>
+            </div>
+        </template>
+        <template v-else>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
             <DatePicker
@@ -22,6 +29,7 @@
                 </div>
             </div>
         </div>
+        </template>
     </div>
 </template>
 <script>
@@ -58,10 +66,22 @@ export default {
         }
     },
     mounted:function(){
-        var _valueValidPart=this.getValidPart();
-        this.valueObj=_valueValidPart;
+        if(this.value){
+            var _valueValidPart=this.getValidPart();
+            this.valueObj=_valueValidPart;
+        }
     },
     methods:{
+        initDefaultByType(){
+            let _this=this;
+            this.calcField().then((data)=>{
+                if(!data){
+                    return;
+                }
+                let dv=moment(data).format(Utils.getMomentFormat(_this.dateTimeFormat));
+                _this.handleChange(dv);
+            });
+        },
         getValidPart:function(){//将传进来的值value转成特定的格式
             //moment format YYYY-MM-DD HH:mm:ss
             let timePrecision=this.formItem.componentParams.timePrecision;
@@ -69,13 +89,12 @@ export default {
             return _valueValidPart;
         },
         handleChange:function(newDate){//最终都转成完整的日期时间格式
-            let timePrecision=this.formItem.componentParams.timePrecision;
-            let _d=null;
-            if(this.controlTypeService.timePrecision.minute===timePrecision){
-                _d=moment(newDate,'YYYY-MM-DD HH:mm');
-            }else{
-                _d=moment(newDate,'YYYY-MM-DD HH:mm:ss');
+            if(!newDate){
+                this.$emit("input",null);
+                return;
             }
+            let timePrecision=this.formItem.componentParams.timePrecision;
+            let _d=_d=moment(newDate,Utils.getMomentFormat(this.dateTimeFormat));
             this.$emit("input",_d.format('YYYY-MM-DD HH:mm:ss'));
         }
     }

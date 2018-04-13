@@ -1,12 +1,17 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
+        <template v-if="viewMode">
+            <div class="form-item-view-con" v-if="isNotEmpty(valueObj)">
+                <div class="view-title" v-text="formItem.componentParams.title"></div>
+                <div v-text="getExData(valueObj)"></div>
+            </div>
+        </template>
+        <template v-else>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label :class="{'ivu-form-item-label':formItem.componentParams.required}" v-text="formItem.componentParams.title"></label>
-            <select v-model="valueObj" @input="updateValue($event.target.value)" :disabled="disabled" class="form-control" :name="formItem.dataField">
-                <option value="" v-text="formItem.componentParams.selectText"></option>
-                <option v-for="item in formItem.componentParams.options" 
-                    :key="item.id" :value="item.id" v-text="item.text"></option>
-            </select>
+            <Select v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
+                <Option v-for="item in formItem.componentParams.options" :key="item.id" :value="item.id">{{ item.text }}</Option>
+            </Select>
             <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
             <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
         </div>
@@ -14,16 +19,15 @@
             <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
                 <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
                 <div class="col-md-10" :style="{width:controlWidth}">
-                    <select v-model="valueObj" @input="updateValue($event.target.value)" :disabled="disabled" class="form-control" :name="formItem.dataField">
-                        <option value="" v-text="formItem.componentParams.selectText"></option>
-                        <option v-for="item in formItem.componentParams.options" 
-                            :key="item.id" :value="item.id" v-text="item.text"></option>
-                    </select>
+                    <Select v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
+                        <Option v-for="item in formItem.componentParams.options" :key="item.id" :value="item.id">{{ item.text }}</Option>
+                    </Select>
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
                     <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
                 </div>
             </div>
         </div>
+        </template>
     </div>
 </template>
 <script>

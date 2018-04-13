@@ -1,5 +1,16 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
+        <template v-if="viewMode">
+            <div class="form-item-view-con" v-if="isNotEmpty(valueObj)">
+                <div class="view-title" v-text="formItem.componentParams.title"></div>
+                <div class="checkbox">
+                    <label>
+                        <input v-model="valueObj" @change="updateValue($event.target)" disabled :true-value="true" :false-value="false" type="checkbox">
+                    </label>
+                </div>
+            </div>
+        </template>
+        <template v-else>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label :class="{'ivu-form-item-label':formItem.componentParams.required}" v-text="formItem.componentParams.title"></label>
             <div class="checkbox">
@@ -24,6 +35,7 @@
                 </div>
             </div>
         </div>
+        </template>
     </div>
 </template>
 <script>

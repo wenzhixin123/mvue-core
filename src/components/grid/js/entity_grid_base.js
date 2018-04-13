@@ -5,6 +5,16 @@ export default {
         var entityName = this.$route.params.entityName;
         var metaEntity = metabase.findMetaEntity(entityName);
         return {
+            navlist:[
+                {
+                  title:`${metaEntity.title}管理`,
+                  to:{
+                        path:this.$route.path,
+                        query:this.$route.query,
+                        params:this.$route.params
+                    }
+                }
+            ],
             header: {
                 title: metaEntity.title,
                 description: metaEntity.description,
@@ -39,18 +49,15 @@ export default {
             var query = this.$route.query;
             var metaEntity = this.metaEntity;
             //如果有查询条件，并且查询key是实体的字段，则加入到默认查询条件中
-            let queryOptions = null;
+            let queryOptions = {};
             if (query) {
-                let conditionArray = [];
+                let _queryOptions = {};
                 _.each(query, function (value, key) {
                     if (metaEntity.findField(key)) {
-                        conditionArray.push(`${key} eq ${value}`);
+                        _queryOptions[key]=value;
                     }
                 });
-                if (conditionArray.length) {
-                    let filters = conditionArray.join(" and ");
-                    queryOptions = { filters: filters };
-                }
+                queryOptions=_queryOptions;
             }
             return queryOptions;
         },
@@ -97,26 +104,47 @@ export default {
                     if(column.searchable){
                         _advanceSearchFields.push(metaField.name);
                     }
+                    //列宽度
+                    if(_.isInteger(column.width)){
+                        metaField.width=column.width;
+                    }
+                    //列固定
+                    if(column.fixed){
+                        metaField.fixed=column.fixed;
+                    }
+                    //对齐方式
+                    if(column.align){
+                        metaField.align=column.align;
+                    }
                 }
             });
             //begin 构造工具栏
             let toolbar = {
-                btns: ["create","import"],
-                advanceSearchFields:_advanceSearchFields
+                btns: ["create","import","exports"],//普通操作
+                advanceSearchFields:_advanceSearchFields,
+                singleBtns:["edit","view","del"],//基于单条数据的操作
+                batchBtns:["batchDelete"]//基于多条数据的操作
             };
+            let quickSearchPlacehoder="请输入关键字搜索";
             if (_searchFields.length) {
                 toolbar.quicksearch = {
                     fields: _searchFields,
-                    placeholder: "根据名称搜索"
+                    placeholder: quickSearchPlacehoder
                 }
             }else{
                 let titleField=metaEntity.firstSemanticsField("title");
                 if(titleField){
                     toolbar.quicksearch = {
-                        fields: titleField.name,
-                        placeholder: "根据名称搜索"
+                        fields: [titleField.name],
+                        placeholder: quickSearchPlacehoder
                     }
                 }
+            }
+            //多个可切换的默认过滤条件处理
+            if(metaView.config.multipleFilters&&metaView.config.multipleFilters.support){
+                toolbar.multipleFilters=metaView.config.multipleFilters;
+            }else{
+                toolbar.multipleFilters={support:false};
             }
             _this.toolbar=toolbar;
             //end 构造工具栏
@@ -145,26 +173,38 @@ export default {
                 return columnsMap[o.name].visible;
             });
             let columns=[];
+            if(toolbar.batchBtns&&toolbar.batchBtns.length>0){
+                columns=[{type: 'selection',width:58,align:"center"}];
+            }
             //添加所有可见列
             for (var i = 0; i < visibleFields.length; i++) {
                 let metaField = visibleFields[i];
-                columns.push({
+                let __col={
                     title: metaField.title,
                     key: metaField.name,
                     sortable: columnsMap && columnsMap[metaField.name].sortable ? "custom" : false,
-                    align: "center"
+                    align: metaField.align||"center",
+                };
+                if(metaField.width){
+                    __col.width=metaField.width;
+                }
+                if(metaField.fixed){
+                    __col.fixed=metaField.fixed;
+                }
+                columns.push(__col);
+            }
+            //如果操作列不和标题列合并，默认最后一列为操作列
+            if(!this.operationsWithTitleColumn){
+                columns.push({
+                    title:"具体操作",
+                    width:220,
+                    align:"center",
+                    metaParams:{
+                        type:"operation",
+                        btns:toolbar.singleBtns
+                    }
                 });
             }
-            //默认最后一列为操作列
-            columns.push({
-                title:"具体操作",
-                width:220,
-                align:"center",
-                metaParams:{
-                    type:"operation",
-                    btns:["edit","view","del"]
-                }
-            });
             _this.columns = columns;
             //end 构造grid列
             //完成初始化
@@ -186,7 +226,7 @@ export default {
                 }
             }
             _this.queryOptions = queryOptions;
-            //end 
+            //end
             //完成初始化
             _this.preprocessed = true;
         },
@@ -205,7 +245,11 @@ export default {
                 .then(({ data }) => {
                     //存在自定义视图，由视图构造grid
                     _this.formShortId=data.metaFormShortId;
-                    _this.metaViewToGrid(metaEntity,data)
+                    if(data.config&&data.config.columns){
+                        _this.metaViewToGrid(metaEntity,data);
+                    }else{//虽然存在视图，但是没有任何配置，依然用默认
+                        _this.setDefaultQueryOptions();
+                    }
                 },(resp)=>{
                     _this.setDefaultQueryOptions();
                 });

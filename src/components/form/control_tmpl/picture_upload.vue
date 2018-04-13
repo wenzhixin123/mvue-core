@@ -1,5 +1,24 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
+        <template v-if="viewMode">
+            <div class="form-item-view-con" v-if="isNotEmpty(defaultList)">
+                <div class="view-title" v-text="formItem.componentParams.title"></div>
+                <div>
+                    <div class="demo-upload-list" v-for="item in defaultList" :key="item.url">
+                        <div>
+                            <img :src="fileRealUrl(item.url)">
+                            <div class="demo-upload-list-cover">
+                                <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item.url)"></i> 
+                            </div>
+                        </div>
+                    </div>
+                    <Modal title="查看图片" v-model="visible">
+                        <img class="preview-img" :src="previewImgSrc" v-if="visible">
+                    </Modal>
+                </div>
+            </div>
+        </template>
+        <template v-else>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
             <div>
@@ -86,6 +105,7 @@
                 </div>
             </div>
         </div>
+        </template>
     </div>
 </template>
 <script>
@@ -98,9 +118,6 @@ export default {
             previewImgSrc:null,
             visible:false
         };
-    },
-    mounted () {
-        
     },
     methods:{
         handleView (previewImgSrc) {

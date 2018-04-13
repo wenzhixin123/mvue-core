@@ -2,10 +2,10 @@
     <div :style="{width:formItem.componentParams.width+'%'}">
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
-            <DatePicker
+            <DatePicker transfer
             v-model="valueObj" 
             @on-change="handleChange"
-             style="width:100%;" :disabled="disabled" type="datetimerange" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
+             style="width:100%;display:block;" :disabled="disabled" type="datetimerange" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
             <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
             <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
         </div>
@@ -13,10 +13,10 @@
             <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
                 <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
                 <div class="col-md-10" :style="{width:controlWidth}">
-                    <DatePicker 
+                    <DatePicker transfer
                     v-model="valueObj" 
                     @on-change="handleChange"
-                    style="width:100%;" :disabled="disabled" type="datetimerange" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
+                    style="width:100%;display:block;" :disabled="disabled" type="datetimerange" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
                     <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
                 </div>

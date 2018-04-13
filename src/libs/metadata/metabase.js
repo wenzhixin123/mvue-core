@@ -357,5 +357,11 @@ export default{
       router.params= _.extend(router.params,params);
     }
     return router;
-  }
+  },
+    setEntityNameForRoute(router,entityName){
+      if(_.isEmpty(router)){
+          return;
+      }
+      router.params["entityName"]=entityName;
+    }
 }

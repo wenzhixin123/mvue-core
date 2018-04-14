@@ -1,6 +1,6 @@
 <template>
     <component v-if="formItem" 
-    v-model="innerValue" 
+    v-model="innerVal"
     :validator="validator"
     @exDataChanged="exDataChanged" 
     :is="componentName(formItem)"
@@ -20,12 +20,6 @@ export default {
             type:String,
             required:true
         },
-        value:{
-            required:true
-        },
-        entityName:{
-            type:String
-        },
         title:{
             type:String
         },
@@ -40,33 +34,16 @@ export default {
         }
     },
     data:function(){
-        var entityName=this.entityName;
         var form=this.getParentForm();
-        if(!entityName){
-            if(!form){
-                iview$Modal.error({
-                    title:"错误",
-                    content:`必须定义父组件meta-form`
-                });
-                return {};
-            }
-            entityName=form.entityName;
-        }
-        if(!entityName){
+        if(!form){
             iview$Modal.error({
                 title:"错误",
-                content:`实体名称无法确定`
+                content:`必须定义父组件meta-form`
             });
             return {};
         }
-        var metaEntity=this.$metaBase.findMetaEntity(entityName);
-        if(!metaEntity){
-            iview$Modal.error({
-                title:"错误",
-                content:`实体${entityName}不存在`
-            });
-            return {};
-        }
+        var metaEntity=form.metaEntity;
+        var entity=form.entity;
         var metaField=_.cloneDeep(metaEntity.findField(this.name));
         if(!metaField){
             iview$Modal.error({
@@ -75,10 +52,6 @@ export default {
             });
             return {};
         }
-        if(!form){
-            //没有表单时，不需要渲染出必填样式
-            metaField.required=false;
-        }
         this.overrideProps(metaField);
         var formItem=controlTypeService.buildFormItemByMetaField(metaField);
         //初始化字段验证
@@ -86,32 +59,28 @@ export default {
             if(!this.model){
                 this.innerModel=form.model;
             }
-            metaformUtils.initValidation(form.$validator,formItem,metaEntity,this.$route.params.id);
+            metaformUtils.initValidation(form.$validator,formItem,metaEntity,form.entityId);
         }
         return {
-            innerValue:_.cloneDeep(this.value),
             formItem:formItem,
+            form:form,
             validator:form?form.$validator:null,
             metaEntity:metaEntity,
-            form:form,
-            innerModel:_.cloneDeep(this.model),
+            metaField:metaField,
+            entity:entity,
             paths:constants.paths
         }
     },
-    watch:{
-        value:{
-            handler:function(){
-                if(!_.isEqual(this.value,this.innerValue)){
-                    this.innerValue=_.cloneDeep(this.value);
-                }
+    computed: {
+        innerVal: {
+            // getter
+            get: function () {
+                return this.entity[this.metaField.name];
             },
-            deep:true
-        },
-        innerValue:{
-            handler:function(){
-                this.$emit('input',this.innerValue);
-            },
-            deep:true
+            // setter
+            set: function (newValue) {
+                this.entity[this.metaField.name]=newValue;
+            }
         }
     },
     methods:{
@@ -138,7 +107,7 @@ export default {
         //表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等
         exDataChanged:function(newValue,dataField){
             if(this.form){
-                this.form.$emit("exDataChanged",newValue,dataField);
+                this.form.exDataChanged(newValue,dataField);
             }
         },
         componentName(formItem){

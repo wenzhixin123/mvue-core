@@ -253,6 +253,7 @@ var utils = {
         hideSuiteNavbar:"_hideSuiteNavbar"
     },
     formActions:{
+        create:"create",
         view:"view",
         edit:"edit"
     },

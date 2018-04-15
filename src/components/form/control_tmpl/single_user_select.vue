@@ -128,6 +128,9 @@ export default {
                         _this.setCurrentUserIfCreate(data);
                     });
                 }
+                if(!_.isEmpty(_this.value)){
+                    _this.setCurrentUserIfCreate(_this.value);
+                }
             });
         },
         onSelect:function(selectItem){

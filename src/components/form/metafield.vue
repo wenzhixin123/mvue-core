@@ -5,8 +5,8 @@
     @exDataChanged="exDataChanged" 
     :is="componentName(formItem)"
     :paths="paths" 
-    :model="innerModel"
-    :context="{metaEntity,action:action}"
+    :model="entity"
+    :context="{metaEntity,action:fieldStatus}"
     :form-item="formItem">
     </component>
 </template>
@@ -28,9 +28,6 @@ export default {
         },
         action:{//表示是否查看模式的表单
             type:String
-        },
-        model:{
-            type:Object
         }
     },
     data:function(){
@@ -56,11 +53,9 @@ export default {
         var formItem=controlTypeService.buildFormItemByMetaField(metaField);
         //初始化字段验证
         if(form){
-            if(!this.model){
-                this.innerModel=form.model;
-            }
             metaformUtils.initValidation(form.$validator,formItem,metaEntity,form.entityId);
         }
+
         return {
             formItem:formItem,
             form:form,
@@ -81,6 +76,17 @@ export default {
             set: function (newValue) {
                 this.entity[this.metaField.name]=newValue;
             }
+        },
+        fieldStatus:function () {
+            var status=this.action;
+            if(_.isEmpty(status)){
+                if(this.form.isView){
+                    status=Utils.formActions.view;
+                }else{
+                    status=Utils.formActions.edit;
+                }
+            }
+            return status;
         }
     },
     methods:{

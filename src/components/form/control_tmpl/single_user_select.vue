@@ -128,9 +128,6 @@ export default {
                         _this.setCurrentUserIfCreate(data);
                     });
                 }
-                if(!_.isEmpty(_this.value)){
-                    _this.setCurrentUserIfCreate(_this.value);
-                }
             });
         },
         onSelect:function(selectItem){
@@ -172,6 +169,7 @@ export default {
         doSearch:function(keyword,callback){
             var _this=this;
             var params={select:_this.queryFields};
+            debugger
             if(!keyword){
                 if(this.value){
                     let idField=this.getIdField();

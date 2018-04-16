@@ -124,9 +124,6 @@ export default {
                         _this.setCurrentOrgIfCreate(data);
                     });
                 }
-                if(!_.isEmpty(_this.value)){
-                    _this.setCurrentOrgIfCreate(_this.value);
-                }
             });
         },
         onSelect:function(selectItem){

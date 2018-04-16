@@ -160,7 +160,7 @@
                 }
                 _this.isSavingToServer=true;
                 if(this.isEdit){//更新
-                    let _model=this.ignoreReaonlyFields();
+                    let _model=this.ignoreReadonlyFields();
                     _this.dataResource.update({id:this.entityId},_model).then(function({data}){
                         _this.isSavingToServer=false;
                         _this.afterSave("on-edited",data,'编辑成功');
@@ -168,7 +168,7 @@
                         _this.isSavingToServer=false;
                     });
                 }else{//新建
-                    let _model=this.ignoreReaonlyFields();
+                    let _model=this.ignoreReadonlyFields();
                     _this.dataResource.save(_model).then(function({data}){
                         _this.isSavingToServer=false;
                         _this.entityId=data[_this.metaEntity.getIdField().name];
@@ -374,7 +374,7 @@
                     fun.call(this);
                 }
             },
-            ignoreReaonlyFields(){
+            ignoreReadonlyFields(){
                 let _model={};
                 let _this=this;
                 _.each(_this.entity,function(v,k){

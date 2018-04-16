@@ -31,6 +31,13 @@ function installGridAndForm(Vue){
     Vue.component('MetaGroup',require('./components/form/control_tmpl/group'));
     Vue.component('meta-field',require('./components/form/metafield'));
     Vue.component('meta-form',require('./components/form/metaform'));
+
+    //begin new added for pclink
+    Vue.component('MetaPclinkSingleUserSelect',require("./components/form/pclink/single_user_select"));
+    Vue.component('MetaPclinkSingleOrgSelect',require("./components/form/pclink/single_org_select"));
+    Vue.component('MetaPclinkMultiUserSelect',require("./components/form/pclink/multi_user_select"));
+    Vue.component('MetaPclinkMultiOrgSelect',require("./components/form/pclink/multi_org_select"));
+    //end new added for pclink
 }
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';

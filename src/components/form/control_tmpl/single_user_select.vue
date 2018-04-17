@@ -169,7 +169,6 @@ export default {
         doSearch:function(keyword,callback){
             var _this=this;
             var params={select:_this.queryFields};
-            debugger
             if(!keyword){
                 if(this.value){
                     let idField=this.getIdField();

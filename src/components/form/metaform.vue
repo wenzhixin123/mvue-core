@@ -1,6 +1,31 @@
 <template>
     <div v-if="preprocessed" class="meta-form-panel" :class="{'has-buttons':hasButtons()}">
-        <slot></slot>
+        <div style="height:30px;position:relative;" v-show="loadingFormData">
+            <Spin fix>
+            </Spin>
+        </div>
+        <template v-if="metaFormLayout">
+            <div v-for="formItem in metaForm.layout" :key="formItem.id">
+                <div class="control-tmpl-panel" v-show="!formItem.hidden">
+                    <component v-if="formItem.isContainer" :is="'Meta'+formItem.componentType" :form-item="formItem">
+                        <div v-for="containerFormItem in formItem.children" :key="containerFormItem.id" v-show="!containerFormItem.hidden">
+                            <component v-if="containerFormItem.isDataField" :context="{metaEntity,action}" :validator="$validator" v-model="entity[containerFormItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                            <component v-else-if="containerFormItem.isExternal" :context="{metaEntity,action}" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(containerFormItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                            <component v-else :is="'Meta'+containerFormItem.componentType" :form-item="containerFormItem"></component>
+                        </div>
+                    </component>
+                    <component v-else-if="formItem.isDataField" :context="{metaEntity,action}" :validator="$validator" v-model="entity[formItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                    <component v-else-if="formItem.isExternal" :context="{metaEntity,action}" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                    <component v-else :is="'Meta'+formItem.componentType" :form-item="formItem"></component>
+                </div>
+            </div>
+        </template>
+        <template v-if="!metaFormLayout">
+            <slot>
+                <meta-field v-for="key in metaEntity.getDefaultFormFields()" :key="key" :name="key">
+                </meta-field>
+            </slot>
+        </template>
         <div v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer" class="form-toolbar" :class="{'has-buttons':hasButtons()}" slot="toolbar">
             <div v-if="hasButtons()" :class="{'onepx-stroke':hasButtons()}"></div>
             <Button v-if="innerPermissions.cancel" type="ghost" size="small"  @click.stop.prevent="doCancel">取消</Button>
@@ -69,6 +94,12 @@
             },
             isEdit:function () {
                 return !this.isView && this.formStatus==Utils.formActions.edit;
+            },
+            action(){
+                if(this.isView){
+                    return Utils.formActions.view;
+                }
+                return this.formStatus;
             }
         },
         data:function(){
@@ -129,6 +160,9 @@
             this.initForm();
         },
         methods:{
+            componentName(formItem){
+                return metaformUtils.metaComponentType(formItem);
+            },
             doOpenEdit(){
                 let _query=_.extend({},this.$route.query);
                 _query[Utils.queryKeys.action]=Utils.formActions.edit;

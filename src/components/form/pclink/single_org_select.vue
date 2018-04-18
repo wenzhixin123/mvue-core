@@ -44,7 +44,7 @@
 </template>
 <script>
 import controlBase from '../js/control_base';
-var linkplugin=require('services/util/linkplugin');
+var linkplugin=require('../../../services/link/linkplugin');
 export default {
     mixins: [controlBase],
     props: {

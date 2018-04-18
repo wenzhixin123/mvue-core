@@ -15,9 +15,12 @@ function installGridAndForm(Vue){
     Vue.component('MetaDivisionLine',require('./components/form/control_tmpl/division_line')),
     Vue.component('MetaCheckboxGroup',require('./components/form/control_tmpl/checkbox_group')),
     Vue.component('MetaSingleSelect',require('./components/form/control_tmpl/single_select')),
-    Vue.component('MetaDate',require('./components/form/control_tmpl/date')),
-    Vue.component('MetaTime',require('./components/form/control_tmpl/time')),
-    Vue.component('MetaDateTime',require('./components/form/control_tmpl/datetime')),
+    Vue.component('MetaDate',require("./components/form/control_tmpl/date")),
+    Vue.component('MetaDateRange',require("./components/form/control_tmpl/daterange")),
+    Vue.component('MetaTime',require("./components/form/control_tmpl/time")),
+    Vue.component('MetaTimeRange',require("./components/form/control_tmpl/timerange")),
+    Vue.component('MetaDateTime',require("./components/form/control_tmpl/datetime")),
+    Vue.component('MetaDateTimeRange',require("./components/form/control_tmpl/datetimerange")),
     Vue.component('MetaNumberInput',require('./components/form/control_tmpl/number_input')),
     Vue.component('MetaFileUpload',require('./components/form/control_tmpl/file_upload')),
     Vue.component('MetaPictureUpload',require('./components/form/control_tmpl/picture_upload')),
@@ -31,6 +34,13 @@ function installGridAndForm(Vue){
     Vue.component('MetaGroup',require('./components/form/control_tmpl/group'));
     Vue.component('meta-field',require('./components/form/metafield'));
     Vue.component('meta-form',require('./components/form/metaform'));
+
+    //begin new added for pclink
+    Vue.component('MetaPclinkSingleUserSelect',require("./components/form/pclink/single_user_select"));
+    Vue.component('MetaPclinkSingleOrgSelect',require("./components/form/pclink/single_org_select"));
+    Vue.component('MetaPclinkMultiUserSelect',require("./components/form/pclink/multi_user_select"));
+    Vue.component('MetaPclinkMultiOrgSelect',require("./components/form/pclink/multi_org_select"));
+    //end new added for pclink
 }
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';
@@ -43,8 +53,11 @@ var customValidator = require("./libs/extend/custom_validator.js");
 var customVueResource = require("./libs/extend/custom_vue_resource.js");
 
 //可用的mixins
-import formBase from './components/form/js/form_base';
 import gridBase from './components/grid/js/entity_grid_base';
+
+import metaservice from "./services/meta/metaservice";
+import toolService from "./services/tool/tool_service";
+
 var CustomDirectives = require("./directives/custom_directives");
 //Vue插件安装入口函数
 const install = function(Vue, opts = {}) {
@@ -52,16 +65,19 @@ const install = function(Vue, opts = {}) {
     new CustomDirectives(Vue);
     Vue.prototype.$metaBase=metabase;
     Vue.prototype.$metaEntity=metaentity;
+    Vue.prototype.$metaService=metaservice;
+    Vue.prototype.$toolService=toolService;
 }
 let MvueCore={
     install:install,
     mixins:{
-        formBase:formBase,
         gridBase:gridBase
     },
     utils:utils,
     metaBase:metabase,
     metaEntity:metaentity,
+    metaService:metaservice,
+    toolService:toolService,
     session:session,
     ssoclient:ssoclient,
     ajax:ajax,

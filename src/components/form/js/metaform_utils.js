@@ -1,5 +1,6 @@
 import constants from './constants';
 import controlTypeService from '../../form/js/control_type_service';
+var linkplugin=require('../../../services/link/linkplugin');
 //因为metaForm加入了容器布局，容器的children包含了子级表单组件
 function getAllFormItems(metaForm){
     var formItems=[];
@@ -189,7 +190,15 @@ function exDataChanged(model,newValue,dataField){
 //根据表单布局项，计算组件对应的渲染组件（pclink将使用原生选人控件）
 function metaComponentType(formItem){
     var ct=formItem.componentType;
-    return `Meta${ct}`;
+    if(controlTypeService.isOrguserType(ct)){
+        if(linkplugin.isInPc){//pclink将使用原生选人控件
+            return `MetaPclink${ct}`;
+        }else{
+            return `Meta${ct}`;
+        }
+    }else{
+        return `Meta${ct}`;
+    }
 }
 export default{
     getAllFormItems:getAllFormItems,

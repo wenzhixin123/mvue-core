@@ -1,6 +1,31 @@
 <template>
-    <div class="meta-form-panel" :class="{'has-buttons':hasButtons()}">
-        <slot></slot>
+    <div v-if="preprocessed" class="meta-form-panel" :class="{'has-buttons':hasButtons()}">
+        <div style="height:30px;position:relative;" v-show="loadingFormData">
+            <Spin fix>
+            </Spin>
+        </div>
+        <template v-if="metaFormLayout">
+            <div v-for="formItem in metaForm.layout" :key="formItem.id">
+                <div class="control-tmpl-panel" v-show="!formItem.hidden">
+                    <component v-if="formItem.isContainer" :is="'Meta'+formItem.componentType" :form-item="formItem">
+                        <div v-for="containerFormItem in formItem.children" :key="containerFormItem.id" v-show="!containerFormItem.hidden">
+                            <component v-if="containerFormItem.isDataField" :context="{metaEntity,action}" :validator="$validator" v-model="entity[containerFormItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                            <component v-else-if="containerFormItem.isExternal" :context="{metaEntity,action}" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(containerFormItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                            <component v-else :is="'Meta'+containerFormItem.componentType" :form-item="containerFormItem"></component>
+                        </div>
+                    </component>
+                    <component v-else-if="formItem.isDataField" :context="{metaEntity,action}" :validator="$validator" v-model="entity[formItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                    <component v-else-if="formItem.isExternal" :context="{metaEntity,action}" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                    <component v-else :is="'Meta'+formItem.componentType" :form-item="formItem"></component>
+                </div>
+            </div>
+        </template>
+        <template v-if="!metaFormLayout">
+            <slot>
+                <meta-field v-for="key in metaEntity.getDefaultFormFields()" :key="key" :name="key">
+                </meta-field>
+            </slot>
+        </template>
         <div v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer" class="form-toolbar" :class="{'has-buttons':hasButtons()}" slot="toolbar">
             <div v-if="hasButtons()" :class="{'onepx-stroke':hasButtons()}"></div>
             <Button v-if="innerPermissions.cancel" type="ghost" size="small"  @click.stop.prevent="doCancel">取消</Button>
@@ -17,7 +42,6 @@
     import metaservice from '../../services/meta/metaservice';
 
     var co = require('co');
-    var pendingField="_pending_";
 
     export default {
         directives: { TransferDom },
@@ -26,11 +50,7 @@
                 type:String,
                 required:true
             },
-            model:{                                 //当前表单编辑的实体数据 ，与 recordId二选一
-                type:Object,
-                required:false
-            },
-            recordId:{                              //当前表单编辑的实体数据id ，与 model二选一
+            recordId:{                              //当前表单编辑的实体数据id
                 type:String,
                 required:false,
             },
@@ -69,40 +89,29 @@
             }
         },
         computed:{
-            isArchived(){//是否已归档
-                return this.entity.isArchived;
-            },
             isCreate:function () {
                 return !this.isView && this.formStatus==Utils.formActions.create;
             },
             isEdit:function () {
                 return !this.isView && this.formStatus==Utils.formActions.edit;
+            },
+            action(){
+                if(this.isView){
+                    return Utils.formActions.view;
+                }
+                return this.formStatus;
             }
         },
         data:function(){
             var metaEntity=this.$metaBase.findMetaEntity(this.entityName);
             var dsWrapper=metaEntity.dataResourceWrapper();
             var formStatus=Utils.formActions.create;
-            if(this.model!=null || !_.isEmpty(this.recordId)){
+            if(!_.isEmpty(this.recordId)){
                 formStatus=Utils.formActions.edit;
             }
-
             var entity=null;
             var entityId=this.recordId;
-            if(formStatus==Utils.formActions.create){
-                entity=metaEntity.getDefaultModel();
-            }else{
-                if(this.model==null){
-                    entity=metaEntity.getDefaultModel();
-                    entity[pendingField]=true;
-                }else{
-                    entity=_.cloneDeep(this.model);
-                    var idFromModel=this.model[metaEntity.getIdField().name];
-                    if(!_.isEmpty(idFromModel)){
-                        entityId=idFromModel;
-                    }
-                }
-            }
+            entity=metaEntity.getDefaultModel();
             return {
                 dataResource:dsWrapper.$resource,
                 dataResourceInnerVueInst:dsWrapper.$innerVueInst,
@@ -151,6 +160,9 @@
             this.initForm();
         },
         methods:{
+            componentName(formItem){
+                return metaformUtils.metaComponentType(formItem);
+            },
             doOpenEdit(){
                 let _query=_.extend({},this.$route.query);
                 _query[Utils.queryKeys.action]=Utils.formActions.edit;
@@ -182,7 +194,7 @@
                 }
                 _this.isSavingToServer=true;
                 if(this.isEdit){//更新
-                    let _model=this.ignoreReaonlyFields();
+                    let _model=this.ignoreReadonlyFields();
                     _this.dataResource.update({id:this.entityId},_model).then(function({data}){
                         _this.isSavingToServer=false;
                         _this.afterSave("on-edited",data,'编辑成功');
@@ -190,7 +202,7 @@
                         _this.isSavingToServer=false;
                     });
                 }else{//新建
-                    let _model=this.ignoreReaonlyFields();
+                    let _model=this.ignoreReadonlyFields();
                     _this.dataResource.save(_model).then(function({data}){
                         _this.isSavingToServer=false;
                         _this.entityId=data[_this.metaEntity.getIdField().name];
@@ -318,30 +330,27 @@
             },
             getEditModelIfNeeded(){//如果是编辑模式，根据数据id或者表单数据model
                 var _this=this;
-                if(this.entity[pendingField]){
-                    this.dataResourceInnerVueInst.showLoading=false;
-                    this.loadingFormData=true;
-                    return this.dataResource.get({id:this.entityId}).then(function({data}){
-                        delete  _this.entity[pendingField];
-                        _this.loadingFormData=false;
-                        _this.initPerm(data);
-                        if(_this.metaForm){//已经定义过表单，以表单定义字段为准初始化模型
-                            let fields=metaformUtils.getAllFieldItems(_this.metaForm);
-                            _.each(fields,function(field){
-                                let key=field.dataField;
-                                _this.entity[key]=data[key];
-                            });
-                            _this.entity[constants.entityModelRedundantKey]=data[constants.entityModelRedundantKey];
-                        }else{//没有定义表单的情况下，使用默认实体表单字段
-                            _.each(_this.entity,function(value,key){
-                                _this.entity[key]=data[key];
-                            });
-                        }
-                        return true;
-                    },function(){
-                        _this.loadingFormData=false;
-                    });
-                }
+                this.dataResourceInnerVueInst.showLoading=false;
+                this.loadingFormData=true;
+                return this.dataResource.get({id:this.entityId}).then(function({data}){
+                    _this.loadingFormData=false;
+                    _this.initPerm(data);
+                    if(_this.metaForm){//已经定义过表单，以表单定义字段为准初始化模型
+                        let fields=metaformUtils.getAllFieldItems(_this.metaForm);
+                        _.each(fields,function(field){
+                            let key=field.dataField;
+                            _this.entity[key]=data[key];
+                        });
+                        _this.entity[constants.entityModelRedundantKey]=data[constants.entityModelRedundantKey];
+                    }else{//没有定义表单的情况下，使用默认实体表单字段
+                        _.each(_this.entity,function(value,key){
+                            _this.entity[key]=data[key];
+                        });
+                    }
+                    return true;
+                },function(){
+                    _this.loadingFormData=false;
+                });
                 return true;
             },
             //实体已经在控制台定义过表单，由表单元数据生成表单
@@ -401,7 +410,7 @@
                     fun.call(this);
                 }
             },
-            ignoreReaonlyFields(){
+            ignoreReadonlyFields(){
                 let _model={};
                 let _this=this;
                 _.each(_this.entity,function(v,k){

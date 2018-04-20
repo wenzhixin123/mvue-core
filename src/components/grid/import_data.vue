@@ -1,7 +1,11 @@
 <template>
     <div class="grid-import-data-con">
-        <Button v-if="toolbarType=='compact'" @click="showImport" type="text"  :icon="toolbarBtn.icon">{{toolbarBtn.title}}</Button>
-        <Button v-else @click="showImport" type="primary"  :icon="toolbarBtn.icon">{{toolbarBtn.title}}</Button>
+        <div @click="showImport">
+            <slot>
+                <Button v-if="operation.toolbarType=='compact'" type="text"  :icon="operation.icon">{{operation.title}}</Button>
+                <Button v-else type="primary"  :icon="operation.icon">{{operation.title}}</Button>
+            </slot>
+        </div>
         <Modal class="search-modal"
             v-model="importModal"
             width="560"
@@ -138,17 +142,13 @@ var moment = require('moment');
 var Config=require("../../config/config.js");
 export default {
     props:{
-        toolbarBtn:{
+        operation:{
             type:Object,
             required:true
         },
-        grid:{
+        widgetContext:{
             type:Object,
             required:true
-        },
-        toolbarType: {//'compact':紧凑型toolbar布局；不设置用默认toolbar布局
-            type: String,
-            required: false
         }
     },
     data:function(){
@@ -165,8 +165,15 @@ export default {
         overrideFormItem.dataField="override";
         overrideFormItem.componentParams.layout=controlTypeService.componentLayout.horizontal;
         overrideFormItem.componentParams.title="是否覆盖已有数据";
-        let metaEntity=this.$metaBase.findMetaEntity(this.grid.metaEntity);
+        //let metaEntity=this.$metaBase.findMetaEntity(this.grid.metaEntity);
+        let metaEntity=this.widgetContext.metaEntity;
+        let grid=this.widgetContext.grid;
+        if(!metaEntity){
+            metaEntity=this.$metaBase.findMetaEntity(grid.metaEntity);
+        }
+        let entityName=metaEntity.name;
         return {
+            grid:grid,
             metaEntity:metaEntity,
             importModal:false,
             model:{
@@ -176,7 +183,7 @@ export default {
             modelForImport:{
                 file:null,
                 swagger:null,
-                entityName:this.grid.metaEntity,
+                entityName:entityName,
                 mappings:[],
                 callback:Config.getMetaserviceUrl()+"/meta_entity_event/on_imported",
                 worksheet:0,
@@ -187,7 +194,7 @@ export default {
             modelForMapping:{
                 excelUrl:null,
                 swaggerUrl:null,
-                entityName:this.grid.metaEntity
+                entityName:entityName
             },
             excelUploadFormItem:excelUploadFormItem,
             overrideFormItem:overrideFormItem,
@@ -220,7 +227,7 @@ export default {
         var _this=this;
         this.$validator.attach("file", {required:true});
         //初始化实体导入模板地址
-        metaService.getEntityTemplate({projectId:this.metaEntity.projectId,entityName:this.metaEntity.name})
+        metaService.getEntityTemplate({projectId:this.metaEntity.projectId,entityName:this.entityName})
           .then(({data})=>{
             if(!_.isEmpty(data)){
               _this.templateUrl=Config.getUploadUrl()+"?filePath="+data["pathInfo"]["relativePath"]+"&filename="+encodeURIComponent(data["pathInfo"]["fileName"]);
@@ -359,7 +366,7 @@ export default {
                         _this.closeProgressInterval();
                         _this.getReport();
                         _this.$Loading.finish();
-                        _this.grid.reload();
+                        _this.grid&&_this.grid.reload();
                     }
                 });
             },300);
@@ -404,7 +411,7 @@ export default {
             if(!this.report){
                 return;
             }
-            var reportName=this.report.title?this.report.title:this.grid.metaEntity;
+            var reportName=this.report.title?this.report.title:this.metaEntity;
             var data=[];
             var padding="               ";
             if(this.report.summaryReport){

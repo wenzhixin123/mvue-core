@@ -11,7 +11,7 @@ var pathToRegexp = require('path-to-regexp');
  * @param context
  */
 function operationForCreate(context){
-  var path=context.grid.createPath;
+  var path=context.grid&&context.grid.createPath;
   if(_.isEmpty(path) && !_.isEmpty(context.metaEntity)){
     path=context.metaEntity.formPathForCreate();
   }
@@ -39,16 +39,19 @@ function operationForCreate(context){
  * 将自定义视图和表单的shortId附加到query参数后
  */
 function buildQuery(context){
-  var routeQuery=context.grid.$route.query;
-  let contextParent=context.grid.contextParent;
-  let formShortId=contextParent?contextParent.formShortId:'';
-  let viewShortId=contextParent?contextParent.viewShortId:'';
-  let _query= _.extend({},routeQuery);
-  if(formShortId){
-    _query.formShortId=formShortId;
-  }
-  if(viewShortId){
-    _query.viewShortId=viewShortId;
+  let _query={};
+  if(context.grid){
+    var routeQuery=context.grid.$route.query;
+    let contextParent=context.grid.contextParent;
+    let formShortId=contextParent?contextParent.formShortId:'';
+    let viewShortId=contextParent?contextParent.viewShortId:'';
+    _query= _.extend({},routeQuery);
+    if(formShortId){
+      _query.formShortId=formShortId;
+    }
+    if(viewShortId){
+      _query.viewShortId=viewShortId;
+    }
   }
   return _query;
 }
@@ -178,7 +181,29 @@ function operationForDel(context) {
   return operation;
 }
 
-
+/**
+ * 数据导入操作
+ */
+function operationForImport(context){
+  var grid=context.grid;
+  var operation= {
+    id:"import",
+    title:"导入",
+    icon:"ios-upload-outline",
+    renderComponent:"meta-grid-import-data",
+    render:(h, ctx) => {//toolbar_btn_render.js会调用这个render函数生成toolbar的按钮和功能
+        return h('meta-grid-import-data',{
+          props:{
+            toolbarBtn: ctx.toolbarBtn,
+            toolbarType: ctx.toolbarType,
+            grid: grid
+          }
+        });
+    }
+  };
+  operation[Utils.dataPermField]=Utils.permValues.create;
+  return operation;
+}
 /**
  * 导出
  * @param {*} context
@@ -298,28 +323,6 @@ function operationForBatchDelete(context) {
     }
   };
   operation[Utils.dataPermField]=Utils.permValues.del;
-  return operation;
-}
-/**
- * 数据导入操作
- */
-function operationForImport(context){
-  var grid=context.grid;
-  var operation= {
-    id:"import",
-    title:"导入",
-    icon:"ios-upload-outline",
-    render:(h, ctx) => {//toolbar_btn_render.js会调用这个render函数生成toolbar的按钮和功能
-        return h('meta-grid-import-data',{
-          props:{
-            toolbarBtn: ctx.toolbarBtn,
-            toolbarType: ctx.toolbarType,
-            grid: grid
-          }
-        });
-    }
-  };
-  operation[Utils.dataPermField]=Utils.permValues.create;
   return operation;
 }
 

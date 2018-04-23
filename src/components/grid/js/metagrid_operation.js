@@ -11,15 +11,16 @@ var pathToRegexp = require('path-to-regexp');
  * @param context
  */
 function operationForCreate(context){
-  var path=context.grid&&context.grid.createPath;
-  if(_.isEmpty(path) && !_.isEmpty(context.metaEntity)){
-    path=context.metaEntity.formPathForCreate();
-  }
   var operation= {
     id:"create",
     title:"添加",
     icon:"plus-round",
-    onclick:function(params){
+    onclick:function(){
+      var path=context.grid&&context.grid.createPath;
+      var metaEntity=context.metaEntity;
+      if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
+        path=context.metaEntity.formPathForCreate();
+      }
       if(_.isEmpty(path)){
         alert("not implement,please set createPath");
         return ;
@@ -28,7 +29,7 @@ function operationForCreate(context){
       if(path.indexOf('/')>-1){
         router.push({path:path,query:_query});
       }else{
-        router.push({name:path,params:{entityName:context.metaEntity.name},query:_query});
+        router.push({name:path,params:{entityName:metaEntity.name},query:_query});
       }
     }
   };
@@ -60,26 +61,21 @@ function buildQuery(context){
  * @param context
  */
 function operationForEdit(context){
-  //计算id字段
-  var idField=null;
-  if( !_.isEmpty(context.metaEntity)){
-    idField=context.metaEntity.getIdField();
-  }
   var operation= {
     id:"edit",
     title:"修改",
     icon:"edit",
-    onclick:function(params){
-      var clickContext=this;
-      if(!idField){
-        alert("entity:"+clickContext.metaEntity.name+" not set identity field");
+    onclick:function(){
+      var id=context.selectedId;
+      if(!id){
+        iview$Modal.error({content:`当前数据id未设置`});
         return;
       }
-      var id=params.row[idField.name];
-      var path=context.grid.editPath;
-      if(_.isEmpty(path) && !_.isEmpty(context.metaEntity)){
+      var metaEntity=context.metaEntity;
+      var path=context.grid&&context.grid.editPath;
+      if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
         //必须传入数据id构造编辑的路径
-        path=context.metaEntity.formPathForEdit(id);
+        path=metaEntity.formPathForEdit(id);
       }else{
         let toPath=pathToRegexp.compile(path);
         path=toPath({id:id});
@@ -88,7 +84,7 @@ function operationForEdit(context){
       if(path.indexOf('/')>-1){
         router.push({path:path,query:_query});
       }else{
-        router.push({name:path,params:{entityName:context.metaEntity.name},query:_query});
+        router.push({name:path,params:{entityName:metaEntity.name},query:_query});
       }
     }
   };
@@ -100,26 +96,21 @@ function operationForEdit(context){
  * @param context
  */
 function operationForView(context){
-  //计算id字段
-  var idField=null;
-  if( !_.isEmpty(context.metaEntity)){
-    idField=context.metaEntity.getIdField();
-  }
   var operation= {
     id:"view",
     title:"查看",
     icon:"ios-eye-outline",
     onclick:function(params){
-      var clickContext=this;
-      if(!idField){
-        alert("entity:"+clickContext.metaEntity.name+" not set identity field");
+      var id=context.selectedId;
+      if(!id){
+        iview$Modal.error({content:`当前数据id未设置`});
         return;
       }
-      var id=params.row[idField.name];
-      var path=context.grid.viewPath;
-      if(_.isEmpty(path) && !_.isEmpty(context.metaEntity)){
+      var metaEntity=context.metaEntity;
+      var path=context.grid&&context.grid.viewPath;
+      if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
         //必须传入数据id构造编辑的路径
-        path=context.metaEntity.formPathForEdit(id);
+        path=metaEntity.formPathForEdit(id);
       }else{
         let toPath=pathToRegexp.compile(path);
         path=toPath({id:id});
@@ -128,7 +119,7 @@ function operationForView(context){
       if(path.indexOf('/')>-1){
         router.push({path:path,query:_query});
       }else{
-        router.push({name:path,params:{entityName:context.metaEntity.name},query:_query});
+        router.push({name:path,params:{entityName:metaEntity.name},query:_query});
       }
     }
   };
@@ -140,38 +131,32 @@ function operationForView(context){
  * @param {*} context
  */
 function operationForDel(context) {
-  var resource=context.grid.queryResource;
-  if(_.isEmpty(resource) &&  !_.isEmpty(context.metaEntity)){
-    resource=context.metaEntity.dataResource();
-  }
-  //计算id字段
-  var idField=null;
-  if( !_.isEmpty(context.metaEntity)){
-    idField=context.metaEntity.getIdField();
-  }
-
   var operation= {
     id:"del",
     title:"删除",
     icon:"trash-a",
     onclick:function(params){
+      var id=context.selectedId;
+      if(!id){
+        iview$Modal.error({content:`当前数据id未设置`});
+        return;
+      }
+      var metaEntity=context.metaEntity;
+      var resource=context.grid&&context.grid.queryResource;
+      if(_.isEmpty(resource) &&  !_.isEmpty(metaEntity)){
+        resource=metaEntity.dataResource();
+      }
       if(_.isEmpty(resource)){
-        alert("can't find delete action path");
+        iview$Modal.error({content:`实体删除地址未设置`});
         return;
       }
-      if(!idField){
-        alert("entity:"+clickContext.metaEntity.name+" not set identity field");
-        return;
-      }
-      var clickContext=this;
-      var id=params.row[idField.name];
       iview$Modal.confirm({
         title: '提示',
         content: '确定删除吗?',
         onOk: () => {
           //,cascade_delete:true
           resource.delete({id:id}).then(function (re) {
-            clickContext.grid.reload();
+            context.grid&&context.grid.reload();
           });
         }
       });
@@ -185,21 +170,11 @@ function operationForDel(context) {
  * 数据导入操作
  */
 function operationForImport(context){
-  var grid=context.grid;
   var operation= {
     id:"import",
     title:"导入",
     icon:"ios-upload-outline",
-    renderComponent:"meta-grid-import-data",
-    render:(h, ctx) => {//toolbar_btn_render.js会调用这个render函数生成toolbar的按钮和功能
-        return h('meta-grid-import-data',{
-          props:{
-            toolbarBtn: ctx.toolbarBtn,
-            toolbarType: ctx.toolbarType,
-            grid: grid
-          }
-        });
-    }
+    renderComponent:"meta-grid-import-data"
   };
   operation[Utils.dataPermField]=Utils.permValues.create;
   return operation;
@@ -209,36 +184,46 @@ function operationForImport(context){
  * @param {*} context
  */
 function operationForExport(context) {
-  var resource=context.grid.queryResource;
-  if(_.isEmpty(resource) &&  !_.isEmpty(context.metaEntity)){
-    resource=context.metaEntity.dataResource();
-  }
-
   var operation= {
     id:"export",
     title:"导出",
     icon:"ios-download-outline",
-    onclick:function(params){
-      var clickContext=this;
+    onclick:function(){
+      var resource=context.grid&&context.grid.queryResource;
+      var metaEntity=context.metaEntity;
+      var grid=context.grid;
+      if(_.isEmpty(resource) &&  !_.isEmpty(metaEntity)){
+        resource=metaEntity.dataResource();
+      }
+      if(_.isEmpty(resource)){
+        iview$Modal.error({content:`实体查询地址未设置`});
+        return;
+      }
       iview$Modal.confirm({
         title: '提示',
         content: '是否导出当前列表所有数据?',
         onOk: () => {
-          var grid=clickContext.grid;
-          var queryOptions=grid.buildQueryOptions();
+          var queryOptions={page_size:500};
+          if(grid){
+            queryOptions=grid.buildQueryOptions();
+            queryOptions.page_size=grid.totalCount || queryOptions.page_size;
+          }
           queryOptions.total=false;
-          queryOptions.page_size=grid.totalCount || 500;
           queryOptions.page=1;
           queryOptions.select="*";
           //获取当前项目的swagger地址
-          metabase.currentSwagger(grid.$route.params.projectId).then(function(swagger){
+          metabase.currentSwagger(metaEntity.projectId).then(function(swagger){
             var exportTaskSetting={
-              "entityName":grid.metaEntity,
+              "entityName":metaEntity.name,
               "swagger":swagger,
               "options":queryOptions
             };
-            var metaEntity=metabase.findMetaEntity(grid.metaEntity);
-            toolServices.doExport(grid.$route.query,exportTaskSetting).then(function (records) {
+            var metaEntity=metabase.findMetaEntity(metaEntity.name);
+            var query={};
+            if(grid){
+              query=grid.$route.query;
+            }
+            toolServices.doExport(query,exportTaskSetting).then(function (records) {
               ExportCsv.download(metaEntity.title+".csv", records.body.join("\r\n"));
             });
           });
@@ -256,38 +241,29 @@ function operationForExport(context) {
  * @param {*} context
  */
 function operationForBatchDelete(context) {
-  var resource=context.grid.queryResource;
-  if(_.isEmpty(resource) &&  !_.isEmpty(context.metaEntity)){
-    resource=context.metaEntity.dataResource();
-  }
-  //计算id字段
-  var idField=null;
-  if( !_.isEmpty(context.metaEntity)){
-    idField=context.metaEntity.getIdField();
-  }
-
   var operation= {
     id:"batchDelete",
     title:"批量删除",
     icon:"trash-a",
     onclick:function(params){
-      var clickContext=this;
-      if(_.isEmpty(resource)){
-        alert("can't find delete action path");
-        return;
+      var metaEntity=context.metaEntity;
+      //计算id字段
+      var idField=null;
+      if( !_.isEmpty(metaEntity)){
+        idField=metaEntity.getIdField();
       }
-      if(!idField){
-        alert("entity:"+clickContext.metaEntity.name+" not set identity field");
-        return;
-      }
-      let checkedRows=clickContext.grid.checked;
-      if(!checkedRows||checkedRows.length===0){
-        iview$Message.info("未选择任何数据");
-        return;
+      var resource=context.grid&&context.grid.queryResource;
+      if(_.isEmpty(resource) &&  !_.isEmpty(metaEntity)){
+        resource=metaEntity.dataResource();
       }
       //检查当前用户对每一行数据是否有删除权限
       let opt={},unpermedItems=[],permedItems=[],unpermedInfo='';
       opt[Utils.dataPermField]=Utils.permValues.del;
+      var checkedRows=context.selectedItems;
+      if(_.isEmpty(checkedRows)){
+        iview$Modal.error({content:`必须传入选中的所有行数据`});
+        return;
+      }
       _.each(checkedRows,function(item){
         let has=Utils.hasDataPerm(item,opt); 
         if(!has){
@@ -315,7 +291,7 @@ function operationForBatchDelete(context) {
             let id=row[idField.name];
             //,cascade_delete:true
             resource.delete({id:id}).then(function (re) {
-              clickContext.grid.reload();
+              context.grid&&context.grid.reload();
             });
           });
         }

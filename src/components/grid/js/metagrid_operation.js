@@ -56,6 +56,22 @@ function buildQuery(context){
   }
   return _query;
 }
+function getIdFromContext(context){
+  var id=context.selectedId;
+  var metaEntity=context.metaEntity;
+  if(!id){
+    var selectedItem=context.selectedItem;
+    if(selectedItem){
+      //计算id字段
+      var idField=null;
+      if( !_.isEmpty(metaEntity)){
+        idField=metaEntity.getIdField();
+      }
+      id=selectedItem[idField];
+    }
+  }
+  return id;
+}
 /**
  * 编辑操作，跳转到编辑表单页
  * @param context
@@ -66,7 +82,7 @@ function operationForEdit(context){
     title:"修改",
     icon:"edit",
     onclick:function(){
-      var id=context.selectedId;
+      var id=getIdFromContext(context);
       if(!id){
         iview$Modal.error({content:`当前数据id未设置`});
         return;
@@ -100,8 +116,8 @@ function operationForView(context){
     id:"view",
     title:"查看",
     icon:"ios-eye-outline",
-    onclick:function(params){
-      var id=context.selectedId;
+    onclick:function(){
+      var id=getIdFromContext(context);
       if(!id){
         iview$Modal.error({content:`当前数据id未设置`});
         return;
@@ -135,8 +151,8 @@ function operationForDel(context) {
     id:"del",
     title:"删除",
     icon:"trash-a",
-    onclick:function(params){
-      var id=context.selectedId;
+    onclick:function(){
+      var id=getIdFromContext(context);
       if(!id){
         iview$Modal.error({content:`当前数据id未设置`});
         return;

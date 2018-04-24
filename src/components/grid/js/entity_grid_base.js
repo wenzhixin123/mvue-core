@@ -125,6 +125,29 @@ export default {
                 singleBtns:["edit","view","del"],//基于单条数据的操作
                 batchBtns:["batchDelete"]//基于多条数据的操作
             };
+            //处理--存在组件定义的一些操作事件
+            if(this.widgetParams){
+                let _t = this.widgetParams;
+                toolbar = {
+                    btns: [],//普通操作
+                    advanceSearchFields:_advanceSearchFields,
+                    singleBtns:[],//基于单条数据的操作
+                    batchBtns:[]//基于多条数据的操作
+                }
+                _.each(_t.commonOperations, function (e) {
+                    //普通操作
+                    toolbar.btns.push(e)
+                });
+                _.each(_t.singleOperations, function (e) {
+                    //单条数据
+                    toolbar.singleBtns.push(e)
+                });
+                _.each(_t.batchOperations, function (e) {
+                    //多条数据
+                    toolbar.batchBtns.push(e)
+                });
+            }
+
             let quickSearchPlacehoder="请输入关键字搜索";
             if (_searchFields.length) {
                 toolbar.quicksearch = {
@@ -244,7 +267,7 @@ export default {
             metaservice.getViewByShortId({id:viewShortId})
                 .then(({ data }) => {
                     //存在自定义视图，由视图构造grid
-                    _this.formShortId=data.metaFormShortId;
+                    _this.formShortId=data.metaFormShortId
                     if(data.config&&data.config.columns){
                         _this.metaViewToGrid(metaEntity,data);
                     }else{//虽然存在视图，但是没有任何配置，依然用默认

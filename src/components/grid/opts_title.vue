@@ -5,18 +5,21 @@
         </div>
         <div class="opts-con-box table-column-center">
             <div v-if="permedBtns()" class="opts-con">
-                <a v-for="(btn,index) in permedBtns()" v-if="index<2 || permedBtns().length==3" :key="index" @click.stop.prevent="handleBtnClick(btn)"
-                    href="javascript:void(0)" class="btn opt-btn" :title="btn.title" >
-                    <Icon :type="btn.icon"></Icon>
-                </a>
+                <meta-operation v-for="(btn,index) in permedBtns()" :operation="btn" v-if="index<2 || permedBtns().length==3" :widget-context="getWidgetContext()">
+                    <a :key="index" href="javascript:void(0)" class="btn opt-btn" :title="btn.title" >
+                        <Icon :type="btn.icon"></Icon>
+                    </a>
+                </meta-operation>
                 <Dropdown v-if="permedBtns().length>3" transfer @on-click="handleDropdownMenuClick" @on-visible-change="handleOnVisibleChange" class="opts-dropdown">
                     <a href="javascript:void(0)">
                         <Icon type="more"></Icon>
                     </a>
                     <DropdownMenu slot="list">
                         <DropdownItem v-for="(btn,index) in permedBtns()" v-if="index>=2" :name="index" :key="index">
+                            <meta-operation :operation="btn" :widget-context="getWidgetContext()">
                             <Icon :type="btn.icon"></Icon>
                             {{btn.title}}
+                            </meta-operation>
                         </DropdownItem>
                     </DropdownMenu>
                 </Dropdown>
@@ -25,6 +28,7 @@
     </div>
 </template>
 <script>
+import metabase from '../../libs/metadata/metabase';
 export default {
     props:{
         params:{
@@ -71,16 +75,26 @@ export default {
             }
         },
         permedBtns(){
-            var _this=this;
+           /* var _this=this;
             let _btns= _.filter(this.btns, function(o) { 
                 //过滤掉查看操作，因为查看操作会在title列或者点击一行触发，有重复
                 if(o.id ==='view'){
                     return false;
                 }
-                let has=Utils.hasDataPerm(_this.item,o); 
+                //let has=Utils.hasDataPerm(_this.item,o);
                 return has;
-            });
-            return _btns;
+            });*/
+            return this.btns;
+        },
+        getWidgetContext(){
+            let _self = this.grid,context;
+            context =  {
+                grid: _self,
+                metaEntity:metabase.findMetaEntity(_self.metaEntity),
+                selectedId:this.item.id,
+                selectedItem:this.item
+            };
+            return context
         }
     }
 }

@@ -19,21 +19,33 @@
                     <div class="concat-toolbar-btn" @click="refresh()"><Icon type="refresh"></Icon>刷新</div>
                 </div>
                 <div v-if="innerToolbar.btns" class="innerToolbar">
-                    <Button style="margin-right:-8px;" type="primary" size="small" v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index<1" :key="index" @click="toolbarClick(toolbarBtn)"
+                        <meta-operation v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index<1" :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                            <Button style="margin-right:-8px;" type="primary" size="small" :title="toolbarBtn.title" class="default-color-btn">
+                                <Icon :type="toolbarBtn.icon"></Icon>
+                                {{toolbarBtn.title}}
+                            </Button>
+                        </meta-operation>
+                    <!--<Button style="margin-right:-8px;" type="primary" size="small" v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index<1" :key="index" @click="toolbarClick(toolbarBtn)"
                         :title="toolbarBtn.title" class="default-color-btn">
                         <Icon :type="toolbarBtn.icon"></Icon>
                         {{toolbarBtn.title}}
-                    </Button>
+                    </Button>-->
                     <Dropdown v-if="innerToolbar.btns.length>1" @on-click="handleDropdownMenuClick" placement="bottom-end" trigger="click">
                             <Button type="primary" title="更多" size="small" class="default-color-btn">
                                 <Icon type="arrow-down-b"></Icon>
                             </Button>
                             <DropdownMenu slot="list">
                                 <DropdownItem v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index>=1" :name="index" :key="index">
-                                    <Button v-if="!toolbarBtn.render" :key="index"
+                                    <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                                        <Button v-if="!toolbarBtn.render" :key="index"
+                                                type="text"  :icon="toolbarBtn.icon"
+                                        >{{toolbarBtn.title}}</Button>
+                                        <toolbar-btn-render :toolbar-type="toolbarType" v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>
+                                    </meta-operation>
+                                    <!--<Button v-if="!toolbarBtn.render" :key="index"
                                             type="text"  :icon="toolbarBtn.icon"
                                             >{{toolbarBtn.title}}</Button>
-                                    <toolbar-btn-render :toolbar-type="toolbarType" v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>
+                                    <toolbar-btn-render :toolbar-type="toolbarType" v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>-->
                                 </DropdownItem>
                             </DropdownMenu>
                     </Dropdown>
@@ -45,11 +57,12 @@
     <div class="toolBar" v-if="!innerToolbar.hide && !toolbarType">
         <Button @click="refresh()" type="ghost" icon="refresh"></Button>
         <template v-for="(toolbarBtn,index) in innerToolbar.btns">
-            <Button v-if="!toolbarBtn.render" :key="index"
-                    type="primary"  :icon="toolbarBtn.icon"
-                    @click="toolbarClick(toolbarBtn)"
-                    >{{toolbarBtn.title}}</Button>
-            <toolbar-btn-render v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>
+            <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                <Button v-if="!toolbarBtn.render" :key="index"
+                        type="primary"  :icon="toolbarBtn.icon"
+                >{{toolbarBtn.title}}</Button>
+                <toolbar-btn-render v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>
+            </meta-operation>
         </template>
         <Select v-if="innerToolbar.multipleFilters&&innerToolbar.multipleFilters.support" v-model="multipleFiltersValueId" style="width: 120px;">
             <Option v-for="f in innerToolbar.multipleFilters.filters" :key="f.id" :value="f.id">{{f.title}}</Option>
@@ -64,10 +77,12 @@
         <div style="display:table-cell;vertical-align:middle;">
         <span class="checked-info-span tools-color">已选中{{checked.length}}项目</span>
         <template v-for="(toolbarBtn,index) in innerToolbar.batchBtns">
-            <Button v-if="!toolbarBtn.render" :key="index" size="small"
-                    type="text"  :icon="toolbarBtn.icon" @click="toolbarClick(toolbarBtn)"
-                    >{{toolbarBtn.title}}</Button>
-            <toolbar-btn-render :toolbar-type="toolbarType" v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>
+            <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                <Button v-if="!toolbarBtn.render" :key="index" size="small"
+                        type="text"  :icon="toolbarBtn.icon"
+                >{{toolbarBtn.title}}</Button>
+                <toolbar-btn-render :toolbar-type="toolbarType" v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>
+            </meta-operation>
         </template>
         </div>
         <div style="width:77px;display:table-cell;vertical-align:middle;background-color:#fff;">
@@ -102,9 +117,14 @@
 <script>
 import metaGrid from "./js/metagrid";
 import toolbarBtnRender from "./js/toolbar_btn_render";
+import metabase from '../../libs/metadata/metabase';
 var utils= require('../../libs/utils');
 export default {
     props: {
+      "widgetParams":{
+        type: Object,
+        required: false
+      },
       "metaEntity": {
         type: String,
         required: false
@@ -458,8 +478,31 @@ export default {
                 };
                 btn.onclick&&btn.onclick.call(context,{row:row});
             }
-        }
+        },
         //end 单击行
+        getWidgetContext(){
+            //获取操作需要的一些参数
+            let _self = this,context;
+            _self.widgetParamsAnalysis()
+            context =  {
+                grid: $.extend(_self,{checked:_self.checked}),
+                metaEntity:metabase.findMetaEntity(_self.metaEntity),
+                selectedIds : _self.checked.map(function(obj){return obj.id}),
+                selectedItems : _self.checked
+            };
+            return context;
+        },
+        widgetParamsAnalysis(){
+            let _self = this;
+            if(_self.widgetParams){
+                //改造过--获取配置--存在没有配置的时候 需要设置
+                //存在页面参数
+                var projectId=_self.$route.params.projectId;
+                if(!!projectId){
+                    _self.$metaBase.initMetabase(projectId,true);
+                }
+            }
+        }
     },
     components:{
         advanceSearch:require("./advance_search"),

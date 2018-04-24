@@ -2,7 +2,6 @@
  * 提供内置的列的渲染
  */
 import controlTypeService from '../../form/js/control_type_service';
-import operationManager from "./metagrid_operation";
 var Config=require("../../../config/config.js");
 
 export default {

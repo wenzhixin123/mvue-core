@@ -10,12 +10,12 @@ var pathToRegexp = require('path-to-regexp');
  * 创建操作，跳转到新建表单页
  * @param context
  */
-function operationForCreate(context){
+function operationForCreate(){
   var operation= {
     id:"create",
     title:"添加",
     icon:"plus-round",
-    onclick:function(){
+    onclick:function(context,$optInst){
       var path=context.grid&&context.grid.createPath;
       var metaEntity=context.metaEntity;
       if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
@@ -76,12 +76,12 @@ function getIdFromContext(context){
  * 编辑操作，跳转到编辑表单页
  * @param context
  */
-function operationForEdit(context){
+function operationForEdit(){
   var operation= {
     id:"edit",
     title:"修改",
     icon:"edit",
-    onclick:function(){
+    onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
         iview$Modal.error({content:`当前数据id未设置`});
@@ -111,12 +111,12 @@ function operationForEdit(context){
  * 查看操作，跳转到查看页面
  * @param context
  */
-function operationForView(context){
+function operationForView(){
   var operation= {
     id:"view",
     title:"查看",
     icon:"ios-eye-outline",
-    onclick:function(){
+    onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
         iview$Modal.error({content:`当前数据id未设置`});
@@ -146,12 +146,12 @@ function operationForView(context){
  * 删除操作
  * @param {*} context
  */
-function operationForDel(context) {
+function operationForDel() {
   var operation= {
     id:"del",
     title:"删除",
     icon:"trash-a",
-    onclick:function(){
+    onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
         iview$Modal.error({content:`当前数据id未设置`});
@@ -183,85 +183,15 @@ function operationForDel(context) {
 }
 
 /**
- * 数据导入操作
- */
-function operationForImport(context){
-  var operation= {
-    id:"import",
-    title:"导入",
-    icon:"ios-upload-outline",
-    renderComponent:"meta-grid-import-data"
-  };
-  operation[Utils.dataPermField]=Utils.permValues.create;
-  return operation;
-}
-/**
- * 导出
- * @param {*} context
- */
-function operationForExport(context) {
-  var operation= {
-    id:"export",
-    title:"导出",
-    icon:"ios-download-outline",
-    onclick:function(){
-      var resource=context.grid&&context.grid.queryResource;
-      var metaEntity=context.metaEntity;
-      var grid=context.grid;
-      if(_.isEmpty(resource) &&  !_.isEmpty(metaEntity)){
-        resource=metaEntity.dataResource();
-      }
-      if(_.isEmpty(resource)){
-        iview$Modal.error({content:`实体查询地址未设置`});
-        return;
-      }
-      iview$Modal.confirm({
-        title: '提示',
-        content: '是否导出当前列表所有数据?',
-        onOk: () => {
-          var queryOptions={page_size:500};
-          if(grid){
-            queryOptions=grid.buildQueryOptions();
-            queryOptions.page_size=grid.totalCount || queryOptions.page_size;
-          }
-          queryOptions.total=false;
-          queryOptions.page=1;
-          queryOptions.select="*";
-          //获取当前项目的swagger地址
-          metabase.currentSwagger(metaEntity.projectId).then(function(swagger){
-            var exportTaskSetting={
-              "entityName":metaEntity.name,
-              "swagger":swagger,
-              "options":queryOptions
-            };
-            var metaEntity=metabase.findMetaEntity(metaEntity.name);
-            var query={};
-            if(grid){
-              query=grid.$route.query;
-            }
-            toolServices.doExport(query,exportTaskSetting).then(function (records) {
-              ExportCsv.download(metaEntity.title+".csv", records.body.join("\r\n"));
-            });
-          });
-        }
-      });
-    }
-  };
-  operation[Utils.dataPermField]=Utils.permValues.view;
-  return operation;
-}
-
-
-/**
  * 批量删除操作
  * @param {*} context
  */
-function operationForBatchDelete(context) {
+function operationForBatchDelete() {
   var operation= {
     id:"batchDelete",
     title:"批量删除",
     icon:"trash-a",
-    onclick:function(params){
+    onclick:function(context,$optInst){
       var metaEntity=context.metaEntity;
       //计算id字段
       var idField=null;
@@ -318,6 +248,90 @@ function operationForBatchDelete(context) {
   return operation;
 }
 
+/**
+ * 数据导入操作
+ */
+function operationForImport(){
+  var operation= {
+    id:"import",
+    title:"导入",
+    icon:"ios-upload-outline",
+    renderComponent:"meta-grid-import-data"
+  };
+  operation[Utils.dataPermField]=Utils.permValues.create;
+  return operation;
+}
+/**
+ * 导出
+ * @param {*} context
+ */
+function operationForExport() {
+  var operation= {
+    id:"export",
+    title:"导出",
+    icon:"ios-download-outline",
+    onclick:function(context,$optInst){
+      var resource=context.grid&&context.grid.queryResource;
+      var metaEntity=context.metaEntity;
+      var grid=context.grid;
+      if(_.isEmpty(resource) &&  !_.isEmpty(metaEntity)){
+        resource=metaEntity.dataResource();
+      }
+      if(_.isEmpty(resource)){
+        iview$Modal.error({content:`实体查询地址未设置`});
+        return;
+      }
+      iview$Modal.confirm({
+        title: '提示',
+        content: '是否导出当前列表所有数据?',
+        onOk: () => {
+          var queryOptions={page_size:500};
+          if(grid){
+            queryOptions=grid.buildQueryOptions();
+            queryOptions.page_size=grid.totalCount || queryOptions.page_size;
+          }
+          queryOptions.total=false;
+          queryOptions.page=1;
+          queryOptions.select="*";
+          //获取当前项目的swagger地址
+          metabase.currentSwagger(metaEntity.projectId).then(function(swagger){
+            var exportTaskSetting={
+              "entityName":metaEntity.name,
+              "swagger":swagger,
+              "options":queryOptions
+            };
+            var metaEntity=metabase.findMetaEntity(metaEntity.name);
+            var query={};
+            if(grid){
+              query=grid.$route.query;
+            }
+            toolServices.doExport(query,exportTaskSetting).then(function (records) {
+              ExportCsv.download(metaEntity.title+".csv", records.body.join("\r\n"));
+            });
+          });
+        }
+      });
+    }
+  };
+  operation[Utils.dataPermField]=Utils.permValues.view;
+  return operation;
+}
+
+/**
+ * 返回到上一步路由
+ * @param {*} context 
+ */
+function goback(){
+  var operation= {
+    id:"goback",
+    title:"返回",
+    icon:"",
+    onclick:function(context,$optInst){
+      router.go(-1);
+    }
+  };
+  return operation;
+}
 
 var operations={
   create:operationForCreate,
@@ -326,7 +340,8 @@ var operations={
   del:operationForDel,
   import:operationForImport,
   exports:operationForExport,
-  batchDelete:operationForBatchDelete
+  batchDelete:operationForBatchDelete,
+  goback:goback
 }
 
 export default {
@@ -335,7 +350,7 @@ export default {
    * @param context
    * @param operationName
    */
-  createOperation:function (context,operationName) {
+  createOperation:function (operationName) {
     if(_.isEmpty(operationName)){
       return null;
     }
@@ -347,7 +362,7 @@ export default {
       }
     });
     if(func!=null){
-      return func(context);
+      return func();
     }
     return null;
   },
@@ -360,7 +375,7 @@ export default {
         name = btn.name;
         oldBtn = btn;
       }
-      var mergedBtn = this.createOperation(context, name);
+      var mergedBtn = this.createOperation(name);
       if (mergedBtn == null) {
         return oldBtn;
       } else {

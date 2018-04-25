@@ -22,10 +22,10 @@ export default {
         }
     },
     data(){
-        if(!this.operation.pageId){
+        if(!this.operation.page){
             this.$Modal.error({
                 title:"错误",
-                content:"pageId参数缺失"
+                content:"page参数缺失"
             });
         }
         return {
@@ -34,11 +34,11 @@ export default {
     },
     methods:{
         gotoPage(){
-            if(!this.operation.pageId){
+            if(!this.operation.page){
                 return;
             }
             var _query=_.extend({},this.widgetContext.pageQuery);
-            var pageId=this.operation.pageId;
+            var pageId=this.operation.page.id;
             var _params=_.extend({pageId:pageId},this.widgetContext.pathParams);
             router.push({name:"defaultPageIndex",query:_query,params:_params});
         }

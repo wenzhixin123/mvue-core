@@ -333,6 +333,27 @@ function goback(){
   return operation;
 }
 
+/**
+ * 保存数据（表单保存）
+ * @param {*} context 
+ */
+function save(){
+  var operation= {
+    id:"save",
+    title:"保存",
+    icon:"",
+    onclick:function(context,$optInst){
+      var form=context.form;
+      if(_.isEmpty(form)){
+        iview$Modal.error({content:`表单保存操作必须传入表单实例参数`});
+        return;
+      }
+      form.doSaveModel();
+    }
+  };
+  return operation;
+}
+
 var operations={
   create:operationForCreate,
   edit:operationForEdit,
@@ -341,7 +362,8 @@ var operations={
   import:operationForImport,
   exports:operationForExport,
   batchDelete:operationForBatchDelete,
-  goback:goback
+  goback:goback,
+  save:save
 }
 
 export default {

@@ -7,6 +7,7 @@ function installGridAndForm(Vue){
     Vue.component('meta-grid-files',require("./components/grid/files"));
     Vue.component('meta-grid-import-data',require("./components/grid/import_data.vue"));
     Vue.component('meta-grid',require("./components/grid/iview_grid.vue"));
+    Vue.component('meta-operation',require("./components/meta_operation/operation"));
 
     Vue.component('MetaSingleLineText',require('./components/form/control_tmpl/single_line_text')),
     Vue.component('MetaMultiLineText',require('./components/form/control_tmpl/multi_line_text')),

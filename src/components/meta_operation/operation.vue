@@ -1,6 +1,6 @@
 <template>
     <div class="widget-operation div-inline-block">
-        <component :is="operationComponent" :operation="operation" :widget-context="widgetContext">
+        <component :is="operationComponent" :operation="operation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
     </div>
@@ -26,6 +26,9 @@ export default {
                 this.operation.operationType=operationType.script;
             }
             return `${this.operation.operationType}Operation`;
+        },
+        extendedWidgetContext:function(){
+            return _.extend(this.widgetContext,this.operation.params);
         }
     },
     data(){

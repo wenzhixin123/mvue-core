@@ -37,7 +37,7 @@ export default {
             if(!this.operation.page){
                 return;
             }
-            var _query=_.extend({},this.widgetContext.pageQuery);
+            var _query=_.extend({},this.widgetContext.queryParams);
             var pageId=this.operation.page.id;
             var _params=_.extend({pageId:pageId},this.widgetContext.pathParams);
             router.push({name:"defaultPageIndex",query:_query,params:_params});

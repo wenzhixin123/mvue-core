@@ -463,7 +463,7 @@ export default {
         },
         handleDropdownMenuClick(itemName){
             var btn=this.innerToolbar.btns[itemName];
-            this.toolbarClick(btn);
+            //this.toolbarClick(btn);
         },
         //高级查询
         doAdvanceSearch(advanceSearchFilters,quicksearchKeyword){

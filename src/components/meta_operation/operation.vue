@@ -6,7 +6,7 @@
     </div>
 </template>
 <script>
-import propParser from 'services/page/prop_parser';
+import propParser from '../../services/tool/prop_parser';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
 //将不同的部件操作类型转成实际的操作

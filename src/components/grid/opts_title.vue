@@ -88,12 +88,17 @@ export default {
         },
         getWidgetContext(){
             let _self = this.grid,context;
-            context =  {
-                grid: _self,
-                metaEntity:metabase.findMetaEntity(_self.metaEntity),
-                selectedId:this.item.id,
-                selectedItem:this.item
-            };
+            if(this.grid.context){
+                //是否-传入了上下文内容
+                context = this.grid.context
+            }else {
+                context = {
+                    grid: _self,
+                    metaEntity: metabase.findMetaEntity(_self.metaEntity),
+                    selectedId: this.item.id,
+                    selectedItem: this.item
+                };
+            }
             return context
         }
     }

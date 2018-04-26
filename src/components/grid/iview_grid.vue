@@ -1,12 +1,13 @@
 <template>
-<div class="grid-con">
+<div class="grid-con" v-if="preprocessed">
     <!--紧凑型toolbar布局-->
     <div class="toolBar compact" v-if="!innerToolbar.hide && toolbarType=='compact'">
         <Row type="flex" align="middle" style="padding-bottom:16px;">
             <i-col span="4" style="text-align:left;">
-                <Select v-if="innerToolbar.multipleFilters&&innerToolbar.multipleFilters.support" v-model="multipleFiltersValueId" style="width: 90px;">
+                <!--<Select v-if="innerToolbar.multipleFilters&&innerToolbar.multipleFilters.support" v-model="multipleFiltersValueId" style="width: 90px;">
                     <Option v-for="f in innerToolbar.multipleFilters.filters" :key="f.id" :value="f.id" style="width: auto;">{{f.title}}</Option>
-                </Select>
+                </Select>-->
+                <slot name="viewSelect"></slot>
             </i-col>
             <i-col span="20" style="text-align:right;">
                 <div class="grid-toolbar-common-btns">
@@ -56,7 +57,7 @@
     <!--默认toolbar布局-->
     <div class="toolBar" v-if="!innerToolbar.hide && !toolbarType">
         <Button @click="refresh()" type="ghost" icon="refresh"></Button>
-        <template v-for="(toolbarBtn,index) in innerToolbar.btns">
+        <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.btns">
             <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
                 <Button v-if="!toolbarBtn.render" :key="index"
                         type="primary"  :icon="toolbarBtn.icon"
@@ -76,7 +77,7 @@
     <div class="toolbar-batch-operations" style="display:table;" v-if="innerToolbar.batchBtns" v-show="checked&&checked.length>0">
         <div style="display:table-cell;vertical-align:middle;">
         <span class="checked-info-span tools-color">已选中{{checked.length}}项目</span>
-        <template v-for="(toolbarBtn,index) in innerToolbar.batchBtns">
+        <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.batchBtns">
             <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
                 <Button v-if="!toolbarBtn.render" :key="index" size="small"
                         type="text"  :icon="toolbarBtn.icon"
@@ -120,74 +121,80 @@ import toolbarBtnRender from "./js/toolbar_btn_render";
 import metabase from '../../libs/metadata/metabase';
 var utils= require('../../libs/utils');
 export default {
+    mixins:[mvueCore.mixins.gridBase],
     props: {
-      "widgetParams":{
-        type: Object,
-        required: false
-      },
-      "metaEntity": {
+      "viewId": {
         type: String,
         required: false
       },
-      "pagerSizes": {
+      "context":{
+         type: Object,
+         required: false
+      },
+      "metaEntityProp": {
+        type: String,
+        required: false
+      },
+      "pagerSizesProp": {
         type: Array,
         required: false,
         default: function () {
           return ["10", "20", "50", "100"];
         }
       },
-      "pager": {
+      "pagerProp": {
         type: Boolean,
         required: false,
         default: true
       },
-      "toolbar": {
+      "toolbarProp": {
         type: Object
       },
-      "createPath": {  //创建表单的路径或路由名
+      "createPathProp": {  //创建表单的路径或路由名
         type: String,
         required: false
       },
-      "editPath": {  //修改表单的路径或路由名
+      "editPathProp": {  //修改表单的路径或路由名
         type: String,
         required: false
       },
-      "viewPath": {  //查看表单的地址
+      "viewPathProp": {  //查看表单的地址
         type: String,
         required: false
       },
-      "queryUrl": {//queryUrl和queryResource二选一
+      "queryUrlProp": {//queryUrl和queryResource二选一
         type: String,
         required: false
       },
-      "queryResource": {//代表vue-resource定义的resource，用来做数据查询
+      "queryResourceProp": {//代表vue-resource定义的resource，用来做数据查询
         type: Object,
         required: false
       },
-      "queryOptions": {//queryUrl或者queryResource查询的参数，对应api query接口的参数，包括排序、分页等参数设置
+      "queryOptionsProp": {//queryUrl或者queryResource查询的参数，对应api query接口的参数，包括排序、分页等参数设置
         type: Object,
         required: false
       },
-      "columns": {
+      "columnsProp": {
         type: Array,
         required: false,
       },
-      "contextParent":{//grid的自定义父容器
+      "contextParentProp":{//grid的自定义父容器
         type:Object
       },
-      "operationsWithTitleColumn": {//是否操作列合并到标题列
+      "operationsWithTitleColumnProp": {//是否操作列合并到标题列
         type: Boolean,
         required: false,
-        default: false
+        default: true
       },
-      "toolbarType": {//'compact':紧凑型toolbar布局；不设置用默认toolbar布局
+      "toolbarTypeProp": {//'compact':紧凑型toolbar布局；不设置用默认compact布局
         type: String,
-        required: false
+        required: false,
+        default: "compact"
       },
-      "viewOnSingleClickRow": {//是否开启单击行跳到查看页
+      "viewOnSingleClickRowProp": {//是否开启单击行跳到查看页
         type: Boolean,
         required: false,
-        default: false
+        default: true
       }
     },
     data:function(){
@@ -212,7 +219,7 @@ export default {
             quicksearchKeyword:"",//快捷查询输入的值
             changedQueue: [],//智能搜索的变化队列
             //begin 分页相关参数
-            pageSize: this.pagerSizes[0],
+            pageSize: this.pagerSizesProp[0],
             pageIndex: 1,
             totalCount: 0,
             pageCount: 1,
@@ -260,12 +267,12 @@ export default {
             });
             }
         },
-        metaEntity:function(){
+        /*metaEntity:function(){
             if(this.metaEntity){
                 metaGrid.initGridByMetabase(this);
                 this.reload();
             }
-        },
+        },*/
         pageSize:function (newVal, oldVal) {
             if (newVal != oldVal) {
                 this.pageIndex = 1;
@@ -287,15 +294,22 @@ export default {
                 this.innerQueryOptions.viewId=this.multipleFiltersValue.viewId;
             }
             this.reload();
+        },
+        viewId(){
+            //检测视图id变化后重新获取视图配置
+            this.initGrid();
         }
     },
     mounted:function(){
+        this.initGrid();
+        /*
         var _this=this;
-        metaGrid.initGridByMetabase(_this);
-        this.setDefaultFilters();
-        this.$nextTick(function(){
-            this.reload();
-        });
+                metaGrid.initGridByMetabase(_this);
+                this.setDefaultFilters();
+                this.$nextTick(function(){
+                    this.reload();
+                });
+        */
     },
     methods:{
         setDefaultFilters(){//根据多个默认过滤条件，选择默认的过滤条件，有默认用默认，没设置用第一个
@@ -482,27 +496,32 @@ export default {
         //end 单击行
         getWidgetContext(){
             //获取操作需要的一些参数
-            let _self = this,context;
-            _self.widgetParamsAnalysis()
-            context =  {
-                grid: $.extend(_self,{checked:_self.checked}),
-                metaEntity:metabase.findMetaEntity(_self.metaEntity),
-                selectedIds : _self.checked.map(function(obj){return obj.id}),
-                selectedItems : _self.checked
-            };
+            let _self = this, context;
+            if(this.context){
+                //是否-传入了上下文内容
+                context = this.context
+            }else {
+                context = {
+                    grid: $.extend(_self, {checked: _self.checked}),
+                    metaEntity: metabase.findMetaEntity(_self.metaEntity),
+                    selectedIds: _self.checked.map(function (obj) {
+                        return obj.id
+                    }),
+                    selectedItems: _self.checked
+                };
+            }
             return context;
         },
-        widgetParamsAnalysis(){
-            let _self = this;
-            if(_self.widgetParams){
-                //改造过--获取配置--存在没有配置的时候 需要设置
-                //存在页面参数
-                var projectId=_self.$route.params.projectId;
-                if(!!projectId){
-                    _self.$metaBase.initMetabase(projectId,true);
-                }
-            }
+        //begin grid渲染
+        gridRender(){
+            var _this=this;
+            metaGrid.initGridByMetabase(_this);
+            this.setDefaultFilters();
+            this.$nextTick(function(){
+                this.reload();
+            });
         }
+        //end grid渲染
     },
     components:{
         advanceSearch:require("./advance_search"),

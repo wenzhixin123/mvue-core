@@ -181,17 +181,43 @@ function  initToolBar(grid) {
     _toolbar.multipleFilters={support:false};
     grid.innerToolbar=_toolbar;
   }else{
+    Object.assign(grid.innerToolbar,grid.toolbar)
     _.each(grid.innerToolbar.btns,function (btn,index) {
-      var mergedBtn=operationManager.fillOperationByMb(context,btn);
+      var mergedBtn;
+      if(typeof btn=="string") {
+        mergedBtn = operationManager.fillOperationByMb(context, btn);
+        mergedBtn.operationType = "common";
+        mergedBtn.name = btn;
+        delete mergedBtn.onClick;
+      }else{
+        mergedBtn = btn
+      }
       btns.push(mergedBtn);
     });
     //单条数据操作转换，将操作key转换成具有实际操作代码的对象
     _.each(grid.innerToolbar.singleBtns,function (btn,index) {
-      var mergedBtn=operationManager.fillOperationByMb(context,btn);
+      var mergedBtn;
+      if(typeof btn=="string"){
+        mergedBtn = operationManager.fillOperationByMb(context, btn);
+        mergedBtn.title = mergedBtn.title
+        mergedBtn.operationType = "common";
+        mergedBtn.name = btn;
+        delete mergedBtn.onClick;
+      }else{
+        mergedBtn = btn
+      }
       singleBtns.push(mergedBtn);
     });
     _.each(grid.innerToolbar.batchBtns,function (btn,index) {
-      var mergedBtn=operationManager.fillOperationByMb(context,btn);
+      var mergedBtn;
+      if(typeof btn=="string") {
+        mergedBtn = operationManager.fillOperationByMb(context, btn);
+        mergedBtn.operationType = "common";
+        mergedBtn.name = btn;
+        delete mergedBtn.onClick;
+      }else{
+        mergedBtn = btn
+      }
       batchBtns.push(mergedBtn);
     });
     //多个可切换的默认过滤条件处理

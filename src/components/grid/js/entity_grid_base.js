@@ -1,17 +1,20 @@
 import metabase from '../../../libs/metadata/metabase';
 import metaservice from '../../../services/meta/metaservice';
+import metaGrid from "./metagrid";
+
 export default {
     data: function () {
         var entityName = this.$route.params.entityName;
         var metaEntity = metabase.findMetaEntity(entityName);
-        return {
-            navlist:[
+        var gridPropsObject = Object.assign({},this._props);//获取从调用组件传入的一些prop,个别用于匹配当前初始化的grid字段
+         return {
+            /*navlist: [
                 {
-                  title:`${metaEntity.title}管理`,
-                  to:{
-                        path:this.$route.path,
-                        query:this.$route.query,
-                        params:this.$route.params
+                    title: `${metaEntity.title}管理`,
+                    to: {
+                        path: this.$route.path,
+                        query: this.$route.query,
+                        params: this.$route.params
                     }
                 }
             ],
@@ -19,31 +22,36 @@ export default {
                 title: metaEntity.title,
                 description: metaEntity.description,
                 showBack: false
-            },
+            },*/
             entityName: entityName,
             metaEntity: metaEntity,
             queryOptions: null,
             preprocessed: false,
             columns: null,
-            toolbar:null,
-            formShortId:null,//如果表单自定义过了，则表单也从自定义表单的formShortId获取
-            viewShortId:null,//如果视图自定义过了，则视图列表也从自定义视图的viewShortId获取
-            createPath:null,//视图表单创建地址
-            editPath:null,//视图表单编辑地址
-            viewPath:null//视图表单查看地址
+            toolbar: null,
+            formShortId: null,//如果表单自定义过了，则表单也从自定义表单的formShortId获取
+            viewShortId: null,//如果视图自定义过了，则视图列表也从自定义视图的viewShortId获取
+            createPath: null,//视图表单创建地址
+            editPath: null,//视图表单编辑地址
+            viewPath: null,//视图表单查看地址
+            contextParent:{},
+            gridPropsObject: gridPropsObject//传入meta-grid的参数
         }
     },
     mounted: function () {
-        this.initGrid();
+        if(!this.gridRender) {
+            //这个配置要是从其他组件作为mixins引入需要自动调用
+            this.initGrid();
+        }
     },
-    beforeRouteUpdate: function (to, from, next) {
+    /*beforeRouteUpdate: function (to, from, next) {
         var entityName = to.params.entityName;
         var metaEntity = metabase.findMetaEntity(entityName);
         this.entityName = entityName;
         this.header.title = metaEntity.title;
         this.header.description = metaEntity.description;
         next();
-    },
+    },*/
     methods: {
         buildQueryFilters() {
             var query = this.$route.query;
@@ -125,28 +133,6 @@ export default {
                 singleBtns:["edit","view","del"],//基于单条数据的操作
                 batchBtns:["batchDelete"]//基于多条数据的操作
             };
-            //处理--存在组件定义的一些操作事件
-            if(this.widgetParams){
-                let _t = this.widgetParams;
-                toolbar = {
-                    btns: [],//普通操作
-                    advanceSearchFields:_advanceSearchFields,
-                    singleBtns:[],//基于单条数据的操作
-                    batchBtns:[]//基于多条数据的操作
-                }
-                _.each(_t.commonOperations, function (e) {
-                    //普通操作
-                    toolbar.btns.push(e)
-                });
-                _.each(_t.singleOperations, function (e) {
-                    //单条数据
-                    toolbar.singleBtns.push(e)
-                });
-                _.each(_t.batchOperations, function (e) {
-                    //多条数据
-                    toolbar.batchBtns.push(e)
-                });
-            }
 
             let quickSearchPlacehoder="请输入关键字搜索";
             if (_searchFields.length) {
@@ -232,6 +218,20 @@ export default {
             //end 构造grid列
             //完成初始化
             _this.preprocessed = true;
+            if(_this.gridRender) {
+                //grid自身调用--初始化完视图配置后需要进行渲染
+                _this.innerToolbar = toolbar;
+                _this.metaEntity = _this.metaEntity.name;
+                _.each(_this.gridPropsObject, function (val, key) {
+                    //读取下传入的参数--进行data赋值
+                    if(val) {
+                        let _key = key.replace("Prop", "");
+                        _this[_key] = val;
+                    }
+                })
+                //执行渲染
+                _this.gridRender();
+            }
         },
         setDefaultQueryOptions(){
             var _this=this;
@@ -256,24 +256,32 @@ export default {
         initGrid() {
             //设置grid的默认父容器
             this.contextParent=this;
-            var metaEntity = this.metaEntity;
-            var viewShortId=this.$route.query.viewShortId;
+            var metaEntity //= this.metaEntity;
+            var viewShortId;
+            if(this.viewId){
+                viewShortId = this.viewId;
+            }else{
+                viewShortId = this.$route.query.viewShortId;
+            }
             this.viewShortId=viewShortId;
             var _this = this;
             if(!viewShortId){
-                _this.setDefaultQueryOptions();
+                //_this.setDefaultQueryOptions();
                 return;
             }
-            metaservice.getViewByShortId({id:viewShortId})
+            metaservice.getViewByShortId({id: viewShortId})
                 .then(({ data }) => {
+                    //需要通过viewId--获取配置,不需要预定义
+                    metaEntity = _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
+                    _this.entityName = data.metaEntityName;
                     //存在自定义视图，由视图构造grid
-                    _this.formShortId=data.metaFormShortId
-                    if(data.config&&data.config.columns){
-                        _this.metaViewToGrid(metaEntity,data);
-                    }else{//虽然存在视图，但是没有任何配置，依然用默认
+                    _this.formShortId = data.metaFormShortId
+                    if (data.config && data.config.columns) {
+                        _this.metaViewToGrid(metaEntity, data);
+                    } else {//虽然存在视图，但是没有任何配置，依然用默认
                         _this.setDefaultQueryOptions();
                     }
-                },(resp)=>{
+                }, (resp)=> {
                     _this.setDefaultQueryOptions();
                 });
         }

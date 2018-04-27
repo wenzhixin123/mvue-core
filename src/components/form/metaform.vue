@@ -37,15 +37,15 @@
             <template v-if="toolbar">
                 <template v-if="isView">
                     <meta-operation v-for="btn in toolbar.viewbtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                        <Button type="primary" size="small" :title="btn.title">
+                        <Button :type="btn.btnType || 'primary'" size="small" :title="btn.title">
                             <Icon :type="btn.icon" v-if="btn.icon"></Icon>
                             {{btn.title}}
                         </Button>
                     </meta-operation>
                 </template>
                 <template v-if="!isView">
-                    <meta-operation v-for="btn in toolbar.editbtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()" v-if="btn.name == 'del' ? isEdit : true">
-                        <Button size="small" :type="btn.name == 'goback' ? 'ghost' : 'primary'" :title="btn.title">
+                    <meta-operation v-for="btn in toolbar.editbtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                        <Button :type="btn.btnType || 'primary'" size="small" :title="btn.title">
                             <Icon :type="btn.icon" v-if="btn.icon"></Icon>
                             {{btn.title}}
                         </Button>
@@ -192,7 +192,9 @@
                 //获取操作需要的一些参数
                 let _self = this,context;
                 context =  {
-                    metaEntity:_self.metaEntity,
+                    selectedId: _self.entityId,
+                    selectedItem: _self.entity,
+                    metaEntity: _self.metaEntity,
                     form : _self
                 };
                 return context;
@@ -460,13 +462,28 @@
                 });
                 return _model;
             },
+            checkIsArchived() {
+                var _self = this;
+                mvueCore.metaService.getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
+                    eventBus.record.isArchived = true;
+                    _self.innerPermissions={
+                        openEdit:false,
+                        edit:false,
+                        del:false,
+                        cancel:false
+                    }
+                }).catch(()=> {
+                    eventBus.record.isArchived = false;
+                });
+            },
             initPerm(data){//初始化表单数据操作权限
                 this.innerPermissions={
-                    "openEdit":false,
+                    "openEdit":Utils.hasPerm(data[Utils.dataPermField],Utils.permValues.edit),
                     "edit":Utils.hasPerm(data[Utils.dataPermField],Utils.permValues.edit),
                     "del":Utils.hasPerm(data[Utils.dataPermField],Utils.permValues.del),
                     "cancel":true
                 };
+                this.checkIsArchived();
             },
             onFormInited(){//表单数据初始化后
                 if(this.scriptModel&&_.isFunction(this.scriptModel.formDataCreated)){

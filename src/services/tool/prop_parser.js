@@ -32,6 +32,20 @@ var parsers={
         }
         return parseFrom(value,curInst);
     },
+    "date":function(initPropValue,curInst){
+        var value=initPropValue.value;
+        if(!_.isPlainObject(value)){
+            return value;
+        }
+        return parseFrom(value,curInst);
+    },
+    "number":function(initPropValue,curInst){
+        var value=initPropValue.value;
+        if(!_.isPlainObject(value)){
+            return value;
+        }
+        return parseFrom(value,curInst);
+    },
     "map":function(initPropValue,curInst){
         var value=initPropValue.value;
         var _query={};
@@ -39,7 +53,24 @@ var parsers={
             _query[k]=parseFrom(v,curInst);
         });
         return _query;
+    },
+    "view":function(initPropValue,curInst){
+        var value=initPropValue.value;
+        return value;
+    },
+    "form":function(initPropValue,curInst){
+        var value=initPropValue.value;
+        return value;
+    },
+    "page":function(initPropValue,curInst){
+        var value=initPropValue.value;
+        return value;
+    },
+    "array":function(initPropValue,curInst){
+        var value=initPropValue.value;
+        return value;
     }
+
 };
 const parser={
     /**

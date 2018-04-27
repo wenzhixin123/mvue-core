@@ -28,10 +28,30 @@
         </template>
         <div v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer" class="form-toolbar" :class="{'has-buttons':hasButtons()}" slot="toolbar">
             <div v-if="hasButtons()" :class="{'onepx-stroke':hasButtons()}"></div>
-            <Button v-if="innerPermissions.cancel" type="ghost" size="small"  @click.stop.prevent="doCancel">取消</Button>
-            <Button v-if="innerPermissions.openEdit&&isView" type="primary" size="small" @click.stop.prevent="doOpenEdit">编辑</Button>
-            <Button v-if="innerPermissions.edit&&!isView" type="primary" size="small" @click.stop.prevent="doSaveModel">保存</Button>
-            <Button v-if="innerPermissions.del && isEdit" type="primary" size="small" @click.stop.prevent="doDelete">删除</Button>
+            <template v-if="!toolbar">
+                <Button v-if="innerPermissions.cancel" type="ghost" size="small"  @click.stop.prevent="doCancel">取消</Button>
+                <Button v-if="innerPermissions.openEdit&&isView" type="primary" size="small" @click.stop.prevent="doOpenEdit">编辑</Button>
+                <Button v-if="innerPermissions.edit&&!isView" type="primary" size="small" @click.stop.prevent="doSaveModel">保存</Button>
+                <Button v-if="innerPermissions.del && isEdit" type="primary" size="small" @click.stop.prevent="doDelete">删除</Button>
+            </template>
+            <template v-if="toolbar">
+                <template v-if="isView">
+                    <meta-operation v-for="btn in toolbar.viewbtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                        <Button type="primary" size="small" :title="btn.title">
+                            <Icon :type="btn.icon" v-if="btn.icon"></Icon>
+                            {{btn.title}}
+                        </Button>
+                    </meta-operation>
+                </template>
+                <template v-if="!isView">
+                    <meta-operation v-for="btn in toolbar.editbtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()" v-if="btn.name == 'del' ? isEdit : true">
+                        <Button size="small" :type="btn.name == 'goback' ? 'ghost' : 'primary'" :title="btn.title">
+                            <Icon :type="btn.icon" v-if="btn.icon"></Icon>
+                            {{btn.title}}
+                        </Button>
+                    </meta-operation>
+                </template>
+            </template>
         </div>
     </div>
 </template>
@@ -46,6 +66,14 @@
     export default {
         directives: { TransferDom },
         props:{
+            formId:{
+                type: String,
+                required: false
+            },
+            toolbar:{
+                type: Object,
+                require: false
+            },
             entityName:{                        //实体名
                 type:String,
                 required:true
@@ -160,6 +188,15 @@
             this.initForm();
         },
         methods:{
+            getWidgetContext(){
+                //获取操作需要的一些参数
+                let _self = this,context;
+                context =  {
+                    metaEntity:_self.metaEntity,
+                    form : _self
+                };
+                return context;
+            },
             componentName(formItem){
                 return metaformUtils.metaComponentType(formItem);
             },
@@ -240,7 +277,7 @@
             },
 
             initForm(){
-                 var formShortId=this.$route.query.formShortId;
+                var formShortId = this.formId || this.$route.query.formShortId;
                 if(_.isEmpty(formShortId)){
                     this.initDefault();
                     return;
@@ -538,7 +575,7 @@
                 router.push({
                     path:path,
                     query:{
-                        formShortId:this.$route.query.formShortId,
+                        formShortId:this.formId || this.$route.query.formShortId,
                         viewShortId:this.$route.query.viewShortId
                     }
                 });

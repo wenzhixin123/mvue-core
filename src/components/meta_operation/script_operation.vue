@@ -31,7 +31,7 @@ export default {
             if(_.isFunction(this.operation.onclick)){
                 this.operation.onclick(this.widgetContext);
             }else{
-                var onclick=Function('"use strict";' + this.operation.onclick );
+                var onclick=Function('"use strict";return ' + this.operation.onclick  )();
                 onclick(this.widgetContext);
             }
         }

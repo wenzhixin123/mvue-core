@@ -9,6 +9,31 @@
 import propParser from '../../services/tool/prop_parser';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
+var permParser={
+    //来自表单的取消、开启编辑、编辑、删除权限
+    "formCancel":function(widgetContext){
+        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.cancel;
+    },
+    "formOpenEdit":function(widgetContext){
+        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.openEdit;
+    },
+    "formEdit":function(widgetContext){
+        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.edit;
+    },
+    "formDel":function(widgetContext){
+        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.del;
+    },
+    //来自当前数据的查看、编辑、删除权限
+    "selectedItemView":function(widgetContext){
+        return widgetContext.selectedItem&&Utils.hasPerm(widgetContext.selectedItem[Utils.dataPermField],Utils.permValues.view);
+    },
+    "selectedItemEdit":function(widgetContext){
+        return widgetContext.selectedItem&&Utils.hasPerm(widgetContext.selectedItem[Utils.dataPermField],Utils.permValues.edit);
+    },
+    "selectedItemDel":function(widgetContext){
+        return widgetContext.selectedItem&&Utils.hasPerm(widgetContext.selectedItem[Utils.dataPermField],Utils.permValues.del);
+    }
+};
 //将不同的部件操作类型转成实际的操作
 export default {
     props:{
@@ -38,10 +63,12 @@ export default {
             return _.extend(this.widgetContext,params);
         },
         showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
-            var optPermValue=this.operation[Utils.dataPermField];
-            optPermValue=_.trim(optPermValue);
-            if(_.isNil(optPermValue)||optPermValue===''){
-                return true;
+            var optPermValue=this.operation[Utils.operationDisplayField];
+            if(!_.isPlainObject(optPermValue)){
+                optPermValue=_.trim(optPermValue);
+                if(_.isNil(optPermValue)||optPermValue===''){
+                    return true;
+                }
             }
             var ctx={
                 ctx: this.widgetContext,
@@ -52,6 +79,14 @@ export default {
                 var hasPerm=compiled(ctx);
                 if(hasPerm==="true"){
                     return true;
+                }
+            }else if(_.isPlainObject(optPermValue)){
+                var from=optPermValue.from;
+                if(from){
+                    var permParse=permParser[from];
+                    if(permParse){
+                        return !!permParse(this.widgetContext);
+                    }
                 }
             }
             return false;

@@ -123,29 +123,9 @@ var utils= require('../../libs/utils');
 export default {
     mixins:[mvueCore.mixins.gridBase],
     props: {
-      "viewId": {
-        type: String,
-        required: false
-      },
-      "context":{
-         type: Object,
-         required: false
-      },
       "metaEntityProp": {
         type: String,
         required: false
-      },
-      "pagerSizesProp": {
-        type: Array,
-        required: false,
-        default: function () {
-          return ["10", "20", "50", "100"];
-        }
-      },
-      "pagerProp": {
-        type: Boolean,
-        required: false,
-        default: true
       },
       "toolbarProp": {
         type: Object
@@ -162,11 +142,11 @@ export default {
         type: String,
         required: false
       },
-      "queryUrlProp": {//queryUrl和queryResource二选一
+      "queryUrl": {//queryUrl和queryResource二选一
         type: String,
         required: false
       },
-      "queryResourceProp": {//代表vue-resource定义的resource，用来做数据查询
+      "queryResource": {//代表vue-resource定义的resource，用来做数据查询
         type: Object,
         required: false
       },
@@ -181,17 +161,37 @@ export default {
       "contextParentProp":{//grid的自定义父容器
         type:Object
       },
-      "operationsWithTitleColumnProp": {//是否操作列合并到标题列
+      "operationsWithTitleColumn": {//是否操作列合并到标题列
         type: Boolean,
         required: false,
         default: true
       },
-      "toolbarTypeProp": {//'compact':紧凑型toolbar布局；不设置用默认compact布局
+      "toolbarType": {//'compact':紧凑型toolbar布局；不设置用默认compact布局
         type: String,
         required: false,
         default: "compact"
       },
-      "viewOnSingleClickRowProp": {//是否开启单击行跳到查看页
+      "viewOnSingleClickRow": {//是否开启单击行跳到查看页
+        type: Boolean,
+        required: false,
+        default: true
+      },
+      "viewId": {
+        type: String,
+        required: false
+      },
+      "context":{
+        type: Object,
+        required: false
+      },
+      "pagerSizes": {
+        type: Array,
+        required: false,
+        default: function () {
+            return ["10", "20", "50", "100"];
+        }
+      },
+      "pager": {
         type: Boolean,
         required: false,
         default: true
@@ -219,7 +219,7 @@ export default {
             quicksearchKeyword:"",//快捷查询输入的值
             changedQueue: [],//智能搜索的变化队列
             //begin 分页相关参数
-            pageSize: this.pagerSizesProp[0],
+            pageSize: this.pagerSizes[0],
             pageIndex: 1,
             totalCount: 0,
             pageCount: 1,

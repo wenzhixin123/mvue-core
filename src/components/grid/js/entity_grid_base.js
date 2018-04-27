@@ -6,7 +6,7 @@ export default {
     data: function () {
         var entityName = this.$route.params.entityName;
         var metaEntity = metabase.findMetaEntity(entityName);
-        var gridPropsObject = Object.assign({},this._props);//获取从调用组件传入的一些prop,个别用于匹配当前初始化的grid字段
+        var gridProps = Object.assign({},this._props);//获取从调用组件传入的一些prop,个别用于匹配当前初始化的grid字段
          return {
             /*navlist: [
                 {
@@ -35,7 +35,7 @@ export default {
             editPath: null,//视图表单编辑地址
             viewPath: null,//视图表单查看地址
             contextParent:{},
-            gridPropsObject: gridPropsObject//传入meta-grid的参数
+            gridProps: gridProps//传入meta-grid的参数
         }
     },
     mounted: function () {
@@ -222,11 +222,13 @@ export default {
                 //grid自身调用--初始化完视图配置后需要进行渲染
                 _this.innerToolbar = toolbar;
                 _this.metaEntity = _this.metaEntity.name;
-                _.each(_this.gridPropsObject, function (val, key) {
-                    //读取下传入的参数--进行data赋值
+                _.each(_this.gridProps, function (val, key) {
+                    //读取传入的prop参数,修改配置字段对应值
                     if(val) {
                         let _key = key.replace("Prop", "");
-                        _this[_key] = val;
+                        if(Object.keys(_this).indexOf(_key)!=-1) {
+                            _this[_key] = val;
+                        }
                     }
                 })
                 //执行渲染

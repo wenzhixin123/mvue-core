@@ -1,11 +1,12 @@
 <template>
-    <div class="widget-operation div-inline-block">
+    <div class="widget-operation div-inline-block" v-if="showOperation">
         <component :is="operationComponent" :operation="operation" :widget-context="extendedWidgetContext">
             <slot></slot>
         </component>
     </div>
 </template>
 <script>
+import propParser from '../../services/tool/prop_parser';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
 //将不同的部件操作类型转成实际的操作
@@ -28,7 +29,32 @@ export default {
             return `${this.operation.operationType}Operation`;
         },
         extendedWidgetContext:function(){
-            return _.extend(this.widgetContext,this.operation.params);
+            var _this=this;
+            var params={};
+            _.each(this.operation.props,function(propValue,propKey){
+                var parsedValue=propParser.parse(propValue,_this);
+                params[propKey]=parsedValue;
+            });
+            return _.extend(this.widgetContext,params);
+        },
+        showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
+            var optPermValue=this.operation[Utils.dataPermField];
+            optPermValue=_.trim(optPermValue);
+            if(_.isNil(optPermValue)||optPermValue===''){
+                return true;
+            }
+            var ctx={
+                ctx: this.widgetContext,
+                opt:this.operation
+            }
+            if(_.startsWith(optPermValue,'${')){
+                var compiled = _.template(optPermValue);
+                var hasPerm=compiled(ctx);
+                if(hasPerm==="true"){
+                    return true;
+                }
+            }
+            return false;
         }
     },
     data(){

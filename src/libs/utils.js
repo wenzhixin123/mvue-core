@@ -238,7 +238,8 @@ var utils = {
         }
         return Utils.hasPerm(userPermVal,operationPermVal);
     },
-    dataPermField:"permVal",
+    dataPermField:"permVal",//数据权限值所在的字段
+    operationDisplayField:"display",//部件操作是否显示的属性字段
     permValues:{
         "view":1,
         "create":2,

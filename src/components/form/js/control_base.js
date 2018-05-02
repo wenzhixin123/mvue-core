@@ -151,7 +151,12 @@ export default {
             var metaEntity=this.context.metaEntity;
             if(metaEntity){
                 let metaField=metaEntity.findField(this.formItem.dataField);
-                return metaField.readonly;
+                if (metaField) {
+                    return metaField.readonly;
+                } else {
+                    this.formItem.hidden = true;
+                    return true;
+                }
             }
             return false;
         },

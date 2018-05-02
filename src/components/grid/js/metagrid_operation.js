@@ -325,13 +325,13 @@ function operationForImport(context){
 
 
 var operations={
-  create:operationForCreate,
-  edit:operationForEdit,
-  view:operationForView,
-  del:operationForDel,
-  import:operationForImport,
-  exports:operationForExport,
-  batchDelete:operationForBatchDelete
+  "create":operationForCreate,
+  "edit":operationForEdit,
+  "view":operationForView,
+  "del":operationForDel,
+  "import":operationForImport,
+  "export":operationForExport,
+  "batchDelete":operationForBatchDelete
 }
 
 export default {

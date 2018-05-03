@@ -26,6 +26,12 @@ function operationForCreate(){
         return ;
       }
       let _query=buildQuery(context);
+      if ($optInst.operation.params) {
+        let extQuery = {};
+        extQuery[Utils.queryKeys.action] = Utils.formActions.create;
+        _query = _.extend(_query, $optInst.operation.query || {}, extQuery);
+        return parseCurrentRoute(context, $optInst.operation.params, _query);
+      }
       if(path.indexOf('/')>-1){
         router.push({path:path,query:_query});
       }else{
@@ -97,6 +103,12 @@ function operationForEdit(){
         path=toPath({id:id});
       }
       let _query=buildQuery(context);
+      if ($optInst.operation.params) {
+        let extQuery = {id: id};
+        extQuery[Utils.queryKeys.action] = Utils.formActions.edit;
+        _query = _.extend(_query, $optInst.operation.query || {}, extQuery);
+        return parseCurrentRoute(context, $optInst.operation.params, _query);
+      }
       if(path.indexOf('/')>-1){
         router.push({path:path,query:_query});
       }else{
@@ -132,6 +144,12 @@ function operationForView(){
         path=toPath({id:id});
       }
       let _query=buildQuery(context);
+      if ($optInst.operation.params) {
+        let extQuery = {id: id};
+        extQuery[Utils.queryKeys.action] = Utils.formActions.view;
+        _query = _.extend(_query, $optInst.operation.query || {}, extQuery);
+        return parseCurrentRoute(context, $optInst.operation.params, _query);
+      }
       if(path.indexOf('/')>-1){
         router.push({path:path,query:_query});
       }else{
@@ -352,6 +370,20 @@ function save(){
     }
   };
   return operation;
+}
+
+/**
+ * 解析当前路由并跳转到解析后的路由
+ * @param {Object} context  上下文
+ * @param {Object} params   路由params
+ * @param {Object} query    路由query
+ */
+function parseCurrentRoute(context, params, query) {
+  var _self = context.grid || context.form;
+  var _route = _.extend({}, _self.$route);
+  _route.params = _.extend({}, _route.params, params || {});
+  _route.query = _.extend({}, _route.query, query || {});
+  _self.$router.push(_route);
 }
 
 var operations={

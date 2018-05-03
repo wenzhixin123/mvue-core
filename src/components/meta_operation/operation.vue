@@ -21,7 +21,7 @@ var permParser={
         return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.edit;
     },
     "formDel":function(widgetContext){
-        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.del;
+        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.del&&widgetContext.form.entityId;
     },
     //来自当前数据的查看、编辑、删除权限
     "selectedItemView":function(widgetContext){

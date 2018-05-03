@@ -489,8 +489,11 @@ export default {
                 var context={
                     grid:this,
                     metaEntity:this.metaEntity,
+                    selectedId: row.id,
+                    selectedItem: row
                 };
-                btn.onclick&&btn.onclick.call(context,{row:row});
+                //btn.onclick&&btn.onclick.call(context,{row:row});
+                btn.onclick&&btn.onclick(context,{operation:btn});
             }
         },
         //end 单击行

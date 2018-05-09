@@ -37,9 +37,9 @@ export default {
             if(!this.operation.page){
                 return;
             }
-            var _query=_.extend({},this.widgetContext.queryParams);
+            var _query=_.extend({},this.operation.queryParams);
             var pageId=this.operation.page.id;
-            var _params=_.extend({pageId:pageId},this.widgetContext.pathParams);
+            var _params=_.extend({pageId:pageId},this.operation.pathParams);
             router.push({name:"defaultPageIndex",query:_query,params:_params});
         }
     }

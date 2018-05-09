@@ -1,7 +1,7 @@
 <template>
     <div class="widget-operation div-inline-block" v-if="showOperation">
-        <component :is="operationComponent" :operation="operation" :widget-context="extendedWidgetContext">
-            <slot></slot>
+        <component :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
+            <slot :operation="extendedOperation"></slot>
         </component>
     </div>
 </template>
@@ -53,12 +53,25 @@ export default {
             }
             return `${this.operation.operationType}Operation`;
         },
+        extendedOperation:function(){
+            var _this=this;
+            var params={};
+            _.each(this.operation.props,function(propValue,propKey){
+                if(!propValue.internal){//非来自于context的属性，作为普通操作属性合并到operation中
+                    var parsedValue=propParser.parse(propValue,_this);
+                    params[propKey]=parsedValue;
+                }
+            });
+            return _.extend(this.operation,params);
+        },
         extendedWidgetContext:function(){
             var _this=this;
             var params={};
             _.each(this.operation.props,function(propValue,propKey){
-                var parsedValue=propParser.parse(propValue,_this);
-                params[propKey]=parsedValue;
+                if(propValue.internal){//来自于context的属性，合并到widgetContext中
+                    var parsedValue=propParser.parse(propValue,_this);
+                    params[propKey]=parsedValue;
+                }
             });
             return _.extend(this.widgetContext,params);
         },

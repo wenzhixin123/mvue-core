@@ -23,29 +23,19 @@ function parseFrom(value,curInst,toRoute){
     }
 }
 //不同类型转换器定义
+//text date number map view form page array icon display widget script app
+function baseParser(initPropValue,curInst,toRoute){
+    var value=initPropValue.value;
+    //非普通对象不需要转换直接返回
+    if(!_.isPlainObject(value)){
+        return value;
+    }
+    return parseFrom(value,curInst,toRoute);
+}
 var parsers={
-    "text":function(initPropValue,curInst,toRoute){
-        var value=initPropValue.value;
-        //非普通对象不需要转换直接返回
-        if(!_.isPlainObject(value)){
-            return value;
-        }
-        return parseFrom(value,curInst,toRoute);
-    },
-    "date":function(initPropValue,curInst,toRoute){
-        var value=initPropValue.value;
-        if(!_.isPlainObject(value)){
-            return value;
-        }
-        return parseFrom(value,curInst,toRoute);
-    },
-    "number":function(initPropValue,curInst,toRoute){
-        var value=initPropValue.value;
-        if(!_.isPlainObject(value)){
-            return value;
-        }
-        return parseFrom(value,curInst,toRoute);
-    },
+    "text":baseParser,
+    "date":baseParser,
+    "number":baseParser,
     "map":function(initPropValue,curInst,toRoute){
         var value=initPropValue.value;
         var _query={};
@@ -53,24 +43,7 @@ var parsers={
             _query[k]=parseFrom(v,curInst,toRoute);
         });
         return _query;
-    },
-    "view":function(initPropValue,curInst,toRoute){
-        var value=initPropValue.value;
-        return value;
-    },
-    "form":function(initPropValue,curInst,toRoute){
-        var value=initPropValue.value;
-        return value;
-    },
-    "page":function(initPropValue,curInst,toRoute){
-        var value=initPropValue.value;
-        return value;
-    },
-    "array":function(initPropValue,curInst,toRoute){
-        var value=initPropValue.value;
-        return value;
     }
-
 };
 const parser={
     /**
@@ -80,14 +53,14 @@ const parser={
      */
     parse(initPropValue,curInst,toRoute){
         var type=initPropValue.type;
+        toRoute=toRoute||(curInst&&curInst.$route);
         if(!!type){
             //根据类型转到各类型的转换器转换
             var _parse=parsers[type];
             if(_parse){
                 return _parse(initPropValue,curInst,toRoute);
             }else{
-                console.log(`未定义属性type:${type}的转换器`);
-                return initPropValue;
+                return initPropValue.value;
             }
         }else{
             return initPropValue;

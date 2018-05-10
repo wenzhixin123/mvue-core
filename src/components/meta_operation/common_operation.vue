@@ -1,17 +1,17 @@
 <template>
 <div>
     <!--有onclick的普通操作-->
-    <div v-if="commonOperation&&!commonOperation.renderComponent" @click.stop.prevent="buttonClick">
+    <div v-if="extendedOperation&&!extendedOperation.renderComponent" @click.stop.prevent="buttonClick">
         <slot>
             <Button type="primary" size="small" 
-                :title="commonOperation.title" >
-                <Icon :type="commonOperation.icon"></Icon>
-                {{commonOperation.title}}
+                :title="extendedOperation.title" >
+                <Icon :type="extendedOperation.icon"></Icon>
+                {{extendedOperation.title}}
             </Button>
         </slot>
     </div>
     <!--有renderComponent的普通操作-->
-    <component v-if="commonOperation&&commonOperation.renderComponent" :widget-context="widgetContext" :operation="commonOperation" :is="commonOperation.renderComponent">
+    <component v-if="extendedOperation&&extendedOperation.renderComponent" :widget-context="widgetContext" :operation="extendedOperation" :is="extendedOperation.renderComponent">
         <slot></slot>
     </component>
 </div>
@@ -29,30 +29,24 @@ export default {
             required:true
         }
     },
-    data(){
-        let commonOptName=this.operation.name;
-        let commonOpt=metagridOperation.createOperation(commonOptName);
-        if(!commonOpt){
-            this.$Modal.error({
-                title:"错误",
-                content:`通用操作${commonOptName}未定义`
-            });
-        }
-        let _this=this;
-        //覆盖通用操作的某些属性
-        _.each(["title","icon"],function(k){
-            if(_this.operation[k]){
-                commonOpt[k]=_this.operation[k];
+    computed:{
+        extendedOperation:function(){
+            let commonOptName=this.operation.name;
+            let commonOpt=metagridOperation.createOperation(commonOptName);
+            if(commonOpt){
+                //对于通用操作的属性，先复制到operation中，但如果operation中已经定义的，不需要复制，所以需要重写回来
+                return _.extend(this.operation,commonOpt,this.operation);
             }
-        });
-        return {
-            commonOperation:commonOpt
-        };
+            return null;
+        }
+    },
+    data(){
+        return {};
     },
     methods:{
         buttonClick(){
-            if(this.commonOperation&&this.commonOperation.onclick){
-                this.commonOperation.onclick(this.widgetContext,this);
+            if(this.extendedOperation&&this.extendedOperation.onclick){
+                this.extendedOperation.onclick(this.widgetContext,this);
             }
         }
     }

@@ -29,7 +29,6 @@
 </template>
 <script>
 import metabase from '../../libs/metadata/metabase';
-import metagrid_operation from './js/metagrid_operation';
 export default {
     props:{
         params:{
@@ -76,17 +75,19 @@ export default {
             }
         },
         permedBtns(){
+            //判断是否是旧的grid操作，新的操作来源都是通过部件的操作配置，没有权限字段
+            var isOldOperation=this.btns&&this.btns[0]&&this.btns[0][Utils.dataPermField];
+            if(!isOldOperation){
+                return this.btns;
+            }
             var _this=this;
             let _btns= _.filter(this.btns, function(o) { 
                 //过滤掉查看操作，因为查看操作会在title列或者点击一行触发，有重复
                 if(o.id ==='view'){
                     return false;
-                } else if (o.name === 'view' && !o.onclick) {
-                    _.extend(o, metagrid_operation.createOperation(o.name), o);
-                    return false;
                 }
-                //let has=Utils.hasDataPerm(_this.item,o);
-                return true;
+                let has=Utils.hasDataPerm(_this.item,o);
+                return has;
             });
             return _btns;
         },

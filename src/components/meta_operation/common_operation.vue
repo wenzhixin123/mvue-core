@@ -17,7 +17,7 @@
 </div>
 </template>
 <script>
-import metagridOperation from '../grid/js/metagrid_operation';
+import commonOperation from './js/common_operation';
 export default {
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
@@ -32,10 +32,9 @@ export default {
     computed:{
         extendedOperation:function(){
             let commonOptName=this.operation.name;
-            let commonOpt=metagridOperation.createOperation(commonOptName);
+            let commonOpt=commonOperation.createOperation(commonOptName);
             if(commonOpt){
-                //对于通用操作的属性，先复制到operation中，但如果operation中已经定义的，不需要复制，所以需要重写回来
-                return _.extend(this.operation,commonOpt,this.operation);
+                return _.extend(this.operation,commonOpt);
             }
             return null;
         }

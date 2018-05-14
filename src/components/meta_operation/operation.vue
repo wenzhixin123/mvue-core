@@ -48,7 +48,7 @@ export default {
     },
     computed:{
         operationComponent:function(){
-            if(this.operation.onclick){
+            if(this.operation.onclick&&!this.operation.operationType){
                 this.operation.operationType=operationType.script;
             }
             return `${this.operation.operationType}Operation`;

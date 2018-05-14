@@ -7,6 +7,7 @@
 </template>
 <script>
 import propParser from '../../services/tool/prop_parser';
+import OperationUtils from './js/operation_utils';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
 var permParser={
@@ -54,15 +55,8 @@ export default {
             return `${this.operation.operationType}Operation`;
         },
         extendedOperation:function(){
-            var _this=this;
-            var params={};
-            _.each(this.operation.props,function(propValue,propKey){
-                if(!propValue.internal){//非来自于context的属性，作为普通操作属性合并到operation中
-                    var parsedValue=propParser.parse(propValue,_this);
-                    params[propKey]=parsedValue;
-                }
-            });
-            return _.extend(this.operation,params);
+            var operation=OperationUtils.expandOperation(this.operation,this);
+            return operation;
         },
         extendedWidgetContext:function(){
             var _this=this;

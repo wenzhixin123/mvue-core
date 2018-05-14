@@ -119,6 +119,8 @@
 import metaGrid from "./js/metagrid";
 import toolbarBtnRender from "./js/toolbar_btn_render";
 import metabase from '../../libs/metadata/metabase';
+import OperationUtils from '../meta_operation/js/operation_utils';
+import commonOperation from '../meta_operation/js/common_operation';
 var utils= require('../../libs/utils');
 export default {
     mixins:[mvueCore.mixins.gridBase],
@@ -203,10 +205,11 @@ export default {
             innerQueryResource:this.queryResource,
             innerQueryOptions:_.cloneDeep(this.queryOptions),
             innerToolbar:{
-                    hide: (this.toolbar&&this.toolbar.hide)||false,
+                hide: (this.toolbar&&this.toolbar.hide)||false,
                     btns: (this.toolbar&&this.toolbar.btns)||[],//普通操作
                     singleBtns:(this.toolbar&&this.toolbar.singleBtns)||[],//基于单条数据的操作
                     batchBtns: (this.toolbar&&this.toolbar.batchBtns)||[],//基于多条数据的操作
+                    rowSingleClick: (this.toolbar&&this.toolbar.rowSingleClick),//单击行的操作
                     quicksearch: (this.toolbar&&this.toolbar.quicksearch)||{
                         fields: null,
                         placeholder: ""
@@ -480,6 +483,27 @@ export default {
         handleOnRowClick(row,index){
             if(!this.viewOnSingleClickRow){
                 return;
+            }
+            //处理由部件配置传入的单击行操作
+            var _rowSingleClick=this.innerToolbar.rowSingleClick;
+            if(_rowSingleClick){
+                var _widgetCtx={
+                    grid:this,
+                    metaEntity:this.metaEntity,
+                    selectedId: row.id,
+                    selectedItem: row
+                };
+                var operation=OperationUtils.expandOperation(_rowSingleClick,{
+                    operation:_rowSingleClick,
+                    widgetContext:_widgetCtx
+                });
+                let commonOptName=operation.name;
+                let commonOpt=commonOperation.createOperation(commonOptName);
+                if(commonOpt){
+                    operation= _.extend(operation,commonOpt);
+                    operation.onclick(_widgetCtx,{operation:operation});
+                    return;
+                }
             }
             //这里btns必须包含view操作
             var btn=_.find(this.innerToolbar.singleBtns, function(o) {

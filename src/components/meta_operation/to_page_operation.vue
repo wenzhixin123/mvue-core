@@ -41,6 +41,7 @@ export default {
             var pageId=this.operation.page.id;
             var _params=_.extend({pageId:pageId},this.operation.pathParams);
             router.push({name:"defaultPageIndex",query:_query,params:_params});
+            this.$emit("triggered");
         }
     }
 }

@@ -47,6 +47,7 @@ export default {
                 data: appData
             };
             //linkapi.runApp(params);
+            this.$emit("triggered");
         }
     }
 }

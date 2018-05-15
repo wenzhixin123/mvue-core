@@ -34,6 +34,7 @@ export default {
                 var onclick=Function('"use strict";return ' + this.operation.onclick  )();
                 onclick(this.widgetContext);
             }
+            this.$emit("triggered");
         }
     }
 }

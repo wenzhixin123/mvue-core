@@ -47,6 +47,7 @@ export default {
             if(this.extendedOperation&&this.extendedOperation.onclick){
                 this.extendedOperation.onclick(this.widgetContext,this);
             }
+            this.$emit("triggered");
         }
     }
 }

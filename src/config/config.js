@@ -262,4 +262,11 @@ mergedConfig.getBlogApiUrl = function () {
 mergedConfig.getLinkEndpoint = function () {
   return getConfigVal("service.link.endpoint");
 };
+/**
+ * 获取元数据api接口地址
+ * @return {*}
+ */
+mergedConfig.getMetadApiEndpoint = function () {
+  return getConfigVal("service.metad.api.endpoint");
+}
 module.exports = mergedConfig;

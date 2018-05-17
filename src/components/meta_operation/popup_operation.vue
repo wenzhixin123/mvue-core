@@ -46,7 +46,7 @@ export default {
     methods:{
         toggleModal(){
             this.popupWidgetModal=!this.popupWidgetModal;
-            this.$emit("triggered",this.popupWidgetModal);
+            this.$emit("triggered","popup");
         }
     }
 }

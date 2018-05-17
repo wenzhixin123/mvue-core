@@ -125,6 +125,7 @@ function operationForDel() {
         onOk: () => {
             resource.delete({id:id}).then(function (re) {
                 context.grid&&context.grid.reload();
+                $optInst.$emit("successed","del");
             });
         }
       });
@@ -185,6 +186,7 @@ function operationForBatchDelete() {
             let id=row[idField.name];
             resource.delete({id:id}).then(function (re) {
               context.grid&&context.grid.reload();
+              $optInst.$emit("successed","batchDelete");
             });
           });
         }

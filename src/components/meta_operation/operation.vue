@@ -49,8 +49,8 @@ export default {
     },
     computed:{
         operationComponent:function(){
-            if(this.operation.onclick&&!this.operation.operationType){
-                this.operation.operationType=operationType.script;
+            if(!this.operation.operationType){
+                return;
             }
             return `${this.operation.operationType}Operation`;
         },
@@ -70,7 +70,8 @@ export default {
             return _.extend(this.widgetContext,params);
         },
         showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
-            var optPermValue=this.operation[Utils.operationDisplayField];
+            var operation=OperationUtils.expandOperation(this.operation,this);
+            var optPermValue=operation[Utils.operationDisplayField];
             if(!_.isPlainObject(optPermValue)){
                 optPermValue=_.trim(optPermValue);
                 if(_.isNil(optPermValue)||optPermValue===''){
@@ -79,7 +80,7 @@ export default {
             }
             var ctx={
                 ctx: this.widgetContext,
-                opt:this.operation
+                opt:operation
             }
             if(_.startsWith(optPermValue,'${')){
                 var compiled = _.template(optPermValue);

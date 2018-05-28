@@ -143,8 +143,7 @@ mergedConfig.getApiBaseUrl = function () {
   if (!_.isEmpty(url)) {
       return url;
   }
-  //未配置时，使用配置的基地址为api地址
-  url = window.config.baseServerUrl;
+  return getConfigVal("service.metad.api.endpoint");
 };
 
 /**

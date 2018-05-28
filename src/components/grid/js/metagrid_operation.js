@@ -49,9 +49,8 @@ function buildQuery(context){
   let _query={};
   if(context.grid){
     var routeQuery=context.grid.$route.query;
-    let contextParent=context.grid.contextParent;
-    let formShortId=contextParent?contextParent.formShortId:'';
-    let viewShortId=contextParent?contextParent.viewShortId:'';
+    let formShortId=context.grid.formShortId||'';
+    let viewShortId=context.grid.viewShortId||'';
     _query= _.extend({},routeQuery);
     if(formShortId){
       _query.formShortId=formShortId;

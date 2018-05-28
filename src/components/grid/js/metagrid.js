@@ -2,7 +2,6 @@
  * 提供元数据与grid整合的功能
  */
 import controlTypeService from '../../form/js/control_type_service';
-import metabase from '../../../libs/metadata/metabase';
 import renderManager from './metagrid_render';
 import operationManager from './metagrid_operation';
 
@@ -47,7 +46,7 @@ function metaFieldToCol(context,metaField) {
  * @param grid
  */
 function initGridByMetabase(grid) {
-  intiGridProperties(grid);
+  initGridProperties(grid);
 
   initToolBar(grid);
 
@@ -59,10 +58,10 @@ function initGridByMetabase(grid) {
  * 实始化grid的基本属性
  * @param grid
  */
-function intiGridProperties(grid) {
+function initGridProperties(grid) {
   var metaEntityObj=null;
   if(!_.isEmpty(grid.metaEntity)){
-    metaEntityObj=metabase.findMetaEntity(grid.metaEntity);
+    metaEntityObj=grid.metaEntity;
     let updatedAtField=metaEntityObj.firstSemanticsField("updatedAt");
     if(updatedAtField&&!grid.queryOptions){//实体有更新时间字段，并且queryOptions没写，则按照更新时间降序排列
       grid.innerQueryOptions={orderby:`${updatedAtField.name} desc`};
@@ -97,14 +96,14 @@ function buildInnerColumns(columns,metaEntityObj,context){
 function  initColumns(grid) {
   var metaEntityObj=null;
   if(!_.isEmpty(grid.metaEntity)){
-    metaEntityObj=metabase.findMetaEntity(grid.metaEntity);
+    metaEntityObj=grid.metaEntity;
   }
   var context={
     grid:grid,
     metaEntity:metaEntityObj
   };
   //如果没有传递columns通过实体字段构造
-  if(!grid.columns&&metaEntityObj){
+  if(!grid.columns&&metaEntityObj&&!grid.innerColumns){
     let defaultFormFields=metaEntityObj.getDefaultViewFields();
     let _cols=[];
     if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
@@ -127,7 +126,10 @@ function  initColumns(grid) {
     }
     _cols=buildInnerColumns(_cols,metaEntityObj,context);
     grid.innerColumns=_cols;
-  }else{
+  }else if(!_.isEmpty(grid.innerColumns)){//已经在entity_base_js中通过viewId构造出内部的columns
+    let _cols=buildInnerColumns(grid.innerColumns,metaEntityObj,context);
+    grid.innerColumns=_cols;
+  }else if(grid.columns){//由外部传入的columns
     let _cols=buildInnerColumns(grid.columns,metaEntityObj,context);
     grid.innerColumns=_cols;
   }
@@ -139,7 +141,7 @@ function  initToolBar(grid) {
   var metaEntityObj=null;
   let titleField=null;
   if(!_.isEmpty(grid.metaEntity)){
-    metaEntityObj=metabase.findMetaEntity(grid.metaEntity);
+    metaEntityObj=grid.metaEntity;
     titleField=metaEntityObj.firstSemanticsField("title");
   }
   var context={
@@ -181,50 +183,50 @@ function  initToolBar(grid) {
     _toolbar.multipleFilters={support:false};
     grid.innerToolbar=_toolbar;
   }else{}*/
-    Object.assign(grid.innerToolbar,grid.toolbar)
-    _.each(grid.innerToolbar.btns,function (btn,index) {
-      var mergedBtn;
-      if(typeof btn=="string") {
-        mergedBtn = operationManager.fillOperationByMb(context, btn);
-        mergedBtn.operationType = "common";
-        mergedBtn.name = btn;
-        delete mergedBtn.onclick;
-      }else{
-        mergedBtn = btn
-      }
-      btns.push(mergedBtn);
-    });
-    //单条数据操作转换，将操作key转换成具有实际操作代码的对象
-    _.each(grid.innerToolbar.singleBtns,function (btn,index) {
-      var mergedBtn;
-      if(typeof btn=="string"){
-        mergedBtn = operationManager.fillOperationByMb(context, btn);
-        mergedBtn.title = mergedBtn.title
-        mergedBtn.operationType = "common";
-        mergedBtn.name = btn;
-        delete mergedBtn.onclick;
-      }else{
-        mergedBtn = btn
-      }
-      singleBtns.push(mergedBtn);
-    });
-    _.each(grid.innerToolbar.batchBtns,function (btn,index) {
-      var mergedBtn;
-      if(typeof btn=="string") {
-        mergedBtn = operationManager.fillOperationByMb(context, btn);
-        mergedBtn.operationType = "common";
-        mergedBtn.name = btn;
-        delete mergedBtn.onclick;
-      }else{
-        mergedBtn = btn
-      }
-      batchBtns.push(mergedBtn);
-    });
-    //多个可切换的默认过滤条件处理
-    grid.innerToolbar.multipleFilters=grid.innerToolbar.multipleFilters||{support:false};
-    grid.innerToolbar.btns=btns;
-    grid.innerToolbar.singleBtns=singleBtns;
-    grid.innerToolbar.batchBtns=batchBtns;
+  //debugger
+    // _.each(grid.innerToolbar.btns,function (btn,index) {
+    //   var mergedBtn;
+    //   if(typeof btn=="string") {
+    //     mergedBtn = operationManager.fillOperationByMb(context, btn);
+    //     mergedBtn.operationType = "common";
+    //     mergedBtn.name = btn;
+    //     delete mergedBtn.onclick;
+    //   }else{
+    //     mergedBtn = btn
+    //   }
+    //   btns.push(mergedBtn);
+    // });
+    // //单条数据操作转换，将操作key转换成具有实际操作代码的对象
+    // _.each(grid.innerToolbar.singleBtns,function (btn,index) {
+    //   var mergedBtn;
+    //   if(typeof btn=="string"){
+    //     mergedBtn = operationManager.fillOperationByMb(context, btn);
+    //     mergedBtn.title = mergedBtn.title
+    //     mergedBtn.operationType = "common";
+    //     mergedBtn.name = btn;
+    //     delete mergedBtn.onclick;
+    //   }else{
+    //     mergedBtn = btn
+    //   }
+    //   singleBtns.push(mergedBtn);
+    // });
+    // _.each(grid.innerToolbar.batchBtns,function (btn,index) {
+    //   var mergedBtn;
+    //   if(typeof btn=="string") {
+    //     mergedBtn = operationManager.fillOperationByMb(context, btn);
+    //     mergedBtn.operationType = "common";
+    //     mergedBtn.name = btn;
+    //     delete mergedBtn.onclick;
+    //   }else{
+    //     mergedBtn = btn
+    //   }
+    //   batchBtns.push(mergedBtn);
+    // });
+    // //多个可切换的默认过滤条件处理
+    // grid.innerToolbar.multipleFilters=grid.innerToolbar.multipleFilters||{support:false};
+    // grid.innerToolbar.btns=btns;
+    // grid.innerToolbar.singleBtns=singleBtns;
+    // grid.innerToolbar.batchBtns=batchBtns;
 
 }
 

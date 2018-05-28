@@ -31,7 +31,7 @@ export default {
     },
     data: function(){
         return {
-            contextPath :Config.contextPath.url
+            contextPath :Config.getGatewayUrl()
         }
     },
     methods:{

@@ -53,8 +53,6 @@ import ajax from './libs/ajax';
 var customValidator = require("./libs/extend/custom_validator.js");
 var customVueResource = require("./libs/extend/custom_vue_resource.js");
 
-//可用的mixins
-import gridBase from './components/grid/js/entity_grid_base';
 
 import metaservice from "./services/meta/metaservice";
 import toolService from "./services/tool/tool_service";
@@ -71,9 +69,6 @@ const install = function(Vue, opts = {}) {
 }
 let MvueCore={
     install:install,
-    mixins:{
-        gridBase:gridBase
-    },
     utils:utils,
     metaBase:metabase,
     metaEntity:metaentity,

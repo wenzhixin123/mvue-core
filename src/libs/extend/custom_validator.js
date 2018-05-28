@@ -35,6 +35,18 @@ module.exports = function CustomValidator(Vue, Vee) {
     }
   });
 
+  Vee.Validator.extend("alpha_underline_begin", {
+    getMessage: function (field) {
+      return '字母下划线开头，可包含字母、数字、中划线、下划线';
+    },
+    validate: function (value) {
+      if (!value) {
+        return true;
+      }
+      return /^[a-z\_][a-zA-Z0-9_\-]*$/.test(value);
+    }
+  });
+
   Vee.Validator.extend("code", {
     getMessage: function (field) {
       return '只允字母、数字、中划线、下划线、中划线';

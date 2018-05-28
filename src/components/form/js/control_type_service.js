@@ -17,6 +17,8 @@ import orguserType from './orguser_type'
 import entityType from './entity_type'
 //基础组件：bool组件定义
 import boolType from './bool_type'
+//高级组件：成员组件定义
+import noFieldType from './no_field_type'
 
 //定义所有辅助组件类型，如描述、分隔线等
 import auxiliaryType from './auxiliary_type'
@@ -49,7 +51,8 @@ _.each(fieldControlsType,function(type){
 //添加新组件(实体数据组件)时 step1-2 需要先import再加到这里
 var entityControlsType=[
     orguserType,
-    entityType
+    entityType,
+    noFieldType
 ];
 var entityControls=[];
 _.each(entityControlsType,function(type){
@@ -86,7 +89,9 @@ var baseComponentParams={
     layout:componentLayout.vertical,//组件的布局方式
     width:"100",//组件所占的宽度，是百分比
     horizontalLayoutLabelWidth:"20",//左右布局时，组件label占的百分比
-    required:false//是否必填
+    required:false,//是否必填
+    semantics:"",//语义设置
+    placeholder:""
 };
 var fieldIndex=0;
 //根据组件类型构造对应的表单布局
@@ -108,6 +113,11 @@ function buildFormItemByComponentType(componentType){
         formItem.children=[];
         formItem.isContainer=true;
         componentParams=_.extend({},containerType.componentParams[componentType]);
+    }else if(noFieldType.accept(componentType)){
+        //不是字段类型的组件：如成员、子列表等
+        formItem.isExternal=true;
+        componentParams=_.extend({},baseComponentParams,noFieldType.componentParams[componentType]);
+        componentParams.title=componentTypes[componentType].title;
     }else{
         formItem.isDataField=true;
         formItem.dataField="field"+fieldIndex++;//如果是field类型，对应实体的字段名
@@ -258,6 +268,22 @@ function switchableComponents(formItem){
     }
     return false;
 };
+//获取组件默认值可设置的所有类型
+function defaultValueTypes(formItem){
+    var componentType=formItem.componentType;
+    for(let type of allType){
+        if(type.accept(componentType)&&type.defaultValueTypes){
+            return type.defaultValueTypes(componentType);
+        }
+    }
+    return null;
+};
+//可设置的语义
+var semantics=[
+    {id:"title",title:"标题"},
+    {id:"member",title:"成员"},
+    {id:"manager",title:"管理员"}
+];
 //值可设置的类型：默认值和固定值
 var valueTypes={
     defaultValue:{id:"defaultValue",title:"默认值"},
@@ -295,6 +321,7 @@ export default{
     isCascadeType:cascadeType.accept,
     isRefEntityType:entityType.accept,
     isContainer:containerType.accept,
+    isNoFieldType:noFieldType.accept,
     componentLayout:componentLayout,
     datePrecision:dateType.datePrecision,
     timePrecision:dateType.timePrecision,
@@ -304,5 +331,7 @@ export default{
     buildFormItemByMetaField:buildFormItemByMetaField,
     formatData:formatData,
     getMetaFieldComponentType:getMetaFieldComponentType,
+    defaultValueTypes:defaultValueTypes,
+    semantics:semantics,
     valueTypes:valueTypes
 };

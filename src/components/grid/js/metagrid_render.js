@@ -112,7 +112,10 @@ export default {
       },
       on:{
         click:function(btn){
-          btn.onclick.call(_.extend({"op":btn},context),_.extend({"checked":params.row},params));
+          var ctx={
+            selectedItem:params.row
+          }
+          btn.onclick.call(context,ctx);
         }
       }
     });

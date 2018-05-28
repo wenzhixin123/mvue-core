@@ -5,7 +5,7 @@
         </div>
         <div class="opts-con-box table-column-center">
             <div v-if="permedBtns()" class="opts-con">
-                <meta-operation v-for="(btn,index) in permedBtns()" :operation="btn" v-if="index<2 || permedBtns().length==3" :widget-context="getWidgetContext()">
+                <meta-operation v-for="(btn,index) in permedBtns()" :key="index" :operation="btn" v-if="index<2 || permedBtns().length==3" :widget-context="getWidgetContext()">
                     <a :key="index" href="javascript:void(0)" class="btn opt-btn" :title="btn.title" >
                         <Icon :type="btn.icon"></Icon>
                     </a>
@@ -28,7 +28,6 @@
     </div>
 </template>
 <script>
-import metabase from '../../libs/metadata/metabase';
 export default {
     props:{
         params:{
@@ -99,7 +98,7 @@ export default {
             }else {
                 context = {
                     grid: _self,
-                    metaEntity: metabase.findMetaEntity(_self.metaEntity),
+                    metaEntity: _self.metaEntity,
                     selectedId: this.item.id,
                     selectedItem: this.item
                 };

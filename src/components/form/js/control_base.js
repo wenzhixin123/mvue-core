@@ -32,6 +32,10 @@ export default {
         };
     },
     mounted:function(){
+        //设计模式不作处理
+        if(this.designMode){
+            return;
+        }
         //创建模式时，组件默认值初始化：如果组件定义了默认值，调用具体组件的默认值初始化函数
         if(this.shouldInitDefault()&&this.initDefaultByType){
             this.initDefaultByType();
@@ -66,6 +70,9 @@ export default {
                 return true;
             }
             return false;
+        },
+        designMode(){
+            return this.mode===controlTypeService.controlMode.design;
         }
     },
     methods:{
@@ -148,6 +155,10 @@ export default {
             });
         },
         isReadonly(){//字段是否只读
+            //设计模式返回
+            if(this.designMode){
+                return true;
+            }
             var metaEntity=this.context.metaEntity;
             if(metaEntity){
                 let metaField=metaEntity.findField(this.formItem.dataField);

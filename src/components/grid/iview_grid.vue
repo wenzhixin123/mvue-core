@@ -4,9 +4,6 @@
     <div class="toolBar compact" v-if="!innerToolbar.hide && toolbarType=='compact'">
         <Row type="flex" align="middle" style="padding-bottom:16px;">
             <i-col span="4" style="text-align:left;">
-                <!--<Select v-if="innerToolbar.multipleFilters&&innerToolbar.multipleFilters.support" v-model="multipleFiltersValueId" style="width: 90px;">
-                    <Option v-for="f in innerToolbar.multipleFilters.filters" :key="f.id" :value="f.id" style="width: auto;">{{f.title}}</Option>
-                </Select>-->
                 <slot name="viewSelect"></slot>
             </i-col>
             <i-col span="20" style="text-align:right;">
@@ -16,21 +13,16 @@
                             icon="ios-search" @on-click="showQuickSearchInput=false" style="width: 150px;margin-right:10px;" :autofocus="true"/>
                         <div class="concat-toolbar-btn" v-if="!showQuickSearchInput" @click="showQuickSearchInput=true"><Icon type="search"></Icon>搜索</div>
                     </div>
-                    <advance-search :quicksearch-keyword="quicksearchKeyword" :toolbar-type="toolbarType" v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" :entity-name="metaEntity" :advance-search-fields="innerToolbar.advanceSearchFields" @do-advance-search="doAdvanceSearch"></advance-search>
+                    <advance-search :quicksearch-keyword="quicksearchKeyword" :toolbar-type="toolbarType" v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" :entity-name="entityName" :advance-search-fields="innerToolbar.advanceSearchFields" @do-advance-search="doAdvanceSearch"></advance-search>
                     <div class="concat-toolbar-btn" @click="refresh()"><Icon type="refresh"></Icon>刷新</div>
                 </div>
                 <div v-if="innerToolbar.btns" class="innerToolbar">
-                        <meta-operation v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index<1" :operation="toolbarBtn" :widget-context="getWidgetContext()">
-                            <Button style="margin-right:-8px;" type="primary" size="small" :title="toolbarBtn.title" class="default-color-btn">
-                                <Icon :type="toolbarBtn.icon"></Icon>
-                                {{toolbarBtn.title}}
-                            </Button>
-                        </meta-operation>
-                    <!--<Button style="margin-right:-8px;" type="primary" size="small" v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index<1" :key="index" @click="toolbarClick(toolbarBtn)"
-                        :title="toolbarBtn.title" class="default-color-btn">
-                        <Icon :type="toolbarBtn.icon"></Icon>
-                        {{toolbarBtn.title}}
-                    </Button>-->
+                    <meta-operation v-for="(toolbarBtn,index) in innerToolbar.btns" :key="index" v-if="index<1" :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                        <Button style="margin-right:-8px;" type="primary" size="small" :title="toolbarBtn.title" class="default-color-btn">
+                            <Icon :type="toolbarBtn.icon"></Icon>
+                            {{toolbarBtn.title}}
+                        </Button>
+                    </meta-operation>
                     <Dropdown v-if="innerToolbar.btns.length>1" @on-click="handleDropdownMenuClick" placement="bottom-end" trigger="click">
                             <Button type="primary" title="更多" size="small" class="default-color-btn">
                                 <Icon type="arrow-down-b"></Icon>
@@ -38,15 +30,10 @@
                             <DropdownMenu slot="list">
                                 <DropdownItem v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index>=1" :name="index" :key="index">
                                     <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
-                                        <Button v-if="!toolbarBtn.render" :key="index"
+                                        <Button :key="index"
                                                 type="text"  :icon="toolbarBtn.icon"
                                         >{{toolbarBtn.title}}</Button>
-                                        <toolbar-btn-render :toolbar-type="toolbarType" v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>
                                     </meta-operation>
-                                    <!--<Button v-if="!toolbarBtn.render" :key="index"
-                                            type="text"  :icon="toolbarBtn.icon"
-                                            >{{toolbarBtn.title}}</Button>
-                                    <toolbar-btn-render :toolbar-type="toolbarType" v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>-->
                                 </DropdownItem>
                             </DropdownMenu>
                     </Dropdown>
@@ -56,33 +43,29 @@
     </div>
     <!--默认toolbar布局-->
     <div class="toolBar" v-if="!innerToolbar.hide && !toolbarType">
-        <Button @click="refresh()" type="ghost" icon="refresh"></Button>
+        <slot name="viewSelect"></slot>
         <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.btns">
-            <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
-                <Button v-if="!toolbarBtn.render" :key="index"
-                        type="primary"  :icon="toolbarBtn.icon"
-                >{{toolbarBtn.title}}</Button>
-                <toolbar-btn-render v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>
+            <meta-operation :operation="toolbarBtn" :key="index" :widget-context="getWidgetContext()">
+                <Button type="primary"  :icon="toolbarBtn.icon">{{toolbarBtn.title}}</Button>
             </meta-operation>
         </template>
-        <Select v-if="innerToolbar.multipleFilters&&innerToolbar.multipleFilters.support" v-model="multipleFiltersValueId" style="width: 120px;">
-            <Option v-for="f in innerToolbar.multipleFilters.filters" :key="f.id" :value="f.id">{{f.title}}</Option>
-        </Select>
         <Input v-if="innerToolbar.quicksearch&&innerToolbar.quicksearch.fields"
                v-model="quicksearchKeyword" :placeholder="innerToolbar.quicksearch.placeholder"
                icon="search" style="width: 150px;" :autofocus="true"/>
-        <advance-search :quicksearch-keyword="quicksearchKeyword" v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" :entity-name="metaEntity" :advance-search-fields="innerToolbar.advanceSearchFields" @do-advance-search="doAdvanceSearch"></advance-search>
+        <button @click="refresh()" type="button" class="ivu-btn ivu-btn-primary ivu-btn-circle ivu-btn-icon-only" title="刷新">
+            <i class="ivu-icon ivu-icon-ios-refresh-empty" style="font-size:32px;"></i>
+        </button>
+        <advance-search :quicksearch-keyword="quicksearchKeyword" v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" :entity-name="entityName" :advance-search-fields="innerToolbar.advanceSearchFields" @do-advance-search="doAdvanceSearch"></advance-search>
     </div>
     <!--批量操作的工具栏-->
     <div class="toolbar-batch-operations" style="display:table;" v-if="innerToolbar.batchBtns" v-show="checked&&checked.length>0">
         <div style="display:table-cell;vertical-align:middle;">
         <span class="checked-info-span tools-color">已选中{{checked.length}}项目</span>
         <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.batchBtns">
-            <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
-                <Button v-if="!toolbarBtn.render" :key="index" size="small"
+            <meta-operation :key="index" :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                <Button v-if="!toolbarBtn.render" size="small"
                         type="text"  :icon="toolbarBtn.icon"
                 >{{toolbarBtn.title}}</Button>
-                <toolbar-btn-render :toolbar-type="toolbarType" v-if="toolbarBtn.render" :render="toolbarBtn.render" :key="index" :toolbar-btn="toolbarBtn"></toolbar-btn-render>
             </meta-operation>
         </template>
         </div>
@@ -116,33 +99,16 @@
 </div>
 </template>
 <script>
-import metaGrid from "./js/metagrid";
-import toolbarBtnRender from "./js/toolbar_btn_render";
 import metabase from '../../libs/metadata/metabase';
 import OperationUtils from '../meta_operation/js/operation_utils';
 import commonOperation from '../meta_operation/js/common_operation';
+import gridBase from './js/entity_grid_base';
 var utils= require('../../libs/utils');
 export default {
-    mixins:[mvueCore.mixins.gridBase],
+    mixins:[gridBase],
     props: {
-      "metaEntityProp": {
-        type: String,
-        required: false
-      },
-      "toolbarProp": {
+      "toolbar": {
         type: Object
-      },
-      "createPathProp": {  //创建表单的路径或路由名
-        type: String,
-        required: false
-      },
-      "editPathProp": {  //修改表单的路径或路由名
-        type: String,
-        required: false
-      },
-      "viewPathProp": {  //查看表单的地址
-        type: String,
-        required: false
       },
       "queryUrl": {//queryUrl和queryResource二选一
         type: String,
@@ -152,26 +118,22 @@ export default {
         type: Object,
         required: false
       },
-      "queryOptionsProp": {//queryUrl或者queryResource查询的参数，对应api query接口的参数，包括排序、分页等参数设置
+      "queryOptions": {//queryUrl或者queryResource查询的参数，对应api query接口的参数，包括排序、分页等参数设置
         type: Object,
         required: false
       },
-      "columnsProp": {
+      "columns": {
         type: Array,
         required: false,
-      },
-      "contextParentProp":{//grid的自定义父容器
-        type:Object
       },
       "operationsWithTitleColumn": {//是否操作列合并到标题列
         type: Boolean,
         required: false,
         default: true
       },
-      "toolbarType": {//'compact':紧凑型toolbar布局；不设置用默认compact布局
+      "toolbarType": {//'compact':紧凑型toolbar布局；不设置用默认布局
         type: String,
-        required: false,
-        default: "compact"
+        required: false
       },
       "viewOnSingleClickRow": {//是否开启单击行跳到查看页
         type: Boolean,
@@ -200,7 +162,17 @@ export default {
       }
     },
     data:function(){
+        var entityName = this.$route.params.entityName;
+        var metaEntity = metabase.findMetaEntity(entityName);
         return {
+            entityName: entityName,
+            metaEntity: metaEntity,
+            preprocessed: false,
+            formShortId: null,//如果表单自定义过了，则表单也从自定义表单的formShortId获取
+            viewShortId: null,//如果视图自定义过了，则视图列表也从自定义视图的viewShortId获取
+            createPath:null,
+            editPath:null,
+            viewPath:null,
             innerColumns:[],
             innerQueryResource:this.queryResource,
             innerQueryOptions:_.cloneDeep(this.queryOptions),
@@ -214,8 +186,7 @@ export default {
                         fields: null,
                         placeholder: ""
                     },
-                    advanceSearchFields:(this.toolbar&&this.toolbar.advanceSearchFields)||[],
-                    multipleFilters:(this.toolbar&&this.toolbar.multipleFilters)||{support:false}
+                    advanceSearchFields:(this.toolbar&&this.toolbar.advanceSearchFields)||[]
                 },
             data:[],//原始数据
             checked:[],//已经选择的数据
@@ -270,12 +241,6 @@ export default {
             });
             }
         },
-        /*metaEntity:function(){
-            if(this.metaEntity){
-                metaGrid.initGridByMetabase(this);
-                this.reload();
-            }
-        },*/
         pageSize:function (newVal, oldVal) {
             if (newVal != oldVal) {
                 this.pageIndex = 1;
@@ -289,45 +254,23 @@ export default {
             },
             deep:true
         },
-        multipleFiltersValueId:function(){
-            let fmap=_.keyBy(this.innerToolbar.multipleFilters.filters,"id");
-            this.multipleFiltersValue=fmap[this.multipleFiltersValueId];
-            this.innerQueryOptions.filters=this.multipleFiltersValue.value;
-            if(this.multipleFiltersValue.viewId){
-                this.innerQueryOptions.viewId=this.multipleFiltersValue.viewId;
-            }
-            this.reload();
-        },
         viewId(){
+            this.preprocessed=false;
             //检测视图id变化后重新获取视图配置
-            this.initGrid();
+            this.initGridByViewId();
+        },
+        preprocessed(){
+            //当grid已经根据viewId初始化完成后，重新加载grid
+            if(this.preprocessed){
+                this.reload();
+            }
         }
     },
     mounted:function(){
-        this.initGrid();
-        /*
-        var _this=this;
-                metaGrid.initGridByMetabase(_this);
-                this.setDefaultFilters();
-                this.$nextTick(function(){
-                    this.reload();
-                });
-        */
+        //根据viewId获取视图配置并初始化grid的一些属性，在entity_grid_base中实现
+        this.initGridByViewId();
     },
     methods:{
-        setDefaultFilters(){//根据多个默认过滤条件，选择默认的过滤条件，有默认用默认，没设置用第一个
-            var _this=this;
-            if(this.innerToolbar.multipleFilters&&this.innerToolbar.multipleFilters.support){
-                _.each(this.innerToolbar.multipleFilters.filters,function(f){
-                    if(f.checked){
-                        _this.multipleFiltersValueId=f.id;
-                    }
-                });
-                if(!this.multipleFiltersValueId){
-                    this.multipleFiltersValueId=this.innerToolbar.multipleFilters.filters[0].id;
-                }
-            }
-        },
         reload: function () {
             var _this = this;
             if ((!_this.queryUrl) && (!_this.innerQueryResource)) {
@@ -530,7 +473,7 @@ export default {
             }else {
                 context = {
                     grid: $.extend(_self, {checked: _self.checked}),
-                    metaEntity: metabase.findMetaEntity(_self.metaEntity),
+                    metaEntity: _self.metaEntity,
                     selectedIds: _self.checked.map(function (obj) {
                         return obj.id
                     }),
@@ -538,26 +481,15 @@ export default {
                 };
             }
             return context;
-        },
-        //begin grid渲染
-        gridRender(){
-            var _this=this;
-            metaGrid.initGridByMetabase(_this);
-            this.setDefaultFilters();
-            this.$nextTick(function(){
-                this.reload();
-            });
         }
-        //end grid渲染
     },
     components:{
-        advanceSearch:require("./advance_search"),
-        toolbarBtnRender:toolbarBtnRender
+        advanceSearch:require("./advance_search")
     }
 }
 </script>
 
-<style lang="scss" scoped>
+<style lang="scss">
     .data-table-list{
         margin-top:10px;
         margin-bottom: 20px;
@@ -584,17 +516,22 @@ export default {
         .ivu-checkbox{
             margin-top:8px;
         }
-        .toolBar .innerToolbar{
-            display: inline-block;
-            button +.ivu-dropdown{
-                border-left: 1px rgba(255, 255, 255, .2) solid;
-
-                button{
-                    border-top-left-radius: 0;
-                    border-bottom-left-radius: 0;
+        .toolBar{
+            .innerToolbar{
+                display: inline-block;
+                button +.ivu-dropdown{
+                    border-left: 1px rgba(255, 255, 255, .2) solid;
+    
+                    button{
+                        border-top-left-radius: 0;
+                        border-bottom-left-radius: 0;
+                    }
                 }
             }
-        }
+            .widget-operation{
+                margin-right:5px;
+            }
+        } 
     }
 </style>
 

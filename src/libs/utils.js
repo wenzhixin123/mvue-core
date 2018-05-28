@@ -258,6 +258,11 @@ var utils = {
         view:"view",
         edit:"edit"
     },
+    fieldActions:{
+        view:"view",
+        edit:"edit",
+        readonly:"readonly"
+    },
     ignoreSpecialQuery(query){
         let _query=_.cloneDeep(query);
         _.each(Utils.queryKeys,function(key){

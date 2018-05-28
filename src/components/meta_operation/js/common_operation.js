@@ -114,7 +114,10 @@ function operationForDel() {
         return;
       }
       var metaEntity=context.metaEntity;
-      resource=metaEntity&&metaEntity.dataResource();
+      var resource=context.grid&&context.grid.queryResource;
+      if(!resource){
+        resource=metaEntity&&metaEntity.dataResource();
+      }
       if(_.isEmpty(resource)){
         iview$Modal.error({content:`实体删除地址未设置`});
         return;

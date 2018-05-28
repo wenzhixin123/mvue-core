@@ -108,15 +108,8 @@ export default {
     return h("meta-grid-operation-btn",{
       props:{
         btns:btns,
-        item: params.row
-      },
-      on:{
-        click:function(btn){
-          var ctx={
-            selectedItem:params.row
-          }
-          btn.onclick.call(context,ctx);
-        }
+        item: params.row,
+        context:context
       }
     });
   }

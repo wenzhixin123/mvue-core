@@ -170,15 +170,20 @@ export default {
             var _this=this;
             //begin 实体没有自定义默认视图数据，检查查询参数构造默认的查询条件
             let queryOptions = _this.buildQueryFilters();
-            //检查实体默认的排序字段
-            let orderby = _this.buildDefaultOrderby();
-            if (queryOptions) {
-                if (orderby) {
-                    queryOptions.orderby = orderby;
-                }
-            } else {
-                if (orderby) {
-                    queryOptions = { orderby: orderby };
+            if(_this.innerQueryOptions&&_this.innerQueryOptions.orderby){
+                queryOptions=queryOptions||{};
+                queryOptions.orderby=_this.innerQueryOptions.orderby;
+            }else{
+                //检查实体默认的排序字段
+                let orderby = _this.buildDefaultOrderby();
+                if (queryOptions) {
+                    if (orderby) {
+                        queryOptions.orderby = orderby;
+                    }
+                } else {
+                    if (orderby) {
+                        queryOptions = { orderby: orderby };
+                    }
                 }
             }
             _this.innerQueryOptions = queryOptions;

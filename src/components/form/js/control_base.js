@@ -59,14 +59,15 @@ export default {
             return rwidth+"%";
         },
         disabled:function(){
-            if(this.isReadonly()){
+            let action= this.context&&this.context.action;
+            if(this.isReadonly()||Utils.fieldActions.readonly==action){
                 return true;
             }
             return this.mode!==controlTypeService.controlMode.normal;
         },
         viewMode(){
             let action= this.context&&this.context.action;
-            if(Utils.formActions.view===action){
+            if(Utils.formActions.view===action||Utils.fieldActions.view===action){
                 return true;
             }
             return false;

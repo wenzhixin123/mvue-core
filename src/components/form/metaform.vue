@@ -9,13 +9,13 @@
                 <div class="control-tmpl-panel" v-show="!formItem.hidden">
                     <component v-if="formItem.isContainer" :is="'Meta'+formItem.componentType" :form-item="formItem">
                         <div v-for="containerFormItem in formItem.children" :key="containerFormItem.id" v-show="!containerFormItem.hidden">
-                            <component v-if="containerFormItem.isDataField" :context="{metaEntity,action}" :validator="$validator" v-model="entity[containerFormItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
-                            <component v-else-if="containerFormItem.isExternal" :context="{metaEntity,action}" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(containerFormItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                            <component v-if="containerFormItem.isDataField" :context="fieldContext(formItem)" :validator="$validator" v-model="entity[containerFormItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                            <component v-else-if="containerFormItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(containerFormItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
                             <component v-else :is="'Meta'+containerFormItem.componentType" :form-item="containerFormItem"></component>
                         </div>
                     </component>
-                    <component v-else-if="formItem.isDataField" :context="{metaEntity,action}" :validator="$validator" v-model="entity[formItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
-                    <component v-else-if="formItem.isExternal" :context="{metaEntity,action}" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                    <component v-else-if="formItem.isDataField" :context="fieldContext(formItem)" :validator="$validator" v-model="entity[formItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                    <component v-else-if="formItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
                     <component v-else :is="'Meta'+formItem.componentType" :form-item="formItem"></component>
                 </div>
             </div>
@@ -114,6 +114,10 @@
             transfer: {
                 type: Boolean,
                 default: false
+            },
+            components:{
+                type: Object,
+                require: false
             }
         },
         computed:{
@@ -596,6 +600,15 @@
                         viewShortId:this.$route.query.viewShortId
                     }
                 });
+            },
+            fieldContext(item){
+                //字段视图
+                let _this = this,_obj = {metaEntity:_this.metaEntity,action:_this.action}
+                if(_this.components&&_this.components[item.dataField]){
+                    //存在对字段的状态设置
+                    _obj.action = _this.components[item.dataField].mode;
+                }
+                return _obj
             }
         }
     }

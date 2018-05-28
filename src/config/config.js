@@ -268,4 +268,18 @@ mergedConfig.getLinkEndpoint = function () {
 mergedConfig.getMetadApiEndpoint = function () {
   return getConfigVal("service.metad.api.endpoint");
 }
+/**
+ * 获取工作流运行时服务地址
+ * @return {*}
+ */
+mergedConfig.getActivitiRuntimeUrl = function () {
+  return getConfigVal("service.activiti.runtime.endpoint");
+}
+/**
+ * 获取工作流查询服务地址
+ * @return {*}
+ */
+mergedConfig.getActivitiQueryUrl = function () {
+  return getConfigVal("service.activiti.query.endpoint");
+}
 module.exports = mergedConfig;

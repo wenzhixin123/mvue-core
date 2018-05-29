@@ -1,5 +1,6 @@
 <template>
 <div class="grid-con" v-if="preprocessed">
+    <slot name="toolbarSlot">
     <!--紧凑型toolbar布局-->
     <div class="toolBar compact" v-if="!innerToolbar.hide && toolbarType=='compact'">
         <Row type="flex" align="middle" style="padding-bottom:16px;">
@@ -42,7 +43,7 @@
         </Row>
     </div>
     <!--默认toolbar布局-->
-    <div class="toolBar" v-if="!innerToolbar.hide && !toolbarType">
+    <div class="toolBar default" v-if="!innerToolbar.hide && !toolbarType">
         <slot name="viewSelect"></slot>
         <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.btns">
             <meta-operation :operation="toolbarBtn" :key="index" :widget-context="getWidgetContext()">
@@ -57,6 +58,7 @@
         </button>
         <advance-search :quicksearch-keyword="quicksearchKeyword" v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" :entity-name="entityName" :advance-search-fields="innerToolbar.advanceSearchFields" @do-advance-search="doAdvanceSearch"></advance-search>
     </div>
+    </slot>
     <!--批量操作的工具栏-->
     <div class="toolbar-batch-operations" style="display:table;" v-if="innerToolbar.batchBtns" v-show="checked&&checked.length>0">
         <div style="display:table-cell;vertical-align:middle;">
@@ -516,22 +518,32 @@ export default {
         .ivu-checkbox{
             margin-top:8px;
         }
-        .toolBar{
+        .default.toolBar{
+            .widget-operation{
+                margin-right:5px;
+            }
+        } 
+        .compact.toolBar{
             .innerToolbar{
                 display: inline-block;
                 button +.ivu-dropdown{
                     border-left: 1px rgba(255, 255, 255, .2) solid;
-    
+
+                    button{
+                        border-top-left-radius: 0;
+                        border-bottom-left-radius: 0;
+                    }
+                }
+                .widget-operation +.ivu-dropdown{
+                    border-left: 1px rgba(255, 255, 255, .2) solid;
+
                     button{
                         border-top-left-radius: 0;
                         border-bottom-left-radius: 0;
                     }
                 }
             }
-            .widget-operation{
-                margin-right:5px;
-            }
-        } 
+        }
     }
 </style>
 

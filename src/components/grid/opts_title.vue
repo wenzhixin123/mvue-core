@@ -108,7 +108,7 @@ export default {
     }
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .opts-title-con{
     display:table;
     width:100%;
@@ -142,6 +142,12 @@ export default {
             }
         }
     }
+}
+.ivu-table-row .opts-title-con.opts-title-con-showopts .opts-con{
+    display: block;
+}
+.ivu-table-row.ivu-table-row-hover .opts-title-con .opts-con{
+    display: block;
 }
 </style>
 

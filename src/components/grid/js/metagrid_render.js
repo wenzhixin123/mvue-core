@@ -82,11 +82,6 @@ export default {
           btns:btns,
           item: params.row,
           grid:context.grid
-        },
-        on: {
-          btnClick:function(btn){
-            btn.onclick.call(_.extend({"op":btn},context),_.extend({"checked":params.row},params));
-          }
         }
       });
     }

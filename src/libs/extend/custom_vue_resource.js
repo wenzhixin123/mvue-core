@@ -7,7 +7,7 @@ module.exports=function CustomVueResource(Vue,VueResource){
         var _this=this;
         if(_this instanceof Vue && _this.showLoading){
             // 请求发送前加载中提示
-            _this.$Spin.show();
+            //_this.$Spin.show();
         }
         var token = session.getToken();
         if (token) {
@@ -20,7 +20,7 @@ module.exports=function CustomVueResource(Vue,VueResource){
             }
             if(_this instanceof Vue){
                 // 请求结束关闭加载中
-                _this.$Spin.hide();
+                //_this.$Spin.hide();
             }
             var isError=false;
             if(response.status === 401) {

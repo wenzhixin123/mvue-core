@@ -60,7 +60,7 @@
     </div>
     </slot>
     <!--批量操作的工具栏-->
-    <div class="toolbar-batch-operations" style="display:table;" v-if="innerToolbar.batchBtns" v-show="checked&&checked.length>0">
+    <div v-if="!innerToolbar.hide && toolbarType=='compact' && innerToolbar.batchBtns" class="toolbar-batch-operations" style="display:table;" v-show="checked&&checked.length>0">
         <div style="display:table-cell;vertical-align:middle;">
         <span class="checked-info-span tools-color">已选中{{checked.length}}项目</span>
         <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.batchBtns">

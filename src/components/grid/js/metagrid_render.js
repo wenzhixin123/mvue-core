@@ -51,10 +51,9 @@ export default {
     return function (h, params) {
       return h("meta-grid-img-title", {
         props: {
-          params: {
-            metaField:metaField,
-            uploadUrl:Config.getUploadUrl()
-          },
+          params: _.extend({
+              uploadUrl:Config.getUploadUrl()
+            },metaField),
           item: params.row
         },
         on: {

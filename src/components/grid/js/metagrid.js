@@ -79,7 +79,7 @@ function buildInnerColumns(columns,metaEntityObj,context){
   _.each(columns,function(col){
     var metaParams=col.metaParams ||{};
     var _col=_.omit(col,["metaParams"]);
-    var metaField={};
+    var metaField={name:_col.key};
     if(metaEntityObj!=null){
       metaField=metaEntityObj.findField(_col.key) || {};
     }
@@ -91,7 +91,7 @@ function buildInnerColumns(columns,metaEntityObj,context){
   return _cols;
 }
 /**
- * 初始化列
+ * 根据元数据信息初始化列，所以没有元数据信息不做初始化
  */
 function  initColumns(grid) {
   var metaEntityObj=null;
@@ -102,37 +102,33 @@ function  initColumns(grid) {
     grid:grid,
     metaEntity:metaEntityObj
   };
-  //如果没有传递columns通过实体字段构造
-  if(!grid.columns&&metaEntityObj&&!grid.innerColumns){
+  let _cols=[];
+  //如果没有传入任何columns，并且元数据信息存在，构造默认列
+  if(!grid.innerColumns&&metaEntityObj){
     let defaultFormFields=metaEntityObj.getDefaultViewFields();
-    let _cols=[];
     if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
       _cols=[{type: 'selection',width:58,align:"center"}];
     }
     _.each(defaultFormFields,function(fieldName){
       _cols.push({key:fieldName});
     });
-    //如果操作列不和标题列合并，默认最后一列为操作列
-    if(!grid.operationsWithTitleColumn){
-      _cols.push({
-        title:"具体操作",
-        width:220,
-        align:"center",
-        metaParams:{
-          type:"operation",
-          btns:grid.innerToolbar.singleBtns
-        }
-      });
-    }
-    _cols=buildInnerColumns(_cols,metaEntityObj,context);
-    grid.innerColumns=_cols;
-  }else if(!_.isEmpty(grid.innerColumns)){//已经在entity_base_js中通过viewId构造出内部的columns
-    let _cols=buildInnerColumns(grid.innerColumns,metaEntityObj,context);
-    grid.innerColumns=_cols;
-  }else if(grid.columns){//由外部传入的columns
-    let _cols=buildInnerColumns(grid.columns,metaEntityObj,context);
-    grid.innerColumns=_cols;
+  }else{
+    _cols=grid.innerColumns;
   }
+  //如果操作列不和标题列合并，并且定义了单行操作，默认最后一列为操作列
+  if(!grid.operationsWithTitleColumn&&!_.isEmpty(grid.innerToolbar.singleBtns)){
+    _cols.push({
+      title:"具体操作",
+      width:220,
+      align:"center",
+      metaParams:{
+        type:"operation"
+      }
+    });
+  }
+  //如果元数据信息存在，用metaField初始化列，操作列也要转化成render列
+  _cols=buildInnerColumns(_cols,metaEntityObj,context);
+  grid.innerColumns=_cols;
 }
 
 function  initToolBar(grid) {

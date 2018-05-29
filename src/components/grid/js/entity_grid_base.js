@@ -155,8 +155,7 @@ export default {
                     width:220,
                     align:"center",
                     metaParams:{
-                        type:"operation",
-                        btns:toolbar.singleBtns
+                        type:"operation"
                     }
                 });
             }

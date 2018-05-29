@@ -99,16 +99,16 @@ export default {
    */
   renderForOperation:function (context,metaField) {
     let btns=context.grid.innerToolbar.singleBtns;
-  return function(h,params){
-    return h("meta-grid-operation-btn",{
-      props:{
-        btns:btns,
-        item: params.row,
-        context:context
-      }
-    });
-  }
-},
+    return function(h,params){
+      return h("meta-grid-operation-btn",{
+        props:{
+          btns:btns,
+          item: params.row,
+          context:context
+        }
+      });
+    }
+  },
 
   /**
    * 通用渲染

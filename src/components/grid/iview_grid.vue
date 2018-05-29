@@ -131,7 +131,7 @@ export default {
       "operationsWithTitleColumn": {//是否操作列合并到标题列
         type: Boolean,
         required: false,
-        default: true
+        default: false
       },
       "toolbarType": {//'compact':紧凑型toolbar布局；不设置用默认布局
         type: String,
@@ -175,7 +175,7 @@ export default {
             createPath:null,
             editPath:null,
             viewPath:null,
-            innerColumns:[],
+            innerColumns:_.cloneDeep(this.columns),
             innerQueryResource:this.queryResource,
             innerQueryOptions:_.cloneDeep(this.queryOptions),
             innerToolbar:{

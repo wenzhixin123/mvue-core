@@ -178,7 +178,6 @@ export default {
                 swagger:null,
                 entityName:this.grid.metaEntity,
                 mappings:[],
-                callback:Config.getMetaserviceUrl()+"/meta_entity_event/on_imported",
                 worksheet:0,
                 startRowIndex:1,
                 overideOnDup:true,

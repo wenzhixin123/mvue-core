@@ -76,7 +76,11 @@
         </div>
     </div>
     <div class="data-table-list">
-        <Table :loading="loadingData" :columns="innerColumns" :data="filteredData"
+        <Table :loading="loadingData" 
+            :columns="innerColumns" 
+            :data="filteredData"
+            :highlight-row="highlightRow"
+            @on-current-change="handleOnCurrentChange"
             @on-selection-change="handleOnSelectionChange"
             @on-row-click="handleOnRowClick"
             @on-sort-change="handleSortChange">
@@ -175,6 +179,10 @@ export default {
           default:"page"
       },
       "pageStart0":{//表示起始页是否从0开始，leap从1开始，activiti从0开始
+          type:Boolean,
+          default:false
+      },
+      "highlightRow":{//iview table属性，用来单选选中高亮
           type:Boolean,
           default:false
       }
@@ -440,11 +448,14 @@ export default {
             this.advanceSearchFilters=advanceSearchFilters;
             this.reload();
         },
-        //begin 选择行
+        //选择单行
+        handleOnCurrentChange(currentRow,oldCurrentRow){
+            this.$emit("on-current-change",currentRow,oldCurrentRow)
+        },
+        //选择多行
         handleOnSelectionChange(selection){
             this.checked=selection;
         },
-        //end 选择行
         //begin 单击行
         handleOnRowClick(row,index){
             if(!this.viewOnSingleClickRow){

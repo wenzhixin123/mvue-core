@@ -128,7 +128,7 @@ export default {
                 return columnsMap[o.name].visible;
             });
             let columns=[];
-            if(toolbar.batchBtns&&toolbar.batchBtns.length>0){
+            if(this.innerToolbar.batchBtns&&this.innerToolbar.batchBtns.length>0){
                 columns=[{type: 'selection',width:58,align:"center"}];
             }
             //添加所有可见列

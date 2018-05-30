@@ -161,6 +161,22 @@ export default {
         type: Boolean,
         required: false,
         default: true
+      },
+      "preprocessor":{//数据预处理函数，对获取到数据作预处理转换
+          type:Function,
+          required: false
+      },
+      "pageSizeKey":{
+          type:String,
+          default:"pageSize"
+      },
+      "pageKey":{
+          type:String,
+          default:"page"
+      },
+      "pageStart0":{//表示起始页是否从0开始，leap从1开始，activiti从0开始
+          type:Boolean,
+          default:false
       }
     },
     data:function(){
@@ -301,15 +317,19 @@ export default {
             dataPromise.then(function(resp){
                 //重新加载数据后清空选中的数据
                 _this.checked=[];
-                _this.data = resp.data;
-                if (_this.pager) {
-                    //获取总数
-                    _this.totalCount = _.toInteger(resp.headers.get("X-Total-Count"));
-                    //获取总页数
-                    _this.pageCount = _.ceil(_this.totalCount / _.toInteger(_this.pageSize));
-                    //总页数至少为1
-                    if (_this.pageCount == 0) {
-                        _this.pageCount = 1;
+                if(_this.preprocessor){//调用外部的数据处理器
+                    _this.preprocessor(_this,resp);
+                }else{
+                    _this.data = resp.data;
+                    if (_this.pager) {
+                        //获取总数
+                        _this.totalCount = _.toInteger(resp.headers.get("X-Total-Count"));
+                        //获取总页数
+                        _this.pageCount = _.ceil(_this.totalCount / _.toInteger(_this.pageSize));
+                        //总页数至少为1
+                        if (_this.pageCount == 0) {
+                            _this.pageCount = 1;
+                        }
                     }
                 }
                 _this.$emit("dataloaded", _this);
@@ -322,8 +342,9 @@ export default {
             if (!_this.pageIndex) {
               _this.pageIndex = 1;
             }
-            _queryOptions.page = _this.pageIndex;
-            _queryOptions.page_size = _this.pageSize;
+            //如果起始页从0开始，传到后台的参数要减1
+            _queryOptions[this.pageKey] = this.pageStart0?_this.pageIndex-1:_this.pageIndex;
+            _queryOptions[this.pageSizeKey] = _this.pageSize;
             _queryOptions.total = true;
           }
           //如果启用了高级搜索，快捷搜索失效

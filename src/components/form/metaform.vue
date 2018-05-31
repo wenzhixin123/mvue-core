@@ -28,15 +28,9 @@
         </template>
         <div v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer" class="form-toolbar" :class="{'has-buttons':hasButtons()}" slot="toolbar">
             <div v-if="hasButtons()" :class="{'onepx-stroke':hasButtons()}"></div>
-            <template v-if="!toolbar">
-                <Button v-if="innerPermissions.cancel" type="ghost" size="small"  @click.stop.prevent="doCancel">取消</Button>
-                <Button v-if="innerPermissions.openEdit&&isView" type="primary" size="small" @click.stop.prevent="doOpenEdit">编辑</Button>
-                <Button v-if="innerPermissions.edit&&!isView" type="primary" size="small" @click.stop.prevent="doSaveModel">保存</Button>
-                <Button v-if="innerPermissions.del && isEdit" type="primary" size="small" @click.stop.prevent="doDelete">删除</Button>
-            </template>
             <template v-if="toolbar">
                 <template v-if="isView">
-                    <meta-operation v-for="btn in toolbar.viewbtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                    <meta-operation v-for="btn in toolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
                         <Button :type="btn.btnType || 'primary'" size="small" :title="btn.title">
                             <Icon :type="btn.icon" v-if="btn.icon"></Icon>
                             {{btn.title}}
@@ -44,7 +38,7 @@
                     </meta-operation>
                 </template>
                 <template v-if="!isView">
-                    <meta-operation v-for="btn in toolbar.editbtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                    <meta-operation v-for="btn in toolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
                         <Button :type="btn.btnType || 'primary'" size="small" :title="btn.title">
                             <Icon :type="btn.icon" v-if="btn.icon"></Icon>
                             {{btn.title}}
@@ -82,11 +76,11 @@
                 type:String,
                 required:false,
             },
-            isView:{                                 //表示是否查看模式的表单
+            forceView:{                                 //表示是否指定表单未强制查看模式
                 type:Boolean,
                 default:false
             },
-            editToView:{                        //编辑完成后，是否跳转到查看到页面
+            editToView:{                        //编辑完成后，是否跳转到查看页面
                 type : Boolean,
                 default: false
             },
@@ -127,8 +121,16 @@
             isEdit:function () {
                 return !this.isView && this.formStatus==Utils.formActions.edit;
             },
+            isView:function(){//是否为查看模式
+                //外部指定强制查看模式或者已归档
+                if(this.forceView||this.isArchived){
+                    return true;
+                }
+                return false;
+            },
             action(){
-                if(this.isView){
+                //外部指定强制查看模式或者已归档
+                if(this.forceView||this.isArchived){
                     return Utils.formActions.view;
                 }
                 return this.formStatus;
@@ -145,6 +147,7 @@
             var entityId=this.recordId;
             entity=metaEntity.getDefaultModel();
             return {
+                isArchived:false,//表示数据是否已归档
                 dataResource:dsWrapper.$resource,
                 dataResourceInnerVueInst:dsWrapper.$innerVueInst,
                 changedQueue:[],//智能验证变化队列
@@ -206,15 +209,6 @@
             componentName(formItem){
                 return metaformUtils.metaComponentType(formItem);
             },
-            doOpenEdit(){
-                let _query=_.extend({},this.$route.query);
-                _query[Utils.queryKeys.action]=Utils.formActions.edit;
-                router.push({
-                    name:this.$route.name,
-                    params:this.$route.params,
-                    query:_query
-                });
-            },
             doSaveModel:function(){
                 var _this=this;
                 this.doValidation(function(){
@@ -255,25 +249,6 @@
                     });
                 }
             },
-            doCancel:function(){
-                router.go(-1);
-            },
-            doDelete:function(){
-                var _this = this;
-                var delParams={id:this.entityId};
-                var tips='确定删除吗?';
-                iview$Modal.confirm({
-                    title: '提示',
-                    content: tips,
-                    onOk: () => {
-                        _this.dataResource.delete(delParams).then(function(res){
-                            iview$Message.success('删除成功');
-                            _this.$emit("on-deleted");
-                            _this.onDeleted();
-                        });
-                    }
-                });
-            },
             doValidation:function(callback){
                 var _this=this;
                 //启用智能校验
@@ -281,7 +256,6 @@
                     callback&&callback();
                 });
             },
-
             initForm(){
                 var formShortId = this.formId || this.$route.query.formShortId;
                 if(_.isEmpty(formShortId)){
@@ -334,6 +308,15 @@
                 }
             },
             hasButtons(){//工具栏是否有按钮存在，没有按钮的话，工具栏隐藏
+                if(!this.toolbar){
+                    return false;
+                }
+                if(this.toolbar&&_.isEmpty(this.toolbar.viewBtns)&&this.isView){
+                    return false;
+                }
+                if(this.toolbar&&_.isEmpty(this.toolbar.editBtns)&&!this.isView){
+                    return false;
+                }
                 if(this.innerPermissions.cancel){
                     return true;
                 }
@@ -469,6 +452,7 @@
             checkIsArchived() {
                 var _self = this;
                 mvueCore.metaService.getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
+                    _self.isArchived=true;
                     eventBus.record.isArchived = true;
                     _self.innerPermissions={
                         openEdit:false,
@@ -477,6 +461,7 @@
                         cancel:false
                     }
                 }).catch(()=> {
+                    _self.isArchived=false;
                     eventBus.record.isArchived = false;
                 });
             },

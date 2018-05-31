@@ -211,17 +211,25 @@
             },
             doSaveModel:function(){
                 var _this=this;
-                this.doValidation(function(){
-                    let before=_this.beforeSave();
-                    if (before && before.then){//返回的Promise对象
-                        before.then(function(valid){
-                            if(false!==valid){//true 表示可继续保存
-                                _this.doSave();
-                            }
-                        });
-                    }else if(before!==false){//普通true or false
-                        _this.doSave();
-                    }
+                return new Promise((resolve,reject)=>{
+                    this.doValidation(function(){
+                        let before=_this.beforeSave();
+                        if (before && before.then){//返回的Promise对象
+                            before.then(function(valid){
+                                if(false!==valid){//true 表示可继续保存
+                                    let doSavePromise=_this.doSave();
+                                    doSavePromise.then(()=>{resolve();},()=>{reject();});
+                                }else{
+                                    reject();
+                                }
+                            });
+                        }else if(before!==false){//普通true or false
+                            let doSavePromise=_this.doSave();
+                            doSavePromise.then(()=>{resolve();},()=>{reject();});
+                        }else{
+                            reject();
+                        }
+                    });
                 });
             },
             doSave(){
@@ -230,24 +238,30 @@
                     return;
                 }
                 _this.isSavingToServer=true;
-                if(this.isEdit){//更新
-                    let _model=this.ignoreReadonlyFields();
-                    _this.dataResource.update({id:this.entityId},_model).then(function({data}){
-                        _this.isSavingToServer=false;
-                        _this.afterSave("on-edited",data,'编辑成功');
-                    },function(){
-                        _this.isSavingToServer=false;
-                    });
-                }else{//新建
-                    let _model=this.ignoreReadonlyFields();
-                    _this.dataResource.save(_model).then(function({data}){
-                        _this.isSavingToServer=false;
-                        _this.entityId=data[_this.metaEntity.getIdField().name];
-                        _this.afterSave("on-created",data,'保存成功');
-                    },function(){
-                        _this.isSavingToServer=false;
-                    });
-                }
+                return new Promise((resolve,reject)=>{
+                    if(this.isEdit){//更新
+                        let _model=this.ignoreReadonlyFields();
+                        _this.dataResource.update({id:this.entityId},_model).then(function({data}){
+                            _this.isSavingToServer=false;
+                            let afterSavePromise=_this.afterSave("on-edited",data,'编辑成功');
+                            afterSavePromise.then(()=>{resolve();},()=>{reject();});
+                        },function(){
+                            _this.isSavingToServer=false;
+                            reject();
+                        });
+                    }else{//新建
+                        let _model=this.ignoreReadonlyFields();
+                        _this.dataResource.save(_model).then(function({data}){
+                            _this.isSavingToServer=false;
+                            _this.entityId=data[_this.metaEntity.getIdField().name];
+                            let afterSavePromise=_this.afterSave("on-created",data,'保存成功');
+                            afterSavePromise.then(()=>{resolve();},()=>{reject();});
+                        },function(){
+                            _this.isSavingToServer=false;
+                            reject();
+                        });
+                    }
+                });
             },
             doValidation:function(callback){
                 var _this=this;
@@ -501,20 +515,28 @@
                 let _this=this;
                 //调用内部组件保存事件
                 let after=_this.afterSaveChain(data);
-                //抛出保存事件
-                if (after && after.then){//返回的Promise对象
-                    after.then(function(valid){
-                        if(false!==valid){//true 表示可继续保存
-                            iview$Message.success(msg);
-                            _this.$emit(evtName,data);
-                            _this.onCompleted();
-                        }
-                    });
-                }else if(after!==false){
-                    iview$Message.success(msg);
-                    _this.$emit(evtName,data);
-                    _this.onCompleted();
-                }
+                return new Promise((resolve,reject)=>{
+                    //抛出保存事件
+                    if (after && after.then){//返回的Promise对象
+                        after.then(function(valid){
+                            if(false!==valid){//true 表示可继续保存
+                                iview$Message.success(msg);
+                                _this.$emit(evtName,data);
+                                _this.onCompleted();
+                                resolve();
+                            }else{
+                                reject();
+                            }
+                        });
+                    }else if(after!==false){
+                        iview$Message.success(msg);
+                        _this.$emit(evtName,data);
+                        _this.onCompleted();
+                        resolve();
+                    }else{
+                        reject();
+                    }
+                });
             },
             afterSaveChain(data){//表单数据提交后
                 let result=true;

@@ -258,10 +258,11 @@ var utils = {
         view:"view",
         edit:"edit"
     },
-    fieldActions:{
-        view:"view",
-        edit:"edit",
-        readonly:"readonly"
+    widgetMode:{
+        editable:"editable",
+        invisible:"invisible",
+        readonly:"readonly",
+        forceView:"forceView"//保留模式，流程表单暂不启用，兼容旧的强制查看模式
     },
     ignoreSpecialQuery(query){
         let _query=_.cloneDeep(query);

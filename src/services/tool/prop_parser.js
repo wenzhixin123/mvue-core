@@ -32,7 +32,20 @@ function baseParser(initPropValue,curInst,toRoute){
     }
     return parseFrom(value,curInst,toRoute);
 }
+function booleanParser(initPropValue,curInst,toRoute){
+    var value=initPropValue.value;
+    //非普通对象不需要转换直接返回
+    if(!_.isPlainObject(value)){
+        return !!value;
+    }
+    var _v= parseFrom(value,curInst,toRoute);
+    if(_v==="true"||_v==="1"){
+        return true;
+    }
+    return false;
+}
 var parsers={
+    "boolean":booleanParser,
     "text":baseParser,
     "date":baseParser,
     "number":baseParser,

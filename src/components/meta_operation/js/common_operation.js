@@ -102,7 +102,7 @@ function operationForView() {
         iview$Modal.error({ content: `跳转页面未设置` });
         return;
       }
-      var _query = _.extend({ dataId: id, _action: "view" }, operation.queryParams);
+      var _query = _.extend({ dataId: id, forceView:true }, operation.queryParams);
       toPage(pageId, _query);
       $optInst.mustStopRepeatedClick = false;
     }

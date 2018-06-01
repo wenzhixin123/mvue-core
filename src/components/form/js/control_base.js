@@ -6,7 +6,7 @@ export default {
             type:Object,
             required:true
         },
-        mode:{
+        mode:{//表单是否是设计模式或者正常的模式
             type:String,
             default:controlTypeService.controlMode.normal
         },
@@ -22,7 +22,7 @@ export default {
         model:{//表单的模型数据
             type:Object
         },
-        context:{//与上下文相关的对象，{metaEntity:"元数据实体对象",action:"表单模式，是查看还是编辑模式"}
+        context:{//与上下文相关的对象，{metaEntity:"元数据实体对象",mode:"字段显示模式：readonly/invisible/editable"}
             type:Object
         }
     },
@@ -59,20 +59,16 @@ export default {
             return rwidth+"%";
         },
         disabled:function(){
-            let action= this.context&&this.context.action;
-            if(this.isReadonly()||Utils.fieldActions.readonly==action){
-                return true;
-            }
-            return this.mode!==controlTypeService.controlMode.normal;
+            return this.isReadonly();
         },
-        viewMode(){
-            let action= this.context&&this.context.action;
-            if(Utils.formActions.view===action||Utils.fieldActions.view===action){
+        viewMode(){//强制查看模式
+            let mode= this.context&&this.context.mode;
+            if(Utils.widgetMode.forceView===mode){
                 return true;
             }
             return false;
         },
-        designMode(){
+        designMode(){//设计模式
             return this.mode===controlTypeService.controlMode.design;
         }
     },

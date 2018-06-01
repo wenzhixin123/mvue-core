@@ -109,7 +109,7 @@
                 type: Boolean,
                 default: false
             },
-            components:{
+            fieldSettings:{//表单字段配置数据，控制字段的显示和编辑状态
                 type: Object,
                 require: false
             }
@@ -127,13 +127,6 @@
                     return true;
                 }
                 return false;
-            },
-            action(){
-                //外部指定强制查看模式或者已归档
-                if(this.forceView||this.isArchived){
-                    return Utils.formActions.view;
-                }
-                return this.formStatus;
             }
         },
         data:function(){
@@ -612,10 +605,19 @@
             },
             fieldContext(item){
                 //字段视图
-                let _this = this,_obj = {metaEntity:_this.metaEntity,action:_this.action}
-                if(_this.components&&_this.components[item.dataField]){
+                let _this = this,_obj = {metaEntity:_this.metaEntity,mode:null};
+                //外部指定强制查看模式或者已归档
+                if(this.isView){
+                    //目前强制查看模式和readonly都统一
+                    _obj.mode=Utils.widgetMode.forceView;
+                }else if(_this.fieldSettings&&_this.fieldSettings[item.dataField]){
                     //存在对字段的状态设置
-                    _obj.action = _this.components[item.dataField].mode;
+                    let mode=_this.fieldSettings[item.dataField].mode;
+                    //隐藏字段在这里做，进入组件里边隐藏可能不起作用
+                    if(Utils.widgetMode.invisible===mode){
+                        item.hidden=true;
+                    }
+                    _obj.mode = mode;
                 }
                 return _obj
             }

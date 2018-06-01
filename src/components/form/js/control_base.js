@@ -156,6 +156,11 @@ export default {
             if(this.designMode){
                 return true;
             }
+            //来自部件字段权限的控制
+            let mode= this.context&&this.context.mode;
+            if(Utils.widgetMode.readonly===mode){
+                return true;
+            }
             var metaEntity=this.context.metaEntity;
             if(metaEntity){
                 let metaField=metaEntity.findField(this.formItem.dataField);

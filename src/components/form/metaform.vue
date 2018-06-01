@@ -229,7 +229,7 @@
                         }else{
                             reject();
                         }
-                    });
+                    },()=>{reject();});
                 });
             },
             doSave(){
@@ -263,12 +263,12 @@
                     }
                 });
             },
-            doValidation:function(callback){
+            doValidation:function(callback,failCallback){
                 var _this=this;
                 //启用智能校验
                 Utils.smartValidate(_this,this.entity,this.$validator,function(){
                     callback&&callback();
-                });
+                },()=>{failCallback&&failCallback();});
             },
             initForm(){
                 var formShortId = this.formId || this.$route.query.formShortId;

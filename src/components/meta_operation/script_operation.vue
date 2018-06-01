@@ -23,16 +23,21 @@ export default {
     },
     data(){
         return {
-
+            mustStopRepeatedClick:false//阻止点击操作重复触发
         };
     },
     methods:{
         execScript(){
+            if(this.mustStopRepeatedClick){
+                return;
+            }
             if(_.isFunction(this.operation.onclick)){
-                this.operation.onclick(this.widgetContext);
+                this.mustStopRepeatedClick=true;
+                this.operation.onclick(this.widgetContext,this);
             }else{
+                this.mustStopRepeatedClick=true;
                 var onclick=Function('"use strict";return ' + this.operation.onclick  )();
-                onclick(this.widgetContext);
+                onclick(this.widgetContext,this);
             }
             this.$emit("triggered","script");
         }

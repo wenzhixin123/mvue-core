@@ -40,11 +40,17 @@ export default {
         }
     },
     data(){
-        return {};
+        return {
+            mustStopRepeatedClick:false//阻止点击操作重复触发
+        };
     },
     methods:{
         buttonClick(){
+            if(this.mustStopRepeatedClick){
+                return;
+            }
             if(this.extendedOperation&&this.extendedOperation.onclick){
+                this.mustStopRepeatedClick=true;
                 this.extendedOperation.onclick(this.widgetContext,this);
             }
             this.$emit("triggered",this.operation.name);

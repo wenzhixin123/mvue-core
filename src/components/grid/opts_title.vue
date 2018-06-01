@@ -6,8 +6,8 @@
         <div class="opts-con-box table-column-center">
             <div v-if="permedBtns()" class="opts-con">
                 <meta-operation v-for="(btn,index) in permedBtns()" :key="index" :operation="btn" v-if="index<2 || permedBtns().length==3" :widget-context="getWidgetContext()">
-                    <a :key="index" href="javascript:void(0)" class="btn opt-btn" :title="btn.title" >
-                        <Icon :type="btn.icon"></Icon>
+                    <a href="javascript:void(0)" class="btn opt-btn" :title="operation.title" slot-scope="{operation}">
+                        <Icon :type="operation.icon"></Icon>
                     </a>
                 </meta-operation>
                 <Dropdown v-if="permedBtns().length>3" transfer @on-click="handleDropdownMenuClick" @on-visible-change="handleOnVisibleChange" class="opts-dropdown">

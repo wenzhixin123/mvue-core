@@ -218,14 +218,14 @@
                             before.then(function(valid){
                                 if(false!==valid){//true 表示可继续保存
                                     let doSavePromise=_this.doSave();
-                                    doSavePromise.then(()=>{resolve();},()=>{reject();});
+                                    doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
                                 }else{
                                     reject();
                                 }
                             });
                         }else if(before!==false){//普通true or false
                             let doSavePromise=_this.doSave();
-                            doSavePromise.then(()=>{resolve();},()=>{reject();});
+                            doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
                         }else{
                             reject();
                         }
@@ -244,7 +244,7 @@
                         _this.dataResource.update({id:this.entityId},_model).then(function({data}){
                             _this.isSavingToServer=false;
                             let afterSavePromise=_this.afterSave("on-edited",data,'编辑成功');
-                            afterSavePromise.then(()=>{resolve();},()=>{reject();});
+                            afterSavePromise.then(()=>{resolve(_this.entity);},()=>{reject();});
                         },function(){
                             _this.isSavingToServer=false;
                             reject();
@@ -255,7 +255,9 @@
                             _this.isSavingToServer=false;
                             _this.entityId=data[_this.metaEntity.getIdField().name];
                             let afterSavePromise=_this.afterSave("on-created",data,'保存成功');
-                            afterSavePromise.then(()=>{resolve();},()=>{reject();});
+                            afterSavePromise.then(()=>{
+                                resolve(data);
+                            },()=>{reject();});
                         },function(){
                             _this.isSavingToServer=false;
                             reject();

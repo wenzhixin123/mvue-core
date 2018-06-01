@@ -307,8 +307,12 @@ function save() {
         iview$Modal.error({ content: `表单保存操作必须传入表单实例参数` });
         return;
       }
-      form.doSaveModel();
-      $optInst.mustStopRepeatedClick = false;
+      var savePromise=form.doSaveModel();
+      savePromise.then(()=>{
+        $optInst.mustStopRepeatedClick = false;
+      },()=>{
+        $optInst.mustStopRepeatedClick = false;
+      });
     }
   };
   return operation;

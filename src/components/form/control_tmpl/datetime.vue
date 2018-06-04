@@ -94,7 +94,7 @@ export default {
                 return;
             }
             let timePrecision=this.formItem.componentParams.timePrecision;
-            let _d=_d=moment(newDate,Utils.getMomentFormat(this.dateTimeFormat));
+            let _d=moment(newDate,Utils.getMomentFormat(this.dateTimeFormat));
             this.$emit("input",_d.format('YYYY-MM-DD HH:mm:ss'));
         }
     }

@@ -605,7 +605,12 @@
             },
             fieldContext(item){
                 //字段视图
-                let _this = this,_obj = {metaEntity:_this.metaEntity,mode:null};
+                let _this = this;
+                let _obj = {
+                    metaEntity:_this.metaEntity,
+                    mode:null,
+                    formStatus:this.formStatus
+                };
                 //外部指定强制查看模式或者已归档
                 if(this.isView){
                     //目前强制查看模式和readonly都统一

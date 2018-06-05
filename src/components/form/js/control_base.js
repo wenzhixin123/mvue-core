@@ -22,7 +22,7 @@ export default {
         model:{//表单的模型数据
             type:Object
         },
-        context:{//与上下文相关的对象，{metaEntity:"元数据实体对象",mode:"字段显示模式：readonly/invisible/editable"}
+        context:{//与上下文相关的对象，{metaEntity:"元数据实体对象",mode:"字段显示模式：readonly/invisible/editable",formStatus:"create/edit"}
             type:Object
         }
     },
@@ -88,6 +88,11 @@ export default {
             return _data[id]&&_data[id][constants.entityModelTitleKey];
         },
         isCreate(){//判断当前表单是否为新建模式
+            if(this.context
+                &&this.context.formStatus
+                &&this.context.formStatus!==Utils.formActions.create){
+                return false;
+            }
             let id=this.$route.params.id;
             if(id){
                 return false;

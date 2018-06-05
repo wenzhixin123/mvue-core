@@ -39,6 +39,7 @@ export default {
                 var onclick=Function('"use strict";return ' + this.operation.onclick  )();
                 onclick(this.widgetContext,this);
             }
+            this.mustStopRepeatedClick=false;
             this.$emit("triggered","script");
         }
     }

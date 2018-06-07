@@ -515,18 +515,16 @@
                     if (after && after.then){//返回的Promise对象
                         after.then(function(valid){
                             if(false!==valid){//true 表示可继续保存
-                                iview$Message.success(msg);
                                 _this.$emit(evtName,data);
-                                _this.onCompleted();
+                                _this.onCompleted(msg);
                                 resolve();
                             }else{
                                 reject();
                             }
                         });
                     }else if(after!==false){
-                        iview$Message.success(msg);
                         _this.$emit(evtName,data);
-                        _this.onCompleted();
+                        _this.onCompleted(msg);
                         resolve();
                     }else{
                         reject();
@@ -569,13 +567,16 @@
                 }
                 return result;
             },
-            onCompleted(){
+            onCompleted(msg){
                 var isContinue=true;
                 if(this.onSaved){
                     isContinue=_.defaultTo(this.onSaved(this),true);
                 }
                 if(!isContinue){
                     return false;
+                }
+                if(msg){
+                    iview$Message.success(msg);
                 }
                 if(this.editToView){//如果需要从编辑页保存数据后，跳转回查看页
                     let _query=_.extend({},this.$route.query);

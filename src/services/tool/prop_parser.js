@@ -1,6 +1,10 @@
 //用来将部件或者操作的props根据属性类型转换成具体的属性值
 
-function fromQuery(key,toRoute){
+function fromQuery(key,toRoute,curInst){
+    //特殊的逻辑，页面部件可以从模拟的query属性中取值
+    if(_.isPlainObject(curInst.query)&&_.has(curInst.query,key)){
+        return curInst.query[key];
+    }
     return toRoute.query[key];
 }
 function fromPath(key,toRoute){
@@ -13,7 +17,7 @@ function fromContext(key,curInst){
 function parseFrom(value,curInst,toRoute){
     var from=value.from,key=value.key;
     if(from=="query"&&key){
-        return fromQuery(key,toRoute);
+        return fromQuery(key,toRoute,curInst);
     }else if(from=="path"&&key){
         return fromPath(key,toRoute);
     }else if(from=="context"&&key){

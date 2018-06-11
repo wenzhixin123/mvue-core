@@ -12,7 +12,7 @@
             <DatePicker
             v-model="valueObj" 
             @on-change="handleChange"
-             style="width:100%;" :disabled="disabled" type="datetime" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
+             style="width:100%;" :readonly="disabled" :disabled="disabled" type="datetime" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
             <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
             <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
         </div>
@@ -23,7 +23,7 @@
                     <DatePicker 
                     v-model="valueObj" 
                     @on-change="handleChange"
-                    style="width:100%;" :disabled="disabled" type="datetime" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
+                    style="width:100%;" :readonly="disabled" :disabled="disabled" type="datetime" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
                     <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
                 </div>

@@ -6,7 +6,7 @@
             v-model="valueObj"
             type="timerange" 
             @on-change="handleChange" 
-            style="width:100%;" :disabled="disabled" :format="timeFormat" :placeholder="formItem.componentParams.placeholder"></TimePicker>
+            style="width:100%;" :readonly="disabled" :disabled="disabled" :format="timeFormat" :placeholder="formItem.componentParams.placeholder"></TimePicker>
             <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
             <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
         </div>
@@ -18,7 +18,7 @@
                     v-model="valueObj"
                     type="timerange"  
                     @on-change="handleChange"
-                     style="width:100%;" :disabled="disabled" :format="timeFormat" :placeholder="formItem.componentParams.placeholder"></TimePicker>
+                     style="width:100%;" :readonly="disabled" :disabled="disabled" :format="timeFormat" :placeholder="formItem.componentParams.placeholder"></TimePicker>
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
                     <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
                 </div>

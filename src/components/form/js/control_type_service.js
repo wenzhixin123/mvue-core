@@ -91,7 +91,15 @@ var baseComponentParams={
     horizontalLayoutLabelWidth:"20",//左右布局时，组件label占的百分比
     required:false,//是否必填
     semantics:"",//语义设置
-    placeholder:""
+    placeholder:"",
+    validation:{
+        validate:false,
+        rule:{
+            type:"",
+            brief:"",
+            pattern:""
+        }
+    }
 };
 var fieldIndex=0;
 //根据组件类型构造对应的表单布局

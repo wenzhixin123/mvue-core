@@ -18,5 +18,13 @@ export default [
         type:"regex",
         brief:"自定义",
         pattern:""
+    },
+    {
+        type:"compare",
+        brief:"字段比较",
+        pattern:"",
+        operator:"",
+        fieldName:"",
+        fieldTitle:""
     }
 ];

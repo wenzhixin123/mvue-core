@@ -139,6 +139,15 @@ function initValidation(validator,formItem,metaEntity,dataId){
             &&params.validation.rule.pattern){
             rule.regex=[params.validation.rule.pattern];
         }
+        if(params.validation
+            &&params.validation.validate
+            &&params.validation.rule
+            &&params.validation.rule.type==='compare'
+            &&_.includes(["lessThan","biggerThan","equals"],params.validation.rule.operator)
+            &&params.validation.rule.fieldName
+            ){
+            rule[params.validation.rule.operator]=[params.validation.rule.fieldName,params.validation.rule.fieldTitle||params.validation.rule.fieldName];
+        }
         //长度验证
         if(params.limitLength&&params.limitLength.limit){
             if(params.limitLength.max>0){

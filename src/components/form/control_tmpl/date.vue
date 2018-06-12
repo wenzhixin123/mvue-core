@@ -81,6 +81,7 @@ export default {
         if(this.value){
             var _valueValidPart=this.getValidPart();
             this.valueObj=_valueValidPart;
+            this.handleChange(_valueValidPart);
         }
     },
     methods:{

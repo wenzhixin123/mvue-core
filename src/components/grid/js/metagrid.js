@@ -106,15 +106,31 @@ function  initColumns(grid) {
   //如果没有传入任何columns，并且元数据信息存在，构造默认列
   if(!grid.innerColumns&&metaEntityObj){
     let defaultFormFields=metaEntityObj.getDefaultViewFields();
-    if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
-      _cols=[{type: 'selection',width:58,align:"center"}];
-    }
     _.each(defaultFormFields,function(fieldName){
       _cols.push({key:fieldName});
     });
   }else{
     _cols=grid.innerColumns;
   }
+  var __cols=[];
+  //多选列放在序号列前面
+  if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
+    __cols.push({type: 'selection',width:58,align:"center"});
+  }
+  if(grid.showIndex){
+    __cols.push({
+      render:(h, params) => {
+        var pageIndex=grid.pageIndex-1;
+        var pageSize=grid.pageSize;
+        var _index=params.index;
+        var index=pageIndex*pageSize+_index+1;
+        return h("div",index);
+      },
+      width:58,
+      align:"center"
+    });
+  }
+  _cols=__cols.concat(_cols);
   //如果操作列不和标题列合并，并且定义了单行操作，默认最后一列为操作列
   if(!grid.operationsWithTitleColumn&&!_.isEmpty(grid.innerToolbar.singleBtns)){
     _cols.push({

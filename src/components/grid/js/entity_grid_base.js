@@ -128,9 +128,6 @@ export default {
                 return columnsMap[o.name].visible;
             });
             let columns=[];
-            if(this.innerToolbar.batchBtns&&this.innerToolbar.batchBtns.length>0){
-                columns=[{type: 'selection',width:58,align:"center"}];
-            }
             //添加所有可见列
             for (var i = 0; i < visibleFields.length; i++) {
                 let metaField = visibleFields[i];

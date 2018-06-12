@@ -185,6 +185,10 @@ export default {
       "highlightRow":{//iview table属性，用来单选选中高亮
           type:Boolean,
           default:false
+      },
+      "showIndex":{//是否显示序号列
+          type:Boolean,
+          default:true
       }
     },
     data:function(){

@@ -172,7 +172,7 @@ export default {
       },
       "pageSizeKey":{
           type:String,
-          default:"pageSize"
+          default:"page_size"
       },
       "pageKey":{
           type:String,

@@ -486,13 +486,13 @@ export default {
                         operation= _.extend(operation,commonOpt);
                         operation.onclick(_widgetCtx,{operation:operation});
                         return;
-                    }else if(operation.onclick){//脚本操作
-                        if(_.isFunction(operation.onclick)){
-                            operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation});
-                        }else{
-                            var onclick=Function('"use strict";return ' + operation.onclick  )();
-                            onclick(Object.assign(_widgetCtx,operation),{operation:operation});
-                        }
+                    }
+                }else if(operation.onclick){//脚本操作
+                    if(_.isFunction(operation.onclick)){
+                        operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+                    }else{
+                        var onclick=Function('"use strict";return ' + operation.onclick  )();
+                        onclick(Object.assign(_widgetCtx,operation),{operation:operation});
                     }
                 }
             }

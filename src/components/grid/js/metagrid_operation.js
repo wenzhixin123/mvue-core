@@ -391,7 +391,7 @@ var operations={
   view:operationForView,
   del:operationForDel,
   import:operationForImport,
-  exports:operationForExport,
+  export:operationForExport,
   batchDelete:operationForBatchDelete,
   goback:goback,
   save:save
@@ -419,7 +419,7 @@ export default {
     }
     return null;
   },
-  fillOperationByMb:function (context,btn) {
+  fillOperationByMb:function (btn) {
       var oldBtn = {};
       var name = "";
       if (_.isString(btn)) {

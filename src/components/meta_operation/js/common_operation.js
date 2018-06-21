@@ -324,7 +324,7 @@ var operations = {
   view: operationForView,
   del: operationForDel,
   import: operationForImport,
-  exports: operationForExport,
+  export: operationForExport,
   batchDelete: operationForBatchDelete,
   goback: goback,
   save: save

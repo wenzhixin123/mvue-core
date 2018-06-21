@@ -112,6 +112,10 @@
             fieldSettings:{//表单字段配置数据，控制字段的显示和编辑状态
                 type: Object,
                 require: false
+            },
+            checkArchived:{//表示是否开启表单的归档检测，默认不开启
+                type:Boolean,
+                default:false
             }
         },
         computed:{
@@ -131,7 +135,7 @@
         },
         data:function(){
             var metaEntity=this.$metaBase.findMetaEntity(this.entityName);
-            var dsWrapper=metaEntity.dataResourceWrapper();
+            var dataResource=metaEntity.dataResource();
             var formStatus=Utils.formActions.create;
             if(!_.isEmpty(this.recordId)){
                 formStatus=Utils.formActions.edit;
@@ -141,8 +145,7 @@
             entity=metaEntity.getDefaultModel();
             return {
                 isArchived:false,//表示数据是否已归档
-                dataResource:dsWrapper.$resource,
-                dataResourceInnerVueInst:dsWrapper.$innerVueInst,
+                dataResource:dataResource,
                 changedQueue:[],//智能验证变化队列
                 formStatus:formStatus,
                 metaEntity:metaEntity,
@@ -365,7 +368,6 @@
             },
             getEditModelIfNeeded(){//如果是编辑模式，根据数据id或者表单数据model
                 var _this=this;
-                this.dataResourceInnerVueInst.showLoading=false;
                 this.loadingFormData=true;
                 return this.dataResource.get({id:this.entityId}).then(function({data}){
                     _this.loadingFormData=false;
@@ -458,11 +460,13 @@
                 });
                 return _model;
             },
-            checkIsArchived() {
+            checkIsArchived() {//TODO: 判断是否归档的逻辑可能需要修正
                 var _self = this;
                 mvueCore.metaService.getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
                     _self.isArchived=true;
-                    eventBus.record.isArchived = true;
+                    if(eventBus&&eventBus.record){
+                        eventBus.record.isArchived = true;
+                    }
                     _self.innerPermissions={
                         openEdit:false,
                         edit:false,
@@ -471,7 +475,9 @@
                     }
                 }).catch(()=> {
                     _self.isArchived=false;
-                    eventBus.record.isArchived = false;
+                    if(eventBus&&eventBus.record){
+                        eventBus.record.isArchived = false;
+                    }
                 });
             },
             initPerm(data){//初始化表单数据操作权限
@@ -481,7 +487,9 @@
                     "del":Utils.hasPerm(data[Utils.dataPermField],Utils.permValues.del),
                     "cancel":true
                 };
-                this.checkIsArchived();
+                if(this.checkArchived){
+                    this.checkIsArchived();
+                }
             },
             onFormInited(){//表单数据初始化后
                 if(this.scriptModel&&_.isFunction(this.scriptModel.formDataCreated)){

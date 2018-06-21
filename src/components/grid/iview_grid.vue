@@ -107,7 +107,8 @@
 <script>
 import metabase from '../../libs/metadata/metabase';
 import OperationUtils from '../meta_operation/js/operation_utils';
-import commonOperation from '../meta_operation/js/common_operation';
+import commonOperation from '../meta_operation/js/common_operation';//widgetMode true
+import noneWidgetModeCommonOperation from './js/metagrid_operation';//widgetMode false
 import gridBase from './js/entity_grid_base';
 var utils= require('../../libs/utils');
 export default {
@@ -189,10 +190,24 @@ export default {
       "showIndex":{//是否显示序号列
           type:Boolean,
           default:true
+      },
+      "widgetMode":{
+         /** 是否部件模式，默认false对应普通模式，true则对应部件模式
+          *  普通模式：此时通用操作的实现使用./js/metagrid_operation.js中的实现
+          *  部件模式：此时通用操作的实现使用../meta_operation/common_operation.js实现
+          */
+          type:Boolean,
+          default:false
+      },
+      "metaEntityName":{//元数据实体名称，可由外部传入
+          type:String
       }
     },
     data:function(){
-        var entityName = this.$route.params.entityName;
+        /**
+         * 元数据实体名称可由属性参数metaEntityName(内部已经使用了entityName属性)或者路由参数entityName传递进来
+         */
+        var entityName = this.metaEntityName||this.$route.params.entityName;
         var metaEntity = metabase.findMetaEntity(entityName);
         return {
             entityName: entityName,
@@ -208,9 +223,9 @@ export default {
             innerQueryOptions:_.cloneDeep(this.queryOptions),
             innerToolbar:{
                 hide: (this.toolbar&&this.toolbar.hide)||false,
-                    btns: (this.toolbar&&this.toolbar.btns)||[],//普通操作
-                    singleBtns:(this.toolbar&&this.toolbar.singleBtns)||[],//基于单条数据的操作
-                    batchBtns: (this.toolbar&&this.toolbar.batchBtns)||[],//基于多条数据的操作
+                    btns: this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.btns),//普通操作
+                    singleBtns:this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.singleBtns),//基于单条数据的操作
+                    batchBtns: this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.batchBtns),//基于多条数据的操作
                     rowSingleClick: (this.toolbar&&this.toolbar.rowSingleClick),//单击行的操作
                     quicksearch: (this.toolbar&&this.toolbar.quicksearch)||{
                         fields: null,
@@ -301,6 +316,36 @@ export default {
         this.initGridByViewId();
     },
     methods:{
+        getCommonOpt(name){//根据通用操作的name，返回具体的操作，包括onclick函数等
+            let commonOpt=null;
+            if(this.widgetMode){
+                commonOpt=commonOperation.createOperation(name);
+            }else{
+                commonOpt=noneWidgetModeCommonOperation.createOperation(name);
+            }
+            return commonOpt;
+        },
+        convertToCommonOptIfNeeded(btns){//将通过属性传递的toolbar中的通用操作简写方式（只写了name），转成具体的操作对象（包含onclick函数等）
+            let _btns=[];
+            if(!btns){
+                return _btns;
+            }
+            _.each(btns,(btn)=>{
+                if(_.isString(btn)){
+                    let newBtn={
+                        name:btn,
+                        operationType:"common"
+                    };
+                    let commonOpt=this.getCommonOpt(btn);
+                    if(commonOpt){
+                        _btns.push(Object.assign(newBtn,commonOpt));
+                    }
+                }else{
+                    _btns.push(btn);
+                }
+            });
+            return _btns;
+        },
         reload: function () {
             var _this = this;
             if ((!_this.queryUrl) && (!_this.innerQueryResource)) {
@@ -335,7 +380,7 @@ export default {
                     _this.data = resp.data;
                     if (_this.pager) {
                         //获取总数
-                        _this.totalCount = _.toInteger(resp.headers.get("X-Total-Count"));
+                        _this.totalCount = _.toInteger(resp.headers["x-total-count"]);
                         //获取总页数
                         _this.pageCount = _.ceil(_this.totalCount / _.toInteger(_this.pageSize));
                         //总页数至少为1
@@ -481,7 +526,7 @@ export default {
                 let commonOptName=operation.name;
                 //目前支持通用操作和脚本操作
                 if(commonOptName){//通用操作
-                    let commonOpt=commonOperation.createOperation(commonOptName);
+                    let commonOpt=this.getCommonOpt(btn);
                     if(commonOpt){
                         operation= _.extend(operation,commonOpt);
                         operation.onclick(_widgetCtx,{operation:operation});

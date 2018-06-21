@@ -2,7 +2,7 @@
  * 封装AJAX请求相关操作
  * Created by yulongsheng on 2016/10/28.
  */
-var session=require("./security/session");
+var session=require("mvue-toolkit/src/libs/security/session");
 
 var ax = {};
 ax.ajax = function (params) {

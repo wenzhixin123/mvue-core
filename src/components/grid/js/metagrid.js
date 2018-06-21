@@ -3,8 +3,6 @@
  */
 import controlTypeService from '../../form/js/control_type_service';
 import renderManager from './metagrid_render';
-import operationManager from './metagrid_operation';
-
 /**
  *  将metaField转成ivue需要的col对象
  * @param metaField
@@ -47,9 +45,6 @@ function metaFieldToCol(context,metaField) {
  */
 function initGridByMetabase(grid) {
   initGridProperties(grid);
-
-  initToolBar(grid);
-
   initColumns(grid);
 }
 
@@ -146,102 +141,6 @@ function  initColumns(grid) {
   _cols=buildInnerColumns(_cols,metaEntityObj,context);
   grid.innerColumns=_cols;
 }
-
-function  initToolBar(grid) {
-
-  var btns=[],batchBtns=[],singleBtns=[];
-  var metaEntityObj=null;
-  let titleField=null;
-  if(!_.isEmpty(grid.metaEntity)){
-    metaEntityObj=grid.metaEntity;
-    titleField=metaEntityObj.firstSemanticsField("title");
-  }
-  var context={
-    grid:grid,
-    metaEntity:metaEntityObj
-  };
-  /*if(!grid.toolbar){//外部没有定义toolbar，根据实体构造
-    let _toolbar={
-      btns:["create","import"],//普通操作
-      singleBtns:["edit","view","del"],//基于单条数据的操作
-      batchBtns:[]//基于多条数据的操作
-    };
-    let quickSearchPlacehoder="请输入关键字搜索";
-    if(titleField){
-      _toolbar.quicksearch={
-        fields:[titleField.name],
-        placeholder:quickSearchPlacehoder
-      }
-    }
-    //普通操作转换，将操作key转换成具有实际操作代码的对象
-    _.each(_toolbar.btns,function (btn,index) {
-      var mergedBtn=operationManager.fillOperationByMb(context,btn);
-      btns.push(mergedBtn);
-    });
-    //单条数据操作转换，将操作key转换成具有实际操作代码的对象
-    _.each(_toolbar.singleBtns,function (btn,index) {
-      var mergedBtn=operationManager.fillOperationByMb(context,btn);
-      singleBtns.push(mergedBtn);
-    });
-    //批量操作转换，将操作key转换成具有实际操作代码的对象
-    _.each(_toolbar.batchBtns,function (btn,index) {
-      var mergedBtn=operationManager.fillOperationByMb(context,btn);
-      batchBtns.push(mergedBtn);
-    });
-    _toolbar.btns=btns;
-    _toolbar.batchBtns=batchBtns;
-    _toolbar.singleBtns=singleBtns;
-    //多个可切换的默认过滤条件处理
-    _toolbar.multipleFilters={support:false};
-    grid.innerToolbar=_toolbar;
-  }else{}*/
-  //debugger
-    // _.each(grid.innerToolbar.btns,function (btn,index) {
-    //   var mergedBtn;
-    //   if(typeof btn=="string") {
-    //     mergedBtn = operationManager.fillOperationByMb(context, btn);
-    //     mergedBtn.operationType = "common";
-    //     mergedBtn.name = btn;
-    //     delete mergedBtn.onclick;
-    //   }else{
-    //     mergedBtn = btn
-    //   }
-    //   btns.push(mergedBtn);
-    // });
-    // //单条数据操作转换，将操作key转换成具有实际操作代码的对象
-    // _.each(grid.innerToolbar.singleBtns,function (btn,index) {
-    //   var mergedBtn;
-    //   if(typeof btn=="string"){
-    //     mergedBtn = operationManager.fillOperationByMb(context, btn);
-    //     mergedBtn.title = mergedBtn.title
-    //     mergedBtn.operationType = "common";
-    //     mergedBtn.name = btn;
-    //     delete mergedBtn.onclick;
-    //   }else{
-    //     mergedBtn = btn
-    //   }
-    //   singleBtns.push(mergedBtn);
-    // });
-    // _.each(grid.innerToolbar.batchBtns,function (btn,index) {
-    //   var mergedBtn;
-    //   if(typeof btn=="string") {
-    //     mergedBtn = operationManager.fillOperationByMb(context, btn);
-    //     mergedBtn.operationType = "common";
-    //     mergedBtn.name = btn;
-    //     delete mergedBtn.onclick;
-    //   }else{
-    //     mergedBtn = btn
-    //   }
-    //   batchBtns.push(mergedBtn);
-    // });
-    // //多个可切换的默认过滤条件处理
-    // grid.innerToolbar.multipleFilters=grid.innerToolbar.multipleFilters||{support:false};
-    // grid.innerToolbar.btns=btns;
-    // grid.innerToolbar.singleBtns=singleBtns;
-    // grid.innerToolbar.batchBtns=batchBtns;
-
-}
-
 export default{
   initGridByMetabase:initGridByMetabase,
 }

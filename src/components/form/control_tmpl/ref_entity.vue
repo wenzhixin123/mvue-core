@@ -54,7 +54,7 @@ export default {
     data: function(){
         var entityResource=null;
         if(this.formItem.componentParams&&this.formItem.componentParams.entityResourceUrl){
-            entityResource= Vue.resource(this.formItem.componentParams.entityResourceUrl,null,null,null);
+            entityResource= Vue.resource(this.formItem.componentParams.entityResourceUrl);
         }
         return {
             selectedItem:null,//已经选择的项

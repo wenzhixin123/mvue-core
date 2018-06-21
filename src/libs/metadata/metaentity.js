@@ -154,22 +154,9 @@ module.exports=function (options) {
     var customActions = {
       calc: {method: 'POST', url: `${pathname}/calc`}
     };
-    var dataResource = Vue.resource(resourceName,null,customActions);
+    var dataResource = Vue.resource(resourceName,customActions);
     return dataResource;
   }
-  /**
-   * dataResource变体方法，可控制loading
-   */
-  metaEntity.dataResourceWrapper=function(){
-    var resourceName=this.dataResourceUrl();
-    let $innerVueInst=new Vue({data:{showLoading:true}});
-    return {
-      $innerVueInst:$innerVueInst,
-      $resource:$innerVueInst.$resource(resourceName)
-    };
-  }
-  
-
   /**
    * 构造默认的创建表单Path
    */

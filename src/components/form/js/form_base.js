@@ -16,7 +16,7 @@ export default{
         var _model=metaEntity.getDefaultModel();
         this.fillDefaultByQuery(_model,metaEntity);
         var model=_.cloneDeep(_model);
-        var dsWrapper=metaEntity.dataResourceWrapper();
+        var dataResource=metaEntity.dataResource();
         return {
             navlist:[
                 {
@@ -28,8 +28,7 @@ export default{
                 },
                 {title:`${this.$route.params.id?'编辑':'新建'}`}
             ],
-            dataResource:dsWrapper.$resource,
-            dataResourceInnerVueInst:dsWrapper.$innerVueInst,
+            dataResource:dataResource,
             model:model,
             initialData:{},
             entityName:entityName,
@@ -85,7 +84,6 @@ export default{
         getEditModelIfNeeded(){//如果是编辑模式，根据数据id或者表单数据model
             var _this=this;
             if(this.$route.params.id){
-                this.dataResourceInnerVueInst.showLoading=false;
                 this.loadingFormData=true;
                 return this.dataResource.get({id:this.$route.params.id}).then(function({data}){
                     _this.loadingFormData=false;

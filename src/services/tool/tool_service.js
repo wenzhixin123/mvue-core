@@ -2,6 +2,7 @@
  * 获取元数据相关信息的接口，包括表单、视图、套件和项目等基本信息获取接口
  * swagger json定义：https://developer.bingosoft.net:12100/services/metaservice/swagger.json
  */
+import mvueToolkit from "mvue-toolkit";
 var Config=require("../../config/config.js");
 var toolBaseUrl=Config.getToolEndpoint();
 
@@ -13,7 +14,7 @@ var customActions = {
   getImportReport: {method: 'GET', url: 'import/report'},
   currentUser: {method: 'GET', url: 'user/info'},
 };
-var $resource=Vue.resource('import',null,customActions,{root:toolBaseUrl});
+var $resource=mvueToolkit.resource('import',customActions,{root:toolBaseUrl});
 
 export default {
   doImport: $resource.doImport,

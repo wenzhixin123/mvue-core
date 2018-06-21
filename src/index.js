@@ -46,26 +46,24 @@ function installGridAndForm(Vue){
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';
 import utils from './libs/utils';
-import config from './config/config';
-import session from './libs/security/session';
-import ssoclient from './libs/security/ssoclient';
+import mvueToolkit from "mvue-toolkit";
 import ajax from './libs/ajax';
-var customValidator = require("./libs/extend/custom_validator.js");
-var customVueResource = require("./libs/extend/custom_vue_resource.js");
-
 
 import metaservice from "./services/meta/metaservice";
 import toolService from "./services/tool/tool_service";
+import axios from "axios";
+import config from './config/config';
 
-var CustomDirectives = require("./directives/custom_directives");
 //Vue插件安装入口函数
 const install = function(Vue, opts = {}) {
     installGridAndForm(Vue);
-    new CustomDirectives(Vue);
     Vue.prototype.$metaBase=metabase;
     Vue.prototype.$metaEntity=metaentity;
     Vue.prototype.$metaService=metaservice;
     Vue.prototype.$toolService=toolService;
+    Vue.prototype.$http=axios;
+    Vue.prototype.$resource=mvueToolkit.resource;
+    Vue.resource=mvueToolkit.resource;
 }
 let MvueCore={
     install:install,
@@ -74,10 +72,10 @@ let MvueCore={
     metaEntity:metaentity,
     metaService:metaservice,
     toolService:toolService,
-    session:session,
-    ssoclient:ssoclient,
     ajax:ajax,
-    customValidator:customValidator,
-    customVueResource:customVueResource
+    session:mvueToolkit.session,
+    ssoclient:mvueToolkit.ssoclient,
+    router:mvueToolkit.router,
+    config:config
 };
 export default MvueCore;

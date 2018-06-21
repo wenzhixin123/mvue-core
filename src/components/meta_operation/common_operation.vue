@@ -34,7 +34,7 @@ export default {
             let commonOptName=this.operation.name;
             let commonOpt=commonOperation.createOperation(commonOptName);
             if(commonOpt){
-                return _.extend(this.operation,commonOpt);
+                return Object.assign({},commonOpt,this.operation);
             }
             return null;
         }

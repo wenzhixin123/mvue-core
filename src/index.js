@@ -54,6 +54,14 @@ import toolService from "./services/tool/tool_service";
 import axios from "axios";
 import config from './config/config';
 
+import propParser from './services/tool/prop_parser';
+import linkplugin from './services/link/linkplugin';
+
+import formConstants from './components/form/js/constants';
+import formValidationPattern from './components/form/js/validation_pattern';
+import controlTypeService from './components/form/js/control_type_service';
+import formBase from './components/form/js/form_base';
+
 //Vue插件安装入口函数
 const install = function(Vue, opts = {}) {
     installGridAndForm(Vue);
@@ -76,6 +84,12 @@ let MvueCore={
     session:mvueToolkit.session,
     ssoclient:mvueToolkit.ssoclient,
     router:mvueToolkit.router,
-    config:config
+    config:config,
+    propParser:propParser,
+    linkplugin,
+    formConstants,
+    formValidationPattern,
+    formBase,//TODO:后面应该要去掉的
+    controlTypeService
 };
 export default MvueCore;

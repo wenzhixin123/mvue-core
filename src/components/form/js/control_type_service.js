@@ -341,5 +341,17 @@ export default{
     getMetaFieldComponentType:getMetaFieldComponentType,
     defaultValueTypes:defaultValueTypes,
     semantics:semantics,
-    valueTypes:valueTypes
+    valueTypes:valueTypes,
+    //type definition
+    textType,
+    optionsType,
+    dateType,
+    numberType,
+    uploadType,
+    cascadeType,
+    boolType,
+    orguserType,
+    entityType,
+    noFieldType,
+    containerType
 };

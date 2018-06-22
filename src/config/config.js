@@ -1,3 +1,2 @@
-var _config=require('mvue-toolkit/src/config/config');
-
-module.exports = _config;
+var mvueToolkit=require('mvue-toolkit').default;
+module.exports = mvueToolkit.config;

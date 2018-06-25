@@ -64,6 +64,9 @@ import formBase from './components/form/js/form_base';
 
 //Vue插件安装入口函数
 const install = function(Vue, opts = {}) {
+    if (install.installed) return;
+    //TODO 由于开发模式mvue-core未发布到npm，mvue-toolkit会出现和web不同的副本，手工初始化一下
+    Vue.use(mvueToolkit,opts);
     installGridAndForm(Vue);
     Vue.prototype.$metaBase=metabase;
     Vue.prototype.$metaEntity=metaentity;

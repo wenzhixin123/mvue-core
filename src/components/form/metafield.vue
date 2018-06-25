@@ -88,7 +88,7 @@ export default {
             metaEntity:metaEntity,
             metaField:metaField,
             entity:entity,
-            paths:constants.paths
+            paths:constants.paths()
         }
     },
     computed: {

@@ -159,7 +159,7 @@
                 preprocessed: false,
                 metaFormLayout:false,//true表示已经在控制台设计过表单，按设计过的表单显示表单
                 metaForm:null,
-                paths:constants.paths,
+                paths:constants.paths(),
                 //begin 处理脚本相关data定义
                 scriptModel:{
                     formDataCreated:null,//(model)

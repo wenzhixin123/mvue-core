@@ -198,7 +198,7 @@ export default {
             },
             excelUploadFormItem:excelUploadFormItem,
             overrideFormItem:overrideFormItem,
-            paths:constants.paths,
+            paths:constants.paths(),
             changedQueue:[],//智能验证变化队列
             progressData:[],//导入步骤的进度数据
             progressInterval:null,//进度获取定时器

@@ -356,22 +356,13 @@ export default {
             var dataPromise=null;
             if (!!_this.queryUrl) {//传的是查询url
                 _this.loadingData=true;
-                dataPromise=_this.$http.get(_this.queryUrl,{params:_queryOptions}).then(function(resp){
-                    _this.loadingData=false;
-                    return resp;
-                },function(){
-                    _this.loadingData=false;
-                });
+                dataPromise=_this.$http.get(_this.queryUrl,{params:_queryOptions});
             }else if (!!_this.innerQueryResource) {//传的是vue-resource对象
                 _this.loadingData=true;
-                dataPromise=_this.innerQueryResource.query(_queryOptions).then(function (resp) {
-                   _this.loadingData=false;
-                   return resp;
-                },function(){
-                    _this.loadingData=false;
-                });
+                dataPromise=_this.innerQueryResource.query(_queryOptions);
             }
             dataPromise.then(function(resp){
+                _this.loadingData=false;
                 //重新加载数据后清空选中的数据
                 _this.checked=[];
                 if(_this.preprocessor){//调用外部的数据处理器
@@ -390,6 +381,8 @@ export default {
                     }
                 }
                 _this.$emit("dataloaded", _this);
+            },function(){
+                _this.loadingData=false;
             });
         },
         buildQueryOptions:function () {

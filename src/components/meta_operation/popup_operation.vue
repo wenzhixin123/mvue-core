@@ -16,7 +16,7 @@
             :mask-closable="false"
             >
             <div class="modal-inner-widget" :style="{height:modalHeight+'px'}">
-                <component :widget-context="widgetContext" :operation="operation" :is="operation.widget">
+                <component @popup-close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
                 </component>
             </div>
             <div slot="footer"></div>
@@ -47,6 +47,9 @@ export default {
         toggleModal(){
             this.popupWidgetModal=!this.popupWidgetModal;
             this.$emit("triggered","popup");
+        },
+        close(){//关闭对话框
+            this.popupWidgetModal=false;
         }
     }
 }

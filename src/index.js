@@ -61,6 +61,7 @@ import formConstants from './components/form/js/constants';
 import formValidationPattern from './components/form/js/validation_pattern';
 import controlTypeService from './components/form/js/control_type_service';
 import formBase from './components/form/js/form_base';
+import commonOperation from './components/meta_operation/js/common_operation';
 
 //Vue插件安装入口函数
 const install = function(Vue, opts = {}) {
@@ -93,6 +94,7 @@ let MvueCore={
     formConstants,
     formValidationPattern,
     formBase,//TODO:后面应该要去掉的
-    controlTypeService
+    controlTypeService,
+    commonOperation
 };
 export default MvueCore;

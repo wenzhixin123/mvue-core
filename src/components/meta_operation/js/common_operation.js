@@ -332,7 +332,7 @@ var operations = {
 
 export default {
   /**
-   * 根据操作中，创建一个默认的操作
+   * 根据通用操作名称，创建一个默认的操作
    * @param context
    * @param operationName
    */
@@ -351,6 +351,14 @@ export default {
       return func();
     }
     return null;
+  },
+  //注册部件提供的通用操作
+  register(newAddedOperations){//{name:func,name2:func2}
+    _.each(newAddedOperations,(func,name)=>{
+      if(!operations[name]){
+        operations[name]=func;
+      }
+    });
   }
 }
 

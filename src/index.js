@@ -42,6 +42,9 @@ function installGridAndForm(Vue){
     Vue.component('MetaPclinkMultiUserSelect',require("./components/form/pclink/multi_user_select"));
     Vue.component('MetaPclinkMultiOrgSelect',require("./components/form/pclink/multi_org_select"));
     //end new added for pclink
+
+    //通用组件定义
+    //Vue.component('select-user-modal',require('./components/common/select_user_modal'));
 }
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';
@@ -51,7 +54,6 @@ import ajax from './libs/ajax';
 
 import metaservice from "./services/meta/metaservice";
 import toolService from "./services/tool/tool_service";
-import axios from "axios";
 import config from './config/config';
 
 import propParser from './services/tool/prop_parser';
@@ -73,7 +75,7 @@ const install = function(Vue, opts = {}) {
     Vue.prototype.$metaEntity=metaentity;
     Vue.prototype.$metaService=metaservice;
     Vue.prototype.$toolService=toolService;
-    Vue.prototype.$http=axios;
+    Vue.prototype.$http=mvueToolkit.http;
     Vue.prototype.$resource=mvueToolkit.resource;
     Vue.resource=mvueToolkit.resource;
 }

@@ -25,12 +25,12 @@ ax.ajax = function (params) {
 };
 
 ax.callAjax = function (type, url, data, success, error, _options) {
-  var _vue=new Vue();
+  //var _vue=new Vue();
   var options = $.extend({}, _options);
   var beforeSend = function (xhr, options) {
     if (_options && _options.showLoading) {
       // 请求发送前加载中提示
-      _vue.$Spin.show();
+      //_vue.$Spin.show();
     }
     if (_options && _options.beforeSend) {
       _options.beforeSend(xhr, options);
@@ -40,7 +40,7 @@ ax.callAjax = function (type, url, data, success, error, _options) {
   var complete = function (xhr, status) {
     if (_options && _options.showLoading) {
       // 请求发送前加载中提示
-      _vue.$Spin.show();
+      //_vue.$Spin.show();
     }
     if (_options && _options.complete) {
       _options.complete(xhr, status);

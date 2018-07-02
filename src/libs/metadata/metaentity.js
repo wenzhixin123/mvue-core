@@ -1,3 +1,4 @@
+var mvueToolkit = require("mvue-toolkit").default;
 module.exports=function (options) {
     var metaEntity=_.extend({
       name:"",
@@ -154,7 +155,7 @@ module.exports=function (options) {
     var customActions = {
       calc: {method: 'POST', url: `${pathname}/calc`}
     };
-    var dataResource = Vue.resource(resourceName,customActions);
+    var dataResource = mvueToolkit.resource(resourceName,customActions);
     return dataResource;
   }
   /**

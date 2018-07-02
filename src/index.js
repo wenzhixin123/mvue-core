@@ -44,7 +44,7 @@ function installGridAndForm(Vue){
     //end new added for pclink
 
     //通用组件定义
-    //Vue.component('select-user-modal',require('./components/common/select_user_modal'));
+    Vue.component('select-user-modal',require('./components/common/select_user_modal'));
 }
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';
@@ -77,7 +77,6 @@ const install = function(Vue, opts = {}) {
     Vue.prototype.$toolService=toolService;
     Vue.prototype.$http=mvueToolkit.http;
     Vue.prototype.$resource=mvueToolkit.resource;
-    Vue.resource=mvueToolkit.resource;
 }
 let MvueCore={
     install:install,
@@ -97,6 +96,7 @@ let MvueCore={
     formValidationPattern,
     formBase,//TODO:后面应该要去掉的
     controlTypeService,
-    commonOperation
+    commonOperation,
+    resource:mvueToolkit.resource
 };
 export default MvueCore;

@@ -462,7 +462,7 @@
             },
             checkIsArchived() {//TODO: 判断是否归档的逻辑可能需要修正
                 var _self = this;
-                mvueCore.metaService.getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
+                metaService.getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
                     _self.isArchived=true;
                     if(eventBus&&eventBus.record){
                         eventBus.record.isArchived = true;

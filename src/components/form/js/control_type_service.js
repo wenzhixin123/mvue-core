@@ -220,6 +220,10 @@ function buildFormItemByMetaField(metaField){
     formItem.componentParams.required=metaField.required;
     //是否唯一
     formItem.componentParams.unique=metaField.unique;
+    //placeholder默认填充
+    if(metaField.placeholder){
+        formItem.componentParams.placeholder=metaField.placeholder;
+    }
     //验证规则
     if(metaField.inputTypeParams["pattern"]){
         formItem.validation={

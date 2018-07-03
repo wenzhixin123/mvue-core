@@ -44,7 +44,7 @@ function installGridAndForm(Vue){
     //end new added for pclink
 
     //通用组件定义
-    Vue.component('select-user-modal',require('./components/common/select_user_modal'));
+    //Vue.component('select-user-modal',require('./components/common/select_user_modal'));
 }
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';

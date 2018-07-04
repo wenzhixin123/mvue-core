@@ -31,6 +31,10 @@ export default {
         },
         entityName:{//在高级查询的时候，会指定entityName参数获取元数据信息，因为此时没有meta-form包裹
             type:String
+        },
+        preprocessor:{//数据预处理函数，对formItem作预处理转换
+            type:Function,
+            required: false
         }
     },
     data:function(){
@@ -75,6 +79,9 @@ export default {
         }
         this.overrideProps(metaField);
         var formItem=controlTypeService.buildFormItemByMetaField(metaField);
+        if(this.preprocessor){
+            this.preprocessor(formItem,this);
+        }
         //初始化字段验证
         var entity=null;
         if(form){

@@ -45,6 +45,9 @@
     <!--默认toolbar布局-->
     <div class="toolBar default" v-if="!innerToolbar.hide && !toolbarType">
         <slot name="viewSelect"></slot>
+        <button @click="refresh()" type="button" class="ivu-btn ivu-btn-primary ivu-btn-circle ivu-btn-icon-only" title="刷新">
+            <i class="ivu-icon ivu-icon-ios-refresh-empty" style="font-size:32px;"></i>
+        </button>
         <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.btns">
             <meta-operation :operation="toolbarBtn" :key="index" :widget-context="getWidgetContext()">
                 <Button type="primary"  :icon="toolbarBtn.icon">{{toolbarBtn.title}}</Button>
@@ -53,9 +56,6 @@
         <Input v-if="innerToolbar.quicksearch&&innerToolbar.quicksearch.fields"
                v-model="quicksearchKeyword" :placeholder="innerToolbar.quicksearch.placeholder"
                icon="search" style="width: 150px;" :autofocus="true"/>
-        <button @click="refresh()" type="button" class="ivu-btn ivu-btn-primary ivu-btn-circle ivu-btn-icon-only" title="刷新">
-            <i class="ivu-icon ivu-icon-ios-refresh-empty" style="font-size:32px;"></i>
-        </button>
         <advance-search :quicksearch-keyword="quicksearchKeyword" v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" :entity-name="entityName" :advance-search-fields="innerToolbar.advanceSearchFields" @do-advance-search="doAdvanceSearch"></advance-search>
     </div>
     </slot>

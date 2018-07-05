@@ -5,4 +5,5 @@ build/
 config/
 node_modules/
 test/
+src/
 gulpfile.js

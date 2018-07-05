@@ -37,50 +37,6 @@
                 </div>
             </div>
         </div>
-        <!--
-        <Poptip v-model="searchModal" placement="left-start" width="400" transfer>
-            <div v-if="toolbarType=='compact'" @click="advanceSearch" class="concat-toolbar-btn"><Icon type="funnel"></Icon>高级</div>
-            <Button v-else @click="advanceSearch" type="ghost"><Icon type="funnel"></Icon>高级</Button>
-            <div slot="content">
-                <div class="ivu-modal-content">
-                    <div class="ivu-modal-header">
-                        <div class="ivu-modal-header-inner">高级筛选</div>
-                    </div>
-                    <div class="ivu-modal-body" style="padding-left: 0px;padding-right: 0px;">
-                        <div style="height:300px;overflow:auto;padding:0px 10px;">
-                            <meta-field v-for="key in advanceSearchFields" :key="key" :name="key" v-model="model[key]" :entity-name="entityName" :input-type="inputType(key)">
-                            </meta-field>
-                        </div>
-                    </div>
-                    <div class="ivu-modal-footer">
-                        <button type="button" class="ivu-btn ivu-btn-text ivu-btn-large" @click="doReset"><span>重置</span></button> 
-                        <button type="button" class="ivu-btn ivu-btn-text ivu-btn-large" @click="cancel"><span>取消</span></button> 
-                        <button type="button" class="ivu-btn ivu-btn-primary ivu-btn-large" @click="doSearch"><span>搜索</span></button>
-                    </div>
-                </div>
-            </div>
-        </Poptip>-->
-        <!-- 
-        <div v-if="toolbarType=='compact'" @click="advanceSearch" class="concat-toolbar-btn"><Icon type="funnel"></Icon>高级</div>
-        <Button v-else @click="advanceSearch" type="ghost"><Icon type="funnel"></Icon>高级</Button>
-        <Modal class="search-modal"
-            v-model="searchModal"
-            width="400"
-            title="高级查询"
-            :scrollable="true"
-            :mask-closable="false"
-            >
-            <div style="height:350px;overflow:auto;padding:0px 10px;">
-                <meta-field v-for="key in advanceSearchFields" :key="key" :name="key" v-model="model[key]" :entity-name="entityName" :input-type="inputType(key)">
-                </meta-field>
-            </div>
-            <div slot="footer">
-                <button type="button" class="ivu-btn ivu-btn-text ivu-btn-large" @click="doReset"><span>重置</span></button> 
-                <button type="button" class="ivu-btn ivu-btn-text ivu-btn-large" @click="cancel"><span>取消</span></button> 
-                <button type="button" class="ivu-btn ivu-btn-primary ivu-btn-large" @click="doSearch"><span>确定</span></button>
-            </div>
-        </Modal>-->
-       
     </div>
 </template>
 <script>
@@ -106,9 +62,13 @@ export default {
     },
     data:function(){
         var metaEntity=this.$metaBase.findMetaEntity(this.entityName);
+        var _model={};
+        _.each(this.advanceSearchFields,f=>{
+            _model[f]=null;
+        });
         return {
             searchModal:false,
-            model:{},
+            model:_model,
             innerAdvanceSearchFilters:_.cloneDeep(this.value),
             metaEntity:metaEntity,
             innerQuicksearchKeyword:this.quicksearchKeyword
@@ -135,7 +95,9 @@ export default {
             this.searchModal=!this.searchModal;
         },
         doReset(){
-            this.model={};
+            _.each(this.advanceSearchFields,f=>{
+                this.model[f]=null;
+            });
             this.innerQuicksearchKeyword="";
         },
         cancel(){

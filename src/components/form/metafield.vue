@@ -39,6 +39,9 @@ export default {
         context:{//context的附加数据:{mode:"字段显示模式：readonly/invisible/editable"}
             type:Object,
             require:false
+        },
+        value:{//高级查询v-model使用
+            required: false
         }
     },
     data:function(){
@@ -93,6 +96,7 @@ export default {
             metaformUtils.initValidation(form.$validator,formItem,metaEntity,this.$route.params.id);
         }
         return {
+            innerVal:null,
             formItem:formItem,
             form:form,
             validator:form?form.$validator:null,
@@ -102,22 +106,41 @@ export default {
             paths:constants.paths()
         }
     },
+    watch:{
+        value:{//同步外部v-model的数据到innerVal，高级查询特用
+            handler:function(){
+                if(!_.isEqual(this.value,this.innerVal)){
+                    this.innerVal=_.cloneDeep(this.value);
+                    if(this.entity){
+                        this.entity[this.metaField.name]=this.innerVal;
+                    }
+                }
+            },
+            deep:true
+        },
+        entity:{//同步entity的数据到innerVal
+            handler:function(){
+                if(this.entity){
+                    this.innerVal=this.entity[this.metaField.name];
+                }
+            },
+            deep:true,
+            immediate:true
+        },
+        innerVal:{//将innerVal的变化反应到entity和外部
+            handler:function(){
+                if(this.entity){
+                    this.entity[this.metaField.name]=this.innerVal;
+                }
+                this.$emit('input',this.innerVal);
+            },
+            deep:true
+        }
+    },
     computed: {
         innerContext:function(){
             var baseCtx={metaEntity:this.metaEntity,action:this.fieldStatus};
             return Object.assign(baseCtx,this.context);
-        },
-        innerVal: {
-            // getter
-            get: function () {
-                return this.entity&&this.entity[this.metaField.name];
-            },
-            // setter
-            set: function (newValue) {
-                if(this.entity){
-                    this.entity[this.metaField.name]=newValue;
-                }
-            }
         },
         fieldStatus:function () {
             var status=this.action;

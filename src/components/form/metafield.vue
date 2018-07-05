@@ -90,13 +90,15 @@ export default {
             this.preprocessor(formItem,this);
         }
         //初始化字段验证
-        var entity=null;
+        var entity=null,_innerVal=null;
         if(form){
             entity=form.entity;
+            //初始化来自entity的初始值
+            _innerVal=entity[metaField.name];
             metaformUtils.initValidation(form.$validator,formItem,metaEntity,this.$route.params.id);
         }
         return {
-            innerVal:null,
+            innerVal:_innerVal,
             formItem:formItem,
             form:form,
             validator:form?form.$validator:null,
@@ -117,15 +119,6 @@ export default {
                 }
             },
             deep:true
-        },
-        entity:{//同步entity的数据到innerVal
-            handler:function(){
-                if(this.entity){
-                    this.innerVal=this.entity[this.metaField.name];
-                }
-            },
-            deep:true,
-            immediate:true
         },
         innerVal:{//将innerVal的变化反应到entity和外部
             handler:function(){

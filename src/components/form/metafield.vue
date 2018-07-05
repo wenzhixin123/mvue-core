@@ -6,7 +6,7 @@
     :is="componentName(formItem)"
     :paths="paths" 
     :model="entity"
-    :context="{metaEntity,action:fieldStatus}"
+    :context="innerContext"
     :form-item="formItem">
     </component>
 </template>
@@ -35,6 +35,10 @@ export default {
         preprocessor:{//数据预处理函数，对formItem作预处理转换
             type:Function,
             required: false
+        },
+        context:{//context的附加数据:{mode:"字段显示模式：readonly/invisible/editable"}
+            type:Object,
+            require:false
         }
     },
     data:function(){
@@ -99,6 +103,10 @@ export default {
         }
     },
     computed: {
+        innerContext:function(){
+            var baseCtx={metaEntity:this.metaEntity,action:this.fieldStatus};
+            return Object.assign(baseCtx,this.context);
+        },
         innerVal: {
             // getter
             get: function () {

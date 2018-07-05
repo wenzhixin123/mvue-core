@@ -11,6 +11,8 @@ import numberType from './number_type'
 import uploadType from './upload_type';
 //定义基础组件:级联下拉组件定义
 import cascadeType from './cascade_options_type'
+//定义基础组件:字号组件定义
+import issuedNumberTypes from './issued_number_type'
 //实体组件：部门用户相关组件定义
 import orguserType from './orguser_type'
 //实体组件：实体相关组件定义
@@ -37,7 +39,8 @@ var fieldControlsType=[
     numberType,
     uploadType,
     cascadeType,
-    boolType
+    boolType,
+    issuedNumberTypes
 ];
 var fieldControls=[];
 _.each(fieldControlsType,function(type){

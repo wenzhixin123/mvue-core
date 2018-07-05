@@ -35,8 +35,10 @@ function installGridAndForm(Vue){
     Vue.component('MetaGroup',require('./components/form/control_tmpl/group'));
     Vue.component('meta-field',require('./components/form/metafield'));
     Vue.component('meta-form',require('./components/form/metaform'));
+    Vue.component('MetaIssuedNumber',require('./components/form/control_tmpl/issued_number')),
 
-    //begin new added for pclink
+
+        //begin new added for pclink
     Vue.component('MetaPclinkSingleUserSelect',require("./components/form/pclink/single_user_select"));
     Vue.component('MetaPclinkSingleOrgSelect',require("./components/form/pclink/single_org_select"));
     Vue.component('MetaPclinkMultiUserSelect',require("./components/form/pclink/multi_user_select"));

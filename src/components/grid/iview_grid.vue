@@ -110,7 +110,7 @@ import OperationUtils from '../meta_operation/js/operation_utils';
 import commonOperation from '../meta_operation/js/common_operation';//widgetMode true
 import noneWidgetModeCommonOperation from './js/metagrid_operation';//widgetMode false
 import gridBase from './js/entity_grid_base';
-var utils= require('../../libs/utils');
+import utils from '../../libs/utils';
 export default {
     mixins:[gridBase],
     props: {

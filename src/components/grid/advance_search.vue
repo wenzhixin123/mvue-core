@@ -85,7 +85,7 @@
 </template>
 <script>
 import controlTypeService from '../form/js/control_type_service';
-var utils= require('../../libs/utils');
+import utils from '../../libs/utils';
 export default {
     props: {
         "entityName": {

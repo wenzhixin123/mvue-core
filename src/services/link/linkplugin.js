@@ -16,14 +16,14 @@ let isUnder425 = isInPc && typeof app.window.showDevTools !== 'function'; //PCLi
  * -onlySelectOrg Boolean 是否只选择部门数据，默认false
  * -needMyGroup Boolean 是否显示我的群组，默认false
  */
-shareProjectToChat = (options) => {
+let shareProjectToChat = (options) => {
     options.msgType = 11;
     shareToChat(options);
 };
 /**
  * 分享到聊天
  */
-shareToChat = (options) => {
+let shareToChat = (options) => {
     app.trigger('ProxyOpenContactSelect', [{
         type: "ShareToChat",
         selectedUsers: options.selected || [],
@@ -42,7 +42,7 @@ shareToChat = (options) => {
 
 /*---------------------4.2.5版本之下接口（包含4.2.5）------------------*/
 //发起聊天
-openChatUnder425 = (id, type, name, callback) => {
+let openChatUnder425 = (id, type, name, callback) => {
     var encodeName = "";
     app.window.exists('chatWindow', function (exists) {
         if (exists) {
@@ -86,7 +86,7 @@ openChatUnder425 = (id, type, name, callback) => {
     });
 };
 //获取分享的云盘文件
-getDiskShareFileUnder425 = (callback) => {
+let getDiskShareFileUnder425 = (callback) => {
     var diskServiceUrl = "",
         diskUserData = {
             oper: "share",
@@ -127,7 +127,7 @@ getDiskShareFileUnder425 = (callback) => {
  * 发起聊天
  * id, type, name 必填
  */
-openChat = (id, type, name, callback) => {
+let openChat = (id, type, name, callback) => {
     app.trigger('ProxyOpenChat', [{
         id: id,
         name: name,
@@ -140,7 +140,7 @@ openChat = (id, type, name, callback) => {
  * 获取分享的云盘文件
  * callback 必填， 里面返回所分享文件（包含分享地址）
  */
-getDiskShareFile = (callback) => {
+let getDiskShareFile = (callback) => {
     let closeTriggerEventName = 'WebDiskFileEvent' + new Date().getTime();
     app.trigger('ProxyOpenDiskSelect', [{
         oper: "share",
@@ -170,7 +170,7 @@ getDiskShareFile = (callback) => {
  *    -canSelectOrg Boolean 是否能选择部门，默认false
  *    -callback function 回调函数，里面返回选择的联系人（json数组）
  */
-selectContact = (options) => {
+let selectContact = (options) => {
     var closeTriggerEventName = 'SelectContactEvent' + new Date().getTime();
     app.trigger('ProxyOpenContactSelect', [{
         type: "SelectContact",
@@ -196,7 +196,7 @@ selectContact = (options) => {
 };
 
 //打开没有标题栏的窗口
-openNoTitleWindow = (url, title) => {
+let openNoTitleWindow = (url, title) => {
     app.trigger('ProxyOpenNoTitleWindow', [url, title]);
 };
 
@@ -207,7 +207,7 @@ openNoTitleWindow = (url, title) => {
  * needAuth boolean 需要认证，默认是true
  * callback function 回调函数，成功打开后。
  */
-openWindow = (url, title, needAuth, callback) => {
+let openWindow = (url, title, needAuth, callback) => {
     app.trigger('ProxyOpenWindow', [{
         url: url,
         name: title,
@@ -218,7 +218,7 @@ openWindow = (url, title, needAuth, callback) => {
 
 /*---------------------4.3.2版本以上接口----------------------------*/
 //当前版本是否支持本地编辑文件
-function isSupportLocalEditFile() {
+let isSupportLocalEditFile = () => {
     var app = window.app;
     return !!(app && app.util && app.util.setCookies);
 }
@@ -240,7 +240,7 @@ function isSupportLocalEditFile() {
  *  -success function 成功回调，返回上传成功的response
  *  -error function 失败回调
  */
-function localEditFile(options) {
+let localEditFile = (options) => {
     var cbTriggerEventName = 'LocalEditFile' + new Date().getTime();
     app.trigger('ProxyLocalEditFile', [{
         fileDownloadUrl: options.fileDownloadUrl,

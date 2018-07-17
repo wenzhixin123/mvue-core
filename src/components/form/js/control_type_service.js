@@ -337,6 +337,7 @@ export default{
     isRefEntityType:entityType.accept,
     isContainer:containerType.accept,
     isNoFieldType:noFieldType.accept,
+    isIssuedNumber:issuedNumberTypes.isIssuedNumber,
     componentLayout:componentLayout,
     datePrecision:dateType.datePrecision,
     timePrecision:dateType.timePrecision,
@@ -360,5 +361,6 @@ export default{
     orguserType,
     entityType,
     noFieldType,
-    containerType
+    containerType,
+    issuedNumberTypes
 };

@@ -10,11 +10,14 @@
             <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
                 <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
                 <div class="issued_align">
-                    <div class="col-md-3">
-                        <input v-model="issuedObjcet.code" :disabled="disabled" type="text" class="form-control" @input="updateValue" :placeholder="formItem.componentParams.placeholder">
+                    <div class="col-md-3 _p0">
+                        <Select align="left" v-if="formItem.componentParams.standard=='standard2'" v-model="issuedObjcet.code" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
+                            <Option v-for="item in formItem.componentParams.options" :key="item.id" :value="item.id">{{ item.text }}</Option>
+                        </Select>
+                        <input v-else v-model="issuedObjcet.code" :disabled="disabled" type="text" class="form-control" @input="updateValue" :placeholder="formItem.componentParams.placeholder">
                     </div>
                     <div class="col-md-1 issued_align">[</div>
-                    <div class="col-md-3">
+                    <div class="col-md-3" align="left">
                         <input v-model="issuedObjcet.year" :disabled="disabled" type="text" class="form-control" @input="updateValue" :placeholder="formItem.componentParams.placeholder">
                     </div>
                     <div class="col-md-1 issued_align">]</div>
@@ -31,8 +34,11 @@
                     <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
                     <div class="col-md-10" :style="{width:controlWidth}">
                         <div class="issued_align">
-                            <div class="col-md-3">
-                                <input v-model="issuedObjcet.code" :disabled="disabled" type="text" class="form-control" @input="updateValue" :placeholder="formItem.componentParams.placeholder">
+                            <div class="col-md-3 _p0">
+                                <Select align="left" v-if="formItem.componentParams.standard=='standard2'" v-model="issuedObjcet.code" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
+                                    <Option v-for="item in formItem.componentParams.options" :key="item.id" :value="item.id">{{ item.text }}</Option>
+                                </Select>
+                                <input v-else v-model="issuedObjcet.code" :disabled="disabled" type="text" class="form-control" @input="updateValue" :placeholder="formItem.componentParams.placeholder">
                             </div>
                             <div class="col-md-1 issued_align">[</div>
                             <div class="col-md-3">
@@ -57,12 +63,7 @@
     export default {
         mixins: [controlBase],
         props: {
-            "value":{
-                type:Object,
-                default:function(){
-                    return {};
-                }
-            }
+            "value":[Object,String]
         },
         data(){
             return {
@@ -80,6 +81,15 @@
                 if(newV){
                     Object.assign(_issuedObjcet,newV)
                 }
+            },
+            "formItem.componentParams.standard"(newV){
+                //监听标准切换
+                this.issuedObjcet.code = "";
+                this.$emit('input',"");
+            },
+            "formItem.componentParams.options"(newV){
+                //监听选项改变
+                this.initDefault()
             }
         },
         mounted:function(){
@@ -87,6 +97,7 @@
                 this.issuedObjcet=_.cloneDeep(this.value);
             }else{
                 this.$emit('input',"");
+                this.initDefault();
             }
         },
         methods: {
@@ -97,12 +108,25 @@
                 }else{
                     this.$emit('input',"");
                 }
+            },
+            initDefault:function(){
+                var _this=this;
+                if(this.formItem.componentParams.standard!="standard2")return false;
+                _this.issuedObjcet.code = "";
+                _.each(this.formItem.componentParams.options,function(option){
+                    if(option.checked){
+                        _this.issuedObjcet.code=option.id;
+                        _this.$emit('input',_this.issuedObjcet);
+                        return false;
+                    }
+                });
             }
         }
     }
 </script>
 <style lang="scss" scoped>
 .issued_align{  height: 33px; line-height: 33px; text-align: center }
+._p0{ padding-left: 0;}
 </style>
 
 

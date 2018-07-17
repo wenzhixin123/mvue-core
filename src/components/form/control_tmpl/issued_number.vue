@@ -103,7 +103,9 @@
         methods: {
             updateValue: function () {
                 let _issuedObjcet = this.issuedObjcet;
-                if(_.some(_.values(_issuedObjcet))){
+                _issuedObjcet.fullText = "";
+                _issuedObjcet.fullText = _.values(_issuedObjcet).join("");
+                if(_.every(_.values(_issuedObjcet))){
                     this.$emit('input',this.issuedObjcet);
                 }else{
                     this.$emit('input',"");

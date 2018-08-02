@@ -102,9 +102,17 @@
         },
         methods: {
             updateValue: function () {
-                let _issuedObjcet = this.issuedObjcet;
+                let _issuedObjcet = Object.assign({},this.issuedObjcet);
                 _issuedObjcet.fullText = "";
+                if(this.formItem.componentParams.standard=="standard2"){
+                    _.each(this.formItem.componentParams.options,function(option){
+                        if(option.checked){
+                            _issuedObjcet.code = option.text
+                        }
+                    });
+                }//处理类型2的存储格式
                 _issuedObjcet.fullText = _.values(_issuedObjcet).join("");
+                this.issuedObjcet.fullText = _issuedObjcet.fullText;
                 if(_.every(_.values(_issuedObjcet))){
                     this.$emit('input',this.issuedObjcet);
                 }else{

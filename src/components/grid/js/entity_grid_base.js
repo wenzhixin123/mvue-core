@@ -199,6 +199,7 @@ export default {
             metaservice.getViewByShortId({id: viewShortId})
                 .then(({ data }) => {
                     //需要通过viewId--获取配置,不需要预定义
+                    _this.viewConfig = data;//存入视图配置
                     _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
                     _this.entityName = data.metaEntityName;
                     //存在自定义视图，由视图构造grid

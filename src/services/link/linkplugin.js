@@ -1,9 +1,8 @@
-'use strict';
 /**
  * PC端提供给第三方应用使用的接口
  */
-let isInPc = !!(app && app.window && app.window.open);
-let isUnder425 = isInPc && typeof app.window.showDevTools !== 'function'; //PCLink 4.2.5版本之下, 用浏览器属性判断
+var isInPc = !!(app && app.window && app.window.open);
+var isUnder425 = isInPc && typeof app.window.showDevTools !== 'function'; //PCLink 4.2.5版本之下, 用浏览器属性判断
 
 /**
  * 分享项目主页到聊天
@@ -17,14 +16,14 @@ let isUnder425 = isInPc && typeof app.window.showDevTools !== 'function'; //PCLi
  * -onlySelectOrg Boolean 是否只选择部门数据，默认false
  * -needMyGroup Boolean 是否显示我的群组，默认false
  */
-let shareProjectToChat = (options) => {
+var shareProjectToChat = function (options) {
     options.msgType = 11;
     shareToChat(options);
 };
 /**
  * 分享到聊天
  */
-let shareToChat = (options) => {
+var shareToChat = function (options) {
     app.trigger('ProxyOpenContactSelect', [{
         type: "ShareToChat",
         selectedUsers: options.selected || [],
@@ -43,7 +42,7 @@ let shareToChat = (options) => {
 
 /*---------------------4.2.5版本之下接口（包含4.2.5）------------------*/
 //发起聊天
-let openChatUnder425 = (id, type, name, callback) => {
+var openChatUnder425 = function (id, type, name, callback) {
     var encodeName = "";
     app.window.exists('chatWindow', function (exists) {
         if (exists) {
@@ -87,7 +86,7 @@ let openChatUnder425 = (id, type, name, callback) => {
     });
 };
 //获取分享的云盘文件
-let getDiskShareFileUnder425 = (callback) => {
+var getDiskShareFileUnder425 = function (callback) {
     var diskServiceUrl = "",
         diskUserData = {
             oper: "share",
@@ -128,7 +127,7 @@ let getDiskShareFileUnder425 = (callback) => {
  * 发起聊天
  * id, type, name 必填
  */
-let openChat = (id, type, name, callback) => {
+var openChat = function (id, type, name, callback) {
     app.trigger('ProxyOpenChat', [{
         id: id,
         name: name,
@@ -141,8 +140,8 @@ let openChat = (id, type, name, callback) => {
  * 获取分享的云盘文件
  * callback 必填， 里面返回所分享文件（包含分享地址）
  */
-let getDiskShareFile = (callback) => {
-    let closeTriggerEventName = 'WebDiskFileEvent' + new Date().getTime();
+var getDiskShareFile = function (callback) {
+    var closeTriggerEventName = 'WebDiskFileEvent' + new Date().getTime();
     app.trigger('ProxyOpenDiskSelect', [{
         oper: "share",
         closeTriggerEventName: closeTriggerEventName
@@ -171,7 +170,7 @@ let getDiskShareFile = (callback) => {
  *    -canSelectOrg Boolean 是否能选择部门，默认false
  *    -callback function 回调函数，里面返回选择的联系人（json数组）
  */
-let selectContact = (options) => {
+var selectContact = function (options) {
     var closeTriggerEventName = 'SelectContactEvent' + new Date().getTime();
     app.trigger('ProxyOpenContactSelect', [{
         type: "SelectContact",
@@ -197,7 +196,7 @@ let selectContact = (options) => {
 };
 
 //打开没有标题栏的窗口
-let openNoTitleWindow = (url, title) => {
+var openNoTitleWindow = function (url, title) {
     app.trigger('ProxyOpenNoTitleWindow', [url, title]);
 };
 
@@ -208,7 +207,7 @@ let openNoTitleWindow = (url, title) => {
  * needAuth boolean 需要认证，默认是true
  * callback function 回调函数，成功打开后。
  */
-let openWindow = (url, title, needAuth, callback) => {
+var openWindow = function (url, title, needAuth, callback) {
     app.trigger('ProxyOpenWindow', [{
         url: url,
         name: title,
@@ -219,7 +218,7 @@ let openWindow = (url, title, needAuth, callback) => {
 
 /*---------------------4.3.2版本以上接口----------------------------*/
 //当前版本是否支持本地编辑文件
-let isSupportLocalEditFile = () => {
+var isSupportLocalEditFile = function () {
     var app = window.app;
     return !!(app && app.util && app.util.setCookies);
 }
@@ -241,7 +240,7 @@ let isSupportLocalEditFile = () => {
  *  -success function 成功回调，返回上传成功的response
  *  -error function 失败回调
  */
-let localEditFile = (options) => {
+var localEditFile = function (options) {
     var cbTriggerEventName = 'LocalEditFile' + new Date().getTime();
     app.trigger('ProxyLocalEditFile', [{
         fileDownloadUrl: options.fileDownloadUrl,
@@ -262,7 +261,7 @@ let localEditFile = (options) => {
     });
 }
 
-let linkplugin = {
+var linkplugin = {
     isInPc: !!(app && app.window && app.window.open),
     isUnder425: isInPc && typeof app.window.showDevTools !== 'function', //PCLink 4.2.5版本之下, 用浏览器属性判断
     //发起聊天

@@ -1,4 +1,64 @@
 <template>
+    <b-list  v-if="preprocessed" ref="listInst"
+            :padding="2"
+            :columns="innerColumns"
+            :query="query"
+            :toolbar="toolbar"
+            :filters="filters"
+            :default-sort="null">
+        <template slot="header">
+                <slot name="top">
+                    <!-- 高级搜索区 -->
+                </slot>
+                <div class="b-list-header">
+                    <slot name="header-left">
+                        <!-- 自定义菜单左侧区 -->
+                    </slot>
+                    <Button @click="doReload" icon="ios-refresh-empty"></Button>
+                    <template v-if="toolbar&&toolbar.btns">
+                        <Button class="normal-btn" v-for="(btn,index) in toolbar.btns" v-if="index<btnSizeBeforeMore" :disabled="btnIsDisabled(btn)" :type="btn.type?btn.type:'primary'" @click="onBtnClick(btn)" :icon="btn.icon" :key="index">{{btn.title}}</Button>
+                        <Dropdown v-if="toolbar.btns.length>btnSizeBeforeMore" @on-click="handleMoreClick">
+                            <Button>
+                                更多操作
+                                <Icon type="arrow-down-b"></Icon>
+                            </Button>
+                            <DropdownMenu slot="list">
+                                <DropdownItem v-for="(btn,index) in toolbar.btns" v-if="index>=btnSizeBeforeMore" :disabled="btnIsDisabled(btn)" @click="onBtnClick(btn)" :divided="btn.divided" :name="index" :key="index">{{btn.title}}</DropdownItem>
+                            </DropdownMenu>
+                        </Dropdown>
+                    </template>
+                    <slot name="header-middle">
+                        <!-- 自定义菜单中部区 -->
+                    </slot>
+                    <Input class="quicksearch-input" v-if="toolbar.quicksearch&&toolbar.quicksearch.fields" v-model="quicksearchKeyword" :placeholder="toolbar.quicksearch.placeholder" icon="search"/>
+                    <config-columns :columns="columns" @on-change-columns="handleChangeColumns"></config-columns>
+                    <slot name="header-right">
+                        <!-- 自定义菜单右侧区 -->
+                    </slot>
+                </div>
+
+            <!--批量操作的工具栏-->
+            <div v-if="!innerToolbar.hide && toolbarType=='compact' && innerToolbar.batchBtns" class="toolbar-batch-operations" style="display:table;" v-show="checked&&checked.length>0">
+                <div style="display:table-cell;vertical-align:middle;">
+                    <span class="checked-info-span tools-color">已选中{{checked.length}}项目</span>
+                    <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.batchBtns">
+                        <meta-operation :key="index" :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                            <Button v-if="!toolbarBtn.render" size="small"
+                                    type="text"  :icon="toolbarBtn.icon"
+                            >{{toolbarBtn.title}}</Button>
+                        </meta-operation>
+                    </template>
+                </div>
+                <div style="width:77px;display:table-cell;vertical-align:middle;background-color:#fff;">
+
+                </div>
+            </div>
+        </template>
+
+
+    </b-list>
+
+
 <div class="grid-con" v-if="preprocessed">
     <slot name="toolbarSlot">
     <!--紧凑型toolbar布局-->

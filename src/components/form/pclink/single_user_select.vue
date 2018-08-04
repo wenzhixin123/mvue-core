@@ -43,7 +43,7 @@
     </div>
 </template>
 <script>
-import mvueToolkit from 'mvue-toolkit';
+import context from 'src/libs/context';
 import controlBase from '../js/control_base';
 var linkplugin=require('../../../services/link/linkplugin');
 export default {
@@ -54,7 +54,7 @@ export default {
     data: function(){
         let entityResource=null;
         if(this.paths&&this.paths.userApiUrl){
-            entityResource= mvueToolkit.resource(this.paths.userApiUrl);
+            entityResource= context.buildResource(this.paths.userApiUrl);
         }
         return {
             innerValue:this.value,

@@ -37,8 +37,7 @@ function installGridAndForm(Vue){
     Vue.component('meta-form',require('./components/form/metaform'));
     Vue.component('MetaIssuedNumber',require('./components/form/control_tmpl/issued_number')),
 
-
-        //begin new added for pclink
+     //begin new added for pclink
     Vue.component('MetaPclinkSingleUserSelect',require("./components/form/pclink/single_user_select"));
     Vue.component('MetaPclinkSingleOrgSelect',require("./components/form/pclink/single_org_select"));
     Vue.component('MetaPclinkMultiUserSelect',require("./components/form/pclink/multi_user_select"));
@@ -51,12 +50,9 @@ function installGridAndForm(Vue){
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';
 import utils from './libs/utils';
-import mvueToolkit from "mvue-toolkit";
-import ajax from './libs/ajax';
 
 import metaservice from "./services/meta/metaservice";
 import toolService from "./services/tool/tool_service";
-import config from './config/config';
 
 import propParser from './services/tool/prop_parser';
 import linkplugin from './services/link/linkplugin';
@@ -67,38 +63,39 @@ import controlTypeService from './components/form/js/control_type_service';
 import formBase from './components/form/js/form_base';
 import commonOperation from './components/meta_operation/js/common_operation';
 
+import  context from "./libs/context";
+
 //Vue插件安装入口函数
 const install = function(Vue, opts = {}) {
     if (install.installed) return;
-    //TODO 由于开发模式mvue-core未发布到npm，mvue-toolkit会出现和web不同的副本，手工初始化一下
-    Vue.use(mvueToolkit,opts);
+    context.init(Vue,opts);
     installGridAndForm(Vue);
     Vue.prototype.$metaBase=metabase;
     Vue.prototype.$metaEntity=metaentity;
     Vue.prototype.$metaService=metaservice;
     Vue.prototype.$toolService=toolService;
-    Vue.prototype.$http=mvueToolkit.http;
-    Vue.prototype.$resource=mvueToolkit.resource;
+    Vue.prototype.$http=context.getMvueToolkit().http;
+    Vue.prototype.$resource=context.getMvueToolkit().resource;
 }
 let MvueCore={
     install:install,
+    session:context.getMvueToolkit().session,
+    ssoclient:context.getMvueToolkit().ssoclient,
+    router:context.getMvueToolkit().router,
+    config:context.getMvueToolkit().config,
+    http:context.getMvueToolkit().http,
+    resource:context.getMvueToolkit().resource,
     utils:utils,
     metaBase:metabase,
     metaEntity:metaentity,
     metaService:metaservice,
     toolService:toolService,
-    ajax:ajax,
-    session:mvueToolkit.session,
-    ssoclient:mvueToolkit.ssoclient,
-    router:mvueToolkit.router,
-    config:config,
     propParser:propParser,
     linkplugin,
     formConstants,
     formValidationPattern,
     formBase,//TODO:后面应该要去掉的
     controlTypeService,
-    commonOperation,
-    resource:mvueToolkit.resource
+    commonOperation
 };
 export default MvueCore;

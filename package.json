@@ -5,7 +5,7 @@
   "main": "dist/lib/index.js",
   "scripts": {
     "build": "node build/build-lib.js",
-    "prepublish":"npm run build"
+    "prepublish": "npm run build"
   },
   "author": "bingosoft",
   "license": "Apache-2.0",
@@ -14,23 +14,23 @@
     "url": "https://github.com/bingo-oss/mvue-core"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "file-size": "^1.0.0",
     "iview": "^2.7.4",
     "js-base64": "^2.4.0",
     "js-cookie": "^2.2.0",
     "moment": "^2.18.1",
     "moment-range": "^3.0.3",
+    "mvue-toolkit": "0.0.8",
+    "path-to-regexp": "1.7.0",
+    "qs": "^6.5.2",
     "store2": "^2.5.9",
     "url-parse": "^1.1.9",
     "uuid": "^3.1.0",
     "vue": "2.5.3",
     "vue-html-loader": "^1.2.4",
     "vue-multiselect": "^2.0.2",
-    "vue-router": "2.7.0",
-    "path-to-regexp" : "1.7.0",
-    "qs": "^6.5.2",
-    "axios": "^0.18.0",
-    "mvue-toolkit": "^0.0.7"
+    "vue-router": "2.7.0"
   },
   "devDependencies": {
     "resolve-url": "^0.2.1",

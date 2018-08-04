@@ -67,7 +67,7 @@
     </div>
 </template>
 <script>
-import mvueToolkit from 'mvue-toolkit';
+import context from 'src/libs/context';
 import controlBase from '../js/control_base';
 export default {
     mixins: [controlBase],
@@ -77,7 +77,7 @@ export default {
     data: function(){
         let entityResource=null;
         if(this.paths&&this.paths.userApiUrl){
-            entityResource= mvueToolkit.resource(this.paths.userApiUrl);
+            entityResource= context.buildResource(this.paths.userApiUrl);
         }
         return {
             selectedItem:null,//已经选择的项
@@ -109,7 +109,7 @@ export default {
         "paths.userApiUrl":function(newValue,oldValue){//监听地址，一旦设置值，用户操作的resource就可以构造了
             var _this=this;
             if(newValue){
-                this.entityResource= mvueToolkit.resource(newValue);
+                this.entityResource= context.buildResource(newValue);
                 this.firstSearch();
             }
         },

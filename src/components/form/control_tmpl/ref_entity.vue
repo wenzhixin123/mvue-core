@@ -45,7 +45,7 @@
     </div>
 </template>
 <script>
-import mvueToolkit from 'mvue-toolkit';
+import context from 'src/libs/context';
 import controlBase from '../js/control_base';
 export default {
     mixins: [controlBase],
@@ -55,7 +55,7 @@ export default {
     data: function(){
         var entityResource=null;
         if(this.formItem.componentParams&&this.formItem.componentParams.entityResourceUrl){
-            entityResource= mvueToolkit.resource(this.formItem.componentParams.entityResourceUrl);
+            entityResource= context.buildResource(this.formItem.componentParams.entityResourceUrl);
         }
         return {
             selectedItem:null,//已经选择的项

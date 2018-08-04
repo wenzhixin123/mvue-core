@@ -1,4 +1,4 @@
-var mvueToolkit = require("mvue-toolkit").default;
+var context = require("src/libs/context").default;
 module.exports=function (options) {
     var metaEntity=_.extend({
       name:"",
@@ -155,7 +155,7 @@ module.exports=function (options) {
     var customActions = {
       calc: {method: 'POST', url: `${pathname}/calc`}
     };
-    var dataResource = mvueToolkit.resource(resourceName,customActions);
+    var dataResource = context.buildResource(resourceName,customActions);
     return dataResource;
   }
   /**

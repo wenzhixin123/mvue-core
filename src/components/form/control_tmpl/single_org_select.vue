@@ -63,7 +63,7 @@
     </div>
 </template>
 <script>
-import context from 'src/libs/context';
+import context from '../../../libs/context';
 import controlBase from '../js/control_base';
 export default {
     mixins: [controlBase],

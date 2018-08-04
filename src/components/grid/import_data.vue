@@ -40,7 +40,7 @@
                     <div class="upload-con margin-top42">
                         <Row>
                             <Col span="24">
-                                <import-file-upload :validator="$validator" v-model="model.file" :form-item="excelUploadFormItem" :paths="paths"></import-file-upload>
+                                <import-file-upload v-model="model.file" :form-item="excelUploadFormItem" :paths="paths"></import-file-upload>
                                 <div style="margin-left:auto;margin-right:auto;width:220px;margin-top:10px;">
                                     <!--
 
@@ -135,7 +135,7 @@
 import controlTypeService from '../form/js/control_type_service';
 import constants from '../form/js/constants';
 import toolService from '../../services/tool/tool_service';
-import metaService from '../../services/meta/metaservice';
+import metaservice from "../../services/meta/metaservice";
 import ExportCsv from './js/export_csv';
 
 var moment = require('moment');
@@ -225,9 +225,9 @@ export default {
     },
     mounted:function(){
         var _this=this;
-        this.$validator.attach("file", {required:true});
+        //this.$validator.attach("file", {required:true});
         //初始化实体导入模板地址
-        metaService.getEntityTemplate({projectId:this.metaEntity.projectId,entityName:this.entityName})
+        metaservice().getEntityTemplate({projectId:this.metaEntity.projectId,entityName:this.entityName})
           .then(({data})=>{
             if(!_.isEmpty(data)){
               _this.templateUrl=Config.getUploadUrl()+"?filePath="+data["pathInfo"]["relativePath"]+"&filename="+encodeURIComponent(data["pathInfo"]["fileName"]);
@@ -290,7 +290,7 @@ export default {
                 var fileUrl=`${_this.paths.uploadUrl}?filePath=${fileRelativePath}`;
                 _this.modelForMapping.excelUrl=fileUrl;
                 _this.modelForImport.file=fileUrl;
-                toolService.getImportMapping(_this.modelForMapping).then(({data})=>{
+                toolService().getImportMapping(_this.modelForMapping).then(({data})=>{
                     //构造新的映射关系
                     var _mappings=[];
                     _.each(data.cols,function(col){
@@ -308,9 +308,9 @@ export default {
         doValidation:function(callback){
             var _this=this;
             //启用智能校验
-            Utils.smartValidate(_this,this.model,this.$validator,function(){
+            /*Utils.smartValidate(_this,this.model,this.$validator,function(){
                 callback&&callback();
-            });
+            });*/
         },
         cancel(){
             this.importModal=false;
@@ -340,7 +340,7 @@ export default {
                 if(!_this.importId){
                     return;
                 }
-                toolService.getImportProgress({id:_this.importId}).then(({data})=>{
+                toolService().getImportProgress({id:_this.importId}).then(({data})=>{
                     _this.progressData=data;
 
                     let finished=true;
@@ -374,7 +374,7 @@ export default {
         getReport(){//导入完成后获取导入的报告
             var _this=this;
             if(this.importFinished){
-                toolService.getImportReport({id:this.importId}).then(({data})=>{
+                toolService().getImportReport({id:this.importId}).then(({data})=>{
                     _this.report=data;
                     _this.hasReport=true;
                 });
@@ -397,7 +397,7 @@ export default {
                 //标志导入开始，但未完成
                 _this.importFinished=false;
                 _this.$Loading.start();
-                toolService.doImport(_this.modelForImport).then(({data})=>{
+                toolService().doImport(_this.modelForImport).then(({data})=>{
                     _this.importId=data;
                     //开始定时获取进度数据，直到导入步骤完成
                     _this.startProgressInterval();

@@ -28,7 +28,7 @@
                     :multiple="formItem.componentParams.multiple.isAllowed"
                     name="file"
                     :action="uploadAction">
-                    <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
+                    <Button  icon="ios-cloud-upload-outline">上传文件</Button>
                 </Upload>
                 <ul class="ivu-upload-list">
                     <li class="ivu-upload-list-file ivu-upload-list-file-finish" v-for="item in fileList()" :key="item.url">
@@ -59,7 +59,7 @@
                         :multiple="formItem.componentParams.multiple.isAllowed"
                         name="file"
                         :action="uploadAction">
-                        <Button type="ghost" icon="ios-cloud-upload-outline">上传文件</Button>
+                        <Button  icon="ios-cloud-upload-outline">上传文件</Button>
                     </Upload>
                     <ul class="ivu-upload-list">
                         <li class="ivu-upload-list-file ivu-upload-list-file-finish" v-for="item in fileList()" :key="item.url">

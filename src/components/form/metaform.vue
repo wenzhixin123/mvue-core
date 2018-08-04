@@ -275,7 +275,7 @@
                     return;
                 }
                 var _this = this;
-                metaservice.getFormByShortId({id:formShortId,resolve:true})
+                metaservice().getFormByShortId({id:formShortId,resolve:true})
                     .then(({ data }) => {
                         //存在自定义表单，按表单元数据构建表单
                         _this.metaFormLayout=true;
@@ -462,7 +462,7 @@
             },
             checkIsArchived() {//TODO: 判断是否归档的逻辑可能需要修正
                 var _self = this;
-                metaService.getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
+                metaservice().getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
                     _self.isArchived=true;
                     if(eventBus&&eventBus.record){
                         eventBus.record.isArchived = true;

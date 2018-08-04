@@ -1,4 +1,4 @@
-var context = require("src/libs/context").default;
+var context = require("../context").default;
 module.exports=function (options) {
     var metaEntity=_.extend({
       name:"",
@@ -18,7 +18,7 @@ module.exports=function (options) {
    */
   metaEntity.getIdField=function(){
     var idField=null;
-    _.forEach(this.fields,function (metaField,key) {
+    _.forIn(this.fields,function (metaField,key) {
       if(metaField.identity){
         idField=metaField;
       }
@@ -31,7 +31,7 @@ module.exports=function (options) {
     if(_.isEmpty(fieldName)){
       return null;
     }
-    _.forEach(this.fields,function (metaField,key) {
+    _.forIn(this.fields,function (metaField,key) {
       if(fieldName.toLowerCase()==key.toLowerCase()){
         field=metaField;
         return false;
@@ -54,7 +54,7 @@ module.exports=function (options) {
    */
   metaEntity.firstSemanticsField=function (semantics) {
     var field=null;
-    _.forEach(this.fields,function (metaField,key) {
+    _.forIn(this.fields,function (metaField,key) {
       if(metaField.semantics==semantics
         || (_.isArray(metaField.semantics)&& _.includes(metaField.semantics,semantics))){
         field=metaField;
@@ -72,7 +72,7 @@ module.exports=function (options) {
   metaEntity.findRelation=function(sourceField,targetEntity){
     var relation=null;
     var self=this;
-    _.forEach(self.relations,function(metaRelation,key){
+    _.forIn(self.relations,function(metaRelation,key){
       var eqTargetEntity=true;
       if(!_.isEmpty(targetEntity)){
         eqTargetEntity=(metaRelation.targetEntity.toLowerCase()==targetEntity.toLowerCase());
@@ -106,7 +106,7 @@ module.exports=function (options) {
   */
   metaEntity.getDefaultModel=function(){
     var model={};
-    _.forEach(this.fields,function (metaField,key) {
+    _.forIn(this.fields,function (metaField,key) {
       if(!metaField.identity&&!_.includes(["createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
         if(metaField.inputTypeParams["options"]){//选项类型默认值由options的checked属性指定
           model[key]=null;
@@ -122,7 +122,7 @@ module.exports=function (options) {
    */
   metaEntity.getDefaultFormFields=function(){
     var fields=[];
-    _.forEach(this.fields,function (metaField,key) {
+    _.forIn(this.fields,function (metaField,key) {
       if(!metaField.identity&&!_.includes(["redundant","createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
         fields.push(key);
       }
@@ -134,7 +134,7 @@ module.exports=function (options) {
    */
   metaEntity.getDefaultViewFields=function(){
     var fields=[];
-    _.forEach(this.fields,function (metaField,key) {
+    _.forIn(this.fields,function (metaField,key) {
       if(!metaField.identity&&!_.includes(["redundant"],metaField.semantics)){
         fields.push(key);
       }

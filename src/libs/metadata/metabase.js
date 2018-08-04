@@ -3,8 +3,8 @@
  * Created by fulsh on 2017/12/12.
  */
 import controlTypeService from '../../components/form/js/control_type_service';
+import context from "../context";
 var Config=require("../../config/config.js");
-import metaservice from '../../services/meta/metaservice';
 var store=require("store2");
 
 var MetaEntityCls=require("./metaentity");
@@ -49,7 +49,7 @@ function currentSwagger(projectId){
       reslove(swagger);
     });
   }
-  return metaservice.getProject({id:projectId}).then(({data})=>{
+  return metaservice().getProject({id:projectId}).then(({data})=>{
     if(!data.engine||!data.engine.externalUrl){
       console.log(`项目id为${projectId}的项目engine地址不存在`);
       return null;
@@ -64,32 +64,29 @@ function currentSwagger(projectId){
  * @param {*} projectId 
  * @param {*} forceReload 为true表示强制从远程更新元数据信息
  */
-function  initMetabase(projectId,forceReload){
-  currentProjectId=projectId;
-  var _metabase=getMetabase(projectId);
-  if(_metabase&&!forceReload){//已经在缓存里边存在，不加载
-    return;
-  }
-  //先通过项目id，查询项目的swagger服务地址，在通过swagger地址获取元数据信息
-  return currentSwagger(projectId).then((swagger)=>{
-    if(!swagger){
-      return;
+function  initMetabase(projectId,forceReload) {
+    currentProjectId = projectId;
+    var _metabase = getMetabase(projectId);
+    if (_metabase && !forceReload) {//已经在缓存里边存在，不加载
+        return;
     }
-    return jQuery.ajax({
-      url:swagger,
-      cache:false,
-      dataType:"json",
-      statusCode:{
-        404:function () {
-          alert("加载元数据定义失败，请确认以下配置是否正确："+swagger);
+    //先通过项目id，查询项目的swagger服务地址，在通过swagger地址获取元数据信息
+    return currentSwagger(projectId).then((swagger) => {
+        if (!swagger) {
+            return;
         }
-      },
-      success:function (swaggerJson) {
-        loadMetabase(swaggerJson,projectId);
-        console.log("load metabase from "+swagger);
-      }
+        context.getMvueToolkit().http.get(swagger).then(function ({data}) {
+            loadMetabase(data, projectId);
+            console.log("load metabase from " + swagger);
+        }).catch(function (error) {
+            if (error.response && error.response.status == 404) {
+                alert("加载元数据定义失败，请确认以下配置是否正确：" + swagger);
+            } else {
+                alert('加载元数据定义失败,' + error.message);
+            }
+            console.log(error.config);
+        });
     });
-  });
 }
 
 /**
@@ -101,7 +98,7 @@ function loadMetabase(swagger,projectId){
     swagger:swagger
   };
   var entities={};
-  _.forEach(swagger.definitions,function(val,key){
+  _.forIn(swagger.definitions,function(val,key){
     var isEntity=firstNotNaN(val["x-entity"],true);
     if(!isEntity){
       return;
@@ -138,7 +135,7 @@ function loadMetaEntityFromMode(context,modelName,model){
   },context);
   var index=0;
   var relations=[];
-  _.forEach(model.properties,function (val,key) {
+  _.forIn(model.properties,function (val,key) {
     var isRelation=firstNotNaN(val["x-relation"],false);
     if(isRelation){
       var metaRelation=loadMetaRelationFromProperty(propertyContext,key,val);

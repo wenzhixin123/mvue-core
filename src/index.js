@@ -51,11 +51,10 @@ import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';
 import utils from './libs/utils';
 
-import metaservice from "./services/meta/metaservice";
-import toolService from "./services/tool/tool_service";
-
 import propParser from './services/tool/prop_parser';
 import linkplugin from './services/link/linkplugin';
+import metaservice from './services/meta/metaservice';
+import toolService from './services/tool/tool_service';
 
 import formConstants from './components/form/js/constants';
 import formValidationPattern from './components/form/js/validation_pattern';
@@ -65,37 +64,40 @@ import commonOperation from './components/meta_operation/js/common_operation';
 
 import  context from "./libs/context";
 
-//Vue插件安装入口函数
-const install = function(Vue, opts = {}) {
-    if (install.installed) return;
-    context.init(Vue,opts);
-    installGridAndForm(Vue);
-    Vue.prototype.$metaBase=metabase;
-    Vue.prototype.$metaEntity=metaentity;
-    Vue.prototype.$metaService=metaservice;
-    Vue.prototype.$toolService=toolService;
-    Vue.prototype.$http=context.getMvueToolkit().http;
-    Vue.prototype.$resource=context.getMvueToolkit().resource;
-}
 let MvueCore={
     install:install,
-    session:context.getMvueToolkit().session,
-    ssoclient:context.getMvueToolkit().ssoclient,
-    router:context.getMvueToolkit().router,
-    config:context.getMvueToolkit().config,
-    http:context.getMvueToolkit().http,
-    resource:context.getMvueToolkit().resource,
     utils:utils,
     metaBase:metabase,
     metaEntity:metaentity,
-    metaService:metaservice,
-    toolService:toolService,
     propParser:propParser,
     linkplugin,
     formConstants,
     formValidationPattern,
     formBase,//TODO:后面应该要去掉的
     controlTypeService,
-    commonOperation
+    commonOperation,
+    context
 };
+
+//Vue插件安装入口函数
+function install(Vue, opts = {}) {
+    if (install.installed) return;
+    context.init(Vue,opts);
+    installGridAndForm(Vue);
+    Vue.prototype.$metaBase=metabase;
+    Vue.prototype.$metaEntity=metaentity;
+    Vue.prototype.$metaService=metaservice();
+    Vue.prototype.$toolService=toolService();
+    Vue.prototype.$http=context.getMvueToolkit().http;
+    Vue.prototype.$resource=context.getMvueToolkit().resource;
+
+
+    MvueCore["session"]=context.getMvueToolkit().session;
+    MvueCore["ssoclient"]=context.getMvueToolkit().ssoclient;
+    MvueCore["router"]=context.getMvueToolkit().router;
+    MvueCore["config"]=context.getMvueToolkit().config;
+    MvueCore["http"]=context.getMvueToolkit().http;
+    MvueCore["resource"]=context.getMvueToolkit().resource;
+};
+
 export default MvueCore;

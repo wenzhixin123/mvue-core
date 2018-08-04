@@ -1,7 +1,7 @@
 <template>
     <div class="grid-advance-search-con">
         <div v-if="toolbarType=='compact'" @click="advanceSearch" class="concat-toolbar-btn"><Icon type="funnel"></Icon>高级</div>
-        <Button v-else @click="advanceSearch" type="ghost"><Icon type="funnel"></Icon>高级</Button>
+        <Button v-else @click="advanceSearch" type="default"><Icon type="funnel"></Icon>高级</Button>
         <div v-show="searchModal" class="ivu-poptip-popper v-transfer-dom" style="width: 400px; position: absolute; right: 215px; top: 5px; transform-origin: right center 0px;text-align:left;" x-placement="left-start">
             <div class="ivu-poptip-content">
                 <div class="ivu-poptip-arrow"></div> 
@@ -28,7 +28,7 @@
                                     </div>
                                     <div class="ivu-modal-footer">
                                         <Button type="primary" size="small" @click="doSearch">搜索</Button>
-                                        <Button type="ghost" size="small" @click="doReset">重置</Button>
+                                        <Button type="default" size="small"  @click="doReset">重置</Button>
                                     </div>
                                 </div>
                             </div>

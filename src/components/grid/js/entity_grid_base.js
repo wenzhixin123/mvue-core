@@ -1,6 +1,7 @@
 import metabase from '../../../libs/metadata/metabase';
-import metaservice from '../../../services/meta/metaservice';
 import metaGrid from "./metagrid";
+import utils from "../../../libs/utils";
+import metaservice from "../../../services/meta/metaservice";
 
 export default {
     methods: {
@@ -196,7 +197,7 @@ export default {
                 _this.setDefaultQueryOptions();
                 return;
             }
-            metaservice.getViewByShortId({id: viewShortId})
+            metaservice().getViewByShortId({id: viewShortId})
                 .then(({ data }) => {
                     //需要通过viewId--获取配置,不需要预定义
                     _this.viewDef = data;//存入视图配置
@@ -212,6 +213,38 @@ export default {
                 }, (resp)=> {
                     _this.setDefaultQueryOptions();
                 });
+        },
+        /**
+         * 根据通用查询条件，构造leap的filters
+         * @param group
+         * @returns {string}
+         */
+        buildFilter(group) {
+            var _self=this;
+            var conditions = [];
+            if (group.rules) {
+                _.forIn(group.rules, (rule, k) => {
+                    var key = rule.mappingKey || k;
+                    var value = rule.value;
+                    if (!_.isNull(value) && value !== "" && !_.isUndefined(value)) {
+                        if (_.isString(value)) {
+                            value = utils.leapQueryValueEncode(value);
+                        }
+                        conditions.push(`(${key} ${rule.op} ${value})`);
+                    }
+                });
+            }
+            if (group.groups) {
+                _.forIn(group.groups, (g, k) => {
+                    var c = _self.buildFilter(g);
+                    c = c ? `(${c})` : '';
+                    if (c) {
+                        conditions.push(c);
+                    }
+                });
+            }
+            var conditionString = conditions.join(` ${group.op} `);
+            return conditionString ? `(${conditionString})` : conditionString;
         }
     }
 }

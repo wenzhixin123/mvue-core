@@ -3,8 +3,9 @@
  */
 import metabase from '../../../libs/metadata/metabase';
 import ExportCsv from './export_csv';
-import toolServices from '../../../services/tool/tool_service';
+import contextHelper from "../../../libs/context";
 var pathToRegexp = require('path-to-regexp');
+
 
 /**
  * 创建操作，跳转到新建表单页
@@ -14,7 +15,7 @@ function operationForCreate(){
   var operation= {
     id:"create",
     title:"添加",
-    icon:"plus-round",
+    icon:"plus",
     onclick:function(context,$optInst){
       var path=context.grid&&context.grid.createPath;
       var metaEntity=context.metaEntity;
@@ -33,9 +34,9 @@ function operationForCreate(){
         return parseCurrentRoute(context, $optInst.operation.params, _query);
       }
       if(path.indexOf('/')>-1){
-        router.push({path:path,query:_query});
+          contextHelper.getRouter().push({path:path,query:_query});
       }else{
-        router.push({name:path,params:{entityName:metaEntity.name},query:_query});
+         contextHelper.getRouter().push({name:path,params:{entityName:metaEntity.name},query:_query});
       }
     }
   };
@@ -109,9 +110,9 @@ function operationForEdit(){
         return parseCurrentRoute(context, $optInst.operation.params, _query);
       }
       if(path.indexOf('/')>-1){
-        router.push({path:path,query:_query});
+          contextHelper.getRouter().push({path:path,query:_query});
       }else{
-        router.push({name:path,params:{entityName:metaEntity.name},query:_query});
+          contextHelper.getRouter().push({name:path,params:{entityName:metaEntity.name},query:_query});
       }
     }
   };
@@ -150,9 +151,9 @@ function operationForView(){
         return parseCurrentRoute(context, $optInst.operation.params, _query);
       }
       if(path.indexOf('/')>-1){
-        router.push({path:path,query:_query});
+          contextHelper.getRouter().push({path:path,query:_query});
       }else{
-        router.push({name:path,params:{entityName:metaEntity.name},query:_query});
+          contextHelper.getRouter().push({name:path,params:{entityName:metaEntity.name},query:_query});
       }
     }
   };
@@ -322,7 +323,7 @@ function operationForExport() {
             if(grid){
               query=grid.$route.query;
             }
-            toolServices.doExport(query,exportTaskSetting).then(function (records) {
+            toolServices().doExport(query,exportTaskSetting).then(function (records) {
               ExportCsv.download(metaEntity.title+".csv", records.body.join("\r\n"));
             });
           });
@@ -344,7 +345,7 @@ function goback(){
     title:"返回",
     icon:"",
     onclick:function(context,$optInst){
-      router.go(-1);
+        contextHelper.getRouter().go(-1);
     }
   };
   return operation;
@@ -382,7 +383,7 @@ function parseCurrentRoute(context, params, query) {
   var _route = _.extend({}, _self.$route);
   _route.params = _.extend({}, _route.params, params || {});
   _route.query = _.extend({}, _route.query, query || {});
-  _self.$router.push(_route);
+    contextHelper.getRouter().push(_route);
 }
 
 var operations={
@@ -408,7 +409,7 @@ export default {
       return null;
     }
     var func=null;
-    _.forEach(operations,function (opFunc,key) {
+    _.forIn(operations,function (opFunc,key) {
       if(key.toLowerCase()==operationName.toLowerCase()){
         func=opFunc;
         return false;

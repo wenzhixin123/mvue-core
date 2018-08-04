@@ -270,7 +270,7 @@ function operationForExport() {
             if (grid) {
               query = grid.$route.query;
             }
-            toolServices.doExport(query, exportTaskSetting).then(function (records) {
+            toolServices().doExport(query, exportTaskSetting).then(function (records) {
               ExportCsv.download(metaEntity.title + ".csv", records.body.join("\r\n"));
             });
           });
@@ -341,7 +341,7 @@ export default {
       return null;
     }
     var func = null;
-    _.forEach(operations, function (opFunc, key) {
+    _.forIn(operations, function (opFunc, key) {
       if (key.toLowerCase() == operationName.toLowerCase()) {
         func = opFunc;
         return false;

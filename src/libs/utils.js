@@ -1,5 +1,6 @@
 import context from "./context";
-const utils=Object.assign({},context.getMvueToolkit().utils,{
+import mvueToolkit from "mvue-toolkit";
+const utils=Object.assign({},mvueToolkit.utils,{
     operationDisplayField:"display",//部件操作是否显示的属性字段
     widgetMode:{
         editable:"editable",

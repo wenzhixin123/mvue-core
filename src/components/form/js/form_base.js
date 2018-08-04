@@ -1,7 +1,8 @@
 import metabase from '../../../libs/metadata/metabase';
 import constants from './constants';
 import metaformUtils from './metaform_utils';
-import metaservice from '../../../services/meta/metaservice';
+import  metaservice from '../../../services/meta/metaservice';
+
 var co = require('co');
 export default{
     props:{
@@ -164,7 +165,7 @@ export default{
                 return;
             }
             var _this = this;
-            metaservice.getFormByShortId({id:formShortId,resolve:true})
+            metaservice().getFormByShortId({id:formShortId,resolve:true})
                 .then(({ data }) => {
                     //存在自定义表单，按表单元数据构建表单
                     _this.metaFormLayout=true;

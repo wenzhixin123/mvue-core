@@ -112,18 +112,12 @@ function  initColumns(grid) {
   if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
     __cols.push({type: 'selection',width:58,align:"center"});
   }
-  if(grid.showIndex){
-    __cols.push({
-      render:(h, params) => {
-        var pageIndex=grid.pageIndex-1;
-        var pageSize=grid.pageSize;
-        var _index=params.index;
-        var index=pageIndex*pageSize+_index+1;
-        return h("div",index);
-      },
-      width:58,
-      align:"center"
-    });
+  if(grid.showIndex) {
+      __cols.push({
+          type: 'index',
+          width: 60,
+          align: 'center'
+      });
   }
   _cols=__cols.concat(_cols);
   //如果操作列不和标题列合并，并且定义了单行操作，默认最后一列为操作列

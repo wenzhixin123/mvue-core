@@ -13,7 +13,7 @@
                 <input readonly type="text" class="ivu-input" :value="innerText"> 
                 <input type="hidden" class="ivu-input" :value="innerValue"> 
                 <div class="ivu-input-group-append">
-                    <Button type="ghost" icon="ios-search" class="btn-search" @click="showPcLinkSelectModal"></Button>
+                    <Button  icon="ios-search" class="btn-search" @click="showPcLinkSelectModal"></Button>
                 </div>
                 <Button icon="ios-close" type="text" class="btn-remove" @click="onRemove">
                 </Button>
@@ -29,7 +29,7 @@
                         <input readonly type="text" class="ivu-input" :value="innerText"> 
                         <input type="hidden" class="ivu-input" :value="innerValue"> 
                         <div class="ivu-input-group-append">
-                            <Button type="ghost" icon="ios-search" class="btn-search" @click="showPcLinkSelectModal"></Button>
+                            <Button  icon="ios-search" class="btn-search" @click="showPcLinkSelectModal"></Button>
                         </div>
                         <Button icon="ios-close" type="text" class="btn-remove" @click="onRemove">
                         </Button>
@@ -43,7 +43,7 @@
     </div>
 </template>
 <script>
-import context from 'src/libs/context';
+import context from '../../../libs/context';
 import controlBase from '../js/control_base';
 var linkplugin=require('../../../services/link/linkplugin');
 export default {

@@ -85,11 +85,27 @@ function isIssuedNumber(componentType){
     return issuedNumberTypes.IssuedNumber.id===componentType;
 }
 
+function formatData(componentType,item,metaField){
+    let fieldName=metaField.name;
+    let origin=item[fieldName];
+    if(_.isUndefined(origin)||_.isNull(origin)||origin===''){
+        return "";
+    }
+    let result="";
+    if (_.isPlainObject(origin)) {
+        result=origin.fullText;
+    } else {
+        result=orignin;
+    }
+    return result;
+}
+
 export default{
     types:issuedNumberTypes,
     componentParams:componentParams,
     accept:accept,
     isIssuedNumber:isIssuedNumber,
+    formatData: formatData,
     standard:standard,
     buildOptionsItem:buildOptionsItem
 }

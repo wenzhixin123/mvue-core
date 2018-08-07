@@ -111,7 +111,7 @@
                         }
                     });
                 }//处理类型2的存储格式
-                _issuedObjcet.fullText = _.values(_issuedObjcet).join("");
+                _issuedObjcet.fullText = _issuedObjcet.code+"["+_issuedObjcet.year+"]"+_issuedObjcet.number+"号"//_.values(_issuedObjcet).join("");
                 this.issuedObjcet.fullText = _issuedObjcet.fullText;
                 if(_.every(_.values(_issuedObjcet))){
                     this.$emit('input',this.issuedObjcet);

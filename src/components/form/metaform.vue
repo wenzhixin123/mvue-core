@@ -184,6 +184,12 @@
                     }
                 },
                 deep:true
+            },
+            recordId(val){
+                //检测传入的数据id
+                this.formStatus=Utils.formActions.edit;
+                this.entityId=this.recordId;
+                this.initForm();
             }
         },
         mounted:function () {

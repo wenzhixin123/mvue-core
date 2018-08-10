@@ -1,5 +1,5 @@
 <template>
-<div @click="execScript">
+<div @click.stop.prevent="execScript">
     <slot>
         <Button type="primary" size="small" 
             :title="operation.title" >
@@ -31,13 +31,14 @@ export default {
             if(this.mustStopRepeatedClick){
                 return;
             }
+            var _widgetCtx = Object.assign(this.widgetContext, this.operation);
             if(_.isFunction(this.operation.onclick)){
                 this.mustStopRepeatedClick=true;
-                this.operation.onclick(this.widgetContext,this);
+                this.operation.onclick(_widgetCtx,this);
             }else{
                 this.mustStopRepeatedClick=true;
                 var onclick=Function('"use strict";return ' + this.operation.onclick  )();
-                onclick(this.widgetContext,this);
+                onclick(_widgetCtx,this);
             }
             this.mustStopRepeatedClick=false;
             this.$emit("triggered","script");

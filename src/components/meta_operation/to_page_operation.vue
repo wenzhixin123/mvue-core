@@ -1,5 +1,5 @@
 <template>
-<div @click="gotoPage">
+<div @click.stop.prevent="gotoPage">
     <slot>
         <Button type="primary" size="small" 
             :title="operation.title" >

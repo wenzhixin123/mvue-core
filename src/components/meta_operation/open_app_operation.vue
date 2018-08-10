@@ -1,5 +1,5 @@
 <template>
-<div @click="openApp">
+<div @click.stop.prevent="openApp">
     <slot>
         <Button type="primary" size="small" 
             :title="operation.title" >

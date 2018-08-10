@@ -145,17 +145,6 @@ export default {
                 }
                 columns.push(__col);
             }
-            //如果操作列不和标题列合并，默认最后一列为操作列
-            if(!this.operationsWithTitleColumn){
-                columns.push({
-                    title:"具体操作",
-                    width:220,
-                    align:"center",
-                    metaParams:{
-                        type:"operation"
-                    }
-                });
-            }
             _this.innerColumns = columns;
             //end 构造grid列
             metaGrid.initGridByMetabase(this);

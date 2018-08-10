@@ -519,7 +519,7 @@ export default {
                 let commonOptName=operation.name;
                 //目前支持通用操作和脚本操作
                 if(commonOptName){//通用操作
-                    let commonOpt=this.getCommonOpt(btn);
+                    let commonOpt=this.getCommonOpt(commonOptName);
                     if(commonOpt){
                         operation= _.extend(operation,commonOpt);
                         operation.onclick(_widgetCtx,{operation:operation});

@@ -318,6 +318,46 @@ function save() {
   return operation;
 }
 
+//跳入数据主页
+function goHomePage(){
+  //返回
+  var operation= {
+    onclick:function(ctx,$optInst){
+      var id = getIdFromContext(ctx);
+      if (!id) {
+        $optInst.mustStopRepeatedClick = false;
+        iview$Modal.error({ content: `当前数据id未设置` });
+        return;
+      }
+      let pageId=$optInst.operation.page&&$optInst.operation.page.id;
+      if(!pageId){
+        $optInst.mustStopRepeatedClick = false;
+        iview$Modal.error({ content: `详情页面未设置` });
+        return;
+      }
+
+      let metaSuiteId = (ctx.grid&&ctx.grid.viewDef)||(ctx.form&&ctx.form.metaForm);
+      if(!metaSuiteId){
+        $optInst.mustStopRepeatedClick = false;
+        iview$Modal.error({ content: `跳入主页需要传入metaSuiteId` });
+        return;
+      }else{
+        metaSuiteId = metaSuiteId.metaSuiteId
+      }
+      var params=_.extend((ctx.grid||ctx.form).$route.params,{pageId:pageId,recordId:id,dataId:id,suiteId:metaSuiteId,detailPage:pageId});
+      var _query = _.extend({}, $optInst.operation.queryParams);
+      let procDefKey = $optInst.operation.page&&$optInst.operation.page.procDefKey;
+      if(procDefKey){
+        //判断是否需要关联流程--是的话-带入
+        _query =  Object.assign(_query,{procDefKey:procDefKey,businessKey:id});
+      }
+      router.push({ name: "metaSuiteDetailPage",query:_query, params: params });
+    }
+  }
+  return operation
+}
+
+
 var operations = {
   create: operationForCreate,
   edit: operationForEdit,
@@ -327,7 +367,8 @@ var operations = {
   export: operationForExport,
   batchDelete: operationForBatchDelete,
   goback: goback,
-  save: save
+  save: save,
+  goHomePage:goHomePage
 }
 
 export default {

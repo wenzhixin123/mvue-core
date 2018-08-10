@@ -106,7 +106,7 @@
                 _issuedObjcet.fullText = "";
                 if(this.formItem.componentParams.standard=="standard2"){
                     _.each(this.formItem.componentParams.options,function(option){
-                        if(option.checked){
+                        if(option.id==_issuedObjcet.code){
                             _issuedObjcet.code = option.text
                         }
                     });

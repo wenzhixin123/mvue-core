@@ -1,54 +1,12 @@
 <template>
-    <div :style="{width:formItem.componentParams.width+'%'}">
+    <div>
         <template v-if="viewMode">
-            <div class="form-item-view-con" v-if="isNotEmpty(valueObj)">
-                <div class="view-title" v-text="formItem.componentParams.title"></div>
-                <div v-text="viewModeValue()"></div>
-            </div>
+            <div v-text="viewModeValue()"></div>
         </template>
         <template v-else>
-        <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
-            <label :class="{'ivu-form-item-label':formItem.componentParams.required}" v-text="formItem.componentParams.title"></label>
-            <div class="checkbox" v-for="item in formItem.componentParams.options" :key="item.id">
-                <label>
-                    <input @change="updateValue()" v-model="valueObj" type="checkbox" :disabled="disabled" :name="formItem.dataField" :checked="item.checked" :value="item.id">
-                    {{item.text}}
-                </label>
-            </div>
-            <div class="checkbox" v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}">
-                <label style="width:70px;">
-                    <input type="checkbox" :disabled="disabled" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
-                    {{formItem.componentParams.otherOptions.text}}
-                    <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
-                </label>
-                <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" type="text" class="form-control form-control-inline">
-            </div>
-            <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
-            <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
-        </div>
-        <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.horizontal" class="form-horizontal">
-            <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
-                <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
-                <div class="col-md-10" :style="{width:controlWidth}">
-                    <div class="checkbox" v-for="item in formItem.componentParams.options" :key="item.id">
-                        <label>
-                            <input @change="updateValue()" v-model="valueObj" type="checkbox" :disabled="disabled" :name="formItem.dataField" :checked="item.checked" :value="item.id">
-                            {{item.text}}
-                        </label>
-                    </div>
-                    <div class="checkbox" v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}">
-                        <label style="width:70px;">
-                            <input type="checkbox" :disabled="disabled" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
-                            {{formItem.componentParams.otherOptions.text}}
-                            <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
-                        </label>
-                        <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" type="text" class="form-control form-control-inline">
-                    </div>
-                    <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
-                    <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
-                </div>
-            </div>
-        </div>
+            <CheckboxGroup v-model="valueObj" @on-change="updateValue">
+                <Checkbox  v-for="item in formItem.componentParams.options" :key="item.id" :label="item.id" :disabled="disabled">{{item.text}}</Checkbox>
+            </CheckboxGroup>
         </template>
     </div>
 </template>
@@ -103,7 +61,7 @@ export default {
                 this.emitExData();
             }
         },
-        updateValue: function () {
+        updateValue: function (vals) {
             var emitValue=_.cloneDeep(this.valueObj);
             this.$emit('input',emitValue);
             this.emitExData();
@@ -114,7 +72,9 @@ export default {
         emitExData:function(othersValue){
             var _this=this;
             var exData={};
-            var optionsMap=_.keyBy(this.formItem.componentParams.options,"id");
+            var optionsMap=_.keyBy(this.formItem.componentParams.options,function (option) {
+                return option.id;
+            });
             var othersId=this.formItem.componentParams.otherOptions.id;
             _.each(this.valueObj,function(selectedId){
                 if(othersId!==selectedId){

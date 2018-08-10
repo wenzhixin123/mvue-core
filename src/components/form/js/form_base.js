@@ -75,7 +75,7 @@ export default{
         },
         fillDefaultByQuery(_model,metaEntity){//创建模式时model用url参数填充
             var query=this.$route.query;
-            _.each(query,function(value,key){
+            _.forIn(query,function(value,key){
                 let metaField=metaEntity.findField(key);
                 if(metaField){
                     _model[key]=value;
@@ -100,7 +100,7 @@ export default{
                         });
                         _this.model[constants.entityModelRedundantKey]=data[constants.entityModelRedundantKey];
                     }else{//没有定义表单的情况下，使用默认实体表单字段
-                        _.each(_this.model,function(value,key){
+                        _.forIn(_this.model,function(value,key){
                             _this.model[key]=data[key];
                         });
                     }
@@ -291,7 +291,7 @@ export default{
             var _this=this;
             if(logistics.optionsToggleComponentsConfig){
                 //遍历每一个单选项配置的逻辑
-                _.each(logistics.optionsToggleComponentsConfig,function(value,key){
+                _.forIn(logistics.optionsToggleComponentsConfig,function(value,key){
                     let curFormItem=metaformUtils.getFormItemById(_this.metaForm,key);
                     //如果此单选项组件存在
                     if(curFormItem){

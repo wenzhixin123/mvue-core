@@ -1,5 +1,7 @@
 import constants from './constants';
 import controlTypeService from '../../form/js/control_type_service';
+import contextHelper from "../../../libs/context";
+
 var linkplugin=require('../../../services/link/linkplugin');
 //因为metaForm加入了容器布局，容器的children包含了子级表单组件
 function getAllFormItems(metaForm){
@@ -111,80 +113,101 @@ function indexOfFormItem(metaForm,formItem){
     return parentIndex;
 }
 //初始化字段组件的验证规则
-function initValidation(validator,formItem,metaEntity,dataId){
-    if(!validator){
-        return;
+function initValidation(formItem,metaEntity,dataId) {
+    if (!formItem.isDataField) {
+        return null;
     }
-    if(formItem.isDataField){
-        var fieldName=formItem.dataField;
-        var params=formItem.componentParams;
-        //必填
-        var rule={};
-        if(params.required){
-            rule.required=true;
+
+    var fieldName = formItem.dataField;
+    var params = formItem.componentParams;
+
+    var rules = [];
+    //唯一性校验
+    if (params.unique) {
+        var uniqueRule = {
+            validator(rule, value, callback) {
+                var params = {};
+                params[fieldName] = value;
+                contextHelper.getMvueToolkit().http.get(metaEntity.resourceUrl, {params: params})
+                    .then(function ({data}) {
+                        callback(rule.message);
+                    });
+            },
+            message: `${formItem.title}重复`
+        };
+        rules.push(uniqueRule);
+    }
+    //验证规则
+    if (params.validation
+        && params.validation.validate
+        && params.validation.rule
+        && params.validation.rule.pattern) {
+        rules.push({
+            type: "regexp",
+            pattern: params.validation.rule.pattern
+        });
+    }
+    if (params.validation
+        && params.validation.validate
+        && params.validation.rule
+        && params.validation.rule.type === 'compare'
+        && _.includes(["lessThan", "biggerThan", "equals"], params.validation.rule.operator)
+        && params.validation.rule.fieldName
+    ) {
+        //TODO:
+        //rule[params.validation.rule.operator]=[params.validation.rule.fieldName,params.validation.rule.fieldTitle||params.validation.rule.fieldName];
+    }
+    //长度验证
+    if (params.limitLength && params.limitLength.limit) {
+        var lenRule = {
+            type: "string",
+        };
+        rules.push(lenRule);
+        if (params.limitLength.max > 0) {
+            lenRule.max = [params.limitLength.max];
         }
-        //唯一性校验
-        if(params.unique){
-            rule.verify_field_unique=[
-                `query:${metaEntity.resourceUrl}`,
-                fieldName,
-                {},
-                dataId
-            ]
+        if (params.limitLength.min > 0) {
+            lenRule.min = [params.limitLength.min];
         }
-        //验证规则
-        if(params.validation
-            &&params.validation.validate
-            &&params.validation.rule
-            &&params.validation.rule.pattern){
-            rule.regex=[params.validation.rule.pattern];
+    }
+    //数值范围
+    if (params.limitRange && params.limitRange.limit) {
+        var rangeRule = {
+            type: "number",
+        };
+        rules.push(rangeRule);
+        if (params.limitRange.max > 0) {
+            rangeRule.max = [params.limitRange.max];
         }
-        if(params.validation
-            &&params.validation.validate
-            &&params.validation.rule
-            &&params.validation.rule.type==='compare'
-            &&_.includes(["lessThan","biggerThan","equals"],params.validation.rule.operator)
-            &&params.validation.rule.fieldName
-            ){
-            rule[params.validation.rule.operator]=[params.validation.rule.fieldName,params.validation.rule.fieldTitle||params.validation.rule.fieldName];
+        if (params.limitRange.min > 0) {
+            rangeRule.min = [params.limitRange.min];
         }
-        //长度验证
-        if(params.limitLength&&params.limitLength.limit){
-            if(params.limitLength.max>0){
-                rule.max=[params.limitLength.max];
-            }
-            if(params.limitLength.min>0){
-                rule.min=[params.limitLength.min];
-            }
+    }
+    //小数点限制
+    if (params.decimal) {
+        //小数
+        var decimalRule = {
+            type: "number",
+        };
+        rules.push(decimalRule);
+        if (!params.decimal.isAllowed) {
+            decimalRule.type = "integer";
         }
-        //数值范围
-        if(params.limitRange&&params.limitRange.limit){
-            if(params.limitRange.max>0){
-                rule.max_value=[params.limitRange.max];
-            }
-            if(params.limitRange.min>0){
-                rule.min_value=[params.limitRange.min];
-            }
-        }
-        //小数点限制
-        if(params.decimal){
-            //小数
-            if(params.decimal.isAllowed){
-                rule.decimal=[params.decimal.digits];
-            }else{//不含小数部分
-                rule.decimal=[];
-            }
-        }
-        //负数限制
-        if(params.allowNegative===false){
-            //没有定义最小值或者最小值设置成负数，设置最小值为0
-            if((!rule.min_value)||(_.startsWith(rule.min_value,"-"))){
-                rule.min_value=["0"];
-            }
-        }
-        if(!_.isEmpty(rule)){
-            validator.attach(fieldName, rule);
-        }
+    }
+    //负数限制
+    if (params.allowNegative === false) {
+        //没有定义最小值或者最小值设置成负数，设置最小值为0
+        /* if((!rule.min_value)||(_.startsWith(rule.min_value,"-"))){
+             rule.min_value=["0"];
+         }*/
+        //TODO:
+    }
+
+    //必填
+    if (params.required) {
+        rules.push({
+            required: true
+        });
     }
 }
 //表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等

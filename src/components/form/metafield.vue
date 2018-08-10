@@ -1,19 +1,28 @@
 <template>
-    <component v-if="formItem" 
-    v-model="innerVal"
-    :validator="validator"
-    @exDataChanged="exDataChanged" 
-    :is="componentName(formItem)"
-    :paths="paths" 
-    :model="entity"
-    :context="innerContext"
-    :form-item="formItem">
-    </component>
+        <FormItem  :prop="name"  :label-for="labelFor"
+                  :required="required"  :rules="rules" :show-message="showMessage">
+            <template v-if="showLabel" slot="label">
+                <slot name="label">{{ metaField.title}}</slot>
+            </template>
+            <slot v-if="formItem"
+                  v-bind:model="entity" :fieldValue="innerVal" :fieldName="name"  :metaField="metaField"  :formItem="formItem">
+                <component
+                           v-model="innerVal"
+                           @exDataChanged="exDataChanged"
+                           :is="componentName(formItem)"
+                           :paths="paths"
+                           :model="entity"
+                           :context="innerContext"
+                           :form-item="formItem">
+                </component>
+            </slot>
+        </FormItem>
 </template>
 <script>
 import controlTypeService from './js/control_type_service';
 import metaformUtils from './js/metaform_utils';
 import constants from './js/constants';
+import  context from "../../libs/context";
 export default {
     props:{
         name:{
@@ -42,6 +51,36 @@ export default {
         },
         value:{//高级查询v-model使用
             required: false
+        },
+        showLabel:{
+            type:Boolean,
+            default:true
+        },
+        label:{
+            type:String
+        },
+        rules:{
+            type:[Object,Array],
+            default:function () {
+                return null;
+            }
+        },
+        required:{
+            type:Boolean,
+        },
+        error:{
+            type:String,
+        },
+        showMessage:{
+            type:Boolean,
+            default:true
+        },
+        labelFor:{
+            type:String
+        },
+        labelWidth:{
+            type:Number,
+            default:0
         }
     },
     data:function(){
@@ -49,7 +88,7 @@ export default {
         var form=this.getParentForm();
         if(!entityName){
             if(!form){
-                iview$Modal.error({
+                context.error({
                     title:"错误",
                     content:`必须定义父组件meta-form`
                 });
@@ -58,7 +97,7 @@ export default {
             entityName=form.entityName;
         }
         if(!entityName){
-            iview$Modal.error({
+            context.error({
                 title:"错误",
                 content:`实体名称无法确定`
             });
@@ -66,7 +105,7 @@ export default {
         }
         var metaEntity=this.$metaBase.findMetaEntity(entityName);
         if(!metaEntity){
-            iview$Modal.error({
+            context.error({
                 title:"错误",
                 content:`实体${entityName}不存在`
             });
@@ -74,7 +113,7 @@ export default {
         }
         var metaField=_.cloneDeep(metaEntity.findField(this.name));
         if(!metaField){
-            iview$Modal.error({
+            context.error({
                 title:"错误",
                 content:`字段${name}不存在`
             });
@@ -95,13 +134,11 @@ export default {
             entity=form.entity;
             //初始化来自entity的初始值
             _innerVal=entity[metaField.name];
-            metaformUtils.initValidation(form.$validator,formItem,metaEntity,this.$route.params.id);
         }
         return {
             innerVal:_innerVal,
             formItem:formItem,
             form:form,
-            validator:form?form.$validator:null,
             metaEntity:metaEntity,
             metaField:metaField,
             entity:entity,
@@ -163,6 +200,9 @@ export default {
         overrideProps(metaField){
             if(this.title){
                 metaField.title=this.title;
+            }
+            if(this.label){
+                metaField.title=this.label;
             }
             if(this.inputType){
                 metaField.inputType=this.inputType;

@@ -1,6 +1,6 @@
 <template>
-    <div class="widget-operation div-inline-block" v-if="showOperation">
-        <component @triggered="triggered" @successed="successed" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
+    <div class="widget-operation div-inline-block" >
+        <component v-if="showOperation" @triggered="triggered" @successed="successed" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot :operation="extendedOperation"></slot>
         </component>
     </div>

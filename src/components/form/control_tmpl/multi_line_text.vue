@@ -1,31 +1,11 @@
 <template>
-    <div :style="{width:formItem.componentParams.width+'%'}">
+    <div >
         <template v-if="viewMode">
-            <div class="form-item-view-con" v-if="isNotEmpty(value)">
-                <div class="view-title" v-text="formItem.componentParams.title"></div>
-                <!--
-                <textarea v-text="value" rows="3" readonly style="border:none;resize:none;width:100%;"></textarea>
-                -->
                 <div v-html="convertedValue()" class="view-textarea"></div>
-            </div>
         </template>
         <template v-else>
-        <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
-            <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
-            <textarea :value="value" @input="updateValue($event.target.value)" :disabled="disabled" rows="5" class="form-control" :placeholder="formItem.componentParams.placeholder"></textarea>
-            <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
-            <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
-        </div>
-        <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.horizontal" class="form-horizontal">
-            <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
-                <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
-                <div class="col-md-10" :style="{width:controlWidth}">
-                    <textarea :value="value" @input="updateValue($event.target.value)" :disabled="disabled" rows="5" class="form-control" :placeholder="formItem.componentParams.placeholder"></textarea>
-                    <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
-                    <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
-                </div>
-            </div>
-        </div>
+            <Input v-model="valueObj" @on-change="updateValue"  :disabled="disabled" type="textarea"  :autosize="{minRows: 2, maxRows: 6 }"
+                   :placeholder="formItem.componentParams.placeholder"></Input>
         </template>
     </div>
 </template>
@@ -38,9 +18,19 @@ export default {
             type:String
         }
     },
+    data: function(){
+        return {
+            valueObj:this.value
+        };
+    },
+    watch:{
+        "value":function (newV,oldV) {
+            this.valueObj=newV;
+        }
+    },
     methods: {
-        updateValue: function (value) {
-            this.$emit('input',value);
+        updateValue: function ($event) {
+            this.$emit('input',this.valueObj);
         },
         convertedValue(){
             let _v=_.replace(this.value,/\r|\n/g,"<br>");
@@ -50,13 +40,5 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
-.view-textarea{
-    display: -webkit-box;
-    -webkit-box-orient: vertical;
-    -webkit-line-clamp: 3;
-    overflow: hidden;
-}
-</style>
 
 

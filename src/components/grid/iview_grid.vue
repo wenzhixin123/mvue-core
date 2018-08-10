@@ -1,3 +1,6 @@
+<style lang="scss">
+    @import "../components.scss";
+</style>
 <template>
     <b-list  v-if="preprocessed" ref="listInst"
             :columns="innerColumns"
@@ -612,10 +615,3 @@ export default {
 }
 </script>
 
-<style>
-    .grid-primary-btn{
-        display: inline-block;
-        float:left;
-        margin-right: 8px;
-    }
-</style>

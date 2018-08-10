@@ -1,15 +1,10 @@
 <template>
-    <div :style="{width:formItem.componentParams.width+'%'}">
+    <div>
         <template v-if="viewMode">
-            <div class="form-item-view-con" v-if="isNotEmpty(selectedItem)">
-                <div class="view-title" v-text="formItem.componentParams.title"></div>
                 <div v-text="selectedItem&&selectedItem[getTitleField()]"></div>
-            </div>
         </template>
         <template v-else>
-        <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
-            <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
-            <Multiselect v-model="selectedItem"
+             <Multiselect v-model="selectedItem"
                         :options="dataItems"
                         :placeholder="formItem.componentParams.placeholder||'请输入部门名称'"
                         :disabled="disabled"
@@ -28,37 +23,6 @@
                     </div>
                 </template>
             </Multiselect>
-            <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
-            <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
-        </div>
-        <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.horizontal" class="form-horizontal">
-            <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
-                <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
-                <div class="col-md-10" :style="{width:controlWidth}">
-                    <Multiselect v-model="selectedItem"
-                        :options="dataItems"
-                        placeholder="选择部门"
-                        :disabled="disabled"
-                        select-label="按enter键选择"
-                        selected-label="已选"
-                        deselect-label="按enter键取消选择"
-                        :show-no-results="false"
-                        :label="getTitleField()"
-                        @select="onSelect"
-                        @remove="onRemove"
-                        @search-change="searchChange"
-                        :track-by="getIdField()">
-                        <template slot="option" slot-scope="props">
-                            <div class="option__desc">
-                                <span class="option__title">{{ props.option.name }}</span>
-                            </div>
-                        </template>
-                    </Multiselect>
-                    <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
-                    <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
-                </div>
-            </div>
-        </div>
         </template>
     </div>
 </template>

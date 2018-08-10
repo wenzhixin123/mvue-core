@@ -2,47 +2,27 @@
     <div class="grid-advance-search-con">
         <div v-if="toolbarType=='compact'" @click="advanceSearch" class="concat-toolbar-btn"><Icon type="funnel"></Icon>高级</div>
         <Button v-else @click="advanceSearch" type="default"><Icon type="funnel"></Icon>高级</Button>
-        <div v-show="searchModal" class="ivu-poptip-popper v-transfer-dom" style="width: 400px; position: absolute; right: 215px; top: 5px; transform-origin: right center 0px;text-align:left;" x-placement="left-start">
-            <div class="ivu-poptip-content">
-                <div class="ivu-poptip-arrow"></div> 
-                <div class="ivu-poptip-inner">
-                    <div class="ivu-poptip-body">
-                        <div class="ivu-poptip-body-content">
-                            <div>
-                                <div class="ivu-modal-content">
-                                    <a href="javascript://" class="ivu-modal-close" @click="cancel"><i class="ivu-icon ivu-icon-ios-close-empty"></i></a>
-                                    <div class="ivu-modal-header">
-                                        <div class="ivu-modal-header-inner">高级筛选</div>
-                                    </div>
-                                    <div class="ivu-modal-body" style="padding-left: 0px;padding-right: 0px;">
-                                        <div style="height:300px;overflow:auto;padding:0px 10px;">
-                                            <div style="width: 100%;">
-                                                <div class="form-group">
-                                                    <label class="ivu-form-item-label">关键字</label> 
-                                                    <input type="text" class="form-control" v-model="innerQuicksearchKeyword"> 
-                                                </div>
-                                            </div>
-                                            <meta-field v-for="key in advanceSearchFields" :key="key" :name="key" v-model="model[key]" :entity-name="entityName" :input-type="inputType(key)">
-                                            </meta-field>
-                                        </div>
-                                    </div>
-                                    <div class="ivu-modal-footer">
-                                        <Button type="primary" size="small" @click="doSearch">搜索</Button>
-                                        <Button type="default" size="small"  @click="doReset">重置</Button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <Modal
+                v-model="searchModal"
+                title="高级筛选"  ok-text="搜索" cancel-text="重置"
+                @on-ok="doSearch"
+                @on-cancel="doReset">
+            <Form ref="advanceSearchForm" >
+                <FormItem label="关键字">
+                    <Input v-model="innerQuicksearchKeyword" placeholder="搜索关键字..."></Input>
+                </FormItem>
+                <meta-field v-for="key in advanceSearchFields" :key="key" :name="key" v-model="model[key]" :entity-name="entityName" :input-type="inputType(key)">
+                </meta-field>
+            </Form>
+        </Modal>
     </div>
 </template>
 <script>
 import controlTypeService from '../form/js/control_type_service';
 import utils from '../../libs/utils';
+import FormItem from "iview/src/components/form/form-item";
 export default {
+    components: {FormItem},
     props: {
         "entityName": {
             type: String,

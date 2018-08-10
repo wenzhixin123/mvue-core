@@ -1,59 +1,63 @@
+<style lang="scss">
+    @import "../components.scss";
+</style>
 <template>
-    <div v-if="preprocessed" class="meta-form-panel" :class="{'has-buttons':hasButtons()}">
-        <div style="height:30px;position:relative;" v-show="loadingFormData">
-            <Spin fix>
-            </Spin>
-        </div>
-        <template v-if="metaFormLayout">
-            <div v-for="formItem in metaForm.layout" :key="formItem.id">
-                <div class="control-tmpl-panel" v-show="!formItem.hidden">
-                    <component v-if="formItem.isContainer" :is="'Meta'+formItem.componentType" :form-item="formItem">
-                        <div v-for="containerFormItem in formItem.children" :key="containerFormItem.id" v-show="!containerFormItem.hidden">
-                            <component v-if="containerFormItem.isDataField" :context="fieldContext(formItem)" :validator="$validator" v-model="entity[containerFormItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
-                            <component v-else-if="containerFormItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(containerFormItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
-                            <component v-else :is="'Meta'+containerFormItem.componentType" :form-item="containerFormItem"></component>
-                        </div>
-                    </component>
-                    <component v-else-if="formItem.isDataField" :context="fieldContext(formItem)" :validator="$validator" v-model="entity[formItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
-                    <component v-else-if="formItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
-                    <component v-else :is="'Meta'+formItem.componentType" :form-item="formItem"></component>
-                </div>
-            </div>
-        </template>
+    <Form v-if="preprocessed" :ref="'formRef'" :model="entity"
+          :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="labelWidth"
+          :show-message="showMessage" :autocomplete="autocomplete">
         <template v-if="!metaFormLayout">
             <slot>
                 <meta-field v-for="key in metaEntity.getDefaultFormFields()" :key="key" :name="key">
                 </meta-field>
             </slot>
         </template>
-        <div v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer" class="form-toolbar" :class="{'has-buttons':hasButtons()}" slot="toolbar">
-            <div v-if="hasButtons()" :class="{'onepx-stroke':hasButtons()}"></div>
-            <template v-if="toolbar">
-                <template v-if="isView">
-                    <meta-operation v-for="btn in toolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                        <Button :type="btn.btnType || 'primary'" size="small" :title="btn.title">
-                            <Icon :type="btn.icon" v-if="btn.icon"></Icon>
-                            {{btn.title}}
-                        </Button>
-                    </meta-operation>
+        <template v-if="metaFormLayout">
+            <div v-for="formItem in metaForm.layout" :key="formItem.id">
+                <div class="control-tmpl-panel" v-show="!formItem.hidden">
+                    <component v-if="formItem.isContainer" :is="'Meta'+formItem.componentType" :form-item="formItem">
+                        <div v-for="containerFormItem in formItem.children" :key="containerFormItem.id" v-show="!containerFormItem.hidden">
+                            <component v-if="containerFormItem.isDataField" :context="fieldContext(formItem)"  v-model="entity[containerFormItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                            <component v-else-if="containerFormItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(containerFormItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                            <component v-else :is="'Meta'+containerFormItem.componentType" :form-item="containerFormItem"></component>
+                        </div>
+                    </component>
+                    <component v-else-if="formItem.isDataField" :context="fieldContext(formItem)"  v-model="entity[formItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                    <component v-else-if="formItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                    <component v-else :is="'Meta'+formItem.componentType" :form-item="formItem"></component>
+                </div>
+            </div>
+        </template>
+
+        <FormItem v-if="hasButtons() || $slots.toolbar" class="form-toolbar"
+                 v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer">
+                <slot name="toolbar" >
+                    <!--<div v-if="hasButtons()" :class="{'onepx-stroke':hasButtons()}"></div>-->
+                    <template v-if="isView">
+                        <meta-operation v-for="btn in toolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                            <Button :type="btn.btnType || 'primary'"  :title="btn.title">
+                                <Icon :type="btn.icon" v-if="btn.icon"></Icon>
+                                {{btn.title}}
+                            </Button>
+                        </meta-operation>
                 </template>
-                <template v-if="!isView">
-                    <meta-operation v-for="btn in toolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                        <Button :type="btn.btnType || 'primary'" size="small" :title="btn.title">
-                            <Icon :type="btn.icon" v-if="btn.icon"></Icon>
-                            {{btn.title}}
-                        </Button>
-                    </meta-operation>
-                </template>
-            </template>
-        </div>
-    </div>
+                    <template v-if="!isView">
+                        <meta-operation v-for="btn in toolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                            <Button :type="btn.btnType || 'primary'"  :title="btn.title">
+                                <Icon :type="btn.icon" v-if="btn.icon"></Icon>
+                                {{btn.title}}
+                            </Button>
+                        </meta-operation>
+                    </template>
+                </slot>
+        </FormItem>
+    </Form>
 </template>
 <script>
     import TransferDom from './js/transfer_dom';
     import constants from './js/constants';
     import metaformUtils from './js/metaform_utils';
     import metaservice from '../../services/meta/metaservice';
+    import  contextHelper from "../../libs/context";
 
     var co = require('co');
 
@@ -116,6 +120,35 @@
             checkArchived:{//表示是否开启表单的归档检测，默认不开启
                 type:Boolean,
                 default:false
+            },
+            rules:{
+                type:Object,
+                default:function () {
+                    return {};
+                }
+            },
+            inline:{
+                type:Boolean,
+                default:false
+            },
+            labelPosition:{
+                type:String,
+                default:"right",
+            },
+            labelWidth:{
+                type:Number
+            },
+            showMessage:{
+                type:Boolean,
+                default:true
+            },
+            autocomplete:{
+                type:String,
+                default:"off"
+            },
+            gutter:{
+                type:Number,
+                default:24
             }
         },
         computed:{
@@ -167,7 +200,8 @@
                     afterSave:null//(model)
                 },
                 loadingFormData:false,//表示是否正在远程请求数据
-                subcomponentAfterSaveChain:[]//所有需要在表单保存后做继续操作的子组件集合
+                subcomponentAfterSaveChain:[],//所有需要在表单保存后做继续操作的子组件集合
+                innerRules:_.cloneDeep(this.rules)
             };
         },
         watch:{
@@ -180,7 +214,7 @@
             entity:{
                 handler:function(){
                     if(this.preprocessed){
-                        this.doValidation();
+                        this.validate();
                     }
                 },
                 deep:true
@@ -204,29 +238,6 @@
             },
             componentName(formItem){
                 return metaformUtils.metaComponentType(formItem);
-            },
-            doSaveModel:function(){
-                var _this=this;
-                return new Promise((resolve,reject)=>{
-                    this.doValidation(function(){
-                        let before=_this.beforeSave();
-                        if (before && before.then){//返回的Promise对象
-                            before.then(function(valid){
-                                if(false!==valid){//true 表示可继续保存
-                                    let doSavePromise=_this.doSave();
-                                    doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
-                                }else{
-                                    reject();
-                                }
-                            });
-                        }else if(before!==false){//普通true or false
-                            let doSavePromise=_this.doSave();
-                            doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
-                        }else{
-                            reject();
-                        }
-                    },()=>{reject();});
-                });
             },
             doSave(){
                 var _this=this;
@@ -261,13 +272,47 @@
                     }
                 });
             },
-            doValidation:function(callback,failCallback){
+            doSaveModel:function(){
                 var _this=this;
-                //启用智能校验
-                Utils.smartValidate(_this,this.entity,this.$validator,function(){
-                    callback&&callback();
-                },()=>{failCallback&&failCallback();});
+                return new Promise((resolve,reject)=>{
+                    this.validate(function(){
+                        let before=_this.beforeSave();
+                        if (before && before.then){//返回的Promise对象
+                            before.then(function(valid){
+                                if(false!==valid){//true 表示可继续保存
+                                    let doSavePromise=_this.doSave();
+                                    doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
+                                }else{
+                                    reject();
+                                }
+                            });
+                        }else if(before!==false){//普通true or false
+                            let doSavePromise=_this.doSave();
+                            doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
+                        }else{
+                            reject();
+                        }
+                    },()=>{reject();});
+                });
             },
+            validate:function (callback) {
+                if(callback){
+                    this.$refs["formRef"].validate(callback);
+                }else{
+                    return this.$refs["formRef"].validate();
+                }
+            },
+            validateField:function (prop,callback) {
+                if(callback){
+                    this.$refs["formRef"].validateField(prop,callback);
+                }else{
+                    return this.$refs["formRef"].validateField(prop);
+                }
+            },
+            resetFields:function () {
+                this.$refs["formRef"].resetFields();
+            },
+
             initForm(){
                 var formShortId = this.formId || this.$route.query.formShortId;
                 if(_.isEmpty(formShortId)){
@@ -359,7 +404,7 @@
             },
             fillDefaultByQuery(_model,metaEntity){//创建模式时model用url参数填充
                 var query=this.$route.query;
-                _.each(query,function(value,key){
+                _.forIn(query,function(value,key){
                     let metaField=metaEntity.findField(key);
                     if(metaField){
                         _model[key]=value;
@@ -374,13 +419,13 @@
                     _this.initPerm(data);
                     if(_this.metaForm){//已经定义过表单，以表单定义字段为准初始化模型
                         let fields=metaformUtils.getAllFieldItems(_this.metaForm);
-                        _.each(fields,function(field){
+                        _.forIn(fields,function(field){
                             let key=field.dataField;
                             _this.entity[key]=data[key];
                         });
                         _this.entity[constants.entityModelRedundantKey]=data[constants.entityModelRedundantKey];
                     }else{//没有定义表单的情况下，使用默认实体表单字段
-                        _.each(_this.entity,function(value,key){
+                        _.forIn(_this.entity,function(value,key){
                             _this.entity[key]=data[key];
                         });
                     }
@@ -395,8 +440,21 @@
                 var _this=this;
                 //初始化表单验证
                 var formItems=metaformUtils.getAllFieldItems(metaForm);
-                _.each(formItems,function(formItem){
-                    metaformUtils.initValidation(_this.$validator,formItem,_this.metaEntity,_this.entityId);
+                _.forEach(formItems,function(formItem){
+                    var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId);
+                    if(rules.length>0){
+                        var existRule=_this.innerRules[formItem.dataField];
+                        if(existRule==null){
+                            _this.innerRules[formItem.dataField]=rules;
+                        }else{
+                            if(_.isArray(existRule)){
+                                _this.innerRules[formItem.dataField]=_.union(existRule,rules);
+                            }else{
+                                rules.push(existRule);
+                                _this.innerRules[formItem.dataField]=rules;
+                            }
+                        }
+                    }
                 });
                 //执行表单脚本
                 this.handleFormScript(metaForm);
@@ -408,7 +466,7 @@
                 var _this=this;
                 if(logistics.optionsToggleComponentsConfig){
                     //遍历每一个单选项配置的逻辑
-                    _.each(logistics.optionsToggleComponentsConfig,function(value,key){
+                    _.forIn(logistics.optionsToggleComponentsConfig,function(value,key){
                         let curFormItem=metaformUtils.getFormItemById(_this.metaForm,key);
                         //如果此单选项组件存在
                         if(curFormItem){
@@ -450,7 +508,7 @@
             ignoreReadonlyFields(){
                 let _model={};
                 let _this=this;
-                _.each(_this.entity,function(v,k){
+                _.forIn(_this.entity,function(v,k){
                     let metaField=_this.metaEntity.findField(k);
                     if(metaField&&metaField.readonly){
                         //readonly字段不提交
@@ -589,13 +647,13 @@
                 if(this.editToView){//如果需要从编辑页保存数据后，跳转回查看页
                     let _query=_.extend({},this.$route.query);
                     _query[Utils.queryKeys.action]=Utils.formActions.view;
-                    router.push({
+                    contextHelper.getRouter().push({
                         name:this.$route.name,
                         params:this.$route.params,
                         query:_query
                     });
                 }else{
-                    router.go(-1);
+                    contextHelper.getRouter().go(-1);
                 }
             },
 
@@ -604,7 +662,7 @@
             },
             gotoViewList(){
                 var path=this.metaEntity.viewPath();
-                router.push({
+                contextHelper.getRouter().push({
                     path:path,
                     query:{
                         formShortId:this.formId || this.$route.query.formShortId,

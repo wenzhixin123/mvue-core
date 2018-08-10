@@ -1,7 +1,5 @@
 <template>
-    <div class="control-tmpl-panel">
-        <component :is="'Meta'+formItem.componentType" :form-item="formItem" :mode="mode"></component>
-    </div>
+    <component :is="'Meta'+formItem.componentType" :form-item="formItem" :mode="mode"></component>
 </template>
 <script>
 import controlTypeService from '../js/control_type_service';

@@ -5,8 +5,8 @@
       <Icon :type="btn.icon"></Icon>
     </a> -->
     <meta-operation v-for="(btn,index) in permedBtns()" :key="index" :operation="btn" :widget-context="getWidgetContext()">
-        <a href="javascript:void(0)" class="btn" :title="btn.title" >
-            <Icon :type="btn.icon"></Icon>
+        <a href="javascript:void(0)" class="btn" :title="operation.title"  slot-scope="{operation}">
+            <Icon :type="operation.icon"></Icon>
         </a>
     </meta-operation>
 </div>

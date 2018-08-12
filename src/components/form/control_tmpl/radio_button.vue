@@ -5,7 +5,7 @@
         </template>
         <template v-else>
             <RadioGroup v-model="valueObj" @on-change="updateValue" >
-                <Radio v-for="item in formItem.componentParams.options" :key="item.id" :label="item.id" :true-value="item.id" :disabled="disabled">
+                <Radio v-for="item in formItem.componentParams.options" :key="item.id" :label="item.id"  :disabled="disabled">
                     {{item.text}}
                 </Radio>
             </RadioGroup>
@@ -36,7 +36,7 @@ export default {
         }
     },
     mounted:function(){
-        if(!this.valueObj){
+        if(_.isNull(this.valueObj)){
             this.initDefault();
         }
     },

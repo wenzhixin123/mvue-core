@@ -94,7 +94,7 @@ export default {
     computed:{
         dataItemsMap:function(){
             var idField=this.getIdField();
-            return _.keyBy(this.dataItems,idField);
+            return _.keyBy(this.dataItems,function(item){return item[idField];});
         }
     },
     watch:{

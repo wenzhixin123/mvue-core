@@ -414,25 +414,27 @@
             getEditModelIfNeeded(){//如果是编辑模式，根据数据id或者表单数据model
                 var _this=this;
                 this.loadingFormData=true;
-                return this.dataResource.get({id:this.entityId}).then(function({data}){
-                    _this.loadingFormData=false;
-                    _this.initPerm(data);
-                    if(_this.metaForm){//已经定义过表单，以表单定义字段为准初始化模型
-                        let fields=metaformUtils.getAllFieldItems(_this.metaForm);
-                        _.forIn(fields,function(field){
-                            let key=field.dataField;
-                            _this.entity[key]=data[key];
-                        });
-                        _this.entity[constants.entityModelRedundantKey]=data[constants.entityModelRedundantKey];
-                    }else{//没有定义表单的情况下，使用默认实体表单字段
-                        _.forIn(_this.entity,function(value,key){
-                            _this.entity[key]=data[key];
-                        });
-                    }
-                    return true;
-                },function(){
-                    _this.loadingFormData=false;
-                });
+                if(this.entityId) {
+                    return this.dataResource.get({id: this.entityId}).then(function ({data}) {
+                        _this.loadingFormData = false;
+                        _this.initPerm(data);
+                        if (_this.metaForm) {//已经定义过表单，以表单定义字段为准初始化模型
+                            let fields = metaformUtils.getAllFieldItems(_this.metaForm);
+                            _.forIn(fields, function (field) {
+                                let key = field.dataField;
+                                _this.entity[key] = data[key];
+                            });
+                            _this.entity[constants.entityModelRedundantKey] = data[constants.entityModelRedundantKey];
+                        } else {//没有定义表单的情况下，使用默认实体表单字段
+                            _.forIn(_this.entity, function (value, key) {
+                                _this.entity[key] = data[key];
+                            });
+                        }
+                        return true;
+                    }, function () {
+                        _this.loadingFormData = false;
+                    });
+                }
                 return true;
             },
             //实体已经在控制台定义过表单，由表单元数据生成表单
@@ -642,7 +644,7 @@
                     return false;
                 }
                 if(msg){
-                    iview$Message.success(msg);
+                    contextHelper.success(msg);
                 }
                 if(this.editToView){//如果需要从编辑页保存数据后，跳转回查看页
                     let _query=_.extend({},this.$route.query);

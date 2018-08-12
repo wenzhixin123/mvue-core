@@ -8,12 +8,15 @@
                         :options="dataItems"
                         :placeholder="formItem.componentParams.placeholder||'请输入部门名称'"
                         :disabled="disabled"
+                          :loading="isLoading"
                         select-label="按enter键选择"
                         selected-label="已选"
                         deselect-label="按enter键取消选择"
-                        :show-no-results="false"
+                          :show-no-results="true"
+                          :internal-search="false"
                         :label="getTitleField()"
                         @select="onSelect"
+                          @open="onOpen"
                         @remove="onRemove"
                         @search-change="searchChange"
                         :track-by="getIdField()">
@@ -22,6 +25,9 @@
                         <span class="option__title">{{ props.option.name }}</span>
                     </div>
                 </template>
+                 <template slot="noResult">
+                     根据关键字，搜索不到任何部门
+                 </template>
             </Multiselect>
         </template>
     </div>
@@ -44,26 +50,20 @@ export default {
             dataItems:[],//远程获取的数据项
             entityResource:entityResource,//获取部门数据的操作resource
             queryFields:"id,name",//查询的冗余数据
-            cachedDataItems:null//默认提示的可选数据
+            cachedDataItems:null,//默认提示的可选数据
+            isLoading:false
         };
     },
     computed:{
         dataItemsMap:function(){
             var idField=this.getIdField();
-            return _.keyBy(this.dataItems,idField);
+            return _.keyBy(this.dataItems,function(item){return item[idField];});
         }
     },
     watch:{
         value:function(newV,oldV){
             if(newV){
-                this.selectedItem=this.dataItemsMap[newV]||null;
-            }else{
-                this.selectedItem=null;
-            }
-        },
-        dataItems:function(){
-            if(this.value){
-                this.selectedItem=this.dataItemsMap[this.value]||null;
+                this.initSelectedItem(newV);
             }
         },
         "paths.orgApiUrl":function(newValue,oldValue){//监听地址，一旦设置值，用户操作的resource就可以构造了
@@ -75,28 +75,50 @@ export default {
         }
     },
     mounted:function(){
+        var _this=this;
         this.firstSearch();
+        this.doSearchForCache(function(items)  {
+            _this.dataItems=items;
+        });
     },
     methods: {
         firstSearch(){
             let _this=this;
-            this.doSearch(null,function(){//默认值填充
-                if(_this.shouldInitDefault()){
-                    _this.calcField().then((data)=>{
-                        if(!data){
-                            return;
-                        }
-                        _this.setCurrentOrgIfCreate(data);
-                    });
+            //默认值填充
+            if(this.shouldInitDefault()){
+                this.calcField().then((data)=>{
+                    if(!data){
+                        return;
+                    }
+                    _this.initSelectedItem(data);
+                });
+            }
+        },
+        initSelectedItem:function (val) {
+            var _this=this;
+            let idField=_this.getIdField();
+            var filterOption={
+                filters:`${idField} eq ${this.value}`
+            }
+            this.doSearch(filterOption,function (items) {
+                if(items.length>0){
+                    _this.selectedItem=items[0];
+                    if(_this.value!=val){
+                        _this.onSelect(_this.selectedItem);
+                    }
                 }
-            });
+            },false);
         },
         onSelect:function(selectItem){
             var idField=this.getIdField();
             var titleField=this.getTitleField();
+            this.selectedItem=selectItem;
             var exData=this.buildExData(selectItem[titleField]);;
             this.emitExData(selectItem[idField],exData);
             this.$emit('input',selectItem[idField]);
+        },
+        onOpen:function () {
+            this.dataItems=this.ensureSelectedItem(this.dataItems);
         },
         onRemove:function(item){
             this.selectedItem=null;
@@ -104,62 +126,61 @@ export default {
         },
         searchChange:function(keyword){
             var _this=this;
-            this.doSearch(keyword,function(){
-                _this.selectedItem=null;
-            });
-        },
-        doSearchForCache:function(callback){
-            if(this.cachedDataItems){
-                callback&&callback(this.cachedDataItems);
-                return;
-            }
-            var _this=this;
-            var params={select:_this.queryFields};
-            params.limit=5;
-            params.filters=`status eq 1`;
-            if(this.entityResource){
-                Utils.smartSearch(_this,function(){
-                    _this.entityResource.query(params)
-                    .then(function({data}){
-                        _this.cachedDataItems=data;
-                        callback&&callback(data);
-                    });
+            if(!keyword){
+                this.doSearchForCache(function (items) {
+                    _this.dataItems= items;
+                });
+            }else{
+                var queryOption=`status eq 1 and name like '%${keyword}%'`;
+                this.doSearch(queryOption,function (items) {
+                    _this.dataItems=items;
                 });
             }
         },
-        doSearch:function(keyword,callback){
+        doSearchForCache:function(callback){
             var _this=this;
-            var params={select:_this.queryFields};
-            if(!keyword){
-                if(this.value){
-                    let idField=this.getIdField();
-                    params.filters=`${idField} eq ${this.value}`;
-                }else{
-                    params.limit=5;
-                }
-            }else{
-                params.filters=`status eq 1 and name like '%${keyword}%'`;
+            if(this.cachedDataItems){
+                this.cachedDataItems=this.ensureSelectedItem(this.cachedDataItems);
+                callback&&callback(this.cachedDataItems);
+                return;
             }
+            var queryOption={
+                filters:  `status eq 1`,
+                limit:6
+            };
+            this.doSearch(queryOption,(items) => {
+                _this.cachedDataItems=_this.ensureSelectedItem(items);
+                callback&&callback(_this.cachedDataItems);
+            });
+        },
+        ensureSelectedItem:function (items) {
+            if(this.selectedItem){
+                var idField=this.getIdField();
+                let has=_.find(items,(item) =>{
+                    return item[idField]==this.selectedItem[idField];
+                });
+                if(!has){
+                    items=[this.selectedItem].concat(items);
+                }
+            }
+            return items;
+        },
+        doSearch:function(filterOption,callback){
+            this.isLoading=true;
+            var _this=this;
+            if(_.isString(filterOption)){
+                filterOption={filters:filterOption};
+            }
+            var params=_.extend({
+                select:_this.queryFields,
+            },filterOption);
             if(this.entityResource){
                 Utils.smartSearch(_this,function(){
                     _this.entityResource.query(params)
-                    .then(function({data}){
-                        if(_this.value){//此时需要补充缓存的数据进去
-                            let id=_this.getIdField();
-                            _this.doSearchForCache(function(citems){
-                                let has=_.find(citems, function(o) { return o[id] ===data[0][id]; });
-                                if(has){//如果当前值在缓存中
-                                    _this.dataItems=citems;
-                                }else{
-                                    _this.dataItems=citems.concat(data);
-                                }
-                                callback&&callback();
-                            });
-                        }else{
-                            _this.dataItems=data;
-                            callback&&callback();
-                        }
-                    });
+                        .then(function({data}){
+                            _this.isLoading=false;
+                            callback&&callback(data);
+                        });
                 });
             }
         },

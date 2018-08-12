@@ -42,6 +42,9 @@ export default {
     setRouter(router) {
         cachedContext.router = router;
     },
+    setVue(vue){
+        cachedContext.Vue=vue;
+    },
     getRouter() {
         return cachedContext.router;
     },
@@ -93,30 +96,39 @@ export default {
     },
     info: function (opts) {
         var vue = this.getCurrentVue();
-        if (vue.$Modal) {
+        if (vue.$Message) {
             if (opts && opts.noTimeout) {
-                vue.$Modal.info(opts);
+                vue.$Message.info(opts);
             } else {
                 setTimeout(function () {
-                    vue.$Modal.info(opts);
+                    vue.$Message.info(opts);
                 }, 300);
             }
         }
     },
     success: function (opts) {
         var vue = this.getCurrentVue();
-        if (vue.$Modal) {
+        if(_.isString(opts)){
+            opts={content:opts}
+        }
+        opts=_.extend({
+            title:"操作成功"
+        },opts);
+        if (vue.$Message) {
             if (opts && opts.noTimeout) {
-                vue.$Modal.success(opts);
+                vue.$Message.success(opts);
             } else {
                 setTimeout(function () {
-                    vue.$Modal.success(opts);
+                    vue.$Message.success(opts);
                 }, 300);
             }
         }
     },
     warning: function (opts) {
         var vue = this.getCurrentVue();
+        opts=_.extend({
+            title:"警告信息"
+        },opts);
         if (vue.$Modal) {
             if (opts && opts.noTimeout) {
                 vue.$Modal.warning(opts);
@@ -129,6 +141,9 @@ export default {
     },
     error: function (opts) {
         var vue = this.getCurrentVue();
+        opts=_.extend({
+            title:"错误信息"
+        },opts);
         if (vue.$Modal) {
             if (opts && opts.noTimeout) {
                 vue.$Modal.error(opts);
@@ -141,6 +156,9 @@ export default {
     },
     confirm: function (opts) {
         var vue = this.getCurrentVue();
+        opts=_.extend({
+            title:"确认信息"
+        },opts);
         if (vue.$Modal) {
             if (opts && opts.noTimeout) {
                 vue.$Modal.confirm(opts);

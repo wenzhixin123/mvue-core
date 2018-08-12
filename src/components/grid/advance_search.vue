@@ -79,6 +79,7 @@ export default {
                 this.model[f]=null;
             });
             this.innerQuicksearchKeyword="";
+            this.doSearch();
         },
         cancel(){
             this.searchModal=false;
@@ -86,7 +87,7 @@ export default {
         doSearch(){
             var advanceSearchFilters=[];
             var _this=this;
-            _.each(this.model,function(value,key){
+            _.forIn(this.model,function(value,key){
                 if(!_.isNull(value)&&value!==""&&!_.isUndefined(value)){
                     let metaField=_this.metaEntity.findField(key);
                     if(metaField.inputType==controlTypeService.componentTypes.MultiLineText.id

@@ -64,7 +64,9 @@ export default {
                 value=_.toNumber(value);
             }
             this.$emit('input',value);
-            var optionsMap=_.keyBy(this.formItem.componentParams.options,"id");
+            var optionsMap=_.keyBy(this.formItem.componentParams.options,function (item) {
+                return item["id"];
+            });
             if(value&&optionsMap[value]){
                 this.emitExData(value,optionsMap[value].text);
             }

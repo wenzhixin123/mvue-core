@@ -61,7 +61,7 @@ export default {
         extendedWidgetContext:function(){
             var _this=this;
             var params={};
-            _.each(this.operation.props,function(propValue,propKey){
+            _.forIn(this.operation.props,function(propValue,propKey){
                 if(propValue.internal){//来自于context的属性，合并到widgetContext中
                     var parsedValue=propParser.parse(propValue,_this);
                     params[propKey]=parsedValue;

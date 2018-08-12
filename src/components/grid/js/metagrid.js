@@ -22,9 +22,13 @@ function metaFieldToCol(context,metaField) {
   //优先根据前端设置的type字段，设置列的渲染方式
   if (metaField.type == "operation") {
     col.render = renderManager.renderForOperation(context,metaField);
-  }else if (context.grid.operationsWithTitleColumn&&(metaField.isTitleField||metaField.type == "optsTitle")) {
-    col.render = renderManager.renderForOptsTitle(context,metaField);
-    col.width=col.width||350;
+  }else if (metaField.isTitleField||metaField.type == "optsTitle") {
+    if(context.grid.operationsWithTitleColumn){
+        col.render = renderManager.renderForOptsTitle(context,metaField);
+        col.width=col.width||350;
+    }else {
+        col.render=renderManager.renderForLinkTitle(context,metaField,context.metaEntity.getIdField().name);
+    }
   } else if (metaField.type == "imgTitle") {
     col.render = renderManager.renderForImgTitle(context,metaField);
   } else {
@@ -108,17 +112,18 @@ function  initColumns(grid) {
     _cols=grid.innerColumns;
   }
   var __cols=[];
+    //if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
+    __cols.push({type: 'selection',width:50,align:"center"});
+    //}
   //多选列放在序号列前面
-  if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
-    __cols.push({type: 'selection',width:58,align:"center"});
-  }
   if(grid.showIndex) {
       __cols.push({
           type: 'index',
-          width: 60,
+          width: 50,
           align: 'center'
       });
   }
+
   _cols=__cols.concat(_cols);
   //如果操作列不和标题列合并，并且定义了单行操作，默认最后一列为操作列
   if(!grid.operationsWithTitleColumn&&!_.isEmpty(grid.innerToolbar.singleBtns)){

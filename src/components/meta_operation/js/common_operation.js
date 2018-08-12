@@ -4,6 +4,7 @@
 import metabase from '../../../libs/metadata/metabase';
 import ExportCsv from '../../grid/js/export_csv';
 import toolServices from '../../../services/tool/tool_service';
+import contextHelper from "../../../libs/context";
 var pathToRegexp = require('path-to-regexp');
 /**
  * 获取当前选中的行id
@@ -32,7 +33,7 @@ function getIdFromContext(context) {
  */
 function toPage(pageId, _query) {
   var _params = { pageId: pageId };
-  router.push({ name: "defaultPageIndex", query: _query, params: _params });
+  contextHelper.getRouter().push({ name: "defaultPageIndex", query: _query, params: _params });
 }
 /**
  * 创建操作，跳转到新建表单页
@@ -45,7 +46,7 @@ function operationForCreate() {
       let pageId = operation.page && operation.page.id;
       if (!pageId) {
         $optInst.mustStopRepeatedClick = false;
-        iview$Modal.error({ content: `跳转页面未设置` });
+        contextHelper.error({ content: `跳转页面未设置` });
         return;
       }
       var _query = _.extend({}, operation.queryParams);
@@ -65,14 +66,14 @@ function operationForEdit() {
       var id = getIdFromContext(context);
       if (!id) {
         $optInst.mustStopRepeatedClick = false;
-        iview$Modal.error({ content: `当前数据id未设置` });
+        contextHelper.error({ content: `当前数据id未设置` });
         return;
       }
       var operation = $optInst.operation;
       let pageId = operation.page && operation.page.id;
       if (!pageId) {
         $optInst.mustStopRepeatedClick=false;
-        iview$Modal.error({ content: `跳转页面未设置` });
+        contextHelper.error({ content: `跳转页面未设置` });
         return;
       }
       var _query = _.extend({ dataId: id }, operation.queryParams);
@@ -92,14 +93,14 @@ function operationForView() {
       var id = getIdFromContext(context);
       if (!id) {
         $optInst.mustStopRepeatedClick = false;
-        iview$Modal.error({ content: `当前数据id未设置` });
+        contextHelper.error({ content: `当前数据id未设置` });
         return;
       }
       var operation = $optInst.operation;
       let pageId = operation.page && operation.page.id;
       if (!pageId) {
         $optInst.mustStopRepeatedClick = false;
-        iview$Modal.error({ content: `跳转页面未设置` });
+        contextHelper.error({ content: `跳转页面未设置` });
         return;
       }
       var _query = _.extend({ dataId: id, forceView:true }, operation.queryParams);
@@ -119,7 +120,7 @@ function operationForDel() {
       var id = getIdFromContext(context);
       if (!id) {
         $optInst.mustStopRepeatedClick = false;
-        iview$Modal.error({ content: `当前数据id未设置` });
+        contextHelper.error({ content: `当前数据id未设置` });
         return;
       }
       var metaEntity = context.metaEntity;
@@ -129,10 +130,10 @@ function operationForDel() {
       }
       if (_.isEmpty(resource)) {
         $optInst.mustStopRepeatedClick = false;
-        iview$Modal.error({ content: `实体删除地址未设置` });
+        contextHelper.error({ content: `实体删除地址未设置` });
         return;
       }
-      iview$Modal.confirm({
+      contextHelper.confirm({
         title: '提示',
         content: '确定删除吗?',
         onOk: () => {
@@ -174,7 +175,7 @@ function operationForBatchDelete() {
       var checkedRows = context.selectedItems;
       if (_.isEmpty(checkedRows)) {
         $optInst.mustStopRepeatedClick = false;
-        iview$Modal.error({ content: `必须传入选中的所有行数据` });
+        contextHelper.error({ content: `必须传入选中的所有行数据` });
         return;
       }
       _.each(checkedRows, function (item) {
@@ -188,7 +189,7 @@ function operationForBatchDelete() {
       if (!_.isEmpty(unpermedItems)) {
         if (unpermedItems.length === checkedRows.length) {
           $optInst.mustStopRepeatedClick = false;
-          iview$Modal.warning({
+          contextHelper.warning({
             title: '提示',
             content: '您对选中的数据没有删除权限'
           });
@@ -197,7 +198,7 @@ function operationForBatchDelete() {
           unpermedInfo = `您选中了${checkedRows.length}条数据，有${unpermedItems.length}条没有删除权限，继续删除剩下的${checkedRows.length - unpermedItems.length}条吗`;
         }
       }
-      iview$Modal.confirm({
+      contextHelper.confirm({
         title: '提示',
         content: unpermedInfo || '确定删除吗?',
         onOk: () => {
@@ -243,10 +244,10 @@ function operationForExport() {
         resource = metaEntity.dataResource();
       }
       if (_.isEmpty(resource)) {
-        iview$Modal.error({ content: `实体查询地址未设置` });
+        contextHelper.error({ content: `实体查询地址未设置` });
         return;
       }
-      iview$Modal.confirm({
+      contextHelper.confirm({
         title: '提示',
         content: '是否导出当前列表所有数据?',
         onOk: () => {
@@ -288,7 +289,7 @@ function operationForExport() {
 function goback() {
   var operation = {
     onclick: function (context, $optInst) {
-      router.go(-1);
+      contextHelper.getRouter().go(-1);
     }
   };
   return operation;
@@ -304,7 +305,7 @@ function save() {
       var form = context.form;
       if (_.isEmpty(form)) {
         $optInst.mustStopRepeatedClick = false;
-        iview$Modal.error({ content: `表单保存操作必须传入表单实例参数` });
+        contextHelper.error({ content: `表单保存操作必须传入表单实例参数` });
         return;
       }
       var savePromise=form.doSaveModel();
@@ -354,7 +355,7 @@ export default {
   },
   //注册部件提供的通用操作
   register(newAddedOperations){//{name:func,name2:func2}
-    _.each(newAddedOperations,(func,name)=>{
+    _.forIn(newAddedOperations,(func,name)=>{
       if(!operations[name]){
         operations[name]=func;
       }

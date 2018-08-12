@@ -53,6 +53,7 @@ export default {
     display:inline-block;
     .btn>.ivu-icon{
         font-size:16px;
+        padding: 0px 8px;
     }
 }
 </style>

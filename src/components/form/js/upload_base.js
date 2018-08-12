@@ -1,4 +1,5 @@
 import uploadType from './upload_type';
+import contextHelper from "../../../libs/context"
 var filesize = require('file-size');
 export default {
     props: {
@@ -150,19 +151,19 @@ export default {
             this.$refs.upload.fileList=_.cloneDeep(this.oldFileList);
             this.minusCurrentFileSum();
             var sizeInfo=this.sizeInfo();
-            iview$Message.info(`大小超过限制,${sizeInfo}`);
+            contextHelper.info(`大小超过限制,${sizeInfo}`);
         },
         handleFormatError:function(file,fileList){
             this.$refs.upload.fileList=_.cloneDeep(this.oldFileList);
             this.minusCurrentFileSum();
             var formatInfo=this.formatInfo();
-            iview$Message.info(`格式错误,${formatInfo}`);
+            contextHelper.info(`格式错误,${formatInfo}`);
         },
         handleError:function(error,file){
             console.log(error);
             console.log(file);
             this.minusCurrentFileSum();
-            iview$Message.info("上传失败，请联系管理员");
+            contextHelper.info("上传失败，请联系管理员");
         },
         handleBeforeUpload () {
             this.currentUploadFileSum=this.currentUploadFileSum+1;
@@ -181,7 +182,7 @@ export default {
                     if (!check) {
                         this.minusCurrentFileSum();
                         let isPicture=this.isPicture();
-                        iview$Message.info(`最多只能上传 ${_max} ${isPicture?'张图片':'个文件'}。`);
+                        contextHelper.info(`最多只能上传 ${_max} ${isPicture?'张图片':'个文件'}。`);
                     }
                     ok=check;
                 }

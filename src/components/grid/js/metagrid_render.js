@@ -2,6 +2,7 @@
  * 提供内置的列的渲染
  */
 import controlTypeService from '../../form/js/control_type_service';
+import gridOperations from "./metagrid_operation";
 var Config=require("../../../config/config.js");
 
 export default {
@@ -64,6 +65,31 @@ export default {
       });
     }
   },
+
+    renderForLinkTitle: function (context, metaField,idFieldName) {
+        return function (h, params) {
+            return h("meta-grid-link-title", {
+                props: {
+                    params:metaField,
+                    item: params.row
+                },
+                on: {
+                    click: function (item) {
+                        if(metaField.actionFunc){
+                            metaField.actionFunc.call(context, params);
+                            return ;
+                        }
+                        var id=item[idFieldName];
+                        var wrappedContext=_.extend({
+                            selectedId:id
+                        },context);
+                        var editorOp=gridOperations.createOperation("edit");
+                        editorOp.onclick(wrappedContext,{operation:{}});
+                    }
+                }
+            });
+        }
+    },
 
   /**
    * 带操作的标题头显示

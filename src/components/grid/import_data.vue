@@ -136,6 +136,7 @@ import controlTypeService from '../form/js/control_type_service';
 import constants from '../form/js/constants';
 import toolService from '../../services/tool/tool_service';
 import metaservice from "../../services/meta/metaservice";
+import contextHelper from "../../libs/context"
 import ExportCsv from './js/export_csv';
 
 var moment = require('moment');
@@ -382,11 +383,11 @@ export default {
         },
         doImport(){
             if(this.importFinished===false){
-                iview$Message.info("正在导入数据");
+                contextHelper.info("正在导入数据");
                 return;
             }
             if(this.importFinished===true){
-                iview$Message.info("已经完成导入，请上传新的Excel文件后导入");
+                contextHelper.info("已经完成导入，请上传新的Excel文件后导入");
                 return;
             }
             var _this=this;
@@ -422,7 +423,7 @@ export default {
                 data.push(`${reportName} ${_date}`);
                 let _header1=["实体名称", "实体显示名称", "已创建", "已更新", "出错"];
                 data.push(_header1.join(padding));
-                _.each(this.report.summaryReport,function(sr,key){
+                _.forIn(this.report.summaryReport,function(sr,key){
                     data.push(`${sr.entityName}${padding}${sr.entityDisplayName}${padding}${sr.created}${padding}${sr.updated}${padding}${sr.error}`);
                 });
             }
@@ -433,7 +434,7 @@ export default {
                 data.push(this.report.exceptionStack);
             }
             function buildData(data,initData){
-                _.each(initData,function(value,key){
+                _.forIn(initData,function(value,key){
                     if(!value.title){
                         return;
                     }

@@ -348,6 +348,14 @@ export default {
             //检测视图id变化后重新获取视图配置
             this.initGridByViewId();
         },
+        quicksearchKeyword: function () {
+            if (this.pager) {
+                //智能搜索包装器，在用户快速输入时先不查询，直到用户输入完毕再查询
+                utils.smartSearch(this, () =>{
+                    this.reload();
+                });
+            }
+        }
     },
     mounted:function(){
         //根据viewId获取视图配置并初始化grid的一些属性，在entity_grid_base中实现

@@ -46,9 +46,10 @@ export default {
     },
     methods:{
         buttonClick(){
-            if(this.mustStopRepeatedClick){
+            //TODO:导致列表菜单无法重复点击
+            /*if(this.mustStopRepeatedClick){
                 return;
-            }
+            }*/
             if(this.extendedOperation&&this.extendedOperation.onclick){
                 this.mustStopRepeatedClick=true;
                 this.extendedOperation.onclick(this.widgetContext,this);

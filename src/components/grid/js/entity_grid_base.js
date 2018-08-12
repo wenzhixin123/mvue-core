@@ -15,7 +15,7 @@ export default {
             let queryOptions = {};
             if (query) {
                 let _queryOptions = {};
-                _.each(query, function (value, key) {
+                _.forIn(query, function (value, key) {
                     if (metaEntity.findField(key)) {
                         _queryOptions[key]=value;
                     }
@@ -54,8 +54,10 @@ export default {
             this.initUrls(metaView);
             var _this=this;
             let visibleFields = [];
-            let dataMap = _.keyBy(metaEntity.fields, "name");
-            let columnsMap = _.keyBy(metaView.config.columns, "name");
+            let dataMap = _.keyBy(metaEntity.fields,function(item){return item["name"];});
+            let columnsMap = _.keyBy(metaView.config.columns, function (item) {
+                return item["name"];
+            });
             let filters = metaView.config.filters||'';
             let _metaFields = [], _searchFields = [], _advanceSearchFields=[];
             _.each(metaView.config.columns, function (column) {

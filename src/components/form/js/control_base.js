@@ -24,7 +24,11 @@ export default {
         },
         context:{//与上下文相关的对象，{metaEntity:"元数据实体对象",mode:"字段显示模式：readonly/invisible/editable",formStatus:"create/edit"}
             type:Object
-        }
+        },
+        initWhenCreate:{//表单创建时，自动从服务器初始化默认值
+            type:Boolean,
+            default:false
+        },
     },
     data:function(){
         return {
@@ -100,7 +104,8 @@ export default {
             return true;
         },
         shouldInitDefault(){//判断新建模式，并且需要设置默认值
-            return this.isCreate()&&this.formItem.componentParams.valueType===controlTypeService.valueTypes.defaultValue.id;
+            return this.isCreate()&&
+                (this.initWhenCreate || this.formItem.componentParams.valueType===controlTypeService.valueTypes.defaultValue.id);
         },
         isFixedValue(){//是否是固定字段(计算字段)，计算字段的值由后端计算，前端只能显示不能修改
             return this.formItem.componentParams.valueType===controlTypeService.valueTypes.fixedValue.id;

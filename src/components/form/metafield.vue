@@ -13,7 +13,8 @@
                            :paths="paths"
                            :model="entity"
                            :context="innerContext"
-                           :form-item="formItem">
+                           :form-item="formItem"
+                           :init-when-create="initWhenCreate" >
                 </component>
             </slot>
         </FormItem>
@@ -81,6 +82,16 @@ export default {
         labelWidth:{
             type:Number,
             default:0
+        },
+        initWhenCreate:{
+            type:Boolean,
+            default:false
+        },
+        params:{
+            type:Object,
+            default:function () {
+                return {};
+            }
         }
     },
     data:function(){
@@ -125,6 +136,7 @@ export default {
         }
         this.overrideProps(metaField);
         var formItem=controlTypeService.buildFormItemByMetaField(metaField);
+        formItem.componentParams=_.extend(formItem.componentParams,this.params);
         if(this.preprocessor){
             this.preprocessor(formItem,this);
         }

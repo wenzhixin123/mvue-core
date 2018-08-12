@@ -49,7 +49,8 @@ export default {
     computed:{
         dataItemsMap:function(){
             var idField=this.getIdField();
-            return _.keyBy(this.dataItems,idField);
+            var toMap= _.keyBy(this.dataItems,function(item){ return item[idField]});
+            return toMap;
         }
     },
     watch:{

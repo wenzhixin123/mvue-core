@@ -63,7 +63,7 @@ function buildQuery(context){
   return _query;
 }
 function getIdFromContext(context){
-  var id=context.selectedId;
+  var id=context.selectedId ;
   var metaEntity=context.metaEntity;
   if(!id){
     var selectedItem=context.selectedItem;
@@ -86,11 +86,11 @@ function operationForEdit(){
   var operation= {
     id:"edit",
     title:"修改",
-    icon:"edit",
+    icon:"md-create",
     onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
-        iview$Modal.error({content:`当前数据id未设置`});
+        contextHelper.error({content:`当前数据id未设置`});
         return;
       }
       var metaEntity=context.metaEntity;
@@ -131,7 +131,7 @@ function operationForView(){
     onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
-        iview$Modal.error({content:`当前数据id未设置`});
+        contextHelper.error({content:`当前数据id未设置`});
         return;
       }
       var metaEntity=context.metaEntity;
@@ -168,11 +168,15 @@ function operationForDel() {
   var operation= {
     id:"del",
     title:"删除",
-    icon:"trash-a",
+    icon:"ios-trash",
+      type:"warning",
+      disabled:function (ctx) {
+          return !(ctx.selectedItems && ctx.selectedItems.length === 1);
+      },
     onclick:function(context,$optInst){
       var id=getIdFromContext(context);
       if(!id){
-        iview$Modal.error({content:`当前数据id未设置`});
+          contextHelper.error({content:`当前数据id未设置`});
         return;
       }
       var metaEntity=context.metaEntity;
@@ -181,10 +185,10 @@ function operationForDel() {
         resource=metaEntity.dataResource();
       }
       if(_.isEmpty(resource)){
-        iview$Modal.error({content:`实体删除地址未设置`});
+        contextHelper.error({content:`实体删除地址未设置`});
         return;
       }
-      iview$Modal.confirm({
+      contextHelper.confirm({
         title: '提示',
         content: '确定删除吗?',
         onOk: () => {
@@ -207,8 +211,11 @@ function operationForDel() {
 function operationForBatchDelete() {
   var operation= {
     id:"batchDelete",
-    title:"批量删除",
-    icon:"trash-a",
+    title:"删除",
+    icon:"ios-trash",
+      disabled:function (ctx) {
+          return !(ctx.selectedItems && ctx.selectedItems.length > 0);
+      },
     onclick:function(context,$optInst){
       var metaEntity=context.metaEntity;
       //计算id字段
@@ -225,7 +232,7 @@ function operationForBatchDelete() {
       opt[Utils.dataPermField]=Utils.permValues.del;
       var checkedRows=context.selectedItems;
       if(_.isEmpty(checkedRows)){
-        iview$Modal.error({content:`必须传入选中的所有行数据`});
+        contextHelper.error({content:`必须传入选中的所有行数据`});
         return;
       }
       _.each(checkedRows,function(item){
@@ -238,7 +245,7 @@ function operationForBatchDelete() {
       });
       if(!_.isEmpty(unpermedItems)){
         if(unpermedItems.length===checkedRows.length){
-          iview$Modal.warning({
+          contextHelper.warning({
             title: '提示',
             content:'您对选中的数据没有删除权限'
           });
@@ -247,7 +254,7 @@ function operationForBatchDelete() {
           unpermedInfo=`您选中了${checkedRows.length}条数据，有${unpermedItems.length}条没有删除权限，继续删除剩下的${checkedRows.length-unpermedItems.length}条吗`;
         }
       }
-      iview$Modal.confirm({
+      contextHelper.confirm({
         title: '提示',
         content: unpermedInfo||'确定删除吗?',
         onOk: () => {
@@ -296,10 +303,10 @@ function operationForExport() {
         resource=metaEntity.dataResource();
       }
       if(_.isEmpty(resource)){
-        iview$Modal.error({content:`实体查询地址未设置`});
+        contextHelper.error({content:`实体查询地址未设置`});
         return;
       }
-      iview$Modal.confirm({
+      contextHelper.confirm({
         title: '提示',
         content: '是否导出当前列表所有数据?',
         onOk: () => {
@@ -363,7 +370,7 @@ function save(){
     onclick:function(context,$optInst){
       var form=context.form;
       if(_.isEmpty(form)){
-        iview$Modal.error({content:`表单保存操作必须传入表单实例参数`});
+        contextHelper.error({content:`表单保存操作必须传入表单实例参数`});
         return;
       }
       form.doSaveModel();

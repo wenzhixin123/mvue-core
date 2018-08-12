@@ -209,6 +209,7 @@ function initValidation(formItem,metaEntity,dataId) {
             required: true
         });
     }
+    return rules;
 }
 //表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等
 function exDataChanged(model,newValue,dataField){

@@ -58,6 +58,7 @@
     import metaformUtils from './js/metaform_utils';
     import metaservice from '../../services/meta/metaservice';
     import  contextHelper from "../../libs/context";
+    import controlTypeService from './js/control_type_service';
 
     var co = require('co');
 
@@ -214,7 +215,7 @@
             entity:{
                 handler:function(){
                     if(this.preprocessed){
-                        this.validate();
+                        //this.validate();
                     }
                 },
                 deep:true
@@ -275,24 +276,29 @@
             doSaveModel:function(){
                 var _this=this;
                 return new Promise((resolve,reject)=>{
-                    this.validate(function(){
-                        let before=_this.beforeSave();
-                        if (before && before.then){//返回的Promise对象
-                            before.then(function(valid){
-                                if(false!==valid){//true 表示可继续保存
-                                    let doSavePromise=_this.doSave();
-                                    doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
-                                }else{
-                                    reject();
-                                }
-                            });
-                        }else if(before!==false){//普通true or false
-                            let doSavePromise=_this.doSave();
-                            doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
+                    this.validate(valid=>{
+                        if(valid){
+                            let before=_this.beforeSave();
+                            if (before && before.then){//返回的Promise对象
+                                before.then(function(valid){
+                                    if(false!==valid){//true 表示可继续保存
+                                        let doSavePromise=_this.doSave();
+                                        doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
+                                    }else{
+                                        reject();
+                                    }
+                                });
+                            }else if(before!==false){//普通true or false
+                                let doSavePromise=_this.doSave();
+                                doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
+                            }else{
+                                reject();
+                            }
                         }else{
+                            contextHelper.warning({title:"表单验证失败",content:"表单内部分字段验证未通过，请修复后再重新提交"});
                             reject();
                         }
-                    },()=>{reject();});
+                    });
                 });
             },
             validate:function (callback) {
@@ -394,13 +400,27 @@
                 let res=_this.getEditModelIfNeeded();
                 if(res&&res.then){
                     res.then(function(){
+                        _this.initRuleByMetaEntity();
                         _this.preprocessed=true;
                         _this.onFormInited();
                     });
                 }else{
+                    _this.initRuleByMetaEntity();
                     _this.preprocessed=true;
                     _this.onFormInited();
                 }
+            },
+            initRuleByMetaEntity:function () {
+                //初始化默认规则
+                var _this=this;
+                _.forEach(_this.metaEntity.getDefaultFormFields(),function (fieldName) {
+                    var metaField=_this.metaEntity.findField(fieldName);
+                    var formItem=controlTypeService.buildFormItemByMetaField(metaField);
+                    var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId);
+                    if(rules.length>0) {
+                        _this.innerRules[formItem.dataField] = rules;
+                    }
+                });
             },
             fillDefaultByQuery(_model,metaEntity){//创建模式时model用url参数填充
                 var query=this.$route.query;
@@ -439,6 +459,7 @@
             },
             //实体已经在控制台定义过表单，由表单元数据生成表单
             metaFormToForm(metaForm){
+                debugger;
                 var _this=this;
                 //初始化表单验证
                 var formItems=metaformUtils.getAllFieldItems(metaForm);

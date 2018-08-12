@@ -7,13 +7,16 @@
             <Multiselect v-model="selectedItem"
                         :options="dataItems"
                         :placeholder="formItem.componentParams.placeholder||'请输入关键字搜索'"
+                         :loading="isLoading"
                         :disabled="disabled"
                         select-label="按enter键选择"
                         selected-label="已选"
                         deselect-label="按enter键取消选择"
-                        :show-no-results="false"
+                         :show-no-results="true"
+                         :internal-search="false"
                         :label="getTitleField()"
                         @select="onSelect"
+                         @open="onOpen"
                         @remove="onRemove"
                         @search-change="searchChange"
                         :track-by="getIdField()">
@@ -21,6 +24,9 @@
                                 <div class="option__desc">
                                     <span class="option__title">{{ props.option[formItem.componentParams.titleField] }}</span>
                                 </div>
+                </template>
+                <template slot="noResult">
+                    根据关键字，搜索不到任何数据
                 </template>
             </Multiselect>
         </template>
@@ -43,7 +49,8 @@ export default {
             selectedItem:null,//已经选择的项
             dataItems:[],//远程获取的数据项
             entityResource:entityResource,//获取实体数据的操作resource
-            cachedDataItems:null//默认提示的可选数据
+            cachedDataItems:null,//默认提示的可选数据
+            isLoading:false
         };
     },
     computed:{
@@ -56,27 +63,59 @@ export default {
     watch:{
         value:function(newV,oldV){
             if(newV){
-                this.selectedItem=this.dataItemsMap[newV]||null;
-            }else{
-                this.selectedItem=null;
-            }
-        },
-        dataItems:function(){
-            if(this.value){
-                this.selectedItem=this.dataItemsMap[this.value]||null;
+                this.initSelectedItem(newV);
             }
         }
     },
     mounted:function(){
-        this.doSearch();
+        var _this=this;
+        this.firstSearch();
+        this.doSearchForCache(function(items)  {
+            _this.dataItems=items;
+        });
     },
     methods: {
+        firstSearch(){
+            let _this=this;
+            if(this.value){
+                _this.initSelectedItem(this.value);
+                return;
+            }
+            //默认值填充
+            if(this.shouldInitDefault()){
+                this.calcField().then((data)=>{
+                    if(!data){
+                        return;
+                    }
+                    _this.initSelectedItem(data);
+                });
+            }
+        },
+        initSelectedItem:function (val) {
+            var _this=this;
+            let idField=_this.getIdField();
+            var filterOption={
+                filters:`${idField} eq ${val}`
+            }
+            this.doSearch(filterOption,function (items) {
+                if(items.length>0){
+                    _this.selectedItem=items[0];
+                    if(_this.value!=val){
+                        _this.onSelect(_this.selectedItem);
+                    }
+                }
+            },false);
+        },
         onSelect:function(selectItem){
             var idField=this.getIdField();
             var titleField=this.getTitleField();
+            this.selectedItem=selectItem;
             var exData=this.buildExData(selectItem[titleField]);
             this.emitExData(selectItem[idField],exData);
             this.$emit('input',selectItem[idField]);
+        },
+        onOpen:function () {
+            this.dataItems=this.ensureSelectedItem(this.dataItems);
         },
         onRemove:function(item){
             this.selectedItem=null;
@@ -84,68 +123,81 @@ export default {
         },
         searchChange:function(keyword){
             var _this=this;
-            this.doSearch(keyword,function(){
-                _this.selectedItem=null;
-            });
+            if(!keyword){
+                this.doSearchForCache(function (items) {
+                    _this.dataItems= items;
+                });
+            }else{
+                var titleField=this.getTitleField();
+                var queryOption={
+                    filters:` ${titleField} like '%${keyword}%'`
+                }
+                if(this.formItem.componentParams.orderbyField){
+                    let orderbyType=this.formItem.componentParams.orderbyType||'asc';
+                    queryOption.orderby=`${this.formItem.componentParams.orderbyField} ${orderbyType}`;
+                }
+                this.doSearch(queryOption,function (items) {
+                    _this.dataItems=items;
+                });
+            }
         },
         doSearchForCache:function(callback){
+            var _this=this;
             if(this.cachedDataItems){
+                this.cachedDataItems=this.ensureSelectedItem(this.cachedDataItems);
                 callback&&callback(this.cachedDataItems);
                 return;
             }
-            var _this=this;
-            var params={};
-            params.limit=5;
+            var queryOption={
+                filters:  `status eq 1`,
+                limit:6
+            };
             if(this.formItem.componentParams.orderbyField){
                 let orderbyType=this.formItem.componentParams.orderbyType||'asc';
-                params.orderby=`${this.formItem.componentParams.orderbyField} ${orderbyType}`;
+                queryOption.orderby=`${this.formItem.componentParams.orderbyField} ${orderbyType}`;
             }
-            if(this.entityResource){
-                Utils.smartSearch(_this,function(){
-                    _this.entityResource.query(params)
-                    .then(function({data}){
-                        _this.cachedDataItems=data;
-                        callback&&callback(data)
-                    });
-                });
-            }
+            this.doSearch(queryOption,(items) => {
+                _this.cachedDataItems=_this.ensureSelectedItem(items);
+                callback&&callback(_this.cachedDataItems);
+            },false);
         },
-        doSearch:function(keyword,callback){
-            var _this=this;
-            var params={};
-            if(!keyword){
-                params.limit=5;
-                if(this.value){
-                    params.filters=`${this.formItem.componentParams.idField} eq ${this.value}`;
-                }
-            }else{
-                params.filters=`${this.formItem.componentParams.titleField} like '%${keyword}%'`;
-            }
-            if(this.formItem.componentParams.orderbyField){
-                let orderbyType=this.formItem.componentParams.orderbyType||'asc';
-                params.orderby=`${this.formItem.componentParams.orderbyField} ${orderbyType}`;
-            }
-            if(this.entityResource){
-                Utils.smartSearch(_this,function(){
-                    _this.entityResource.query(params)
-                    .then(function({data}){
-                        if(_this.value){//此时需要补充缓存的数据进去
-                            let id=_this.getIdField();
-                            _this.doSearchForCache(function(citems){
-                                let has=_.find(citems, function(o) { return o[id] ===data[0][id]; });
-                                if(has){//如果当前值在缓存中
-                                    _this.dataItems=citems;
-                                }else{
-                                    _this.dataItems=citems.concat(data);
-                                }
-                                callback&&callback();
-                            });
-                        }else{
-                            _this.dataItems=data;
-                            callback&&callback();
-                        }
-                    });
+        ensureSelectedItem:function (items) {
+            if(this.selectedItem){
+                var idField=this.getIdField();
+                let has=_.find(items,(item) =>{
+                    return item[idField]==this.selectedItem[idField];
                 });
+                if(!has){
+                    items=[this.selectedItem].concat(items);
+                }
+            }
+            return items;
+        },
+        doSearch:function(filterOption,callback,debounce){
+            this.isLoading=true;
+            var _this=this;
+            if(_.isString(filterOption)){
+                filterOption={filters:filterOption};
+            }
+            var params=_.extend({
+                select:_this.queryFields,
+            },filterOption);
+            if(this.entityResource){
+                if(debounce===false){
+                    _this.entityResource.query(params)
+                        .then(function({data}){
+                            _this.isLoading=false;
+                            callback&&callback(data);
+                        });
+                }else{
+                    Utils.smartSearch(_this,function(){
+                        _this.entityResource.query(params)
+                            .then(function({data}){
+                                _this.isLoading=false;
+                                callback&&callback(data);
+                            });
+                    });
+                }
             }
         },
         getIdField:function(){

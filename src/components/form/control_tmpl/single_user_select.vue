@@ -58,7 +58,6 @@ export default {
     },
     computed:{
         dataItemsMap:function(){
-            debugger;
             var idField=this.getIdField();
             return _.keyBy(this.dataItems,function(item){return item[idField];});
         }
@@ -87,6 +86,10 @@ export default {
     methods: {
         firstSearch(){
             let _this=this;
+            if(this.value){
+                _this.initSelectedItem(this.value);
+                return;
+            }
              //默认值填充
             if(this.shouldInitDefault()){
                 this.calcField().then((data)=>{
@@ -107,6 +110,7 @@ export default {
                 if(items.length>0){
                     _this.selectedItem=items[0];
                     if(_this.value!=val){
+
                         _this.onSelect(_this.selectedItem);
                     }
                 }

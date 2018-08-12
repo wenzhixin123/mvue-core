@@ -84,6 +84,10 @@ export default {
     methods: {
         firstSearch(){
             let _this=this;
+            if(this.value){
+                _this.initSelectedItem(this.value);
+                return;
+            }
             //默认值填充
             if(this.shouldInitDefault()){
                 this.calcField().then((data)=>{

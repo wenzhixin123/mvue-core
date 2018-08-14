@@ -92,7 +92,16 @@ export default {
             }
         },
         initSelectedItem:function (val) {
+            if(val==null){
+                return;
+            }
             var _this=this;
+            var existedItems=this.dataItemsMap;
+            if(existedItems && existedItems[val]!=null){
+                _this.selectedItem=existedItems[val];
+                _this.onSelect(_this.selectedItem);
+                return;
+            }
             let idField=_this.getIdField();
             var filterOption={
                 filters:`${idField} eq ${val}`

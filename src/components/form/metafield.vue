@@ -199,10 +199,10 @@ export default {
     },
     methods:{
         updateValue:function (val) {
-            this.innerValue=val;
             if(this.entity){
-                this.entity[this.metaField.name]=this.innerVal;
+                this.entity[this.metaField.name]=val;
             }
+            this.innerValue=val;
         },
         getParentForm(){//不停的向上找父表单组件
             var _parent=this.$parent;

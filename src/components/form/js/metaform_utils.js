@@ -133,7 +133,7 @@ function initValidation(formItem,metaEntity,dataId) {
                         callback(rule.message);
                     });
             },
-            message: `${formItem.title}重复`
+            message: `${formItem.title}值重复`
         };
         rules.push(uniqueRule);
     }
@@ -144,7 +144,8 @@ function initValidation(formItem,metaEntity,dataId) {
         && params.validation.rule.pattern) {
         rules.push({
             type: "regexp",
-            pattern: params.validation.rule.pattern
+            pattern: params.validation.rule.pattern,
+            message: `${formItem.title}验证失败`
         });
     }
     if (params.validation
@@ -165,10 +166,16 @@ function initValidation(formItem,metaEntity,dataId) {
         rules.push(lenRule);
         if (params.limitLength.max > 0) {
             lenRule.max = [params.limitLength.max];
+            lenRule["message"]=`${formItem.title}长度不能超过${params.limitLength.max}`
         }
         if (params.limitLength.min > 0) {
             lenRule.min = [params.limitLength.min];
+            lenRule["message"]=`${formItem.title}长度不少于${params.limitLength.min}`
         }
+        if(params.limitLength.max > 0 && params.limitLength.min > 0){
+            lenRule["message"]=`${formItem.title}长度介于${params.limitLength.min}--${params.limitLength.max}`
+        }
+
     }
     //数值范围
     if (params.limitRange && params.limitRange.limit) {
@@ -178,9 +185,14 @@ function initValidation(formItem,metaEntity,dataId) {
         rules.push(rangeRule);
         if (params.limitRange.max > 0) {
             rangeRule.max = [params.limitRange.max];
+            rangeRule["message"]=`${formItem.title}不大于${params.limitRange.max}`
         }
         if (params.limitRange.min > 0) {
             rangeRule.min = [params.limitRange.min];
+            rangeRule["message"]=`${formItem.title}不小于${params.limitRange.min}`
+        }
+        if(params.limitRange.min > 0 && params.limitRange.max > 0){
+            rangeRule["message"]=`${formItem.title}必须在${params.limitRange.min}--${params.limitRange.max}之间`
         }
     }
     //小数点限制
@@ -188,10 +200,12 @@ function initValidation(formItem,metaEntity,dataId) {
         //小数
         var decimalRule = {
             type: "number",
+            message:`${formItem.title}必须是数字`
         };
         rules.push(decimalRule);
         if (!params.decimal.isAllowed) {
             decimalRule.type = "integer";
+            decimalRule.message=`${formItem.title}必须是整数`;
         }
     }
     //负数限制
@@ -206,7 +220,7 @@ function initValidation(formItem,metaEntity,dataId) {
     //必填
     if (params.required) {
         rules.push({
-            required: true
+            required: true,message:`${params.title}不能为空`
         });
     }
     return rules;

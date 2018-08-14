@@ -35,7 +35,7 @@
                 <slot name="top">
                     <!-- 高级搜索区 -->
                 </slot>
-                <div class="b-list-header">
+                <div class="b-list-header clearfix">
                     <slot name="header-left">
                         <!-- 自定义菜单左侧区 -->
                     </slot>

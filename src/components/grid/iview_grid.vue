@@ -9,6 +9,9 @@
             :filters="filters"
             :default-sort="defaultSort"
 
+             :pager="pager"
+             :page-size="pageSize"
+             :page-size-opts="pageSizeOpts"
              :stripe="stripe"
              :border="border"
              :show-header="showHeader"
@@ -201,17 +204,21 @@ export default {
             type: Object,
             required: false
         },
-        "pagerSizes": {
+        "pageSizeOpts": {
             type: Array,
             required: false,
             default: function () {
-                return ["10", "20", "50", "100"];
+                return [10, 20, 50, 100];
             }
         },
         "pager": {
             type: Boolean,
             required: false,
             default: true
+        },
+        "pageSize": {//每页条数
+            type: Number,
+            default: 10
         },
         "preprocessor": {//数据预处理函数，对获取到数据作预处理转换
             type: Function,

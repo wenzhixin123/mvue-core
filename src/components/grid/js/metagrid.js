@@ -59,7 +59,7 @@ function initGridProperties(grid) {
     metaEntityObj=grid.metaEntity;
     let updatedAtField=metaEntityObj.firstSemanticsField("updatedAt");
     if(updatedAtField&&!grid.queryOptions){//实体有更新时间字段，并且queryOptions没写，则按照更新时间降序排列
-      grid.innerQueryOptions={orderby:`${updatedAtField.name} desc`};
+      grid.innerQueryOptions=_.extend(grid.innerQueryOptions, {orderby:`${updatedAtField.name} desc`});
     }
   }
   if(metaEntityObj==null){

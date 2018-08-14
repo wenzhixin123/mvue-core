@@ -121,6 +121,11 @@ export default {
                 });
                 queryOptions.orderby = _orderby.join(",");
             }
+            if (!_.isEmpty(_this.filterId)) {
+                queryOptions.viewId = _this.filterId;
+            } else {
+                delete queryOptions.viewId;
+            }
             _this.innerQueryOptions=queryOptions;
             //end 构造查询条件
             //begin 构造grid列
@@ -165,6 +170,11 @@ export default {
                 if (orderby) {
                     queryOptions = { orderby: orderby };
                 }
+            }
+            if (!_.isEmpty(_this.filterId)) {
+                queryOptions.viewId = _this.filterId;
+            } else {
+                delete queryOptions.viewId;
             }
             _this.innerQueryOptions = _.extend(queryOptions,_this.innerQueryOptions);
             //end

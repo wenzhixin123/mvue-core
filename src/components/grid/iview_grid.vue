@@ -151,6 +151,10 @@ export default {
         type: String,
         required: false
       },
+      "filterId": {
+        type: String,
+        requited: false
+      },
       "context":{
         type: Object,
         required: false
@@ -302,6 +306,10 @@ export default {
         viewId(){
             this.preprocessed=false;
             //检测视图id变化后重新获取视图配置
+            this.initGridByViewId();
+        },
+        filterId(){
+            this.preprocessed=false;
             this.initGridByViewId();
         },
         preprocessed(){

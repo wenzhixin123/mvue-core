@@ -9,6 +9,7 @@
                 <component
                            v-model="innerVal"
                            @exDataChanged="exDataChanged"
+                           @input="updateValue"
                            :is="componentName(formItem)"
                            :paths="paths"
                            :model="entity"
@@ -197,6 +198,12 @@ export default {
         }
     },
     methods:{
+        updateValue:function (val) {
+            this.innerValue=val;
+            if(this.entity){
+                this.entity[this.metaField.name]=this.innerVal;
+            }
+        },
         getParentForm(){//不停的向上找父表单组件
             var _parent=this.$parent;
             while(_parent){

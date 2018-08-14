@@ -4,7 +4,7 @@
                 <div v-text="value"></div>
         </template>
         <template v-else>
-            <Input v-model="valueObj" @on-change="updateValue"  :disabled="disabled" type="text"  :placeholder="formItem.componentParams.placeholder"></Input>
+            <Input v-model="valueObj" @input="updateValue"  :disabled="disabled" type="text"  :placeholder="formItem.componentParams.placeholder"></Input>
         </template>
     </div>
 </template>

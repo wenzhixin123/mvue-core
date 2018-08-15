@@ -158,7 +158,7 @@ export default {
                 return;
             }
             var queryOption={
-                filters:  `status eq 1`,
+                filters:  "",
                 limit:6
             };
             if(this.formItem.componentParams.orderbyField){

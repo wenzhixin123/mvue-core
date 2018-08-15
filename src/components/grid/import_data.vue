@@ -222,18 +222,20 @@ export default {
                     this.$Loading.finish();
                 }
             }
+            if(this.importModal&&!this.templateUrl){
+                //初始化实体导入模板地址
+                metaservice().getEntityTemplate({projectId:this.metaEntity.projectId,entityName:this.entityName})
+                .then(({data})=>{
+                    if(!_.isEmpty(data)){
+                        this.templateUrl=Config.getUploadUrl()+"?filePath="+data["pathInfo"]["relativePath"]+"&filename="+encodeURIComponent(data["pathInfo"]["fileName"]);
+                    }
+                });
+            }
         }
     },
     mounted:function(){
         var _this=this;
         //this.$validator.attach("file", {required:true});
-        //初始化实体导入模板地址
-        metaservice().getEntityTemplate({projectId:this.metaEntity.projectId,entityName:this.entityName})
-          .then(({data})=>{
-            if(!_.isEmpty(data)){
-              _this.templateUrl=Config.getUploadUrl()+"?filePath="+data["pathInfo"]["relativePath"]+"&filename="+encodeURIComponent(data["pathInfo"]["fileName"]);
-            }
-        });
         //获取当前项目的swagger地址
         this.$metaBase.currentSwagger(this.$route.params.projectId).then(function(swagger){
             _this.modelForImport.swagger=swagger;

@@ -13,7 +13,7 @@
     </div>
 </template>
 <script>
-var moment = require('moment'); 
+var dayjs = require("dayjs");
 import controlBase from '../js/control_base';
 import dateType from '../js/date_type';
 export default {
@@ -71,7 +71,7 @@ export default {
                 if(!data){
                     return;
                 }
-                let dv=moment(data).format(_this.dateFormat);
+                let dv=dayjs(data).format(_this.dateFormat);
                 _this.handleChange(dv);
             });
         },
@@ -86,7 +86,13 @@ export default {
                 return;
             }
             let datePrecision=this.formItem.componentParams.datePrecision;
-            let _d=moment(newDate,this.dateFormat);
+            let _ds=newDate;
+            if(this.dateFormat=="YYYY"){
+                _ds=`${_ds}-01-01`;
+            }else if(this.dateFormat=="YYYY-MM"){
+                _ds=`${_ds}-01`;
+            }
+            let _d=dayjs(_ds);
             this.$emit("input",_d.format('YYYY-MM-DD'));
         }
     }

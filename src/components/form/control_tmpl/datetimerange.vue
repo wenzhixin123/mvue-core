@@ -12,7 +12,7 @@
     </div>
 </template>
 <script>
-var moment = require('moment'); 
+var dayjs = require("dayjs");
 import controlBase from '../js/control_base';
 import dateType from '../js/date_type';
 export default {
@@ -31,7 +31,7 @@ export default {
             if(this.controlTypeService.timePrecision.minute===timePrecision){
                 return "yyyy-MM-dd HH:mm";
             }else{
-                return "yyyy-MM-dd HH:mm:ss";//moment YYYY-MM-DD HH:mm:ss
+                return "yyyy-MM-dd HH:mm:ss";
             }
         }
     },
@@ -50,7 +50,6 @@ export default {
     },
     methods:{
         getValidPart:function(){//将传进来的值value转成特定的格式
-            //moment format YYYY-MM-DD HH:mm:ss
             let timePrecision=this.formItem.componentParams.timePrecision;
             if(this.value&&this.value.length==2){
                 if(!this.value[0]||!this.value[1]){
@@ -68,14 +67,8 @@ export default {
                 return;
             }
             let timePrecision=this.formItem.componentParams.timePrecision;
-            let _dleft=null,_dright=null;
-            if(this.controlTypeService.timePrecision.minute===timePrecision){
-                _dleft=moment(newDate[0],'YYYY-MM-DD HH:mm');
-                _dright=moment(newDate[1],'YYYY-MM-DD HH:mm');
-            }else{
-                _dleft=moment(newDate[0],'YYYY-MM-DD HH:mm:ss');
-                _dright=moment(newDate[1],'YYYY-MM-DD HH:mm:ss');
-            }
+            let _dleft=dayjs(newDate[0]);
+            let _dright=dayjs(newDate[1]);
             this.$emit("input",[_dleft.format('YYYY-MM-DD HH:mm:ss'),_dright.format('YYYY-MM-DD HH:mm:ss')]);
         }
     }

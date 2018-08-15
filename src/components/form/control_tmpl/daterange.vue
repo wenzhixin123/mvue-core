@@ -12,7 +12,7 @@
         </template>
 </div>
 <script>
-var moment = require('moment'); 
+var dayjs = require("dayjs");
 import controlBase from '../js/control_base';
 import dateType from '../js/date_type';
 export default {
@@ -59,15 +59,14 @@ export default {
             let datePrecision=this.formItem.componentParams.datePrecision;
             let _dleft=null,_dright=null;
             if(this.controlTypeService.datePrecision.year===datePrecision){
-                _dleft=moment(newDate[0],'YYYY');
-                _dright=moment(newDate[1],'YYYY');
+                _dleft=`${newDate[0]}-01-01`;
+                _dright=`${newDate[1]}-01-01`;
             }else if(this.controlTypeService.datePrecision.month===datePrecision){
-                _dleft=moment(newDate[0],'YYYY-MM');
-                _dright=moment(newDate[1],'YYYY-MM');
-            }else{
-                _dleft=moment(newDate[0],'YYYY-MM-DD');
-                _dright=moment(newDate[1],'YYYY-MM-DD');
+                _dleft=`${newDate[0]}-01`;
+                _dright=`${newDate[1]}-01`;
             }
+            _dleft=dayjs(_dleft);
+            _dright=dayjs(_dright);
             this.$emit("input",[_dleft.format('YYYY-MM-DD'),_dright.format('YYYY-MM-DD')]);
         }
     }

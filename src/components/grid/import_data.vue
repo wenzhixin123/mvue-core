@@ -139,7 +139,7 @@ import metaservice from "../../services/meta/metaservice";
 import contextHelper from "../../libs/context"
 import ExportCsv from './js/export_csv';
 
-var moment = require('moment');
+var dayjs = require("dayjs");
 var Config=require("../../config/config.js");
 export default {
     props:{
@@ -418,7 +418,7 @@ export default {
             if(this.report.summaryReport){
                 let _date="";
                 if(this.report.date){
-                    _date=moment(this.report.date).format('YYYY-MM-DD HH:mm:ss');
+                    _date=dayjs(this.report.date).format('YYYY-MM-DD HH:mm:ss');
                 }
                 data.push(`${reportName} ${_date}`);
                 let _header1=["实体名称", "实体显示名称", "已创建", "已更新", "出错"];

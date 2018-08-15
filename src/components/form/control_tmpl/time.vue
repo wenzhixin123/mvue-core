@@ -12,7 +12,7 @@
     </div>
 </template>
 <script>
-var moment = require('moment'); 
+var dayjs = require("dayjs");
 import controlBase from '../js/control_base';
 import dateType from '../js/date_type';
 export default {
@@ -58,12 +58,13 @@ export default {
                 if(!data){
                     return;
                 }
-                let dv=moment(data).format(_this.timeFormat);
+                var nowDs=dayjs().format('YYYY-MM-DD');
+                let _d=dayjs(`${nowDs} ${data}`);
+                let dv=_d.format(_this.timeFormat);
                 _this.handleChange(dv);
             });
         },
         getValidPart:function(){//将传进来的值value转成特定的格式
-            //moment format YYYY-MM-DD HH:mm:ss
             let timePrecision=this.formItem.componentParams.timePrecision;
             let _valueValidPart=dateType.formatTime(this.value,timePrecision);
             return _valueValidPart;
@@ -73,7 +74,8 @@ export default {
                 this.$emit("input",null);
                 return;
             }
-            let _d=moment(newDate,this.timeFormat);
+            var nowDs=dayjs().format('YYYY-MM-DD');
+            let _d=dayjs(`${nowDs} ${newDate}`);
             this.$emit("input",_d.format('HH:mm:ss'));
         }
     }

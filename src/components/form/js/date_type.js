@@ -1,4 +1,4 @@
-var moment = require('moment'); 
+var dayjs = require("dayjs");
 //定义基础组件:日期和时间类型
 var dateTypes={
     Date:{ 
@@ -85,7 +85,7 @@ function formatDate(value,precision){
     if(!value){
         return _valueValidPart;
     }
-    let _d=moment(value,'YYYY-MM-DD');
+    let _d=dayjs(value);
     if(datePrecision.year===precision){
         _valueValidPart=_d.format('YYYY');
     }else if(datePrecision.month===precision){
@@ -100,7 +100,8 @@ function formatTime(value,precision){
     if(!value){
         return _valueValidPart;
     }
-    let _d=moment(value,'HH:mm:ss');
+    var nowDs=dayjs().format('YYYY-MM-DD');
+    let _d=dayjs(`${nowDs} ${value}`);
     if(timePrecision.minute===precision){
         _valueValidPart=_d.format('HH:mm');
     }else{
@@ -113,7 +114,7 @@ function formatDateTime(value,precision){
     if(!value){
         return _valueValidPart;
     }
-    let _d=moment(value);
+    let _d=dayjs(value);
     if(timePrecision.minute===precision){
         _valueValidPart=_d.format('YYYY-MM-DD HH:mm');
     }else{

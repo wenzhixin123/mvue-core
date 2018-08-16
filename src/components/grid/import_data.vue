@@ -140,7 +140,7 @@ import contextHelper from "../../libs/context"
 import ExportCsv from './js/export_csv';
 
 var dayjs = require("dayjs");
-var Config=require("../../config/config.js");
+import context from "../../libs/context";
 export default {
     props:{
         operation:{
@@ -186,7 +186,7 @@ export default {
                 swagger:null,
                 entityName:entityName,
                 mappings:[],
-                callback:Config.getMetaserviceUrl()+"/meta_entity_event/on_imported",
+                callback:context.getConfig().getMetaserviceUrl()+"/meta_entity_event/on_imported",
                 worksheet:0,
                 startRowIndex:1,
                 overideOnDup:true,
@@ -227,7 +227,7 @@ export default {
                 metaservice().getEntityTemplate({projectId:this.metaEntity.projectId,entityName:this.entityName})
                 .then(({data})=>{
                     if(!_.isEmpty(data)){
-                        this.templateUrl=Config.getUploadUrl()+"?filePath="+data["pathInfo"]["relativePath"]+"&filename="+encodeURIComponent(data["pathInfo"]["fileName"]);
+                        this.templateUrl=context.getConfig().getUploadUrl()+"?filePath="+data["pathInfo"]["relativePath"]+"&filename="+encodeURIComponent(data["pathInfo"]["fileName"]);
                     }
                 });
             }

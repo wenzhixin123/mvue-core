@@ -50,7 +50,6 @@ function installGridAndForm(Vue){
 }
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';
-import utils from './libs/utils';
 
 import propParser from './services/tool/prop_parser';
 import linkplugin from './services/link/linkplugin';
@@ -65,9 +64,11 @@ import commonOperation from './components/meta_operation/js/common_operation';
 
 import  context from "./libs/context";
 
+//TODO delete just for test
+//import mvueComponents from 'mvue-components';
+
 let MvueCore={
     install:install,
-    utils:utils,
     metaBase:metabase,
     metaEntity:metaentity,
     propParser:propParser,
@@ -84,6 +85,11 @@ let MvueCore={
 function install(Vue, opts = {}) {
     if (install.installed) return;
     context.init(Vue,opts);
+    
+    //TODO delete just for test
+    //debugger
+    //mvueComponents.context.init(Vue,{mvueToolkit:context.getMvueToolkit()});
+
     installGridAndForm(Vue);
     Vue.prototype.$metaBase=metabase;
     Vue.prototype.$metaEntity=metaentity;

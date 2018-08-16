@@ -4,7 +4,7 @@
  */
 import controlTypeService from '../../components/form/js/control_type_service';
 import context from "../context";
-var Config=require("../../config/config.js");
+
 var store=require("store2");
 
 var MetaEntityCls=require("./metaentity");
@@ -44,8 +44,8 @@ function getMetabase(projectId){
 function currentSwagger(projectId){
   if(!projectId){
     return new Promise(function(reslove,reject){
-      currentEngineUrl=Config.getApiBaseUrl();
-      var swagger= Config.getApiBaseUrl()+"/swagger.json";
+      currentEngineUrl=context.getConfig().getApiBaseUrl();
+      var swagger= currentEngineUrl+"/swagger.json";
       reslove(swagger);
     });
   }

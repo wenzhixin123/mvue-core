@@ -48,31 +48,9 @@ function metaFieldToCol(context,metaField) {
  * @param grid
  */
 function initGridByMetabase(grid) {
-  initGridProperties(grid);
   initColumns(grid);
 }
 
-
-/**
- * 实始化grid的基本属性
- * @param grid
- */
-function initGridProperties(grid) {
-  var metaEntityObj=null;
-  if(!_.isEmpty(grid.metaEntity)){
-    metaEntityObj=grid.metaEntity;
-    let updatedAtField=metaEntityObj.firstSemanticsField("updatedAt");
-    if(updatedAtField&&!grid.queryOptions){//实体有更新时间字段，并且queryOptions没写，则按照更新时间降序排列
-      grid.innerQueryOptions={orderby:`${updatedAtField.name} desc`};
-    }
-  }
-  if(metaEntityObj==null){
-    return;
-  }
-  if(_.isEmpty(grid.queryResource)&&_.isEmpty(grid.queryUrl)){
-    grid.innerQueryResource=metaEntityObj.dataResource();
-  }
-}
 function buildInnerColumns(columns,metaEntityObj,context){
   var _cols=[];
   _.each(columns,function(col){
@@ -112,10 +90,7 @@ function  initColumns(grid) {
     _cols=grid.innerColumns;
   }
   var __cols=[];
-    //if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
-    __cols.push({type: 'selection',width:50,align:"center"});
-    //}
-  //多选列放在序号列前面
+  //序号列放在多选列前面
   if(grid.showIndex) {
       __cols.push({
           type: 'index',
@@ -123,6 +98,9 @@ function  initColumns(grid) {
           align: 'center'
       });
   }
+  //if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
+  __cols.push({type: 'selection',width:50,align:"center"});
+  //}
 
   _cols=__cols.concat(_cols);
   //如果操作列不和标题列合并，并且定义了单行操作，默认最后一列为操作列

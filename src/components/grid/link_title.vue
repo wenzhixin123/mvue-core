@@ -4,7 +4,6 @@
     </div>
 </template>
 <script>
-var Config=require("../../config/config");
 export default {
     props:{
         params:{

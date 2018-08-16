@@ -71,7 +71,7 @@ export default {
         },
         showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
             var operation=OperationUtils.expandOperation(this.operation,this);
-            var optPermValue=operation[Utils.operationDisplayField];
+            var optPermValue=operation[OperationUtils.operationDisplayField];
             if(!_.isPlainObject(optPermValue)){
                 optPermValue=_.trim(optPermValue);
                 if(_.isNil(optPermValue)||optPermValue===''){

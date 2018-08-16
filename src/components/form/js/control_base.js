@@ -1,5 +1,6 @@
 import controlTypeService from './control_type_service';
 import constants from './constants';
+import widgetMode from './widget-mode';
 export default {
     props:{
         formItem:{
@@ -67,7 +68,7 @@ export default {
         },
         viewMode(){//强制查看模式
             let mode= this.context&&this.context.mode;
-            if(Utils.widgetMode.forceView===mode){
+            if(widgetMode.forceView===mode){
                 return true;
             }
             return false;
@@ -168,7 +169,7 @@ export default {
             }
             //来自部件字段权限的控制
             let mode= this.context&&this.context.mode;
-            if(Utils.widgetMode.readonly===mode){
+            if(widgetMode.readonly===mode){
                 return true;
             }
             var metaEntity=this.context.metaEntity;

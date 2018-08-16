@@ -9,6 +9,7 @@ var utils={
             }
         });
         return _.extend(operation,params);
-    }
+    },
+    operationDisplayField:"display"
 };
 export default utils;

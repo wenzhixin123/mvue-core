@@ -1,6 +1,6 @@
 import metabase from '../../../libs/metadata/metabase';
 import metaGrid from "./metagrid";
-import utils from "../../../libs/utils";
+import context from '../../../libs/context';
 import metaservice from "../../../services/meta/metaservice";
 
 export default {
@@ -230,7 +230,7 @@ export default {
                     var value = rule.value;
                     if (!_.isNull(value) && value !== "" && !_.isUndefined(value)) {
                         if (_.isString(value)) {
-                            value = utils.leapQueryValueEncode(value);
+                            value =context.getMvueToolkit().utils.leapQueryValueEncode(value);
                         }
                         conditions.push(`(${key} ${rule.op} ${value})`);
                     }

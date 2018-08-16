@@ -17,7 +17,7 @@
     </div>
 </template>
 <script>
-var Config=require("../../config/config");
+import context from "../../libs/context";
 export default {
     props:{
         params:{
@@ -31,7 +31,7 @@ export default {
     },
     data: function(){
         return {
-            contextPath :Config.getGatewayUrl()
+            contextPath :context.getConfig().getGatewayUrl()
         }
     },
     methods:{

@@ -19,7 +19,7 @@
 </template>
 <script>
 import controlTypeService from '../form/js/control_type_service';
-import utils from '../../libs/utils';
+import context from '../../libs/context';
 import FormItem from "iview/src/components/form/form-item";
 export default {
     components: {FormItem},
@@ -93,7 +93,7 @@ export default {
                     if(metaField.inputType==controlTypeService.componentTypes.MultiLineText.id
                         ||metaField.inputType==controlTypeService.componentTypes.SingleLineText.id
                     ){
-                        let _value=utils.leapQueryValueEncode(value);
+                        let _value=context.getMvueToolkit().utils.leapQueryValueEncode(value);
                         advanceSearchFilters.push({
                             key:key,
                             op:"like",

@@ -7,7 +7,7 @@ import renderManager from './metagrid_render';
  *  将metaField转成ivue需要的col对象
  * @param metaField
  */
-function metaFieldToCol(context,metaField) {
+function metaFieldToCol(context,metaField,initialCol) {
   var col = {
     title: metaField.title,
     key: metaField.name,
@@ -31,6 +31,37 @@ function metaFieldToCol(context,metaField) {
     }
   } else if (metaField.type == "imgTitle") {
     col.render = renderManager.renderForImgTitle(context,metaField);
+  } else if(metaField.autoFilterable&&
+    controlTypeService.isOptions(metaField.inputType)){//如果是选项列，自动添加列头过滤相关功能
+    col.filterMultiple=false;
+    col.filterRemote=(selectedValues)=>{//远程过滤
+                        //修改过滤条件
+                        var _filter=null;
+                        if(initialCol.filterMultiple){
+                          _filter={
+                            op:'in',
+                            value:selectedValues.join(',')
+                          };
+                        }else{
+                          _filter={
+                            op:'eq',
+                            value:selectedValues[0]
+                          };
+                        }
+                        context.grid.filtersFromColumnHeader[col.key]=_filter;
+                        //重新加载数据
+                        context.grid.$refs.listInst.doReload();
+                    };
+    let options=metaField.inputTypeParams&&
+      metaField.inputTypeParams["options"],_filters=[]; 
+    _.each(options,opt=>{
+      _filters.push({
+        label:opt.text,
+        value:opt.id
+      });
+    })
+    col.filters=_filters;
+    col.render = renderManager.renderForCommon(context,metaField);
   } else {
     if (controlTypeService.isPictureUpload(metaField.inputType)) {
       col.render = renderManager.renderForPictureUpload(context,metaField);
@@ -43,14 +74,6 @@ function metaFieldToCol(context,metaField) {
   return col;
 }
 
-/**
- * 根据元数据信息初始化Grid
- * @param grid
- */
-function initGridByMetabase(grid) {
-  initColumns(grid);
-}
-
 function buildInnerColumns(columns,metaEntityObj,context){
   var _cols=[];
   _.each(columns,function(col){
@@ -61,7 +84,7 @@ function buildInnerColumns(columns,metaEntityObj,context){
       metaField=metaEntityObj.findField(_col.key) || {};
     }
     metaField=_.extend(metaField,metaParams);
-    var defaultCol=metaFieldToCol(context,metaField);
+    var defaultCol=metaFieldToCol(context,metaField,_col);
     _col=_.extend(defaultCol,_col);
     _cols.push(_col);
   });
@@ -107,7 +130,7 @@ function  initColumns(grid) {
   if(!grid.operationsWithTitleColumn&&!_.isEmpty(grid.innerToolbar.singleBtns)){
     _cols.push({
       title:"具体操作",
-      width:220,
+      width:180,
       align:"center",
       metaParams:{
         type:"operation"
@@ -119,7 +142,7 @@ function  initColumns(grid) {
   grid.innerColumns=_cols;
 }
 export default{
-  initGridByMetabase:initGridByMetabase,
+  initColumns:initColumns,
 }
 
 

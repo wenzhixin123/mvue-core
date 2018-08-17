@@ -27,7 +27,7 @@ function buildDefaultOrderby(gridInst) {
     }
     return orderby;
 }
-function initGrid(gridInst){
-    metaGrid.initGridByMetabase(gridInst);
+function initColumns(gridInst){
+    metaGrid.initColumns(gridInst);
 }
-export default {initGrid,buildFiltersFromQuery,buildDefaultOrderby};
+export default {initColumns,buildFiltersFromQuery,buildDefaultOrderby};

@@ -212,6 +212,7 @@ export default {
             metaEntity: metaEntity,
             preprocessed: false,
             filtersFromQuery:{},//来自查询条件的默认过滤条件
+            filtersFromColumnHeader:{},//来自列header的查询条件
             innerSort:_.cloneDeep(this.defaultSort),
             innerColumns:_.cloneDeep(this.columns),
             queryResource:metaEntity.dataResource(),
@@ -254,8 +255,9 @@ export default {
         //如果有来自查询条件的默认过滤器初始化
         var filtersFromQuery=initByMetadata.buildFiltersFromQuery(this);
         this.filtersFromQuery=filtersFromQuery;
-        //根据实体元数据初始化grid
-        initByMetadata.initGrid(this);
+        //根据实体元数据初始化grid的列
+        initByMetadata.initColumns(this);
+        //预处理完毕，b-list可以渲染了
         this.preprocessed = true;
     },
     methods:{
@@ -306,9 +308,10 @@ export default {
                 ctx.filters=useInnerAdvSearchFilters;
                 ctx.quicksearchKeyword=this.quicksearchKeyword;
             }//外部高级查询的查询条件自动在ctx里边，不需要特殊处理
-            //如果有来自url查询条件的默认查询参数自动添加进去
+            //1 如果有来自url查询条件的默认查询参数自动添加进去
+            //2 如果有来自列header的查询条件也附加上去
             if(ctx.filters&&ctx.filters.rules){
-                ctx.filters.rules=Object.assign(ctx.filters.rules,this.filtersFromQuery);
+                ctx.filters.rules=Object.assign(ctx.filters.rules,this.filtersFromQuery,this.filtersFromColumnHeader);
             }
             if(this.query){//外部指定了query，用外部的
                 return this.query(ctx);

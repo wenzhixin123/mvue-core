@@ -7,7 +7,7 @@
             :query="innerQuery"
             :toolbar="toolbar"
             :filters="filters"
-            :default-sort="defaultSort"
+            :default-sort="innerSort"
 
              :pager="pager"
              :page-size="pageSize"
@@ -211,6 +211,8 @@ export default {
         return {
             metaEntity: metaEntity,
             preprocessed: false,
+            filtersFromQuery:{},//来自查询条件的默认过滤条件
+            innerSort:_.cloneDeep(this.defaultSort),
             innerColumns:_.cloneDeep(this.columns),
             queryResource:metaEntity.dataResource(),
             innerQueryOptions:_.cloneDeep(this.queryOptions),
@@ -245,8 +247,16 @@ export default {
         }
     },
     mounted:function(){
+        //如果外部没有指定默认排序，则使用实体更新时间字段作为默认排序
+        if(!this.innerSort){
+            this.innerSort=initByMetadata.buildDefaultOrderby(this);
+        }
+        //如果有来自查询条件的默认过滤器初始化
+        var filtersFromQuery=initByMetadata.buildFiltersFromQuery(this);
+        this.filtersFromQuery=filtersFromQuery;
         //根据实体元数据初始化grid
         initByMetadata.initGrid(this);
+        this.preprocessed = true;
     },
     methods:{
         getCommonOpt(name){//根据通用操作的name，返回具体的操作，包括onclick函数等
@@ -296,6 +306,10 @@ export default {
                 ctx.filters=useInnerAdvSearchFilters;
                 ctx.quicksearchKeyword=this.quicksearchKeyword;
             }//外部高级查询的查询条件自动在ctx里边，不需要特殊处理
+            //如果有来自url查询条件的默认查询参数自动添加进去
+            if(ctx.filters&&ctx.filters.rules){
+                ctx.filters.rules=Object.assign(ctx.filters.rules,this.filtersFromQuery);
+            }
             if(this.query){//外部指定了query，用外部的
                 return this.query(ctx);
             }else{

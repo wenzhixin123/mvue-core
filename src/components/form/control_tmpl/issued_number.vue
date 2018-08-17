@@ -135,7 +135,7 @@
     }
 </script>
 <style lang="scss" scoped>
-.issued_align{  height: 33px; line-height: 33px; text-align: center }
+.issued_align{ display: -webkit-flex;  display: flex;line-height: 33px; text-align: center }
 ._p0{ padding-left: 0;}
 </style>
 

@@ -11,7 +11,7 @@
                 <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
                 <div class="issued_align">
                     <div class="col-md-3 _p0">
-                        <Select align="left" v-if="formItem.componentParams.standard=='standard2'" v-model="issuedObjcet.code" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
+                        <Select align="left" v-if="formItem.componentParams.standard=='standard2'" v-model="issuedObjcet.code" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue" style="width: 100%">
                             <Option v-for="item in formItem.componentParams.options" :key="item.id" :value="item.id">{{ item.text }}</Option>
                         </Select>
                         <input v-else v-model="issuedObjcet.code" :disabled="disabled" type="text" class="form-control" @input="updateValue" :placeholder="formItem.componentParams.placeholder">
@@ -35,7 +35,7 @@
                     <div class="col-md-10" :style="{width:controlWidth}">
                         <div class="issued_align">
                             <div class="col-md-3 _p0">
-                                <Select align="left" v-if="formItem.componentParams.standard=='standard2'" v-model="issuedObjcet.code" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
+                                <Select align="left" v-if="formItem.componentParams.standard=='standard2'" v-model="issuedObjcet.code" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue" style="width: 100%">
                                     <Option v-for="item in formItem.componentParams.options" :key="item.id" :value="item.id">{{ item.text }}</Option>
                                 </Select>
                                 <input v-else v-model="issuedObjcet.code" :disabled="disabled" type="text" class="form-control" @input="updateValue" :placeholder="formItem.componentParams.placeholder">

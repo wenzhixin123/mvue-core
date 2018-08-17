@@ -19,7 +19,6 @@
 </template>
 <script>
 import controlTypeService from '../form/js/control_type_service';
-import context from '../../libs/context';
 import FormItem from "iview/src/components/form/form-item";
 export default {
     components: {FormItem},
@@ -93,11 +92,10 @@ export default {
                     if(metaField.inputType==controlTypeService.componentTypes.MultiLineText.id
                         ||metaField.inputType==controlTypeService.componentTypes.SingleLineText.id
                     ){
-                        let _value=context.getMvueToolkit().utils.leapQueryValueEncode(value);
                         advanceSearchFilters.push({
                             key:key,
                             op:"like",
-                            value:`'%${_value}%'`
+                            value:`%${value}%`
                         });
                     }else if(metaField.inputType==controlTypeService.componentTypes.DateTime.id
                         ||metaField.inputType==controlTypeService.componentTypes.Date.id){
@@ -105,12 +103,12 @@ export default {
                         advanceSearchFilters.push({
                             key:key,
                             op:"ge",
-                            value:`'${value[0]}'`
+                            value:value[0]
                         });
                         advanceSearchFilters.push({
                             key:key,
                             op:"le",
-                            value:`'${value[1]}'`
+                            value:value[1]
                         });
                     }else{
                         advanceSearchFilters.push({

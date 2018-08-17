@@ -33,53 +33,57 @@
              @on-row-dblclick="handleOnRowDblclick"
              @on-expand="handleOnExpand"
              @on-sort-change="handleSortChange">
-        <!-- 普通布局 -->
-        <template slot="header" v-if="!innerToolbar.hide">
+             <template slot="top">
                 <slot name="top">
                     <!-- 高级搜索区 -->
                 </slot>
-                <div class="b-list-header clearfix">
-                    <slot name="header-left">
-                        <!-- 自定义菜单左侧区 -->
-                    </slot>
-                    <Button @click="reload()" icon="ios-refresh-empty"></Button>
-
-                    <template v-if="innerToolbar.btns">
-                        <meta-operation  v-for="(btn,index) in innerToolbar.btns" v-if="index<btnSizeBeforeMore" :key="index"
-                                :operation="btn"  :widget-context="getWidgetContext()" class="grid-primary-btn">
-                            <Button class="normal-btn"
-                                    :disabled="btnIsDisabled(btn)"
-                                    :type="btn.type?btn.type:'primary'"  :icon="btn.icon">{{btn.title}}</Button>
-                        </meta-operation>
-                        <Dropdown v-if="innerToolbar.btns.length>btnSizeBeforeMore" >
-                            <Button>
-                                更多操作
-                                <Icon type="arrow-down-b"></Icon>
-                            </Button>
-                            <DropdownMenu slot="list">
-                                <DropdownItem v-for="(btn,index) in innerToolbar.btns" v-if="index>=btnSizeBeforeMore"
-                                              :disabled="btnIsDisabled(btn)"
-                                              :divided="btn.divided" :name="index" :key="index">
-                                    <meta-operation  :operation="btn" :widget-context="getWidgetContext()">
-                                        <div style="display: block">{{btn.title}}</div>
-                                    </meta-operation>
-                                </DropdownItem>
-                            </DropdownMenu>
-                        </Dropdown>
-                    </template>
-                    <slot name="header-middle">
-                        <!-- 自定义菜单中部区 -->
-                    </slot>
-                    <Input v-if="innerToolbar.quicksearch&&innerToolbar.quicksearch.fields"
-                           v-model="quicksearchKeyword" :placeholder="innerToolbar.quicksearch.placeholder"
-                           icon="search" style="width: 150px;" :autofocus="true"/>
-                    <advance-search :quicksearch-keyword="quicksearchKeyword" v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" :entity-name="metaEntityName"
-                                    :advance-search-fields="innerToolbar.advanceSearchFields" @do-advance-search="doAdvanceSearch"></advance-search>
-                    <slot name="header-right">
-                        <!-- 自定义菜单右侧区 -->
-                    </slot>
-                </div>
-        </template>
+             </template>
+             <template slot="header-left">
+                <slot name="header-left">
+                </slot>
+             </template>
+             <template slot="header-operations" v-if="innerToolbar.btns">
+                <meta-operation  v-for="(btn,index) in innerToolbar.btns" v-if="index<btnSizeBeforeMore" :key="index"
+                        :operation="btn"  :widget-context="getWidgetContext()" class="grid-primary-btn">
+                    <Button class="normal-btn"
+                            :disabled="btnIsDisabled(btn)"
+                            :type="btn.type?btn.type:'primary'"  :icon="btn.icon">{{btn.title}}</Button>
+                </meta-operation>
+                <Dropdown v-if="innerToolbar.btns.length>btnSizeBeforeMore" >
+                    <Button>
+                        更多操作
+                        <Icon type="arrow-down-b"></Icon>
+                    </Button>
+                    <DropdownMenu slot="list">
+                        <DropdownItem v-for="(btn,index) in innerToolbar.btns" v-if="index>=btnSizeBeforeMore"
+                                        :disabled="btnIsDisabled(btn)"
+                                        :divided="btn.divided" :name="index" :key="index">
+                            <meta-operation  :operation="btn" :widget-context="getWidgetContext()">
+                                <div style="display: block">{{btn.title}}</div>
+                            </meta-operation>
+                        </DropdownItem>
+                    </DropdownMenu>
+                </Dropdown>
+            </template>
+            <template slot="header-middle">
+                <slot name="header-middle">
+                </slot>
+             </template>
+            <template slot="header-quicksearch">
+                <slot name="header-quicksearch">
+                    <Input class="quicksearch-input" v-if="toolbar.quicksearch&&toolbar.quicksearch.fields" v-model="quicksearchKeyword" :placeholder="toolbar.quicksearch.placeholder" icon="search"/>
+                </slot>
+             </template>
+            <template slot="header-right">
+                <slot name="header-right">
+                    <advance-search 
+                        :quicksearch-keyword="quicksearchKeyword" 
+                        v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" 
+                        :entity-name="metaEntityName"
+                        :advance-search-fields="innerToolbar.advanceSearchFields" 
+                        @do-advance-search="doAdvanceSearch"></advance-search>
+                </slot>
+            </template>
     </b-list>
 </template>
 <script>
@@ -91,6 +95,10 @@ import globalContext from '../../libs/context';
 import { leapQueryConvertor } from "mvue-components";
 export default {
     props: {
+        query:{//数据加载方法，可以由外边重写掉
+            type:Function,
+            required:false
+        },
         "filters": {//高级查询的条件和列表头部的筛选条件设置
             type: Object
         },
@@ -102,14 +110,6 @@ export default {
             default() {
                 return {};
             }
-        },
-        "queryUrl": {//queryUrl和queryResource二选一
-            type: String,
-            required: false
-        },
-        "queryOptions": {//queryUrl或者queryResource查询的参数，对应api query接口的参数，包括排序、分页等参数设置
-            type: Object,
-            required: false
         },
         "columns": {
             type: Array,
@@ -227,8 +227,8 @@ export default {
                     advanceSearchFields:(this.toolbar&&this.toolbar.advanceSearchFields)||[]
                 },
             selectedItems:[],//已经选择的数据
-            quicksearchKeyword:"",
-            advanceSearchFilters:[]//高级查询设置的查询条件
+            quicksearchKeyword:"",//内部高级查询提供的快捷搜索词
+            advanceSearchFilters:[]//内部高级查询设置的查询条件
         };
     },
     computed:{
@@ -237,20 +237,10 @@ export default {
             return size||1;
         }
     },
-    watch: {
-        queryOptions:{
-            handler:function(){
-                this.innerQueryOptions=_.cloneDeep(this.queryOptions),
-                this.reload();
-            },
-            deep:true
-        },
+    watch:{
         quicksearchKeyword: function () {
             if (this.pager) {
-                //智能搜索包装器，在用户快速输入时先不查询，直到用户输入完毕再查询
-                globalContext.getMvueToolkit.utils.smartSearch(this, () =>{
-                    this.reload();
-                });
+                this.reload();
             }
         }
     },
@@ -285,92 +275,40 @@ export default {
             return _btns;
         },
         innerQuery(ctx){
-            if(_.isFunction(this.query)){//外部指定了query，用外部的
+            //外部高级查询和内部高级查询只能二选一，如果同时出现，这里不会合并
+            //外部高级查询:可通过设置组件的top slot区模板和属性filters
+            //内部高级查询:如果组件属性toolbar.advanceSearchFields的有值，则内部默认的高级查询条件需要合并到ctx的filters和quicksearchKeyword中
+            var useInnerAdvSearch=this.toolbar && 
+                this.toolbar.advanceSearchFields &&
+                this.toolbar.advanceSearchFields.length>0
+            if(useInnerAdvSearch){//内部高级查询
+                //mappingKey
+                let useInnerAdvSearchFilters={
+                    op:"and",
+                    rules:{}
+                }
+                _.each(this.advanceSearchFilters,asf=>{
+                    useInnerAdvSearchFilters.rules[asf.key]={
+                        op:asf.op,
+                        value:asf.value
+                    };
+                });
+                ctx.filters=useInnerAdvSearchFilters;
+                ctx.quicksearchKeyword=this.quicksearchKeyword;
+            }//外部高级查询的查询条件自动在ctx里边，不需要特殊处理
+            if(this.query){//外部指定了query，用外部的
                 return this.query(ctx);
             }else{
                 //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
                 return leapQueryConvertor.exec(this.queryResource,ctx);
             }
         },
-        queryOld:function (ctx) {
-            this.selectedItems=[];
-            var _this = this;
-            if ((!_this.queryUrl) && (!_this.innerQueryResource)) {
-                console.log("请配置远程查询地址queryUrl或者queryResource");
-                return;
-            }
-            var _queryOptions=this.buildQueryOptions(ctx);
-            return new Promise((resolve,reject)=> {
-                var dataPromise = null;
-                if (!!_this.queryUrl) {//传的是查询url
-                    dataPromise = _this.$http.get(_this.queryUrl, {params: _queryOptions});
-                } else if (!!_this.innerQueryResource) {//传的是vue-resource对象
-                    dataPromise = _this.innerQueryResource.query(_queryOptions);
-                }
-                dataPromise.then(function (resp) {
-                    //重新加载数据后清空选中的数据
-                    _this.selectedItems=[];
-                    if(_this.preprocessor){//调用外部的数据处理器
-                        listData=_this.preprocessor(_this,resp);
-                    }else{
-                        var total = _.toSafeInteger(resp.headers['x-total-count']) || resp.data.length;
-                        var listData = {
-                            data: resp.data,
-                            total: total
-                        };
-                    }
-                    resolve(listData);
-                    _this.$emit("dataloaded", _this);
-                }, () => {
-                    reject();
-                });
-            });
-        },
         reload:function(){
             var _self=this;
-            _self.$refs.listInst.doReload();
-        },
-        buildQueryOptions:function (queryCtx) {
-          var _this = this;
-          var _queryOptions = _this.innerQueryOptions ? _.cloneDeep(_this.innerQueryOptions) : {}; //这里是克隆查询参数，避免查询参数污
-          if (_this.pager) {//如果支持分页
-            _queryOptions[this.pageKey] = queryCtx.currentPage;
-            _queryOptions[this.pageSizeKey] = queryCtx.currentPageSize;
-            _queryOptions.total = true;
-          }
-            //如果用户点击了排序，覆盖默认排序
-            if(queryCtx.sort){
-                _queryOptions.orderby=`${queryCtx.sort.key} ${queryCtx.sort.order}`;
-            }
-
-          //如果启用了高级搜索，快捷搜索失效
-          if(this.advanceSearchFilters&&this.advanceSearchFilters.length>0){
-            let qsFilters = [];
-            _.each(this.advanceSearchFilters,function(asField){
-              qsFilters.push(`${asField.key} ${asField.op} ${asField.value}`);
-            });
-            qsFilters=qsFilters.join(" and ");
-            if(_queryOptions.filters){
-              _queryOptions.filters=`${_queryOptions.filters} and (${qsFilters})`;
-            }else{
-              _queryOptions.filters=qsFilters;
-            }
-          }
-          //快捷搜索条件添加
-          if(_this.innerToolbar.quicksearch&&_this.innerToolbar.quicksearch.fields&&_this.quicksearchKeyword){
-            let qsFilters = [];
-            _.each(_this.innerToolbar.quicksearch.fields, function (sField) {
-              let _keyword=globalContext.getMvueToolkit.utils.leapQueryValueEncode(_this.quicksearchKeyword);
-              qsFilters.push(`${sField} like '%${_keyword}%'`);
-            });
-            qsFilters=qsFilters.join(" or ");
-            if(_queryOptions.filters){
-              _queryOptions.filters=`${_queryOptions.filters} and (${qsFilters})`;
-            }else{
-              _queryOptions.filters=qsFilters;
-            }
-          }
-          return _queryOptions;
+            //智能搜索，快速连续调用多次只会执行一次
+            globalContext.getMvueToolkit().utils.smartSearch(this, () =>{
+                this.$refs.listInst.doReload();
+            },"quickSearchKey");
         },
         wrappedBtn:function (btn) {
             /*var _self=this;

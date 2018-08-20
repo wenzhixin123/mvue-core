@@ -1,11 +1,11 @@
 <template>
         <FormItem  :prop="name"  :label-for="labelFor"
-                  :required="required"  :rules="rules" :show-message="showMessage">
+                    :rules="rules" :show-message="showMessage">
             <template v-if="showLabel" slot="label">
                 <slot name="label">{{ metaField.title}}</slot>
             </template>
-            <slot v-if="formItem"
-                  v-bind:model="entity" :fieldValue="innerVal" :fieldName="name"  :metaField="metaField"  :formItem="formItem">
+            <slot v-if="formItem&&entity"
+                  :model="entity" :metaField="metaField"  :formItem="formItem">
                 <component
                            v-model="innerVal"
                            @exDataChanged="exDataChanged"

@@ -194,7 +194,10 @@ function operationForDel() {
         onOk: () => {
           //,cascade_delete:true
           resource.delete({id:id}).then(function (re) {
+            //如果是grid列表的操作，刷新列表
             context.grid&&context.grid.reload();
+            //如果是表单的删除操作，执行表单的删除后回调
+            context.form&&context.form.onDeleted();
           });
         }
       });

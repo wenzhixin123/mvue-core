@@ -5,50 +5,30 @@
     <Form v-if="preprocessed" :ref="'formRef'" :model="entity"
           :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="labelWidth"
           :show-message="showMessage" :autocomplete="autocomplete">
-        <template v-if="!metaFormLayout">
-            <slot>
-                <meta-field v-for="key in metaEntity.getDefaultFormFields()" :key="key" :name="key">
-                </meta-field>
-            </slot>
-        </template>
-        <template v-if="metaFormLayout">
-            <div v-for="formItem in metaForm.layout" :key="formItem.id">
-                <div class="control-tmpl-panel" v-show="!formItem.hidden">
-                    <component v-if="formItem.isContainer" :is="'Meta'+formItem.componentType" :form-item="formItem">
-                        <div v-for="containerFormItem in formItem.children" :key="containerFormItem.id" v-show="!containerFormItem.hidden">
-                            <component v-if="containerFormItem.isDataField" :context="fieldContext(formItem)"  v-model="entity[containerFormItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
-                            <component v-else-if="containerFormItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(containerFormItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
-                            <component v-else :is="'Meta'+containerFormItem.componentType" :form-item="containerFormItem"></component>
-                        </div>
-                    </component>
-                    <component v-else-if="formItem.isDataField" :context="fieldContext(formItem)"  v-model="entity[formItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
-                    <component v-else-if="formItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
-                    <component v-else :is="'Meta'+formItem.componentType" :form-item="formItem"></component>
-                </div>
-            </div>
-        </template>
-
+        <slot>
+            <meta-field v-for="key in metaEntity.getDefaultFormFields()" :key="key" :name="key">
+            </meta-field>
+        </slot>
         <FormItem v-if="hasButtons() || $slots.toolbar" class="form-toolbar"
-                 v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer">
-                <slot name="toolbar" >
-                    <!--<div v-if="hasButtons()" :class="{'onepx-stroke':hasButtons()}"></div>-->
-                    <template v-if="isView">
-                        <meta-operation v-for="btn in toolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                            <Button :type="btn.btnType || 'primary'"  :title="btn.title">
-                                <Icon :type="btn.icon" v-if="btn.icon"></Icon>
-                                {{btn.title}}
-                            </Button>
-                        </meta-operation>
+                v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer">
+            <slot name="toolbar" >
+                <template v-if="isView">
+                    <meta-operation v-for="btn in toolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                        <Button :type="btn.btnType || 'primary'"  :title="btn.title">
+                            <Icon :type="btn.icon" v-if="btn.icon"></Icon>
+                            {{btn.title}}
+                        </Button>
+                    </meta-operation>
                 </template>
-                    <template v-if="!isView">
-                        <meta-operation v-for="btn in toolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                            <Button :type="btn.btnType || 'primary'"  :title="btn.title">
-                                <Icon :type="btn.icon" v-if="btn.icon"></Icon>
-                                {{btn.title}}
-                            </Button>
-                        </meta-operation>
-                    </template>
-                </slot>
+                <template v-if="!isView">
+                    <meta-operation v-for="btn in toolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                        <Button :type="btn.btnType || 'primary'"  :title="btn.title">
+                            <Icon :type="btn.icon" v-if="btn.icon"></Icon>
+                            {{btn.title}}
+                        </Button>
+                    </meta-operation>
+                </template>
+            </slot>
         </FormItem>
     </Form>
 </template>
@@ -60,24 +40,23 @@
     import  contextHelper from "../../libs/context";
     import controlTypeService from './js/control_type_service';
     import widgetMode from './js/widget-mode';
+
+    import initByMetadata from './init-by-metadata';
+
     var co = require('co');
 
     export default {
         directives: { TransferDom },
         props:{
-            formId:{
-                type: String,
-                required: false
-            },
             toolbar:{
                 type: Object,
                 require: false
             },
-            entityName:{                        //实体名
+            entityName:{//必填参数，表示元数据实体的名称）
                 type:String,
                 required:true
             },
-            recordId:{                              //当前表单编辑的实体数据id
+            recordId:{ //当前表单编辑的实体数据id，这个属性只在组件初始化时使用，作为创建还是编辑表单的依据，后续实体数据id，通过entityId获取
                 type:String,
                 required:false,
             },
@@ -154,10 +133,10 @@
         },
         computed:{
             isCreate:function () {
-                return !this.isView && this.formStatus==Utils.formActions.create;
+                return !this.isView && this.formStatus==contextHelper.getMvueToolkit().utils.formActions.create;
             },
             isEdit:function () {
-                return !this.isView && this.formStatus==Utils.formActions.edit;
+                return !this.isView && this.formStatus==contextHelper.getMvueToolkit().utils.formActions.edit;
             },
             isView:function(){//是否为查看模式
                 //外部指定强制查看模式或者已归档
@@ -170,13 +149,13 @@
         data:function(){
             var metaEntity=this.$metaBase.findMetaEntity(this.entityName);
             var dataResource=metaEntity.dataResource();
-            var formStatus=Utils.formActions.create;
+            var formStatus=contextHelper.getMvueToolkit().utils.formActions.create;
             if(!_.isEmpty(this.recordId)){
-                formStatus=Utils.formActions.edit;
+                formStatus=contextHelper.getMvueToolkit().utils.formActions.edit;
             }
-            var entity=null;
-            var entityId=this.recordId;
-            entity=metaEntity.getDefaultModel();
+            //构造实体数据操作的基本数据模型，会包含需要提交到后台的所有字段：会过滤掉主键、创建时间等维护字段
+            //这里提前初始化entity数据，保证字段的存在性，对于双向绑定和表单验证是必须的
+            var entity=metaEntity.getDefaultModel();
             return {
                 isArchived:false,//表示数据是否已归档
                 dataResource:dataResource,
@@ -184,23 +163,14 @@
                 formStatus:formStatus,
                 metaEntity:metaEntity,
                 entity:entity,
-                entityId:entityId,
+                entityId:this.recordId,
                 isMetaForm:true,
                 openEditClicked:false,
                 innerPermissions:_.cloneDeep(this.permissions),
-                isSavingToServer:false,//表示是否正在保存数据到服务器，用来处理保存时触发重复提交数据的bug
-                formActions:Utils.formActions,
+                isSavingToServer:false,//表示是否正在保存数据到服务器，用来处理保存时触发重复提交数据
+                formActions:contextHelper.getMvueToolkit().utils.formActions,
                 preprocessed: false,
-                metaFormLayout:false,//true表示已经在控制台设计过表单，按设计过的表单显示表单
-                metaForm:null,
                 paths:constants.paths(),
-                //begin 处理脚本相关data定义
-                scriptModel:{
-                    formDataCreated:null,//(model)
-                    beforeSave:null,//(model)
-                    afterSave:null//(model)
-                },
-                loadingFormData:false,//表示是否正在远程请求数据
                 subcomponentAfterSaveChain:[],//所有需要在表单保存后做继续操作的子组件集合
                 innerRules:_.cloneDeep(this.rules)
             };
@@ -211,72 +181,66 @@
                     this.innerPermissions=_.cloneDeep(this.permissions);
                 },
                 deep:true
-            },
-            entity:{
-                handler:function(){
-                    if(this.preprocessed){
-                        //this.validate();
-                    }
-                },
-                deep:true
             }
         },
         mounted:function () {
-            //初始化表单相关逻辑
-            this.initForm();
+            //创建模式，继续初始化，因为初始模型数据已经存在了
+            if(this.isCreate){
+                //如果url参数是实体的字段则填充相应的模型数据
+                initByMetadata.initModelByQueryParams(this,this.entity);
+                this.initOthers();
+            }else{//编辑或查看模式，需要从后端获取实体记录数据覆盖初始的模型数据，之后再继续初始化
+                this.reinitEntityModel();
+            }
         },
         methods:{
-            getWidgetContext(){
-                //获取操作需要的一些参数
-                let _self = this,context;
-                context =  {
-                    selectedId: _self.entityId,
-                    selectedItem: _self.entity,
-                    metaEntity: _self.metaEntity,
-                    form : _self
-                };
-                return context;
-            },
-            componentName(formItem){
-                return metaformUtils.metaComponentType(formItem);
-            },
-            doSave(){
-                var _this=this;
-                if(_this.isSavingToServer){
-                    return;
+            initOthers(){
+                //根据实体字段信息初始化表单默认验证规则
+                this.initValidateRulesByMetaEntity();
+                //预处理完毕，表单可以渲染了
+                this.preprocessed=true;
+                //调用外部传入的初始化回调函数
+                if(this.onInited){
+                    this.onInited(this);
                 }
-                _this.isSavingToServer=true;
-                return new Promise((resolve,reject)=>{
-                    if(this.isEdit){//更新
-                        let _model=this.ignoreReadonlyFields();
-                        _this.dataResource.update({id:this.entityId},_model).then(function({data}){
-                            _this.isSavingToServer=false;
-                            let afterSavePromise=_this.afterSave("on-edited",data,'编辑成功');
-                            afterSavePromise.then(()=>{resolve(_this.entity);},()=>{reject();});
-                        },function(){
-                            _this.isSavingToServer=false;
-                            reject();
-                        });
-                    }else{//新建
-                        let _model=this.ignoreReadonlyFields();
-                        _this.dataResource.save(_model).then(function({data}){
-                            _this.isSavingToServer=false;
-                            _this.entityId=data[_this.metaEntity.getIdField().name];
-                            let afterSavePromise=_this.afterSave("on-created",data,'保存成功');
-                            afterSavePromise.then(()=>{
-                                resolve(data);
-                            },()=>{reject();});
-                        },function(){
-                            _this.isSavingToServer=false;
-                            reject();
-                        });
+            },
+            //根据数据id重新初始化entity模型数据
+            reinitEntityModel(){
+                return this.dataResource.get({id: this.entityId}).then(({data})=> {
+                    //根据实体记录数据初始化操作权限
+                    this.initPerm(data);
+                    _.forIn(this.entity, (value, key) => {
+                        this.entity[key] = data[key];
+                    });
+                    this.initOthers();
+                });
+            },
+            //根据实体字段信息初始化表单默认验证规则
+            initValidateRulesByMetaEntity:function () {
+                var _this=this;
+                _.forEach(_this.metaEntity.getDefaultFormFields(),function (fieldName) {
+                    var metaField=_this.metaEntity.findField(fieldName);
+                    var formItem=controlTypeService.buildFormItemByMetaField(metaField);
+                    var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId);
+                    if(rules.length>0) {
+                        _this.innerRules[formItem.dataField] = rules;
                     }
                 });
             },
+            //表单操作需要的上下文数据
+            getWidgetContext(){
+                return {
+                    selectedId: this.entityId,
+                    selectedItem: this.entity,
+                    metaEntity: this.metaEntity,
+                    form : this
+                };
+            },
+            //表单的默认保存操作为调用表单示例的doSaveModel保存实体数据
             doSaveModel:function(){
                 var _this=this;
                 return new Promise((resolve,reject)=>{
-                    this.validate(valid=>{
+                    this.$refs["formRef"].validate(valid=>{
                         if(valid){
                             let before=_this.beforeSave();
                             if (before && before.then){//返回的Promise对象
@@ -301,286 +265,8 @@
                     });
                 });
             },
-            validate:function (callback) {
-                if(callback){
-                    this.$refs["formRef"].validate(callback);
-                }else{
-                    return this.$refs["formRef"].validate();
-                }
-            },
-            validateField:function (prop,callback) {
-                if(callback){
-                    this.$refs["formRef"].validateField(prop,callback);
-                }else{
-                    return this.$refs["formRef"].validateField(prop);
-                }
-            },
-            resetFields:function () {
-                this.$refs["formRef"].resetFields();
-            },
-
-            initForm(){
-                var formShortId = this.formId || this.$route.query.formShortId;
-                if(_.isEmpty(formShortId)){
-                    this.initDefault();
-                    return;
-                }
-                var _this = this;
-                metaservice().getFormByShortId({id:formShortId,resolve:true})
-                    .then(({ data }) => {
-                        //存在自定义表单，按表单元数据构建表单
-                        _this.metaFormLayout=true;
-                        _this.metaForm=data;
-                        let res=_this.getEditModelIfNeeded();
-                        if(res&&res.then){
-                            res.then(function(){
-                                _this.metaFormToForm(data);
-                                _this.onFormInited();
-                            });
-                        }else{
-                            _this.metaFormToForm(data);
-                            _this.onFormInited();
-                        }
-                    },(resp)=>{
-                        _this.initDefault();
-                    });
-            },
-            registerAfterSaveChain(subcomponent){
-                this.subcomponentAfterSaveChain.push(subcomponent);
-            },
-             //表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等
-            exDataChanged:function(newValue,dataField){
-                metaformUtils.exDataChanged(this.entity,newValue,dataField);
-            },
-            setValue(fieldName,newValue){//设置fieldName字段的值为newValue
-                this.entity[fieldName]=newValue;
-            },
-            getValue(fieldName){//获取fieldName字段的值
-                return this.entity[fieldName];
-            },
-            showField(fieldName){//显示fieldName字段
-                var formItem=metaformUtils.formItemByFieldName(this.metaForm,fieldName);
-                if(formItem){
-                    formItem.hidden=false;
-                }
-            },
-            hideField(fieldName){//隐藏fieldName字段
-                var formItem=metaformUtils.formItemByFieldName(this.metaForm,fieldName);
-                if(formItem){
-                    formItem.hidden=true;
-                }
-            },
-            hasButtons(){//工具栏是否有按钮存在，没有按钮的话，工具栏隐藏
-                if(!this.toolbar){
-                    return false;
-                }
-                if(this.toolbar&&_.isEmpty(this.toolbar.viewBtns)&&this.isView){
-                    return false;
-                }
-                if(this.toolbar&&_.isEmpty(this.toolbar.editBtns)&&!this.isView){
-                    return false;
-                }
-                if(this.innerPermissions.cancel){
-                    return true;
-                }
-                if(this.innerPermissions.openEdit&&this.isView){
-                    return true;
-                }
-                if(!this.entityId||(this.innerPermissions.edit&&!this.isView)){
-                    return true;
-                }
-                if(this.entityId&&this.innerPermissions.del&&!this.isView){
-                    return true;
-                }
-                return false;
-            },
-
-            initDefault(){
-                var _this=this;
-                let res=_this.getEditModelIfNeeded();
-                if(res&&res.then){
-                    res.then(function(){
-                        _this.initRuleByMetaEntity();
-                        _this.preprocessed=true;
-                        _this.onFormInited();
-                    });
-                }else{
-                    _this.initRuleByMetaEntity();
-                    _this.preprocessed=true;
-                    _this.onFormInited();
-                }
-            },
-            initRuleByMetaEntity:function () {
-                //初始化默认规则
-                var _this=this;
-                _.forEach(_this.metaEntity.getDefaultFormFields(),function (fieldName) {
-                    var metaField=_this.metaEntity.findField(fieldName);
-                    var formItem=controlTypeService.buildFormItemByMetaField(metaField);
-                    var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId);
-                    if(rules.length>0) {
-                        _this.innerRules[formItem.dataField] = rules;
-                    }
-                });
-            },
-            fillDefaultByQuery(_model,metaEntity){//创建模式时model用url参数填充
-                var query=this.$route.query;
-                _.forIn(query,function(value,key){
-                    let metaField=metaEntity.findField(key);
-                    if(metaField){
-                        _model[key]=value;
-                    }
-                });
-            },
-            getEditModelIfNeeded(){//如果是编辑模式，根据数据id或者表单数据model
-                var _this=this;
-                this.loadingFormData=true;
-                if(this.entityId) {
-                    return this.dataResource.get({id: this.entityId}).then(function ({data}) {
-                        _this.loadingFormData = false;
-                        _this.initPerm(data);
-                        if (_this.metaForm) {//已经定义过表单，以表单定义字段为准初始化模型
-                            let fields = metaformUtils.getAllFieldItems(_this.metaForm);
-                            _.forIn(fields, function (field) {
-                                let key = field.dataField;
-                                _this.entity[key] = data[key];
-                            });
-                            _this.entity[constants.entityModelRedundantKey] = data[constants.entityModelRedundantKey];
-                        } else {//没有定义表单的情况下，使用默认实体表单字段
-                            _.forIn(_this.entity, function (value, key) {
-                                _this.entity[key] = data[key];
-                            });
-                        }
-                        return true;
-                    }, function () {
-                        _this.loadingFormData = false;
-                    });
-                }
-                return true;
-            },
-            //实体已经在控制台定义过表单，由表单元数据生成表单
-            metaFormToForm(metaForm){
-                debugger;
-                var _this=this;
-                //初始化表单验证
-                var formItems=metaformUtils.getAllFieldItems(metaForm);
-                _.forEach(formItems,function(formItem){
-                    var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId);
-                    if(rules.length>0){
-                        var existRule=_this.innerRules[formItem.dataField];
-                        if(existRule==null){
-                            _this.innerRules[formItem.dataField]=rules;
-                        }else{
-                            if(_.isArray(existRule)){
-                                _this.innerRules[formItem.dataField]=_.union(existRule,rules);
-                            }else{
-                                rules.push(existRule);
-                                _this.innerRules[formItem.dataField]=rules;
-                            }
-                        }
-                    }
-                });
-                //执行表单脚本
-                this.handleFormScript(metaForm);
-                this.handleFieldOptionsToggle();
-                this.preprocessed=true;
-            },
-            handleFieldOptionsToggle:function(){//处理选择某个选项时，显示和隐藏某些组件逻辑
-                var logistics=this.metaForm.logistics;
-                var _this=this;
-                if(logistics.optionsToggleComponentsConfig){
-                    //遍历每一个单选项配置的逻辑
-                    _.forIn(logistics.optionsToggleComponentsConfig,function(value,key){
-                        let curFormItem=metaformUtils.getFormItemById(_this.metaForm,key);
-                        //如果此单选项组件存在
-                        if(curFormItem){
-                            //选项要控制的组件集合
-                            let toggleFields=value.toggleFields;
-                            let dataFields=metaFormUtils.getAllFieldItems(_this.metaForm);
-                            _.each(dataFields,function(fi,index){
-                                if(_.includes(toggleFields,fi.id)){
-                                    fi.hidden=true;
-                                }
-                            });
-                            //监听单选项的值变化，从而显示和隐藏其他组件
-                            _this.$watch('formData.'+curFormItem.dataField,function(newV,oldV){
-                                //选项特殊的可切换字段
-                                let visibleFields=value.toggleSetting[newV];
-                                if(visibleFields){
-                                    _.each(dataFields,function(fi,index){
-                                        if(fi.id===curFormItem.id){
-                                            fi.hidden=false;
-                                        }else if((!_.includes(visibleFields,fi.id))&&_.includes(toggleFields,fi.id)){
-                                            fi.hidden=true;
-                                        }else{
-                                            fi.hidden=false;
-                                        }
-                                    });
-                                }
-                            });
-                        }
-                    });
-                }
-            },
-            handleFormScript(metaForm){
-                var logistics=metaForm.logistics;
-                if(logistics.script){
-                    let fun= new Function(logistics.script);
-                    fun.call(this);
-                }
-            },
-            ignoreReadonlyFields(){
-                let _model={};
-                let _this=this;
-                _.forIn(_this.entity,function(v,k){
-                    let metaField=_this.metaEntity.findField(k);
-                    if(metaField&&metaField.readonly){
-                        //readonly字段不提交
-                    }else{
-                        _model[k]=v;
-                    }
-                });
-                return _model;
-            },
-            checkIsArchived() {//TODO: 判断是否归档的逻辑可能需要修正
-                var _self = this;
-                metaservice().getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
-                    _self.isArchived=true;
-                    if(eventBus&&eventBus.record){
-                        eventBus.record.isArchived = true;
-                    }
-                    _self.innerPermissions={
-                        openEdit:false,
-                        edit:false,
-                        del:false,
-                        cancel:false
-                    }
-                }).catch(()=> {
-                    _self.isArchived=false;
-                    if(eventBus&&eventBus.record){
-                        eventBus.record.isArchived = false;
-                    }
-                });
-            },
-            initPerm(data){//初始化表单数据操作权限
-                this.innerPermissions={
-                    "openEdit":Utils.hasPerm(data[Utils.dataPermField],Utils.permValues.edit),
-                    "edit":Utils.hasPerm(data[Utils.dataPermField],Utils.permValues.edit),
-                    "del":Utils.hasPerm(data[Utils.dataPermField],Utils.permValues.del),
-                    "cancel":true
-                };
-                if(this.checkArchived){
-                    this.checkIsArchived();
-                }
-            },
-            onFormInited(){//表单数据初始化后
-                if(this.scriptModel&&_.isFunction(this.scriptModel.formDataCreated)){
-                    this.scriptModel.formDataCreated.call(this,this.entity);
-                }
-                if(this.onInited){
-                    this.onInited(this);
-                }
-            },
-            beforeSave(){//表单数据提交前
+            //表单提交前预处理，如果外部定义了onSubmit，执行onSubmit
+            beforeSave(){
                 var isContinue=true;
                 if(this.onSubmit){
                     isContinue=_.defaultTo(this.onSubmit(this),true);
@@ -588,13 +274,45 @@
                 if(!isContinue){
                     return false;
                 }
-
-                if(this.scriptModel&&_.isFunction(this.scriptModel.beforeSave)){
-                       return this.scriptModel.beforeSave.call(this,this.entity);
-                }
                 return true;
             },
-
+            //doSaveModel调用时，会先校验表单，然后执行外部定义的onSubmit如果成功再继续执行这里的doSave
+            doSave(){
+                var _this=this;
+                if(_this.isSavingToServer){
+                    return;
+                }
+                _this.isSavingToServer=true;
+                return new Promise((resolve,reject)=>{
+                    if(this.isEdit){//更新
+                        let _model=this.ignoreReadonlyFields();
+                        _this.dataResource.update({id:this.entityId},_model).then(function({data}){
+                            _this.isSavingToServer=false;
+                            let afterSavePromise=_this.afterSave("on-edited",data,'编辑成功');
+                            afterSavePromise.then(()=>{resolve(_this.entity);},()=>{reject();});
+                        },function(){
+                            _this.isSavingToServer=false;
+                            reject();
+                        });
+                    }else{//新建
+                        let _model=this.ignoreReadonlyFields();
+                        _this.dataResource.save(_model).then(function({data}){
+                            _this.entityId=data[_this.metaEntity.getIdField().name];
+                            //创建完数据后，立即为编辑模式否则可能产生多保存数据
+                            _this.formStatus=contextHelper.getMvueToolkit().utils.formActions.edit;
+                            _this.isSavingToServer=false;
+                            let afterSavePromise=_this.afterSave("on-created",data,'保存成功');
+                            afterSavePromise.then(()=>{
+                                resolve(data);
+                            },()=>{reject();});
+                        },function(){
+                            _this.isSavingToServer=false;
+                            reject();
+                        });
+                    }
+                });
+            },
+            //表单数据提交完成后调用：如果与表单关联的组件也需要作一些事情在这里处理
             afterSave(evtName,data,msg){
                 let _this=this;
                 //调用内部组件保存事件
@@ -620,11 +338,9 @@
                     }
                 });
             },
-            afterSaveChain(data){//表单数据提交后
+            //串行执行与表单关联的组件的后处理逻辑
+            afterSaveChain(data){
                 let result=true;
-                if(this.scriptModel&&_.isFunction(this.scriptModel.afterSave)){
-                    result=this.scriptModel.afterSave.call(this,data);
-                }
                 //如果子组件在保存后需要做自己的保存操作，在这里进行
                 //注意这里使用了generator函数(function*)和co库，保证子组件afterSave一个一个串行执行，如果出错不会往下执行，直接返回结果
                 let subcomponentAfterSaveChain=this.subcomponentAfterSaveChain;
@@ -656,6 +372,14 @@
                 }
                 return result;
             },
+            //注册与表单关联的组件的后处理逻辑
+            registerAfterSaveChain(subcomponent){
+                this.subcomponentAfterSaveChain.push(subcomponent);
+            },
+            //表单数据提交完，并且关联子组件的数据处理逻辑也完成后执行
+            //1 执行外部定义的onSaved回调，后续步骤可以在onSaved中返回false阻止继续执行
+            //2 根据msg参数弹出成功提示
+            //3 editToView为true：表示需要从编辑页保存数据后，跳转回查看页，否则返回上一页
             onCompleted(msg){
                 var isContinue=true;
                 if(this.onSaved){
@@ -669,7 +393,7 @@
                 }
                 if(this.editToView){//如果需要从编辑页保存数据后，跳转回查看页
                     let _query=_.extend({},this.$route.query);
-                    _query[Utils.queryKeys.action]=Utils.formActions.view;
+                    _query[contextHelper.getMvueToolkit().utils.queryKeys.action]=contextHelper.getMvueToolkit().utils.formActions.view;
                     contextHelper.getRouter().push({
                         name:this.$route.name,
                         params:this.$route.params,
@@ -679,56 +403,96 @@
                     contextHelper.getRouter().go(-1);
                 }
             },
-
-            onDeleted(){
-                this.gotoViewList();
+            //表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等
+            //这个方法会在metafield组件内部触发
+            exDataChanged:function(newValue,dataField){
+                metaformUtils.exDataChanged(this.entity,newValue,dataField);
             },
-            gotoViewList(){
-                var path=this.metaEntity.viewPath();
-                contextHelper.getRouter().push({
-                    path:path,
-                    query:{
-                        formShortId:this.formId || this.$route.query.formShortId,
-                        viewShortId:this.$route.query.viewShortId
+            //工具栏是否有按钮存在，没有按钮的话，工具栏隐藏
+            hasButtons(){
+                if(!this.toolbar){
+                    return false;
+                }
+                if(this.toolbar&&_.isEmpty(this.toolbar.viewBtns)&&this.isView){
+                    return false;
+                }
+                if(this.toolbar&&_.isEmpty(this.toolbar.editBtns)&&!this.isView){
+                    return false;
+                }
+                if(this.innerPermissions.cancel){
+                    return true;
+                }
+                if(this.innerPermissions.openEdit&&this.isView){
+                    return true;
+                }
+                if(!this.entityId||(this.innerPermissions.edit&&!this.isView)){
+                    return true;
+                }
+                if(this.entityId&&this.innerPermissions.del&&!this.isView){
+                    return true;
+                }
+                return false;
+            },
+            //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据
+            ignoreReadonlyFields(){
+                let _model={};
+                let _this=this;
+                _.forIn(_this.entity,function(v,k){
+                    let metaField=_this.metaEntity.findField(k);
+                    if(metaField&&metaField.readonly){
+                        //readonly字段不提交
+                    }else{
+                        _model[k]=v;
+                    }
+                });
+                return _model;
+            },
+            //TODO: 判断是否归档的逻辑可能需要修正
+            checkIsArchived() {
+                var _self = this;
+                metaservice().getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
+                    _self.isArchived=true;
+                    if(eventBus&&eventBus.record){
+                        eventBus.record.isArchived = true;
+                    }
+                    _self.innerPermissions={
+                        openEdit:false,
+                        edit:false,
+                        del:false,
+                        cancel:false
+                    }
+                }).catch(()=> {
+                    _self.isArchived=false;
+                    if(eventBus&&eventBus.record){
+                        eventBus.record.isArchived = false;
                     }
                 });
             },
-            fieldContext(item){
-                //字段视图
-                let _this = this;
-                let _obj = {
-                    metaEntity:_this.metaEntity,
-                    mode:null,
-                    formStatus:this.formStatus
+            //初始化表单数据操作权限
+            initPerm(data){
+                this.innerPermissions={
+                    "openEdit":contextHelper.getMvueToolkit().utils.hasPerm(data[contextHelper.getMvueToolkit().utils.dataPermField],contextHelper.getMvueToolkit().utils.permValues.edit),
+                    "edit":contextHelper.getMvueToolkit().utils.hasPerm(data[contextHelper.getMvueToolkit().utils.dataPermField],contextHelper.getMvueToolkit().utils.permValues.edit),
+                    "del":contextHelper.getMvueToolkit().utils.hasPerm(data[contextHelper.getMvueToolkit().utils.dataPermField],contextHelper.getMvueToolkit().utils.permValues.del),
+                    "cancel":true
                 };
-                //外部指定强制查看模式或者已归档
-                if(this.isView){
-                    //目前强制查看模式和readonly都统一
-                    _obj.mode=widgetMode.forceView;
-                }else if(_this.fieldSettings&&_this.fieldSettings[item.dataField]){
-                    //存在对字段的状态设置
-                    let mode=_this.fieldSettings[item.dataField].mode;
-                    //隐藏字段在这里做，进入组件里边隐藏可能不起作用
-                    if(widgetMode.invisible===mode){
-                        item.hidden=true;
-                    }
-                    _obj.mode = mode;
+                if(this.checkArchived){
+                    this.checkIsArchived();
                 }
-                return _obj
+            },
+            //通用操作删除按钮执行删除后的回调，在metagrid_operation.js中会调用
+            onDeleted(){
+                this.gotoViewList();
+            },
+            //返回到实体数据列表
+            gotoViewList(){
+                var path=this.metaEntity.viewPath();
+                contextHelper.getRouter().push({
+                    path:path
+                });
             }
         }
     }
 </script>
-<style lang="scss" scoped>
-    .meta-form-panel{
-        position: relative;
-        .form-toolbar{
-            position: absolute;
-        }
-        &.has-buttons{
-            padding-bottom: 88px;
-        }
-    }
-</style>
 
 

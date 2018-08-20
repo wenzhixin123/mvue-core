@@ -79,7 +79,7 @@
                     <advance-search 
                         :quicksearch-keyword="quicksearchKeyword" 
                         v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" 
-                        :entity-name="metaEntityName"
+                        :entity-name="entityName"
                         :advance-search-fields="innerToolbar.advanceSearchFields" 
                         @do-advance-search="doAdvanceSearch"></advance-search>
                 </slot>
@@ -160,7 +160,7 @@ export default {
             type: Boolean,
             default: true
         },
-        "metaEntityName": {//元数据实体名称，由外部传入
+        "entityName": {//元数据实体名称，由外部传入
             type: String,
             required:true
         },
@@ -207,7 +207,7 @@ export default {
         }
     },
     data:function(){
-        var metaEntity = metabase.findMetaEntity(this.metaEntityName);
+        var metaEntity = metabase.findMetaEntity(this.entityName);
         return {
             metaEntity: metaEntity,
             preprocessed: false,

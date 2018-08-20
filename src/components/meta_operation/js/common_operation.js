@@ -251,6 +251,7 @@ function operationForExport() {
         content: '是否导出当前列表所有数据?',
         onOk: () => {
           var queryOptions = { page_size: 500 };
+          var metaEntityName = metaEntity.name;
           if (grid) {
             queryOptions = grid.buildQueryOptions();
             queryOptions.page_size = grid.totalCount || queryOptions.page_size;
@@ -261,17 +262,17 @@ function operationForExport() {
           //获取当前项目的swagger地址
           metabase.currentSwagger(metaEntity.projectId).then(function (swagger) {
             var exportTaskSetting = {
-              "entityName": metaEntity.name,
+              "entityName": metaEntityName,
               "swagger": swagger,
               "options": queryOptions
             };
-            var metaEntity = metabase.findMetaEntity(metaEntity.name);
+            var metaEntity = metabase.findMetaEntity(metaEntityName);
             var query = {};
             if (grid) {
               query = grid.$route.query;
             }
             toolServices.doExport(query, exportTaskSetting).then(function (records) {
-              ExportCsv.download(metaEntity.title + ".csv", records.body.join("\r\n"));
+              ExportCsv.download(metaEntity.title + ".csv", records.data.join("\r\n"));
             });
           });
         }

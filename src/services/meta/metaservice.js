@@ -11,7 +11,7 @@ var customActions = {
     getProject: {method: 'GET', url: 'meta_project{/id}'},
     getSuite: {method: 'GET', url: 'meta_suite{/id}'},
     getSuiteDataSetting: {method: 'GET', url: 'meta_suite_data_setting{/id}'},
-    saveArchive: {method: 'POST', url: 'meta_suite_data_setting/archive', emulateJSON: true},
+    saveArchive: {method: 'POST', url: 'meta_suite_data_setting/archive',headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' }, emulateJSON: true},
     getView: {method: 'GET', url: 'meta_view{/id}'},
     getViewByShortId: {method: 'GET', url: 'meta_view/short{/id}'},
     getEntityTemplate:{method:'GET',url:'meta_template/entity_template'}

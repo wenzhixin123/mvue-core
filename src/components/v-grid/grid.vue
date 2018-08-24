@@ -89,40 +89,74 @@
 <script>
 import metabase from '../../libs/metadata/metabase';
 import { leapQueryConvertor } from "mvue-components";
-import gridBase from './grid-base';
+
+import initByViewId from './js/init-by-viewid';
+import metaservice from "../../services/meta/metaservice";
+import gridBase from '../grid/grid-base';
 export default {
     mixins: [gridBase],
     props: {
+        "viewId": {//视图配置id，必须传入，所有视图配置数据、元数据信息都由这个参数获取
+            type: String,
+            required: true
+        },
         query:{//数据加载方法，可以由外边重写掉
             type:Function,
             required:false
         },
         "filters": {//高级查询的条件和列表头部的筛选条件设置
             type: Object
-        },
-        "defaultSort": {//默认排序设置{key:'',order:'desc'}
-            type: Object
-        },
-        "columns": {
-            type: Array,
-            required: false,
-        },
-        "entityName": {//元数据实体名称，由外部传入
-            type: String,
-            required:true
         }
     },
     data:function(){
-        var metaEntity = metabase.findMetaEntity(this.entityName);
         return {
-            metaEntity:metaEntity,
-            queryResource:metaEntity.dataResource(),
-            innerSort:_.cloneDeep(this.defaultSort),
-            innerColumns:_.cloneDeep(this.columns),
+            entityName:null,
+            formShortId:null,
+            viewPath:null,
+            editPath:null,
+            createPath:null,
+            defaultMetaViewFilters:'',//视图配置配置的默认查询字符串，leap格式
+            
+            innerToolbar:{
+                hide: (this.toolbar&&this.toolbar.hide)||false,
+                btns: this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.btns),//普通操作
+                singleBtns:this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.singleBtns),//基于单条数据的操作
+                batchBtns: this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.batchBtns),//基于多条数据的操作
+                rowSingleClick: (this.toolbar&&this.toolbar.rowSingleClick),//单击行的操作
+                quicksearch:{
+                    fields: null,
+                    placeholder: this.toolbar&&this.toolbar.quicksearch&&this.toolbar.quicksearch.placeholder
+                },
+                advanceSearchFields:[]
+            }
         };
     },
-    mounted:function(){
-        this.initGridByMetadata();
+    watch:{
+        viewId:{
+            handler(){
+                //获取视图配置数据
+                metaservice().getViewByShortId({id: this.viewId}).then(({data:metaView}) => {
+                    this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
+                    this.entityName = data.metaEntityName;
+                    this.queryResource=this.metaEntity.dataResource();
+                    this.formShortId = data.metaFormShortId;
+                    //配置数据存在
+                    if (metaView.config && metaView.config.columns) {
+                        //初始化createPath、editPath、viewPath
+                        initByViewId.initUrls(this,metaView);
+                        initByViewId.initQuickSearch(this,metaView);
+                        initByViewId.initAdvanceSearch(this,metaView);
+                        initByViewId.initOrderBy(this,metaView);
+                        this.defaultMetaViewFilters=metaView.config.filters||'';
+                        initByViewId.initColumns(this,metaView);
+                        this.preprocessed = true;
+                    }else{//配置数据不存在，用元数据信息初始化
+                        this.initGridByMetadata();
+                    }
+                });
+            },
+            immediate:true
+        }
     },
     methods:{
         innerQuery(ctx){
@@ -156,7 +190,12 @@ export default {
                 return this.query(ctx);
             }else{
                 //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
-                return leapQueryConvertor.exec(this.queryResource,ctx);
+                return leapQueryConvertor.exec(this.queryResource,ctx,(params)=>{
+                    //视图配置配置的默认查询字符串附加到查询filters中，leap格式
+                    if(this.defaultMetaViewFilters){
+                        params.filters=params.filters?`(${params.filters}) and ${this.defaultMetaViewFilters}`:`${this.defaultMetaViewFilters}`
+                    }
+                });
             }
         }
     }

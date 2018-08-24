@@ -27,7 +27,15 @@ function buildDefaultOrderby(gridInst) {
     }
     return orderby;
 }
+function buildDefaultQuickSearchFields(gridInst){
+    var metaEntity=gridInst.metaEntity;
+    let titleField=metaEntity.firstSemanticsField("title");
+    if(titleField){
+        return [titleField.name];
+    }
+    return null;
+}
 function initColumns(gridInst){
     metaGrid.initColumns(gridInst);
 }
-export default {initColumns,buildFiltersFromQuery,buildDefaultOrderby};
+export default {initColumns,buildFiltersFromQuery,buildDefaultOrderby,buildDefaultQuickSearchFields};

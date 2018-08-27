@@ -89,7 +89,7 @@
 <script>
 import metabase from '../../libs/metadata/metabase';
 
-import initByViewId from './js/init-by-viewid';
+import initByViewId from './init-by-viewid';
 import metaservice from "../../services/meta/metaservice";
 import gridBase from '../grid/js/grid-base';
 export default {
@@ -142,9 +142,11 @@ export default {
         viewId:{
             handler(){
                 //后端获取视图配置数据
-                metaservice().getViewByShortId({id: this.viewId}).then(({data:metaView}) => {
-                    this.initByMetaView(metaView);
-                });
+                if(this.viewId){
+                    metaservice().getViewByShortId({id: this.viewId}).then(({data:metaView}) => {
+                        this.initByMetaView(metaView);
+                    });
+                }
             },
             immediate:true
         },

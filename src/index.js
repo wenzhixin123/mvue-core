@@ -10,6 +10,9 @@ function installGridAndForm(Vue){
     Vue.component('meta-grid',require("./components/grid/iview_grid.vue"));
     Vue.component('meta-operation',require("./components/meta_operation/operation"));
 
+    Vue.component('meta-v-grid',require("./components/v-grid/index"));
+    Vue.component('meta-v-form',require("./components/v-form/index"));
+
     Vue.component('MetaSingleLineText',require('./components/form/control_tmpl/single_line_text')),
     Vue.component('MetaMultiLineText',require('./components/form/control_tmpl/multi_line_text')),
     Vue.component('MetaRadioButton',require('./components/form/control_tmpl/radio_button')),
@@ -44,9 +47,6 @@ function installGridAndForm(Vue){
     Vue.component('MetaPclinkMultiUserSelect',require("./components/form/pclink/multi_user_select"));
     Vue.component('MetaPclinkMultiOrgSelect',require("./components/form/pclink/multi_org_select"));
     //end new added for pclink
-
-    //通用组件定义
-    //Vue.component('select-user-modal',require('./components/common/select_user_modal'));
 }
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';

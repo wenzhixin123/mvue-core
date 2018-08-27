@@ -21,7 +21,7 @@ export default {
     },
     data: function(){
         return {
-            valueObj:null
+            valueObj:[]
         };
     },
     watch:{
@@ -101,10 +101,5 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
-    .form-control.form-control-inline{
-        display: inline-block;
-    }
-</style>
 
 

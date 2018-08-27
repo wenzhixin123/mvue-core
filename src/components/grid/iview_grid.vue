@@ -88,18 +88,10 @@
 </template>
 <script>
 import metabase from '../../libs/metadata/metabase';
-import { leapQueryConvertor } from "mvue-components";
-import gridBase from './grid-base';
+import gridBase from './js/grid-base';
 export default {
     mixins: [gridBase],
     props: {
-        query:{//数据加载方法，可以由外边重写掉
-            type:Function,
-            required:false
-        },
-        "filters": {//高级查询的条件和列表头部的筛选条件设置
-            type: Object
-        },
         "defaultSort": {//默认排序设置{key:'',order:'desc'}
             type: Object
         },
@@ -123,42 +115,6 @@ export default {
     },
     mounted:function(){
         this.initGridByMetadata();
-    },
-    methods:{
-        innerQuery(ctx){
-            //外部高级查询和内部高级查询只能二选一，如果同时出现，这里不会合并
-            //外部高级查询:可通过设置组件的top slot区模板和属性filters
-            //内部高级查询:如果组件属性toolbar.advanceSearchFields的有值，则内部默认的高级查询条件需要合并到ctx的filters和quicksearchKeyword中
-            var useInnerAdvSearch=this.toolbar && 
-                this.toolbar.advanceSearchFields &&
-                this.toolbar.advanceSearchFields.length>0
-            if(useInnerAdvSearch){//内部高级查询
-                //mappingKey
-                let useInnerAdvSearchFilters={
-                    op:"and",
-                    rules:{}
-                }
-                _.each(this.advanceSearchFilters,asf=>{
-                    useInnerAdvSearchFilters.rules[asf.key]={
-                        op:asf.op,
-                        value:asf.value
-                    };
-                });
-                ctx.filters=useInnerAdvSearchFilters;
-                ctx.quicksearchKeyword=this.quicksearchKeyword;
-            }//外部高级查询的查询条件自动在ctx里边，不需要特殊处理
-            //1 如果有来自url查询条件的默认查询参数自动添加进去
-            //2 如果有来自列header的查询条件也附加上去
-            if(ctx.filters&&ctx.filters.rules){
-                ctx.filters.rules=Object.assign(ctx.filters.rules,this.filtersFromQuery,this.filtersFromColumnHeader);
-            }
-            if(this.query){//外部指定了query，用外部的
-                return this.query(ctx);
-            }else{
-                //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
-                return leapQueryConvertor.exec(this.queryResource,ctx);
-            }
-        }
     }
 }
 </script>

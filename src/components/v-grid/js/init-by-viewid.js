@@ -38,7 +38,7 @@ function initAdvanceSearch(gridInst,metaView){
 function initOrderBy(gridInst,metaView){
     //设置默认排序
     if (metaView.config.orderby && metaView.config.orderby.length) {
-        //TODO 这里都支持一个排序，所以配置那边应该约束
+        //TODO 这里只支持一个排序，所以配置那边应该约束
         let ob=metaView.config.orderby[0];
         gridInst.innerSort={key:ob.name,order:ob.type};
     }

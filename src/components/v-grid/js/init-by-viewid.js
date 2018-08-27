@@ -1,4 +1,4 @@
-import metaGrid from "../../grid/metagrid";
+import metaGrid from "../../grid/js/metagrid";
 
 function initUrls(gridInst,metaView){
     var settings=metaView.settings;

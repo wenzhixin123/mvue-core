@@ -95,12 +95,27 @@ import gridBase from '../grid/js/grid-base';
 export default {
     mixins: [gridBase],
     props: {
-        "viewId": {//视图配置id，必须传入，所有视图配置数据、元数据信息都由这个参数获取
+        "viewId": {//视图配置id，所有视图配置数据、元数据信息都由这个参数获取
             type: String,
-            required: true
+            required: false
+        },
+        "metaView":{//直接传入的视图配置数据，和viewId二选一
+            type:Object,
+            required:false
         }
     },
     data:function(){
+        if((!this.viewId) && (!this.metaView)){
+            this.$Modal.error({
+                content:"viewId或metaView属性必须二选一"
+            });
+            return {};
+        }else if(this.metaView&&(!this.metaView.metaEntityName)){
+            this.$Modal.error({
+                content:"metaView必须指定metaEntityName属性"
+            });
+            return {};
+        }
         return {
             entityName:null,
             formShortId:null,
@@ -126,31 +141,45 @@ export default {
     watch:{
         viewId:{
             handler(){
-                //获取视图配置数据
+                //后端获取视图配置数据
                 metaservice().getViewByShortId({id: this.viewId}).then(({data:metaView}) => {
-                    this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
-                    this.entityName = data.metaEntityName;
-                    this.queryResource=this.metaEntity.dataResource();
-                    this.formShortId = data.metaFormShortId;
-                    //配置数据存在
-                    if (metaView.config && metaView.config.columns) {
-                        //初始化createPath、editPath、viewPath
-                        initByViewId.initUrls(this,metaView);
-                        initByViewId.initQuickSearch(this,metaView);
-                        initByViewId.initAdvanceSearch(this,metaView);
-                        initByViewId.initOrderBy(this,metaView);
-                        this.defaultMetaViewFilters=metaView.config.filters||'';
-                        initByViewId.initColumns(this,metaView);
-                        this.preprocessed = true;
-                    }else{//配置数据不存在，用元数据信息初始化
-                        this.initGridByMetadata();
-                    }
+                    this.initByMetaView(metaView);
                 });
+            },
+            immediate:true
+        },
+        metaView:{
+            handler(){
+                //属性传入的视图配置数据metaView
+                if(this.metaView){
+                    this.initByMetaView(this.metaView);
+                }
             },
             immediate:true
         }
     },
     methods:{
+        initByMetaView(metaView){
+            this.metaEntity = metabase.findMetaEntity(metaView.metaEntityName);
+            this.entityName = metaView.metaEntityName;
+            this.queryResource=this.metaEntity.dataResource();
+            this.formShortId = metaView.metaFormShortId;
+            //配置数据存在
+            if (metaView.config && metaView.config.columns) {
+                //初始化createPath、editPath、viewPath
+                initByViewId.initUrls(this,metaView);
+                initByViewId.initQuickSearch(this,metaView);
+                initByViewId.initAdvanceSearch(this,metaView);
+                initByViewId.initOrderBy(this,metaView);
+                this.defaultMetaViewFilters=metaView.config.filters||'';
+                initByViewId.initColumns(this,metaView);
+                this.preprocessed = true;
+            }else{//配置数据不存在，用元数据信息初始化
+                this.$Modal.error({
+                    content:"视图配置数据不合法，缺少columns配置"
+                });
+            }
+        },
         beforeQuery(params){
             //视图配置配置的默认查询字符串附加到查询filters中，leap格式
             if(this.defaultMetaViewFilters){

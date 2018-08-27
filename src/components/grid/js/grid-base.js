@@ -1,5 +1,4 @@
 import globalContext from '../../../libs/context';
-import initByMetadata from './init-by-metadata';
 import noneWidgetModeCommonOperation from './metagrid_operation';//widgetMode false
 import { leapQueryConvertor } from "mvue-components";
 export default{
@@ -205,27 +204,6 @@ export default{
                 }
             });
             return _btns;
-        },
-        //利用元数据信息填充grid相关属性
-        initGridByMetadata(){
-            //如果外部没有指定默认排序，则使用实体更新时间字段作为默认排序
-            if(!this.innerSort){
-                this.innerSort=initByMetadata.buildDefaultOrderby(this);
-            }
-            //如果有来自查询条件的默认过滤器初始化
-            var filtersFromQuery=initByMetadata.buildFiltersFromQuery(this);
-            this.filtersFromQuery=filtersFromQuery;
-            //如果外部没有定义快捷查询字段，利用title语义字段构造
-            if(this.innerToolbar&&
-                this.innerToolbar.quicksearch&&
-                (!this.innerToolbar.quicksearch.fields)){
-                let _fields=initByMetadata.buildDefaultQuickSearchFields(this);
-                this.innerToolbar.quicksearch.fields=_fields;
-            }
-            //根据实体元数据初始化grid的列
-            initByMetadata.initColumns(this);
-            //预处理完毕，b-list可以渲染了
-            this.preprocessed = true;
         },
         reload:function(){
             var _self=this;

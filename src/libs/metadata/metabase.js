@@ -122,7 +122,7 @@ function loadMetabase(swagger,projectId){
  * @param model
  */
 function loadMetaEntityFromMode(context,modelName,model){
-  var entityPath=_.snakeCase(modelName);
+  var entityPath=modelName.toLowerCase()//_.snakeCase(modelName)
   var opt={
     name:modelName,
     title:model.title,

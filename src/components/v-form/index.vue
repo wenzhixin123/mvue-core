@@ -53,6 +53,7 @@
     import initByMetaForm from './init-by-metaform';
     import formBase from '../form/form-base';
     import metaservice from '../../services/meta/metaservice';
+    import widgetMode from '../form/js/widget-mode';
     export default {
         mixins:[formBase],
         props:{
@@ -166,8 +167,11 @@
                 if(formItem){
                     formItem.hidden=true;
                 }
-            }
+            },
             //end 执行表单脚本步骤中可调用的实例方法
+            componentName(formItem){
+                return metaformUtils.metaComponentType(formItem);
+            }
         }
     }
 </script>

@@ -6,7 +6,7 @@
           :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="labelWidth"
           :show-message="showMessage" :autocomplete="autocomplete">
         <slot>
-            <meta-field v-for="key in metaEntity.getDefaultFormFields()" :key="key" :name="key">
+            <meta-field v-for="key in metaEntity.getDefaultFormFields()" :context="fieldContext({dataField:key})"  :key="key" :name="key">
             </meta-field>
         </slot>
         <FormItem v-if="hasButtons() || $slots.toolbar" class="form-toolbar"

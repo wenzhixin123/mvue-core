@@ -1,5 +1,5 @@
 <template>
-        <FormItem  :prop="name"  :label-for="labelFor"
+        <FormItem  :prop="name"  :label-for="labelFor" v-show="!innerContext.hidden"
                     :rules="rules" :show-message="showMessage">
             <template v-if="showLabel" slot="label">
                 <slot name="label">{{ metaField.title}}</slot>

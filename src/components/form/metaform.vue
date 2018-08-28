@@ -1,6 +1,3 @@
-<style lang="scss">
-    @import "../components.scss";
-</style>
 <template>
     <Form v-if="preprocessed" :ref="'formRef'" :model="entity"
           :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="labelWidth"

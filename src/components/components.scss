@@ -11,17 +11,25 @@
 }
 .grid-primary-btn{
     display: inline-block;
-    float:left;
     margin-right: 8px;
 }
 .grid-title-cell{
     margin-left: 5px;
 }
-
 .form-toolbar .widget-operation{
     margin-right: 16px;
 }
+.multiselect__select{
+    width:32px;
+    height:34px;
+}
+.multiselect__tag{
+    font-size:13px;
+    margin-bottom: 2px;
+}
 .multiselect__tags{
+    font-size:13px;
+    padding-left:7px;
     line-height: 1.5;
     min-height: 38px;
     border: 1px solid #D9D9D9;
@@ -35,7 +43,14 @@
     outline: 0;
     box-shadow: 0 0 0 2px rgba(41, 116, 255, 0.2);
 }
-.multiselect, .multiselect__input, .multiselect__single{
+.multiselect__tags>span>span.multiselect__single{
+    color:#bcbfc5;
+}
+.multiselect__single{
+    padding-left:0px;
+    font-size: 13px;
+}
+.multiselect, .multiselect__input{
     font-size: 13px;
     color:rgba(0, 0, 0, 0.85);
 }

@@ -48,6 +48,8 @@ function installGridAndForm(Vue){
     Vue.component('MetaPclinkMultiOrgSelect',require("./components/form/pclink/multi_org_select"));
     //end new added for pclink
 }
+//全局组件样式在这里引入，避免在内部重复引用
+require('./components/components.scss');
 import metabase from './libs/metadata/metabase';
 import metaentity from './libs/metadata/metaentity';
 

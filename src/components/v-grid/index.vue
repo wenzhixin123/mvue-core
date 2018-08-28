@@ -1,6 +1,3 @@
-<style lang="scss">
-    @import "../components.scss";
-</style>
 <template>
     <b-list  v-if="preprocessed" ref="listInst"
             :columns="innerColumns"

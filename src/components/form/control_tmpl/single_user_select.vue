@@ -1,5 +1,5 @@
 <template>
-    <div :style="{width:formItem.componentParams.width+'%'}">
+    <div>
         <template v-if="viewMode">
                 <div v-text="selectedItem&&selectedItem[getTitleField()]"></div>
         </template>

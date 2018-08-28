@@ -4,7 +4,7 @@
             <template v-if="showLabel" slot="label">
                 <slot name="label">{{ metaField.title}}</slot>
             </template>
-            <slot v-if="formItem&&entity"
+            <slot v-if="formItem"
                   :model="entity" :metaField="metaField"  :formItem="formItem">
                 <component
                            v-model="innerVal"
@@ -142,7 +142,7 @@ export default {
             this.preprocessor(formItem,this);
         }
         //初始化字段验证
-        var entity=null,_innerVal=null;
+        var entity={},_innerVal=null;
         if(form){
             entity=form.entity;
             //初始化来自entity的初始值

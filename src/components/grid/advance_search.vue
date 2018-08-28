@@ -68,7 +68,7 @@ export default {
             }else if(metaField.inputType===controlTypeService.componentTypes.Time.id){
                 return controlTypeService.componentTypes.TimeRange.id;
             }
-            return null;
+            return metaField.inputType;
         },
         advanceSearch(){
             this.searchModal=!this.searchModal;

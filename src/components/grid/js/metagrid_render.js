@@ -3,7 +3,7 @@
  */
 import controlTypeService from '../../form/js/control_type_service';
 import gridOperations from "./metagrid_operation";
-import context from "../../../libs/context";
+import globalContext from "../../../libs/context";
 
 export default {
   /**
@@ -17,7 +17,7 @@ export default {
         props: {
           params: {
             metaField:metaField,
-            uploadUrl:context.getConfig().getUploadUrl()
+            uploadUrl:globalContext.getConfig().getUploadUrl()
           },
           item: params.row
         }
@@ -36,7 +36,7 @@ export default {
         props: {
           params: {
             metaField:metaField,
-            uploadUrl:context.getConfig().getUploadUrl()
+            uploadUrl:globalContext.getConfig().getUploadUrl()
           },
           item: params.row
         }
@@ -53,7 +53,7 @@ export default {
       return h("meta-grid-img-title", {
         props: {
           params: _.extend({
-              uploadUrl:context.getConfig().getUploadUrl()
+              uploadUrl:globalContext.getConfig().getUploadUrl()
             },metaField),
           item: params.row
         },

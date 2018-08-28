@@ -25,13 +25,13 @@
                     :multiple="formItem.componentParams.multiple.isAllowed"
                     name="file"
                     :action="uploadAction">
-                    <Button  icon="ios-cloud-upload-outline">上传文件</Button>
+                    <Button  icon="ios-cloud-upload-outline" style="font-size:13px;">上传</Button>
                 </Upload>
                 <ul class="ivu-upload-list">
                     <li class="ivu-upload-list-file ivu-upload-list-file-finish" v-for="item in fileList()" :key="item.url">
-                        <span @click="handlePreview(item)"><i class="ivu-icon ivu-icon-document"></i> {{item.name}}</span>
+                        <span @click="handlePreview(item)"><Icon type="ios-document-outline" /> {{item.name}}</span>
                         <span>{{humanFileSize(item.size)}}</span>
-                        <i class="ivu-icon ivu-icon-ios-close-empty ivu-upload-list-remove" @click="handleRemove(item)"></i>
+                        <Icon class="del-btn" type="ios-close-circle-outline"  @click="handleRemove(item)"/>
                     </li>
                 </ul>
         </template>
@@ -44,8 +44,22 @@ export default {
     mixins: [controlBase,uploadBase]
 }
 </script>
-<style lang="scss" scoped>
-    
+<style lang="scss">
+    .ivu-upload-list-file{
+        .del-btn{
+            display: none;
+            position: absolute;
+            right: 10px;
+            top: 13px;
+            font-size: 14px;
+            color:#fc1e70;
+        }
+        &:hover{
+            .del-btn{
+                display: inline-block;
+            }
+        }
+    }
 </style>
 
 

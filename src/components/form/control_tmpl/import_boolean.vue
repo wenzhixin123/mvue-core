@@ -4,7 +4,6 @@
             <input v-model="valueObj" @change="updateValue($event.target)" :disabled="disabled" :true-value="true" :false-value="false" type="checkbox">
             {{formItem.componentParams.title}}
         </label>
-        <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
         <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
     </div>
 </template>

@@ -16,6 +16,15 @@
 .grid-title-cell{
     margin-left: 5px;
 }
+.ivu-dropdown-item .widget-operation{
+    >div{
+        width:100%;
+    }
+    width:100%;
+}
+.b-list-header>.widget-operation{
+    float:left;
+}
 .form-toolbar .widget-operation{
     margin-right: 16px;
 }

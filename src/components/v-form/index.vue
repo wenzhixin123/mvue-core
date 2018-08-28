@@ -5,19 +5,25 @@
         <slot>
             <template v-if="innerMetaForm && innerMetaForm.layout">
                 <div v-for="formItem in innerMetaForm.layout" :key="formItem.id">
-                    <div class="control-tmpl-panel" v-show="!formItem.hidden">
                         <component v-if="formItem.isContainer" :is="'Meta'+formItem.componentType" :form-item="formItem">
                             <div v-for="containerFormItem in formItem.children" :key="containerFormItem.id" v-show="!containerFormItem.hidden">
-                                <component v-if="containerFormItem.isDataField" :context="fieldContext(formItem)"  v-model="entity[containerFormItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
-                                <component v-else-if="containerFormItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(containerFormItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                                <FormItem v-if="containerFormItem.isDataField" :label="containerFormItem.componentParams.title" :prop="containerFormItem.dataField" v-show="!containerFormItem.hidden">
+                                    <component :context="fieldContext(formItem)"  v-model="entity[containerFormItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                                </FormItem>
+                                <FormItem v-else-if="containerFormItem.isExternal" :label="containerFormItem.componentParams.title" v-show="!containerFormItem.hidden">
+                                    <component :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(containerFormItem)" :form-item="containerFormItem" :paths="paths" :model="entity"></component>
+                                </FormItem>
                                 <component v-else :is="'Meta'+containerFormItem.componentType" :form-item="containerFormItem"></component>
                             </div>
                         </component>
-                        <component v-else-if="formItem.isDataField" :context="fieldContext(formItem)"  v-model="entity[formItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
-                        <component v-else-if="formItem.isExternal" :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                        <FormItem v-else-if="formItem.isDataField" :label="formItem.componentParams.title" :prop="formItem.dataField" v-show="!formItem.hidden">
+                            <component  :context="fieldContext(formItem)"  v-model="entity[formItem.dataField]" @exDataChanged="exDataChanged" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                        </FormItem>
+                        <FormItem v-else-if="formItem.isExternal" :label="formItem.componentParams.title" v-show="!formItem.hidden">
+                            <component :context="fieldContext(formItem)" @on-register-after-save-chain="registerAfterSaveChain" :is="componentName(formItem)" :form-item="formItem" :paths="paths" :model="entity"></component>
+                        </FormItem>
                         <component v-else :is="'Meta'+formItem.componentType" :form-item="formItem"></component>
                     </div>
-                </div>
             </template>
         </slot>
         <FormItem v-if="hasButtons() || $slots.toolbar" class="form-toolbar"

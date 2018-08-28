@@ -49,7 +49,7 @@
                 <Dropdown v-if="innerToolbar.btns.length>btnSizeBeforeMore" >
                     <Button>
                         更多操作
-                        <Icon type="arrow-down-b"></Icon>
+                        <Icon type="md-arrow-dropdown" />
                     </Button>
                     <DropdownMenu slot="list">
                         <DropdownItem v-for="(btn,index) in innerToolbar.btns" v-if="index>=btnSizeBeforeMore"

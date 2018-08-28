@@ -1,5 +1,5 @@
 <template>
-    <div style="margin-bottom:0px;width:220px;margin-left:auto;margin-right:auto;" :class="{'ivu-form-item-required':formItem.componentParams.required}">
+    <div style="margin-bottom:0px;width:220px;margin-left:auto;margin-right:auto;">
         <div>
             <Upload ref="upload"
                 :show-upload-list="false"
@@ -16,7 +16,6 @@
                 :action="uploadAction">
                 <Button type="primary" style="padding-left: 36px;padding-right: 56px;">{{buttonText()}}</Button>
             </Upload>
-            <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">请先上传文件</span>
             <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
         </div>
     </div>

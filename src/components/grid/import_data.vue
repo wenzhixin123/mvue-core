@@ -1,6 +1,6 @@
 <template>
     <div class="grid-import-data-con">
-        <div @click="showImport">
+        <div @click="showImport" style="width:100%;">
             <slot>
                 <Button v-if="operation.toolbarType=='compact'" type="text"  :icon="operation.icon">{{operation.title}}</Button>
                 <Button v-else type="primary"  :icon="operation.icon">{{operation.title}}</Button>
@@ -20,23 +20,6 @@
                     <Step title="导入数据"></Step>
                 </Steps>
                 <div v-show="current===0">
-                    <!-- <Alert>
-                        导入数据详细步骤如下：
-                        <template slot="desc">
-                            <div>第一步：选择要导入的数据文件，数据文件只支持Excel类型文件(.xlsx或.xls)，Excel文件的第一行为标题行</div>
-                            <div>
-                                第二步：创建实体字段与Excel标题列间的映射关系
-                                <Poptip trigger="hover" width="400">
-                                    <a href="javascript://">详细说明</a>
-                                    <div slot="content">
-                                        <div class="detail-help">
-                                            对于引用类型的字段，导入过程支持将名称转换为Id的操作，因此，对于'创建人'，'修改人'这些字段，Excel文件中该列的值可以直接写用户姓名，转换时可启用'显示名转Id'功能，导入时，系统将根据用户名查询用户Id，并进行保存针对名称转换为Id的操作，在Excel模板的标题行上可附加'|toid'，系统创建映射时，会自动选中”映射到值“的选项
-                                        </div>
-                                    </div>
-                                </Poptip>
-                            </div>
-                        </template>
-                    </Alert> -->
                     <div class="upload-con margin-top42">
                         <Row>
                             <Col span="24">
@@ -310,10 +293,13 @@ export default {
         },
         doValidation:function(callback){
             var _this=this;
-            //启用智能校验
-            /*Utils.smartValidate(_this,this.model,this.$validator,function(){
-                callback&&callback();
-            });*/
+            if(this.current===0){
+                if(!this.model.file){
+                    this.$Message.info('请先上传文件')
+                    return;
+                }
+            }
+            callback&&callback();
         },
         cancel(){
             this.importModal=false;
@@ -497,6 +483,7 @@ export default {
 <style lang="scss">
 .grid-import-data-con{
     display:inline-block;
+    width:100%;
 }
 /*.detail-help{
     word-break: break-all;

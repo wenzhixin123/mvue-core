@@ -126,14 +126,32 @@ function initValidation(formItem,metaEntity,dataId) {
     if (params.unique) {
         var uniqueRule = {
             validator(rule, value, callback) {
+                if(!value){
+                    callback();
+                    return;
+                }
                 var params = {};
                 params[fieldName] = value;
                 contextHelper.getMvueToolkit().http.get(metaEntity.resourceUrl, {params: params})
                     .then(function ({data}) {
-                        callback(rule.message);
+                        //创建模式dataId为空，如果有数据返回则表示重复了
+                        if((!dataId)&&data.length>0){
+                            callback(rule.message);
+                            return;
+                        }
+                        //编辑模式，当且仅当返回的数据条数为一，且id和dataId相同才合法
+                        var idField=metaEntity.getIdField();
+                        if(dataId&&data.length===1&&dataId===data[0][idField.name]){
+                            callback();
+                            return;
+                        }else if(dataId&&data.length){//编辑模式，有返回数据并且不满足第一条if的合法性，则重复
+                            callback(rule.message);
+                            return;
+                        }
+                        callback();
                     });
             },
-            message: `${formItem.title}值重复`
+            message: `${formItem.componentParams.title}值重复`
         };
         rules.push(uniqueRule);
     }

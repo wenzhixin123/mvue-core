@@ -21,14 +21,14 @@ function initValidation(formInst,metaForm){
 }
 function handleFormScript(formInst,metaForm){
     var logistics=metaForm.logistics;
-    if(logistics.script){
+    if(logistics&&logistics.script){
         let fun= new Function(logistics.script);
         fun.call(formInst);
     }
 }
 function handleFieldOptionsToggle(formInst,metaForm){//处理选择某个选项时，显示和隐藏某些组件逻辑
     var logistics=metaForm.logistics;
-    if(logistics.optionsToggleComponentsConfig){
+    if(logistics&&logistics.optionsToggleComponentsConfig){
         //遍历每一个单选项配置的逻辑
         _.forIn(logistics.optionsToggleComponentsConfig,function(value,key){
             let curFormItem=metaformUtils.getFormItemById(metaForm,key);

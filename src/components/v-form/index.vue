@@ -82,6 +82,7 @@
                 return {};
             }
             return {
+                entityName:null,
                 innerMetaForm:null
             };
         },
@@ -100,7 +101,7 @@
                 handler(){
                     //属性传入的视图配置数据metaView
                     if(this.metaForm){
-                        this.initByMetaForm(metaForm);
+                        this.initByMetaForm(this.metaForm);
                     }
                 },
                 immediate:true
@@ -109,7 +110,9 @@
         methods:{
             initByMetaForm(metaForm){
                 this.innerMetaForm=metaForm;
-                this.metaEntity=this.$metaBase.findMetaEntity(metaForm.MetaEntityName);
+                var metaEntity=this.$metaBase.findMetaEntity(metaForm.metaEntityName);
+                this.metaEntity=metaEntity;
+                this.entityName=metaForm.metaEntityName;
                 this.dataResource=metaEntity.dataResource();
                 this.entity=metaEntity.getDefaultModel();
 

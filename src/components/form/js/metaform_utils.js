@@ -112,8 +112,31 @@ function indexOfFormItem(metaForm,formItem){
     //直接返回index
     return parentIndex;
 }
+//"lessThan", "biggerThan", "equals"
+function compareRuleValidate(op,value,comparedFieldValue){
+    if(op==="lessThan"){
+        return value<=comparedFieldValue;
+    }else if(op==="biggerThan"){
+        return value>=comparedFieldValue;
+    }else if(op==="equals"){
+        return value==comparedFieldValue;
+    }
+    return false;
+}
+function compareRuleMessage(op,fieldName,metaEntity){
+    var title = metaEntity.findField(fieldName).title||fieldName;
+    var opDesc="";
+    if(op==="lessThan"){
+        opDesc="小于";
+    }else if(op==="biggerThan"){
+        opDesc="大于";
+    }else if(op==="equals"){
+        opDesc="等于";
+    }
+    return `必须${opDesc}${title}的值`;
+}
 //初始化字段组件的验证规则
-function initValidation(formItem,metaEntity,dataId) {
+function initValidation(formItem,metaEntity,dataId,entity) {
     if (!formItem.isDataField) {
         return null;
     }
@@ -173,8 +196,27 @@ function initValidation(formItem,metaEntity,dataId) {
         && _.includes(["lessThan", "biggerThan", "equals"], params.validation.rule.operator)
         && params.validation.rule.fieldName
     ) {
-        //TODO:
-        //rule[params.validation.rule.operator]=[params.validation.rule.fieldName,params.validation.rule.fieldTitle||params.validation.rule.fieldName];
+        let _compareRule={
+            validator(rule, value, callback) {
+                if(!value){
+                    callback();
+                    return;
+                }
+                var comparedFieldValue=entity[params.validation.rule.fieldName];
+                if(!comparedFieldValue){
+                    callback();
+                    return;
+                }
+                var ok=compareRuleValidate(params.validation.rule.operator,value,comparedFieldValue);
+                if(ok){
+                    callback();
+                }else{
+                    callback(rule.message);
+                }
+            },
+            message:compareRuleMessage(params.validation.rule.operator,params.validation.rule.fieldName,metaEntity)
+        };
+        rules.push(_compareRule);
     }
     //长度验证
     if (params.limitLength && params.limitLength.limit) {

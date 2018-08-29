@@ -3,7 +3,7 @@ function initValidation(formInst,metaForm){
     //初始化表单验证
     var formItems=metaformUtils.getAllFieldItems(metaForm);
     _.forEach(formItems,function(formItem){
-        var rules=metaformUtils.initValidation(formItem,formInst.metaEntity,formInst.entityId);
+        var rules=metaformUtils.initValidation(formItem,formInst.metaEntity,formInst.entityId,formInst.entity);
         if(rules.length>0){
             var existRule=formInst.innerRules[formItem.dataField];
             if(existRule==null){

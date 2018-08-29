@@ -92,7 +92,7 @@
                 _.forEach(_this.metaEntity.getDefaultFormFields(),function (fieldName) {
                     var metaField=_this.metaEntity.findField(fieldName);
                     var formItem=controlTypeService.buildFormItemByMetaField(metaField);
-                    var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId);
+                    var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId,_this.entity);
                     if(rules.length>0) {
                         _this.innerRules[formItem.dataField] = rules;
                     }

@@ -61,7 +61,6 @@ import toolService from './services/tool/tool_service';
 import formConstants from './components/form/js/constants';
 import formValidationPattern from './components/form/js/validation_pattern';
 import controlTypeService from './components/form/js/control_type_service';
-import formBase from './components/form/js/form_base';
 import commonOperation from './components/meta_operation/js/common_operation';
 
 import  context from "./libs/context";
@@ -77,7 +76,6 @@ let MvueCore={
     linkplugin,
     formConstants,
     formValidationPattern,
-    formBase,//TODO:后面应该要去掉的
     controlTypeService,
     commonOperation,
     context

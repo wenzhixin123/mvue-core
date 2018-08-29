@@ -86,7 +86,7 @@
 <script>
 import metabase from '../../libs/metadata/metabase';
 
-import initByViewId from './init-by-viewid';
+import initByMetaView from './init-by-metaview';
 import metaservice from "../../services/meta/metaservice";
 import gridBase from '../grid/js/grid-base';
 export default {
@@ -166,12 +166,12 @@ export default {
             //配置数据存在
             if (metaView.config && metaView.config.columns) {
                 //初始化createPath、editPath、viewPath
-                initByViewId.initUrls(this,metaView);
-                initByViewId.initQuickSearch(this,metaView);
-                initByViewId.initAdvanceSearch(this,metaView);
-                initByViewId.initOrderBy(this,metaView);
+                initByMetaView.initUrls(this,metaView);
+                initByMetaView.initQuickSearch(this,metaView);
+                initByMetaView.initAdvanceSearch(this,metaView);
+                initByMetaView.initOrderBy(this,metaView);
                 this.defaultMetaViewFilters=metaView.config.filters||'';
-                initByViewId.initColumns(this,metaView);
+                initByMetaView.initColumns(this,metaView);
                 this.preprocessed = true;
             }else{//配置数据不存在，用元数据信息初始化
                 this.$Modal.error({

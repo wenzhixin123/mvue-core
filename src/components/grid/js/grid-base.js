@@ -172,7 +172,7 @@ export default{
                 ctx.filters.rules=Object.assign(ctx.filters.rules,this.filtersFromQuery,this.filtersFromColumnHeader);
             }
             if(this.query){//外部指定了query，用外部的
-                return this.query(ctx);
+                return this.query(ctx,this.queryResource);
             }else{
                 //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
                 return leapQueryConvertor.exec(this.queryResource,ctx,(params)=>{

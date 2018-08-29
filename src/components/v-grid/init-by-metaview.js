@@ -46,7 +46,7 @@ function initOrderBy(gridInst,metaView){
 function initColumns(gridInst,metaView){
     var metaEntity=gridInst.metaEntity;
     let visibleFields = [];
-    let dataMap = _.keyBy(metaEntity.fields,function(item){return item["name"];});
+    let dataMap = metaEntity.fields;
     let columnsMap = _.keyBy(metaView.config.columns, function (item) {
         return item["name"];
     });

@@ -206,7 +206,8 @@ export default {
             importFinished:null,//导入是否完成，null:未开始 false:一开始 true:结束
             report:null,//导入报告详细数据
             current:0,//表示进度条的位置
-            hasReport:false//是否已经有报告了
+            hasReport:false,//是否已经有报告了
+            entityName:entityName
         }
     },
     watch:{

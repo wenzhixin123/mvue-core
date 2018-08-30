@@ -1,6 +1,6 @@
 {
   "name": "mvue-core",
-  "version": "2.0.9",
+  "version": "2.0.10",
   "description": "mvue project core components",
   "main": "dist/lib/index.js",
   "scripts": {

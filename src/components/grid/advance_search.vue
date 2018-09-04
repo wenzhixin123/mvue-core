@@ -7,11 +7,11 @@
                 title="高级筛选"  ok-text="搜索" cancel-text="重置"
                 @on-ok="doSearch"
                 @on-cancel="doReset">
-            <Form ref="advanceSearchForm" >
+            <Form ref="advanceSearchForm" :model="model">
                 <FormItem label="关键字">
                     <Input v-model="innerQuicksearchKeyword" placeholder="搜索关键字..."></Input>
                 </FormItem>
-                <meta-field v-for="key in advanceSearchFields" :key="key" :name="key" v-model="model[key]" :entity-name="entityName" :input-type="inputType(key)">
+                <meta-field v-for="key in advanceSearchFields" :model="model" :key="key" :name="key" :entity-name="entityName" :input-type="inputType(key)">
                 </meta-field>
             </Form>
         </Modal>

@@ -1,24 +1,23 @@
 <template>
-        <FormItem  :prop="name"  :label-for="labelFor" v-show="!innerContext.hidden"
-                    :rules="rules" :show-message="showMessage">
-            <template v-if="showLabel" slot="label">
-                <slot name="label">{{ metaField.title}}</slot>
-            </template>
-            <slot v-if="formItem"
-                  :model="entity" :metaField="metaField"  :formItem="formItem">
-                <component
-                           v-model="innerVal"
-                           @exDataChanged="exDataChanged"
-                           @input="updateValue"
-                           :is="componentName(formItem)"
-                           :paths="paths"
-                           :model="entity"
-                           :context="innerContext"
-                           :form-item="formItem"
-                           :init-when-create="initWhenCreate" >
-                </component>
-            </slot>
-        </FormItem>
+    <FormItem  :prop="name"  :label-for="labelFor" v-show="!innerContext.hidden"
+        :rules="rules" :show-message="showMessage">
+        <template v-if="showLabel" slot="label">
+            <slot name="label">{{ metaField.title}}</slot>
+        </template>
+        <slot v-if="formItem"
+            :model="entity" :metaField="metaField"  :formItem="formItem">
+            <component
+                v-model="entity[name]"
+                @exDataChanged="exDataChanged"
+                :is="componentName(formItem)"
+                :paths="paths"
+                :model="entity"
+                :context="innerContext"
+                :form-item="formItem"
+                :init-when-create="initWhenCreate" >
+            </component>
+        </slot>
+    </FormItem>
 </template>
 <script>
 import controlTypeService from './js/control_type_service';
@@ -51,7 +50,7 @@ export default {
             type:Object,
             require:false
         },
-        value:{//高级查询v-model使用
+        model:{//高级查询model
             required: false
         },
         showLabel:{
@@ -142,42 +141,20 @@ export default {
             this.preprocessor(formItem,this);
         }
         //初始化字段验证
-        var entity={},_innerVal=null;
+        var entity=this.model||{},_innerVal=null;
         if(form){
             entity=form.entity;
             //初始化来自entity的初始值
             _innerVal=entity[metaField.name];
         }
         return {
-            innerVal:_innerVal,
+            //innerVal:_innerVal,
             formItem:formItem,
             form:form,
             metaEntity:metaEntity,
             metaField:metaField,
             entity:entity,
             paths:constants.paths()
-        }
-    },
-    watch:{
-        value:{//同步外部v-model的数据到innerVal，高级查询特用
-            handler:function(){
-                if(!_.isEqual(this.value,this.innerVal)){
-                    this.innerVal=_.cloneDeep(this.value);
-                    if(this.entity){
-                        this.entity[this.metaField.name]=this.innerVal;
-                    }
-                }
-            },
-            deep:true
-        },
-        innerVal:{//将innerVal的变化反应到entity和外部
-            handler:function(){
-                if(this.entity){
-                    this.entity[this.metaField.name]=this.innerVal;
-                }
-                this.$emit('input',this.innerVal);
-            },
-            deep:true
         }
     },
     computed: {
@@ -198,12 +175,6 @@ export default {
         }
     },
     methods:{
-        updateValue:function (val) {
-            if(this.entity){
-                this.entity[this.metaField.name]=val;
-            }
-            this.innerValue=val;
-        },
         getParentForm(){//不停的向上找父表单组件
             var _parent=this.$parent;
             while(_parent){

@@ -129,6 +129,7 @@ export default {
 <style lang="less" scoped>
 .grid-advance-search-con{
     display:inline-block;
+    margin-left:4px;
 }
 </style>
 

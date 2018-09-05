@@ -117,12 +117,13 @@ function  initColumns(grid) {
   if(grid.showIndex) {
       __cols.push({
           type: 'index',
+          key:'__index__',
           width: 50,
           align: 'center'
       });
   }
   //if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
-  __cols.push({type: 'selection',width:50,align:"center"});
+  __cols.push({type: 'selection',key:'__selection__',width:50,align:"center"});
   //}
 
   _cols=__cols.concat(_cols);
@@ -130,6 +131,7 @@ function  initColumns(grid) {
   if(!grid.operationsWithTitleColumn&&!_.isEmpty(grid.innerToolbar.singleBtns)){
     _cols.push({
       title:"具体操作",
+      key:"__operation_column__",
       width:180,
       align:"center",
       metaParams:{

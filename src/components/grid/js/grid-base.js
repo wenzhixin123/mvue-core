@@ -101,6 +101,9 @@ export default{
         },
         noFilteredDataText: {
             type: String
+        },
+        id:{//用来唯一标志一个列表，用于存储列表的配置数据key，如配置列数据本地存储的key
+            type:String
         }
     },
     data(){

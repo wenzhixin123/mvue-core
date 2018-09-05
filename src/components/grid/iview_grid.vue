@@ -20,6 +20,7 @@
              :size="size"
              :no-data-text="noDataText"
              :no-filtered-data-text="noFilteredDataText"
+             :id="id"
              @on-current-change="handleOnCurrentChange"
              @on-select="handleOnSelect"
              @on-select-cancel="handleOnSelectCancel"

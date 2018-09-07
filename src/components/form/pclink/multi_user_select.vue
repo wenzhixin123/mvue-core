@@ -88,12 +88,14 @@ export default {
             this.innerValue=valueArray;
             this.innerText=textArray.join(",");
             this.$emit('input',this.innerValue);
+            this.dispatch('FormItem', 'on-form-blur', this.innerValue);
             this.$emit("exDataChanged",exData,this.formItem.dataField);
         },
         onRemove:function(item){
             this.innerValue=[];
             this.innerText="";
             this.$emit('input',[]);
+            this.dispatch('FormItem', 'on-form-blur', []);
         },
         getIdField:function(){
             return "id";

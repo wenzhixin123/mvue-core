@@ -131,6 +131,7 @@ export default {
                 });
             });
             this.$emit("input",_uploadList);
+            this.dispatch('FormItem', 'on-form-blur', _uploadList);
         },
         minusCurrentFileSum:function(){
             //多文件上传，上传完后，当前待上传的总数减一

@@ -14,15 +14,14 @@
                         selected-label="已选"
                         deselect-label="按enter键取消选择"
                         :show-no-results="false"
-                        label="name"
-                        @select="onSelect"
+                        :label="getTitleField()"
                         @search-change="searchChange"
                         :track-by="getIdField()">
                 <template slot="option" slot-scope="props">
                     <div class="option__desc">
-                        <span class="option__title">{{ props.option.name }}</span>
+                        <span class="option__title">{{ props.option[getTitleField()] }}</span>
                         <span>-</span>
-                        <span class="option__small">{{ props.option.email||props.option.loginId }}</span>
+                        <span class="option__small">{{ props.option.email||props.option[getLoginField()] }}</span>
                     </div>
                 </template>
             </Multiselect>
@@ -31,10 +30,11 @@
     </div>
 </template>
 <script>
-    import context from '../../../libs/context';
-    import controlBase from '../js/control_base';
+import context from '../../../libs/context';
+import controlBase from '../js/control_base';
+import entitySelect from '../mixins/entity-select';
 export default {
-    mixins: [controlBase],
+    mixins: [controlBase,entitySelect],
     props: {
         "value":{
             type:Array,
@@ -49,155 +49,42 @@ export default {
             entityResource= context.buildResource(this.paths.userApiUrl);
         }
         return {
-            userSelected:false,
             selectedItem:[],//已经选择的项
             dataItems:[],//远程获取的数据项
             entityResource:entityResource,//获取用户数据的操作resource
-            queryFields:"userId,name,mobile,loginId,email,orgId",//查询的冗余数据
-            cachedDataItems:null//默认提示的可选数据
+            queryFields:this.buildSelectFields(),//查询的冗余数据
         };
     },
-    computed:{
-        dataItemsMap:function(){
-            var idField=this.getIdField();
-            return _.keyBy(this.dataItems,function(item){return item[idField];});
-        }
-    },
     watch:{
-        value:function(newV,oldV){
-            var _this=this;
-            if(this.userSelected){
-                return;
-            }
-            if(newV){//多选为数组
-                _.each(newV,function(v){
-                    let item=_this.dataItemsMap[v]||null;
-                    if(item){
-                        _this.selectedItem.push(item);
-                    }
-                });
-            }else{
-                this.selectedItem=[];
-            }
-        },
-        dataItems:function(){
-            var _this=this;
-            if(this.value){
-                _.each(this.value,function(v){
-                    let item=_this.dataItemsMap[v]||null;
-                    if(item){
-                        _this.selectedItem.push(item);
-                    }
-                });
-            }
-        },
         "paths.userApiUrl":function(newValue,oldValue){//监听地址，一旦设置值，用户操作的resource就可以构造了
-            var _this=this;
             if(newValue){
                 this.entityResource= context.buildResource(newValue);
                 this.doSearch();
             }
-        },
-        "selectedItem":function(){
-            var _this=this;
-            if(this.selectedItem&&this.userSelected){
-                var idField=this.getIdField();
-                var exData={};
-                var sIds=[];
-                var titleField=this.getTitleField();
-                _.each(this.selectedItem,function(sitem){
-                    var sid=sitem[idField];
-                    sIds.push(sid);
-                    var exDataItem=_this.buildExData(sitem[titleField]);
-                    exData[sid]=exDataItem;
-                });
-                this.emitExData(exData);
-                this.$emit('input',sIds);
-            }
         }
     },
-    mounted:function(){
-        this.doSearch();
-    },
     methods: {
-        onSelect:function(selectedItems){
-            this.userSelected=true;
+        buildQueryOptions(params,keyword){
+            var filters= `status eq 1 and (${this.getTitleField()} like '%${keyword}%' or ${this.getLoginField()}  like '%${keyword}%')`;
+            params.filters=filters;
         },
         searchChange:function(keyword){
-            var _this=this;
-            this.doSearch(keyword,function(){
-                _this.selectedItem=null;
-            });
+            this.doSearch(keyword);
         },
-        doSearchForCache:function(callback){
-            if(this.cachedDataItems){
-                callback&&callback(this.cachedDataItems);
-                return;
-            }
-            var _this=this;
-            var params={select:_this.queryFields};
-            params.limit=5;
-            params.filters=`status eq 1`;
-            if(this.entityResource){
-                Utils.smartSearch(_this,function(){
-                    _this.entityResource.query(params)
-                    .then(function({data}){
-                        _this.cachedDataItems=data;
-                        callback&&callback(data);
-                    });
-                });
-            }
-        },
-        doSearch:function(keyword,callback){
-            var _this=this;
-            var params={select:_this.queryFields};
-            if(!keyword){
-                if(this.value&&this.value.length>0){
-                    let idField=this.getIdField();
-                    let values=this.value.join(",");
-                    params.filters=`${idField} in ${values}`;
-                }else{
-                    params.limit=50;
-                }
-            }else{
-                params.filters=`status eq 1 and name like '%${keyword}%'`;
-            }
-            if(this.entityResource){
-                Utils.smartSearch(_this,function(){
-                    _this.entityResource.query(params)
-                    .then(function({data}){
-                        if(_this.value){//此时需要补充缓存的数据进去
-                            let id=_this.getIdField();
-                            _this.doSearchForCache(function(citems){
-                                let _dataItems=_.cloneDeep(citems);
-                                _.each(data,function(dataItem){
-                                    let has=_.find(citems, function(o) { return o[id] ===dataItem[id]; });
-                                    if(!has){//如果当前值不在缓存中
-                                        _dataItems.push(dataItem);
-                                    }
-                                });
-                                _this.dataItems=_dataItems;
-                                callback&&callback();
-                            });
-                        }else{
-                            _this.dataItems=data;
-                            callback&&callback();
-                        }
-                    });
-                });
-            }
+        buildSelectFields(){
+            return `${this.getIdField()},${this.getTitleField()},${this.getLoginField()},${context.getConsts().user.detailFields}`;
         },
         getIdField:function(){
-            return "userId";
+            return context.getConsts().user.idField;
         },
         getTitleField:function(){
-            return "name";
+            return context.getConsts().user.nameField;
         },
-        emitExData:function(exData){
-            this.$emit("exDataChanged",exData,this.formItem.dataField);
+        getLoginField(){
+            return context.getConsts().user.loginField;
         },
         viewModeValue(){
-            if(this.selectedItem&&this.selectedItem){
+            if(this.selectedItem&&this.selectedItem.length){
                 let texts=[];
                 let _this=this;
                 _.each(this.selectedItem,function(item){

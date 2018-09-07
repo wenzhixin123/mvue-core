@@ -20,6 +20,18 @@ var cachedContext={
       }
       return false;
     }
+  },
+  consts:{
+      user:{
+          idField:"id",
+          nameField:"name",
+          loginField:"userName",
+          detailFields:"mobile,email"
+      },
+      org:{
+          idField:"id",
+          nameField:"name",
+      }
   }
 }
 
@@ -168,5 +180,11 @@ export default {
                 }, 300);
             }
         }
+    },
+    setConsts(cmap){
+        cachedContext.consts=_.extend(cachedContext.consts,cmap);
+    },
+    getConsts(){
+        return cachedContext.consts;
     }
 }

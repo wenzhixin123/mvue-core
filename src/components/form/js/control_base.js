@@ -1,7 +1,9 @@
 import controlTypeService from './control_type_service';
 import constants from './constants';
 import widgetMode from './widget-mode';
+import {emitter}  from 'mvue-components';
 export default {
+    mixins:[emitter],
     props:{
         formItem:{
             type:Object,
@@ -33,7 +35,8 @@ export default {
     },
     data:function(){
         return {
-            controlTypeService:controlTypeService
+            controlTypeService:controlTypeService,
+            changedQueue:[]
         };
     },
     mounted:function(){

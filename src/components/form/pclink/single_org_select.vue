@@ -80,11 +80,13 @@ export default {
             var exData=this.buildExData(this.innerText);
             this.emitExData(this.innerValue,exData);
             this.$emit('input',this.innerValue);
+            this.dispatch('FormItem', 'on-form-blur', this.innerValue);
         },
         onRemove:function(item){
             this.innerValue=null;
             this.innerText=null;
             this.$emit('input',null);
+            this.dispatch('FormItem', 'on-form-blur', null);
         },
         getIdField:function(){
             return "id";

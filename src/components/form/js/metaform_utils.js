@@ -146,6 +146,12 @@ function initValidation(formItem,metaEntity,dataId,entity) {
     var fieldTitle=formItem.componentParams.title;
 
     var rules = [];
+    //必填必须放在第一个，否则label前的红色星号不生效，应该是iview的bug
+    if (params.required) {
+        rules.push({
+            required: true,message:`${fieldTitle}不能为空`
+        });
+    }
     //唯一性校验
     if (params.unique) {
         var uniqueRule = {
@@ -276,13 +282,6 @@ function initValidation(formItem,metaEntity,dataId,entity) {
              rule.min_value=["0"];
          }*/
         //TODO:
-    }
-
-    //必填
-    if (params.required) {
-        rules.push({
-            required: true,message:`${fieldTitle}不能为空`
-        });
     }
     return rules;
 }

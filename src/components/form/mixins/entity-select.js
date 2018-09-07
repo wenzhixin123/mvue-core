@@ -1,6 +1,8 @@
 export default{
     data(){
         return {
+            isLoading:false,
+            dataItems:[],//远程获取的数据项
             selectedItem:null,//已经选择的项
             queryFields:null,
             queryLimit:10,
@@ -197,6 +199,22 @@ export default{
                     });
                 },"changedQueue");
             }
+        },
+        viewModeValue(){
+            if(_.isArray(this.selectedItem)){
+                let texts=[];
+                let _this=this;
+                _.each(this.selectedItem,function(item){
+                    let id=item[_this.getIdField()];
+                    let exValue=_this.getExData(id);
+                    texts.push(exValue);
+                });
+                return texts.join(",");
+            }
+            if(this.selectedItem){
+                return selectedItem[this.getTitleField()]
+            }
+            return "";
         }
     }
 }

@@ -47,9 +47,7 @@ export default {
         }
         return {
             selectedItem:[],//已经选择的项
-            dataItems:[],//远程获取的数据项
-            entityResource:entityResource,//获取实体数据的操作resource
-            isLoading:false
+            entityResource:entityResource//获取实体数据的操作resource
         };
     },
     methods: {
@@ -69,19 +67,6 @@ export default {
         },
         getTitleField:function(){
             return this.formItem.componentParams.titleField;
-        },
-        viewModeValue(){
-            if(this.selectedItem&&this.selectedItem.length){
-                let texts=[];
-                let _this=this;
-                _.each(this.selectedItem,function(item){
-                    let id=item[_this.getIdField()];
-                    let exValue=_this.getExData(id);
-                    texts.push(exValue);
-                });
-                return texts.join(",");
-            }
-            return "";
         }
     }
 }

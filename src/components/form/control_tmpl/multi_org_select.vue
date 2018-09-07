@@ -48,7 +48,6 @@ export default {
         }
         return {
             selectedItem:[],//已经选择的项
-            dataItems:[],//远程获取的数据项
             entityResource:entityResource,//获取部门数据的操作resource
             queryFields:this.buildSelectFields(),//查询的冗余数据
         };
@@ -82,19 +81,6 @@ export default {
         },
         getTitleField:function(){
             return context.getConsts().org.nameField;
-        },
-        viewModeValue(){
-            if(this.selectedItem&&this.selectedItem.length){
-                let texts=[];
-                let _this=this;
-                _.each(this.selectedItem,function(item){
-                    let id=item[_this.getIdField()];
-                    let exValue=_this.getExData(id);
-                    texts.push(exValue);
-                });
-                return texts.join(",");
-            }
-            return "";
         }
     }
 }

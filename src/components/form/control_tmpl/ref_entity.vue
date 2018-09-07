@@ -1,7 +1,7 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
         <template v-if="viewMode">
-            <div v-text="selectedItem&&selectedItem[getTitleField()]"></div>
+            <div v-text="viewModeValue()"></div>
         </template>
         <template v-else>
             <Multiselect v-model="selectedItem"
@@ -45,9 +45,7 @@ export default {
         }
         return {
             selectedItem:null,//已经选择的项
-            dataItems:[],//远程获取的数据项
-            entityResource:entityResource,//获取实体数据的操作resource
-            isLoading:false
+            entityResource:entityResource//获取实体数据的操作resource
         };
     },
     methods: {

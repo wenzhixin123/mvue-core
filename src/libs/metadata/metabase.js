@@ -219,7 +219,8 @@ function loadMetaFieldFromProperty(context,propertyName,property){
     format:property["format"],
     isRelationField:false,
     relations:[],
-    _property:property
+    _property:property,
+    xAttrs:property["x-attrs"]||{}//扩展属性
   };
   //设置inputTypeParams
   fillInputTypeParams(metaField,property);

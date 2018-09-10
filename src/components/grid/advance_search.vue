@@ -19,9 +19,7 @@
 </template>
 <script>
 import controlTypeService from '../form/js/control_type_service';
-import FormItem from "iview/src/components/form/form-item";
 export default {
-    components: {FormItem},
     props: {
         "entityName": {
             type: String,

@@ -30,7 +30,7 @@
                 v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer">
             <slot name="toolbar" >
                 <template v-if="isView">
-                    <meta-operation v-for="btn in toolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                    <meta-operation v-for="btn in innerToolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
                         <Button :type="btn.btnType || 'primary'"  :title="btn.title">
                             <Icon :type="btn.icon" v-if="btn.icon"></Icon>
                             {{btn.title}}
@@ -38,7 +38,7 @@
                     </meta-operation>
                 </template>
                 <template v-if="!isView">
-                    <meta-operation v-for="btn in toolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                    <meta-operation v-for="btn in innerToolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
                         <Button :type="btn.btnType || 'primary'"  :title="btn.title">
                             <Icon :type="btn.icon" v-if="btn.icon"></Icon>
                             {{btn.title}}

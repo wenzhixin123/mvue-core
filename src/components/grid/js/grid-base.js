@@ -201,6 +201,8 @@ export default{
                     let commonOpt=this.getCommonOpt(btn);
                     if(commonOpt){
                         _btns.push(Object.assign(newBtn,commonOpt));
+                    }else{
+                        _btns.push(newBtn);
                     }
                 }else{
                     _btns.push(btn);

@@ -75,6 +75,11 @@ export default {
                 },
                 on: {
                     click: function (item) {
+                        var handleOnTitleClickFunc=context.grid&&context.grid.handleOnTitleClick;
+                        if(handleOnTitleClickFunc){
+                            handleOnTitleClickFunc(context, params);
+                            return ;
+                        }
                         if(metaField.actionFunc){
                             metaField.actionFunc.call(context, params);
                             return ;

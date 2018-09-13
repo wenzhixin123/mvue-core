@@ -105,6 +105,10 @@ export default {
         queryOptions:{//leap的固定查询参数
             type:Object,
             required:false
+        },
+        handleOnTitleClick:{//点击标题列处理函数
+            type:Function,
+            required:false
         }
     },
     data:function(){

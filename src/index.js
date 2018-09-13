@@ -78,7 +78,7 @@ let MvueCore={
     formConstants,
     formValidationPattern,
     controlTypeService,
-    commonOperation,
+    operationManager:commonOperation,
     context
 };
 

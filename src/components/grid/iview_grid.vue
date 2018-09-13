@@ -101,6 +101,10 @@ export default {
         "entityName": {//元数据实体名称，由外部传入
             type: String,
             required:true
+        },
+        queryOptions:{//leap的固定查询参数
+            type:Object,
+            required:false
         }
     },
     data:function(){
@@ -136,6 +140,20 @@ export default {
             initByMetadata.initColumns(this);
             //预处理完毕，b-list可以渲染了
             this.preprocessed = true;
+        },
+        //执行查询之前，附加leap query的固定查询参数
+        beforeQuery(params){
+            if(this.queryOptions){
+                if(this.queryOptions.filters){
+                    params.filters=params.filters?`(${params.filters}) and ${this.queryOptions.filters}`:`${this.queryOptions.filters}`
+                }
+                for(const key in this.queryOptions) {
+                    //如果params中没有的key，用queryOptions的覆盖，否则以params的为准
+                    if(key!="filters"&&this.queryOptions.hasOwnProperty(key)&&(!params.hasOwnProperty(key))) {
+                        params[key]=this.queryOptions[key];
+                    }
+                }
+            }
         }
     }
 }

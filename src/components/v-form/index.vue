@@ -31,17 +31,17 @@
             <slot name="toolbar" >
                 <template v-if="isView">
                     <meta-operation v-for="btn in innerToolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                        <Button :type="btn.btnType || 'primary'"  :title="btn.title">
-                            <Icon :type="btn.icon" v-if="btn.icon"></Icon>
-                            {{btn.title}}
+                        <Button slot-scope="{operation}" :type="operation.btnType || 'primary'"  :title="operation.title">
+                            <Icon :type="operation.icon" v-if="operation.icon"></Icon>
+                            {{operation.title}}
                         </Button>
                     </meta-operation>
                 </template>
                 <template v-if="!isView">
                     <meta-operation v-for="btn in innerToolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                        <Button :type="btn.btnType || 'primary'"  :title="btn.title">
-                            <Icon :type="btn.icon" v-if="btn.icon"></Icon>
-                            {{btn.title}}
+                        <Button slot-scope="{operation}" :type="operation.btnType || 'primary'"  :title="operation.title">
+                            <Icon :type="operation.icon" v-if="operation.icon"></Icon>
+                            {{operation.title}}
                         </Button>
                     </meta-operation>
                 </template>

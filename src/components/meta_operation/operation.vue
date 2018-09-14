@@ -8,6 +8,7 @@
 <script>
 import propParser from '../../services/tool/prop_parser';
 import OperationUtils from './js/operation_utils';
+import commonOperation from './js/common_operation';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
 var permParser={
@@ -55,8 +56,16 @@ export default {
             return `${this.operation.operationType}Operation`;
         },
         extendedOperation:function(){
-            var operation=OperationUtils.expandOperation(this.operation,this);
-            return operation;
+            var oper=this.operation;
+            if(this.operation.operationType==operationType.common){
+                let commonOptName=oper.name;
+                let commonOpt=commonOperation.createOperation(commonOptName);
+                if(commonOpt){
+                    oper= Object.assign({},commonOpt,oper);
+                }
+            }
+            oper=OperationUtils.expandOperation(oper,this);
+            return oper;
         },
         extendedWidgetContext:function(){
             var _this=this;

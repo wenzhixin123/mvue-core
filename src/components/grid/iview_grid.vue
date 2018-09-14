@@ -43,9 +43,9 @@
              <template slot="header-operations" v-if="innerToolbar.btns">
                 <meta-operation  v-for="(btn,index) in innerToolbar.btns" v-if="index<btnSizeBeforeMore" :key="index"
                         :operation="btn"  :widget-context="getWidgetContext()" class="grid-primary-btn">
-                    <Button class="normal-btn"
-                            :disabled="btnIsDisabled(btn)"
-                            :type="btn.type?btn.type:'primary'"  :icon="btn.icon">{{btn.title}}</Button>
+                        <Button slot-scope="{operation}" class="normal-btn"
+                                :disabled="btnIsDisabled(operation)"
+                                :type="operation.type?operation.type:'primary'"  :icon="operation.icon">{{operation.title}}</Button>
                 </meta-operation>
                 <Dropdown v-if="innerToolbar.btns.length>btnSizeBeforeMore" >
                     <Button>
@@ -57,7 +57,7 @@
                                         :disabled="btnIsDisabled(btn)"
                                         :divided="btn.divided" :name="index" :key="index">
                             <meta-operation  :operation="btn" :widget-context="getWidgetContext()">
-                                <div style="display: block">{{btn.title}}</div>
+                                <div  slot-scope="{operation}" style="display: block">{{operation.title}}</div>
                             </meta-operation>
                         </DropdownItem>
                     </DropdownMenu>

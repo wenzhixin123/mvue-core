@@ -6,43 +6,6 @@ import ExportCsv from './export_csv';
 import contextHelper from "../../../libs/context";
 var pathToRegexp = require('path-to-regexp');
 
-
-/**
- * 创建操作，跳转到新建表单页
- * @param context
- */
-function operationForCreate(){
-  var operation= {
-    id:"create",
-    title:"添加",
-    icon:"plus",
-    onclick:function(context,$optInst){
-      var path=context.grid&&context.grid.createPath;
-      var metaEntity=context.metaEntity;
-      if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
-        path=context.metaEntity.formPathForCreate();
-      }
-      if(_.isEmpty(path)){
-        alert("not implement,please set createPath");
-        return ;
-      }
-      let _query=buildQuery(context);
-      if ($optInst.operation.params) {
-        let extQuery = {};
-        extQuery[Utils.queryKeys.action] = Utils.formActions.create;
-        _query = _.extend(_query, $optInst.operation.query || {}, extQuery);
-        return parseCurrentRoute(context, $optInst.operation.params, _query);
-      }
-      if(path.indexOf('/')>-1){
-          contextHelper.getRouter().push({path:path,query:_query});
-      }else{
-         contextHelper.getRouter().push({name:path,params:{entityName:metaEntity.name},query:_query});
-      }
-    }
-  };
-  operation[Utils.dataPermField]=Utils.permValues.create;
-  return operation;
-}
 /**
  * 将自定义视图和表单的shortId附加到query参数后
  */
@@ -79,6 +42,46 @@ function getIdFromContext(context){
   return id;
 }
 /**
+ * 创建操作，跳转到新建表单页
+ * @param context
+ */
+function operationForCreate(){
+  var operation= {
+    id:"create",
+    title:"添加",
+    icon:"plus",
+    onclick:function(context,$optInst){
+      var path=null;
+      let _query=buildQuery(context);
+      var to=$optInst&&$optInst.operation.to;
+      if(to){
+        if(_.isString(to)){
+          path=to;
+        }else{//router 对象参数
+          to.query=_.extend(_query,to.query);
+          contextHelper.getRouter().push(to);
+          return;
+        }
+      }
+      var metaEntity=context.metaEntity;
+      if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
+        path=context.metaEntity.formPathForCreate();
+      }
+      if(_.isEmpty(path)){
+        alert("not implement,please set createPath");
+        return ;
+      }
+      if(path.indexOf('/')>-1){
+        contextHelper.getRouter().push({path:path,query:_query});
+      }else{
+        contextHelper.getRouter().push({name:path,params:{entityName:metaEntity.name},query:_query});
+      }
+    }
+  };
+  operation[Utils.dataPermField]=Utils.permValues.create;
+  return operation;
+}
+/**
  * 编辑操作，跳转到编辑表单页
  * @param context
  */
@@ -94,20 +97,28 @@ function operationForEdit(){
         return;
       }
       var metaEntity=context.metaEntity;
-      var path=context.grid&&context.grid.editPath;
+      var path=null;
+      let _query=buildQuery(context);
+      var to=$optInst&&$optInst.operation.to;
+      if(to){
+        if(_.isString(to)){
+          path=to;
+        }else{//router 对象参数
+          to.query=_.extend(_query,to.query);
+          if(to.path){
+            let toPath=pathToRegexp.compile(to.path);
+            to.path=toPath({id:id});
+          }
+          contextHelper.getRouter().push(to);
+          return;
+        }
+      }
       if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
         //必须传入数据id构造编辑的路径
         path=metaEntity.formPathForEdit(id);
       }else{
         let toPath=pathToRegexp.compile(path);
         path=toPath({id:id});
-      }
-      let _query=buildQuery(context);
-      if ($optInst.operation.params) {
-        let extQuery = {id: id};
-        extQuery[Utils.queryKeys.action] = Utils.formActions.edit;
-        _query = _.extend(_query, $optInst.operation.query || {}, extQuery);
-        return parseCurrentRoute(context, $optInst.operation.params, _query);
       }
       if(path.indexOf('/')>-1){
           contextHelper.getRouter().push({path:path,query:_query});
@@ -135,20 +146,28 @@ function operationForView(){
         return;
       }
       var metaEntity=context.metaEntity;
-      var path=context.grid&&context.grid.viewPath;
+      var path=null;
+      let _query=buildQuery(context);
+      var to=$optInst&&$optInst.operation.to;
+      if(to){
+        if(_.isString(to)){
+          path=to;
+        }else{//router 对象参数
+          to.query=_.extend(_query,to.query);
+          if(to.path){
+            let toPath=pathToRegexp.compile(to.path);
+            to.path=toPath({id:id});
+          }
+          contextHelper.getRouter().push(to);
+          return;
+        }
+      }
       if(_.isEmpty(path) && !_.isEmpty(metaEntity)){
         //必须传入数据id构造编辑的路径
         path=metaEntity.formPathForEdit(id);
       }else{
         let toPath=pathToRegexp.compile(path);
         path=toPath({id:id});
-      }
-      let _query=buildQuery(context);
-      if ($optInst.operation.params) {
-        let extQuery = {id: id};
-        extQuery[Utils.queryKeys.action] = Utils.formActions.view;
-        _query = _.extend(_query, $optInst.operation.query || {}, extQuery);
-        return parseCurrentRoute(context, $optInst.operation.params, _query);
       }
       if(path.indexOf('/')>-1){
           contextHelper.getRouter().push({path:path,query:_query});
@@ -380,20 +399,6 @@ function save(){
     }
   };
   return operation;
-}
-
-/**
- * 解析当前路由并跳转到解析后的路由
- * @param {Object} context  上下文
- * @param {Object} params   路由params
- * @param {Object} query    路由query
- */
-function parseCurrentRoute(context, params, query) {
-  var _self = context.grid || context.form;
-  var _route = _.extend({}, _self.$route);
-  _route.params = _.extend({}, _route.params, params || {});
-  _route.query = _.extend({}, _route.query, query || {});
-    contextHelper.getRouter().push(_route);
 }
 
 var operations={

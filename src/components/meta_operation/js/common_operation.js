@@ -5,6 +5,8 @@ import metabase from '../../../libs/metadata/metabase';
 import ExportCsv from '../../grid/js/export_csv';
 import toolServices from '../../../services/tool/tool_service';
 import contextHelper from "../../../libs/context";
+
+import metaOperation from '../../grid/js/metagrid_operation';
 var pathToRegexp = require('path-to-regexp');
 /**
  * 获取当前选中的行id
@@ -46,7 +48,9 @@ function operationForCreate() {
       let pageId = operation.page && operation.page.id;
       if (!pageId) {
         $optInst.mustStopRepeatedClick = false;
-        contextHelper.error({ content: `跳转页面未设置` });
+        //contextHelper.error({ content: `跳转页面未设置` });
+        //这里如果不是按照部件页面规范定义的操作，跳转到旧的[create]实体操作方式执行
+        metaOperation.createOperation("create").onclick(context,$optInst);
         return;
       }
       var _query = _.extend({}, operation.queryParams);
@@ -73,7 +77,9 @@ function operationForEdit() {
       let pageId = operation.page && operation.page.id;
       if (!pageId) {
         $optInst.mustStopRepeatedClick=false;
-        contextHelper.error({ content: `跳转页面未设置` });
+        //contextHelper.error({ content: `跳转页面未设置` });
+        //这里如果不是按照部件页面规范定义的操作，跳转到旧的[edit]实体操作方式执行
+        metaOperation.createOperation("edit").onclick(context,$optInst);
         return;
       }
       var _query = _.extend({ dataId: id }, operation.queryParams);
@@ -100,7 +106,9 @@ function operationForView() {
       let pageId = operation.page && operation.page.id;
       if (!pageId) {
         $optInst.mustStopRepeatedClick = false;
-        contextHelper.error({ content: `跳转页面未设置` });
+        //contextHelper.error({ content: `跳转页面未设置` });
+        //这里如果不是按照部件页面规范定义的操作，跳转到旧的[view]实体操作方式执行
+        metaOperation.createOperation("view").onclick(context,$optInst);
         return;
       }
       var _query = _.extend({ dataId: id, forceView:true }, operation.queryParams);

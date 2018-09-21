@@ -9,4 +9,19 @@ function initModelByQueryParams(formInst,_model){
         }
     });
 }
-export default {initModelByQueryParams}
+//根据关系填充模型关系字段数据：只考虑多对一关系
+function initModelByRelation(formInst,_model){
+    var metaEntity=formInst.metaEntity;
+    _.forIn(_model,function(value,key){
+        let relationField=metaEntity.findField(key);
+        if(relationField&&relationField.manyToOneRelation){
+            let r=relationField.manyToOneRelation;
+            let targetEntity=r.targetEntity;
+            let refId=formInst.$store.getters['core/getRefId'](targetEntity);
+            if(refId){
+                _model[key]=refId;
+            }
+        }
+    });
+}
+export default {initModelByQueryParams,initModelByRelation}

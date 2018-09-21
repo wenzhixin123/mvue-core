@@ -7,7 +7,7 @@
             </meta-field>
         </slot>
         <FormItem v-if="hasButtons() || $slots.toolbar" class="form-toolbar"
-                v-transfer-dom="'#default-form-uuid-'+entityName" :data-transfer="transfer">
+                v-transfer-dom="toolbarTransferDomId" :data-transfer="transfer">
             <slot name="toolbar" >
                 <template v-if="isView">
                     <meta-operation v-for="btn in innerToolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
@@ -59,6 +59,8 @@
             if(this.isCreate){
                 //如果url参数是实体的字段则填充相应的模型数据
                 initByMetadata.initModelByQueryParams(this,this.entity);
+                //根据关系填充模型关系字段数据：只考虑多对一关系
+                initByMetadata.initModelByRelation(this,this.entity);
                 this.initOthers();
             }else{//编辑或查看模式，需要从后端获取实体记录数据覆盖初始的模型数据，之后再继续初始化
                 this.reinitEntityModel();

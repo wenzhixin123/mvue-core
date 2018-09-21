@@ -85,6 +85,10 @@ export default {
         gutter:{
             type:Number,
             default:24
+        },
+        toolbarTransferDomId:{
+            type:String,
+            default:`#default-form-uuid-${this.entityName}`
         }
     },
     data(){

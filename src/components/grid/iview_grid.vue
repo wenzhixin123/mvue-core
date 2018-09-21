@@ -1,5 +1,5 @@
 <template>
-    <b-list  v-if="preprocessed" ref="listInst"
+    <b-list  v-if="canRender" ref="listInst"
             :columns="innerColumns"
             :query="innerQuery"
             :toolbar="toolbar"
@@ -109,6 +109,33 @@ export default {
         handleOnTitleClick:{//点击标题列处理函数
             type:Function,
             required:false
+        },
+        relation:{//关联列表会提供关系配置{refField:''}
+            type:Object,
+            required:false
+        }
+    },
+    computed:{
+        canRender(){
+            //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
+            if(this.relation){
+                return this.preprocessed&&this.refEntityId;
+            }else{
+                return this.preprocessed;
+            }
+        },
+        refEntityId(){
+            if(this.relation){
+                let refField=this.relation.refField;
+                let relationField=this.metaEntity.findField(refField);
+                if(relationField&&relationField.manyToOneRelation){
+                    let r=relationField.manyToOneRelation;
+                    let targetEntity=r.targetEntity;
+                    let refId=this.$store.getters['core/getRefId'](targetEntity);
+                    return refId;
+                }
+            }
+            return null;
         }
     },
     data:function(){
@@ -158,6 +185,19 @@ export default {
                     }
                 }
             }
+            //关系列表自动补充关系字段过滤条件
+            let relationFilters=this.buildRelationFilters();
+            if(relationFilters){
+                params.filters=params.filters?`(${params.filters}) and ${relationFilters}`:`${relationFilters}`
+            }
+        },
+        //暂时只处理多对一关系
+        buildRelationFilters(){
+            var _filters='';
+            if(this.refEntityId){
+                _filters=`${this.relation.refField} eq ${this.refEntityId}`;
+            }
+            return _filters;
         }
     }
 }

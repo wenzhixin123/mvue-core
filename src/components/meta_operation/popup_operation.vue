@@ -16,14 +16,17 @@
             :mask-closable="false"
             >
             <div class="modal-inner-widget" :style="{height:modalHeight+'px'}">
-                <component @popup-close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
+                <component v-if="!isMetaLayout()" @popup-close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
                 </component>
+                <meta-layout v-if="isMetaLayout()" :settings="metaLayoutSettings()" @popup-close="close">
+                </meta-layout>
             </div>
-            <div slot="footer"></div>
+            <div slot="footer" :id="operation.id"></div>
     </Modal>
 </div>
 </template>
 <script>
+import metaLayoutConvertor from '../meta-layout/layout-convertor';
 export default {
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
@@ -37,8 +40,8 @@ export default {
     },
     data(){
         return {
-            modalWidth:this.operation.modalWidth||500,
-            modalHeight:this.operation.modalHeight||340,
+            modalWidth:this.operation.modalWidth||750,
+            modalHeight:this.operation.modalHeight||400,
             modalTitle:this.operation.modalTitle,
             popupWidgetModal:false
         };
@@ -50,6 +53,23 @@ export default {
         },
         close(){//关闭对话框
             this.popupWidgetModal=false;
+            if(this.widgetContext.grid){
+                this.widgetContext.grid.reload();
+            }
+        },
+        isMetaLayout(){
+            var widget=this.operation.widget;
+            if(_.startsWith(widget,"/pages/")){
+                return true;
+            }
+            return false;
+        },
+        metaLayoutSettings(){
+            var widget=this.operation.widget;
+            var autoPageConfs=this.$store.getters['core/autoPageConfs'];
+            var settings=autoPageConfs[widget];
+            settings= metaLayoutConvertor.convert(settings);
+            return settings.layout;
         }
     }
 }
@@ -59,10 +79,10 @@ export default {
     .modal-inner-widget{
         overflow:auto;padding:5px;
     }
-    .ivu-modal-footer{
-        padding:0px;
-        border:none;
-    }
+    // .ivu-modal-footer{
+    //     padding:0px;
+    //     border:none;
+    // }
 }
 </style>
 

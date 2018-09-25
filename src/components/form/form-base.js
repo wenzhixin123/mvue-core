@@ -3,9 +3,10 @@ import constants from './js/constants';
 import  contextHelper from "../../libs/context";
 import metaformUtils from './js/metaform_utils';
 import operationConvertor from '../mixins/operation-convertor';
+import getParent from '../mixins/get-parent';
 var co = require('co');
 export default {
-    mixins:[operationConvertor],
+    mixins:[operationConvertor,getParent],
     directives: { TransferDom },
     props:{
         toolbar:{
@@ -87,10 +88,6 @@ export default {
             type:Number,
             default:24
         },
-        toolbarTransferDomId:{
-            type:String,
-            default:`#default-form-uuid-${this.entityName}`
-        },
         completedAction:{//可选值：closePopup（关闭对话框）、editToView(编辑完跳转到查看页)和自定义函数(与onSaved属性作用相同)
             type:[String,Function],
             required:false
@@ -137,6 +134,14 @@ export default {
                 return true;
             }
             return false;
+        },
+        toolbarTransferDomId(){
+            var popup=this.getParentPopup();
+            if(popup){
+                return `#${popup.footerDomId}`
+            }else{
+                return `#default-form-uuid-${this.entityName}`;
+            }
         }
     },
     watch:{

@@ -10,6 +10,17 @@ export default {
                 }
             }
             return null;
+        },
+        getParentPopup(){//不停的向上找父弹出框组件
+            var _parent=this.$parent;
+            while(_parent){
+                if(_parent.isPopup){
+                    return _parent;
+                }else{
+                    _parent=_parent.$parent;
+                }
+            }
+            return null;
         }
     }
 }

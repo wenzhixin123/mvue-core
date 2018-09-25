@@ -15,7 +15,7 @@
             :scrollable="true"
             :mask-closable="false"
             >
-            <div class="modal-inner-widget" :style="{height:modalHeight+'px'}">
+            <div class="modal-inner-widget" :style="{height:modalHeight+'px'}" v-if="popupWidgetModal">
                 <component v-if="!isMetaLayout()" @popup-close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
                 </component>
                 <meta-layout v-if="isMetaLayout()" :settings="metaLayoutSettings()" @popup-close="close">

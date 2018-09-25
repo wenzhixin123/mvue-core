@@ -72,7 +72,8 @@ export default {
             default:"right",
         },
         labelWidth:{
-            type:Number
+            type:Number,
+            default:80
         },
         showMessage:{
             type:Boolean,

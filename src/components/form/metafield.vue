@@ -23,8 +23,10 @@
 import controlTypeService from './js/control_type_service';
 import metaformUtils from './js/metaform_utils';
 import constants from './js/constants';
-import  context from "../../libs/context";
+import context from "../../libs/context";
+import getParent from '../mixins/get-parent';
 export default {
+    mixins:[getParent],
     props:{
         name:{
             type:String,
@@ -175,17 +177,6 @@ export default {
         }
     },
     methods:{
-        getParentForm(){//不停的向上找父表单组件
-            var _parent=this.$parent;
-            while(_parent){
-                if(_parent.isMetaForm){
-                    return _parent;
-                }else{
-                    _parent=_parent.$parent;
-                }
-            }
-            return null;
-        },
         //根据组件传递进来的参数，覆盖metaField的属性
         overrideProps(metaField){
             if(this.title){

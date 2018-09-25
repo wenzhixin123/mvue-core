@@ -91,7 +91,7 @@ export default {
             type:String,
             default:`#default-form-uuid-${this.entityName}`
         },
-        completedAction:{
+        completedAction:{//可选值：closePopup（关闭对话框）、editToView(编辑完跳转到查看页)和自定义函数(与onSaved属性作用相同)
             type:[String,Function],
             required:false
         }

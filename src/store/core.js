@@ -4,10 +4,10 @@ const state = {
 }
 //公共的计算属性
 const getters = {
-  //获取当前路由中设置的entityName下的refId数据，用于多对一关系处理
-  getRefId: (state, getters) => (entityName) =>{
+  //获取当前路由中设置的entityName下的实体数据，用于多对一关系处理
+  getEntity: (state, getters) => (entityName) =>{
     var key=entityName.toLowerCase();
-    return state.currentRouteData[key]&&state.currentRouteData[key].refId;
+    return state.currentRouteData[key];
   },
   autoPageConfs:(state)=>{
     return state.autoPageConfs;
@@ -19,20 +19,15 @@ const actions = {
 }
 //通过commit调用：同步操作
 const mutations = {
-  setRefId (state, {entityName,refId}) {
+  setEntity (state, {entityName,entity}) {
     var key=entityName.toLowerCase();
     state.currentRouteData[key]=state.currentRouteData[key]||{};
-    state.currentRouteData[key].refId=refId;
+    state.currentRouteData[key]=entity;
   },
   setAutoPageConfs (state, autoPageConfs) {
     state.autoPageConfs=autoPageConfs;
   },
-  setCurrentRouteData (state, currentRouteData) {
-    debugger
-    state.currentRouteData=currentRouteData
-  },
   clearCurrentRouteData (state) {
-    debugger
     state.currentRouteData={}
   }
 }

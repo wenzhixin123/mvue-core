@@ -90,6 +90,10 @@ export default {
         toolbarTransferDomId:{
             type:String,
             default:`#default-form-uuid-${this.entityName}`
+        },
+        completedAction:{
+            type:[String,Function],
+            required:false
         }
     },
     data(){
@@ -302,13 +306,16 @@ export default {
             if(this.onSaved){
                 isContinue=_.defaultTo(this.onSaved(this),true);
             }
+            if(_.isFunction(this.completedAction)){
+                isContinue=_.defaultTo(this.completedAction(this),true);
+            }
             if(!isContinue){
                 return false;
             }
             if(msg){
                 contextHelper.success(msg);
             }
-            if(this.editToView){//如果需要从编辑页保存数据后，跳转回查看页
+            if(this.editToView||this.completedAction=="editToView"){//如果需要从编辑页保存数据后，跳转回查看页
                 let _query=_.extend({},this.$route.query);
                 _query[contextHelper.getMvueToolkit().utils.queryKeys.action]=contextHelper.getMvueToolkit().utils.formActions.view;
                 contextHelper.getRouter().push({
@@ -316,6 +323,8 @@ export default {
                     params:this.$route.params,
                     query:_query
                 });
+            }else if(this.completedAction=="closePopup"){
+                this.$emit("popup-close");
             }else{
                 contextHelper.getRouter().go(-1);
             }

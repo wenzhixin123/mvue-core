@@ -41,8 +41,8 @@ export default {
     data(){
         return {
             modalWidth:this.operation.modalWidth||750,
-            modalHeight:this.operation.modalHeight||400,
-            modalTitle:this.operation.modalTitle,
+            modalHeight:this.operation.modalHeight||380,
+            modalTitle:this.operation.modalTitle||this.operation.title,
             popupWidgetModal:false
         };
     },
@@ -77,12 +77,21 @@ export default {
 <style lang="scss">
 .popup-widget-con{
     .modal-inner-widget{
-        overflow:auto;padding:5px;
+        overflow:auto;
+        padding-right:16px;
     }
     // .ivu-modal-footer{
     //     padding:0px;
     //     border:none;
     // }
+    .ivu-modal-body{
+        padding-right:0px;
+    }
+    .ivu-modal-footer{
+        .ivu-form-item{
+            margin-bottom:0px;
+        }
+    }
 }
 </style>
 

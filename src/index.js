@@ -1,4 +1,6 @@
 function installGridAndForm(Vue){
+    Vue.component('entity-tree',require("./components/entity-tree/index"));
+
     Vue.component('meta-grid-render-html',require("./components/grid/render_html"));
     Vue.component('meta-grid-operation-btn',require("./components/grid/operation_btn"));
     Vue.component('meta-grid-img-title',require("./components/grid/img_title"));
@@ -8,6 +10,7 @@ function installGridAndForm(Vue){
     Vue.component('meta-grid-files',require("./components/grid/files"));
     Vue.component('meta-grid-import-data',require("./components/grid/import_data.vue"));
     Vue.component('meta-grid',require("./components/grid/iview_grid.vue"));
+    Vue.component('meta-tree-grid',require("./components/meta-tree-grid/index"));
     Vue.component('meta-operation',require("./components/meta_operation/operation"));
 
     Vue.component('meta-v-grid',require("./components/v-grid/index"));
@@ -69,7 +72,7 @@ import commonOperation from './components/meta_operation/js/common_operation';
 import  context from "./libs/context";
 
 //TODO delete just for test
-//import mvueComponents from 'mvue-components';
+import mvueComponents from 'mvue-components';
 
 let MvueCore={
     install:install,
@@ -92,7 +95,7 @@ function install(Vue, opts = {}) {
     
     //TODO delete just for test
     //debugger
-    //mvueComponents.context.init(Vue,{mvueToolkit:context.getMvueToolkit()});
+    mvueComponents.context.init(Vue,{mvueToolkit:context.getMvueToolkit()});
 
     installGridAndForm(Vue);
     Vue.prototype.$metaBase=metabase;

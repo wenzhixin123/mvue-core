@@ -66,19 +66,20 @@ export default {
         },
         //计算每个元素跨多少列，这里使用的iview的24列布局
         rowItemSpan(rowItems,rowItem){
-            if(rowItem.span){
-                return rowItem.span;
-            }
-            var allSpan=0,noSpanItemSize=0;
+            var allSpan=0;
             _.each(rowItems,item=>{
                 if(item.span){
                     allSpan+=item.span;
                 }else{
-                    noSpanItemSize+=1;
+                    allSpan+=1;
                 }
             });
+            var itemSpan=1;
+            if(rowItem.span){
+                itemSpan=rowItem.span;
+            }
             //这里需要配置编写者自行保证总和为24列，暂不做特殊处理
-            var spanSize=(24-allSpan)/noSpanItemSize;
+            var spanSize=Math.floor((24*itemSpan)/allSpan);
             return spanSize;
         },
         //附加到组件的参数过滤掉ctype等内置属性
@@ -109,21 +110,33 @@ export default {
             if(item.indexOf("@")!=0){
                 return item;
             }
-            var args=_.split(item);
-            var componentName=_kebabCase(args[0].replace("@",""));
-            var params=minimist(args.splice(1));
+             var args=_.split(item," ");
+            var componentName=_.kebabCase(args[0].replace("@",""));
             var component={
                 ctype:componentName
             }
-            _.forIn(params,(key,val)=>{
-                if(key=="_"){
-                    _.forEach(val,(sKey)=>{
-                        component[sKey]=true;
-                    });
-                }else {
-                    component[key]=val;
-                }
-            });
+            if(args.length>1){
+                var spliced=args.splice(1);
+                var params=minimist(spliced);
+                _.forIn(params,(val,key)=>{
+                    if(key=="_"){
+                        _.forEach(val,(sKey,index)=>{
+                            if(index==0){
+                                component["_value"]=sKey;
+                            }else{
+                                component[sKey]=true;
+                            }
+                        });
+                    }else {
+                        if(key=="s"){
+                            component["span"]=val;
+                        }else{
+                            component[key]=val;
+                        }
+                    }
+                });
+            }
+
             return component;
         }
     }

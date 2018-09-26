@@ -123,6 +123,10 @@
                         context:this.fieldContext(item)
                     }
                 }
+                if(_.has(item,"_value")){
+                    item["name"]=item["_value"];
+                    delete item["_value"];
+                }
                 return item;
             }
         }

@@ -70,6 +70,7 @@ import controlTypeService from './components/form/js/control_type_service';
 import commonOperation from './components/meta_operation/js/common_operation';
 
 import  context from "./libs/context";
+import getParent from './components/mixins/get-parent';
 
 //TODO delete just for test
 import mvueComponents from 'mvue-components';
@@ -85,7 +86,8 @@ let MvueCore={
     controlTypeService,
     operationManager:commonOperation,
     context,
-    metaLayoutConvertor
+    metaLayoutConvertor,
+    getParent
 };
 
 //Vue插件安装入口函数

@@ -21,12 +21,13 @@
                 <meta-layout v-if="isMetaLayout()" :settings="metaLayoutSettings()" @popup-close="close">
                 </meta-layout>
             </div>
-            <div slot="footer" :id="operation.id"></div>
+            <div slot="footer" :id="footerDomId"></div>
     </Modal>
 </div>
 </template>
 <script>
 import metaLayoutConvertor from '../meta-layout/layout-convertor';
+const uuidv1 = require('uuid/v1');
 export default {
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
@@ -39,11 +40,14 @@ export default {
         }
     },
     data(){
+        let footerDomId='footerid-'+uuidv1();
         return {
             modalWidth:this.operation.modalWidth||750,
             modalHeight:this.operation.modalHeight||380,
             modalTitle:this.operation.modalTitle||this.operation.title,
-            popupWidgetModal:false
+            popupWidgetModal:false,
+            footerDomId:footerDomId,
+            isPopup:true
         };
     },
     methods:{

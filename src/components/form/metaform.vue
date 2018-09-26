@@ -70,6 +70,7 @@
             initOthers(){
                 //根据实体字段信息初始化表单默认验证规则
                 this.initValidateRulesByMetaEntity();
+                this.$store.commit("core/setEntity",{entityName:this.entityName,entity:this.entity});
                 //预处理完毕，表单可以渲染了
                 this.preprocessed=true;
                 //调用外部传入的初始化回调函数

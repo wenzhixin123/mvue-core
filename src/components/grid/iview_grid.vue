@@ -131,8 +131,12 @@ export default {
                 if(relationField&&relationField.manyToOneRelation){
                     let r=relationField.manyToOneRelation;
                     let targetEntity=r.targetEntity;
-                    let refId=this.$store.getters['core/getRefId'](targetEntity);
-                    return refId;
+                    let refEntity=this.$store.getters['core/getEntity'](targetEntity);
+                    if(refEntity){
+                        let idField=this.$metaBase.findMetaEntity(targetEntity).getIdField().name;
+                        return refEntity[idField];
+                    }
+                    return null;
                 }
             }
             return null;

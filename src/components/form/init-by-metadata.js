@@ -17,9 +17,10 @@ function initModelByRelation(formInst,_model){
         if(relationField&&relationField.manyToOneRelation){
             let r=relationField.manyToOneRelation;
             let targetEntity=r.targetEntity;
-            let refId=formInst.$store.getters['core/getRefId'](targetEntity);
-            if(refId){
-                _model[key]=refId;
+            let refEntity=formInst.$store.getters['core/getEntity'](targetEntity);
+            if(refEntity){
+                let idField=formInst.$metaBase.findMetaEntity(targetEntity).getIdField().name;
+                _model[key]=refEntity[idField];
             }
         }
     });

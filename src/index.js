@@ -1,5 +1,6 @@
 function installGridAndForm(Vue){
     Vue.component('entity-tree',require("./components/entity-tree/index"));
+    Vue.component('tabs',require("./components/tabs/index"));
 
     Vue.component('meta-grid-render-html',require("./components/grid/render_html"));
     Vue.component('meta-grid-operation-btn',require("./components/grid/operation_btn"));
@@ -73,7 +74,7 @@ import  context from "./libs/context";
 import getParent from './components/mixins/get-parent';
 
 //TODO delete just for test
-//import mvueComponents from 'mvue-components';
+import mvueComponents from 'mvue-components';
 
 let MvueCore={
     install:install,
@@ -97,7 +98,7 @@ function install(Vue, opts = {}) {
     
     //TODO delete just for test
     //debugger
-    //mvueComponents.context.init(Vue,{mvueToolkit:context.getMvueToolkit()});
+    mvueComponents.context.init(Vue,{mvueToolkit:context.getMvueToolkit()});
 
     installGridAndForm(Vue);
     Vue.prototype.$metaBase=metabase;

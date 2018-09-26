@@ -123,9 +123,9 @@
                         context:this.fieldContext(item)
                     }
                 }
-                if(_.has(item,"_value")){
-                    item["name"]=item["_value"];
-                    delete item["_value"];
+                if(_.has(item,"value") &&(item.ctype=="meta-field"|| item.ctype=="metaField")){
+                    item["name"]=item["value"];
+                    delete item["value"];
                 }
                 return item;
             }

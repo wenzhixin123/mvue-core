@@ -122,7 +122,7 @@ export default {
                     if(key=="_"){
                         _.forEach(val,(sKey,index)=>{
                             if(index==0){
-                                component["_value"]=sKey;
+                                component["value"]=sKey;
                             }else{
                                 component[sKey]=true;
                             }
@@ -130,6 +130,16 @@ export default {
                     }else {
                         if(key=="s"){
                             component["span"]=val;
+                        }if(key=="i"){
+                            component["icon"]=val;
+                        }if(key=="t"){
+                            component["title"]=val;
+                        }if(key=="n"){
+                            component["name"]=val;
+                        }if(key=="v"){
+                            component["value"]=val;
+                        }if(key=="c"){
+                            component["code"]=val;
                         }else{
                             component[key]=val;
                         }

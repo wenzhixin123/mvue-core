@@ -3,8 +3,7 @@
           :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="labelWidth"
           :show-message="showMessage" :autocomplete="autocomplete">
         <slot>
-            <meta-field v-for="key in metaEntity.getDefaultFormFields()" :context="fieldContext({dataField:key})"  :key="key" :name="key">
-            </meta-field>
+            <meta-layout :settings="layout" :itemProcessor="layoutProcessor"></meta-layout>
         </slot>
         <FormItem v-if="hasButtons() || $slots.toolbar" class="form-toolbar"
                 v-transfer-dom="toolbarTransferDomId" :data-transfer="transfer">
@@ -40,7 +39,13 @@
             entityName:{//必填参数，表示元数据实体的名称）
                 type:String,
                 required:true
-            }
+            },
+            layout:{
+              type:Array,
+                default:function(){
+                    return [];
+                }
+            },
         },
         data:function(){
             var metaEntity=this.$metaBase.findMetaEntity(this.entityName);
@@ -48,6 +53,15 @@
             //构造实体数据操作的基本数据模型，会包含需要提交到后台的所有字段：会过滤掉主键、创建时间等维护字段
             //这里提前初始化entity数据，保证字段的存在性，对于双向绑定和表单验证是必须的
             var entity=metaEntity.getDefaultModel();
+            if(this.layout.length==0){
+                _.forEach(metaEntity.getDefaultFormFields(),(metaFieldName)=>{
+                    this.layout.length.push({
+                        ctype:"meta-field",
+                        name:metaFieldName,
+                        context:this.fieldContext(metaFieldName)
+                    });
+                });
+            }
             return {
                 metaEntity:metaEntity,
                 dataResource:dataResource,
@@ -100,6 +114,16 @@
                         _this.innerRules[formItem.dataField] = rules;
                     }
                 });
+            },
+            layoutProcessor:function(item){
+                if(_.isString(item)){
+                    return {
+                        ctype:"meta-field",
+                        name:item,
+                        context:this.fieldContext(item)
+                    }
+                }
+                return item;
             }
         }
     }

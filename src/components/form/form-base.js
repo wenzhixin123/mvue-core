@@ -95,7 +95,12 @@ export default {
     },
     data(){
         var formStatus=contextHelper.getMvueToolkit().utils.formActions.create;
-        if(!_.isEmpty(this.recordId)){
+        var entityId=this.recordId;
+        if(_.isEmpty(entityId)){
+            entityId=this.$route.params.id ||this.$route.query.id;
+        }
+
+        if(!_.isEmpty(entityId)){
             formStatus=contextHelper.getMvueToolkit().utils.formActions.edit;
         }
         return {
@@ -105,7 +110,7 @@ export default {
             isArchived:false,//表示数据是否已归档
             changedQueue:[],//智能验证变化队列
             formStatus:formStatus,
-            entityId:this.recordId,
+            entityId:entityId,
             isMetaForm:true,
             openEditClicked:false,
             innerPermissions:_.cloneDeep(this.permissions),

@@ -1,11 +1,11 @@
 <template>
 <div class="meta-layout-con">
-    <Row v-for="(rowItems,index) in settings" :key="index">
+    <Row v-for="(rowItems,index) in innerSettings" :key="index">
         <template v-if="isArray(rowItems)">
             <Col v-for="(rowItem,itemIndex) in rowItems" :key="itemIndex" :span="rowItemSpan(rowItems,rowItem)">
                 <!--子元素还是个布局，用布局组件渲染-->
                 <template v-if="isArray(rowItem)">
-                    <meta-layout @popup-close="handleOnPopupClose" :settings="rowItem"></meta-layout>
+                    <meta-layout @popup-close="handleOnPopupClose" :settings="rowItem" :itemProcessor="itemProcessor"></meta-layout>
                 </template>
                 <template v-else>
                     <component @popup-close="handleOnPopupClose" :is="rowItem.ctype" v-bind="componentProps(rowItem)"></component>
@@ -20,20 +20,46 @@
 </div>
 </template>
 <script>
+    var minimist=require("minimist");
 export default {
     name:"meta-layout",
     props:{
         settings:{//settings的length代表行，每个元素的length待办列，和二维数组对应
             type:[Array],
             required:true
+        },
+        itemProcessor:{ //内容组件处理器
+            type:Function
         }
     },
     data(){
+        var processed=this.preprocess(this.settings);
         return {
-            
+            innerSettings:processed
         };
     },
     methods:{
+        preprocess(st) {
+            var processedSettings=[];
+            _.forEach(st,(rowItem)=>{
+                if(!_.isArray(rowItem)){
+                    var component=this.processItem(rowItem);
+                    processedSettings.push(component);
+                    return;
+                }
+                var row=[];
+                processedSettings.push(row);
+                _.forEach(rowItem,(colItem)=>{
+                    if(_.isArray(colItem)){
+                        row.push(colItem);
+                        return ;
+                    }
+                    var component=this.processItem(colItem);
+                    row.push(component);
+                });
+            });
+            return processedSettings;
+        },
         //判断每个元素是否是数组
         isArray(rowItems){
             return _.isArray(rowItems);
@@ -56,6 +82,13 @@ export default {
             return spanSize;
         },
         //附加到组件的参数过滤掉ctype等内置属性
+        processItem(rowItem){
+             var component=this.cmdProcess(rowItem);
+            if(this.itemProcessor!=null){
+                component=this.itemProcessor(component);
+            }
+            return component;
+        },
         componentProps(rowItem){
             var _props={};
             var ignores=['ctype'];
@@ -68,6 +101,30 @@ export default {
         },
         handleOnPopupClose(){
             this.$emit("popup-close");
+        },
+        cmdProcess(item){
+            if(_.isEmpty(item) || !_.isString(item)){
+                return item;
+            }
+            if(item.indexOf("@")!=0){
+                return item;
+            }
+            var args=_.split(item);
+            var componentName=_kebabCase(args[0].replace("@",""));
+            var params=minimist(args.splice(1));
+            var component={
+                ctype:componentName
+            }
+            _.forIn(params,(key,val)=>{
+                if(key=="_"){
+                    _.forEach(val,(sKey)=>{
+                        component[sKey]=true;
+                    });
+                }else {
+                    component[key]=val;
+                }
+            });
+            return component;
         }
     }
 }

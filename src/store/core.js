@@ -23,6 +23,7 @@ const mutations = {
     var key=entityName.toLowerCase();
     state.currentRouteData[key]=state.currentRouteData[key]||{};
     state.currentRouteData[key]=entity;
+    state.currentRouteData=_.cloneDeep(state.currentRouteData);
   },
   setAutoPageConfs (state, autoPageConfs) {
     state.autoPageConfs=autoPageConfs;

@@ -1,5 +1,5 @@
 <template>
-    <b-list  v-if="canRender" ref="listInst"
+    <b-list  v-if="canRender()" ref="listInst"
             :columns="innerColumns"
             :query="innerQuery"
             :toolbar="toolbar"
@@ -115,33 +115,6 @@ export default {
             required:false
         }
     },
-    computed:{
-        canRender(){
-            //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
-            if(this.relation){
-                return this.preprocessed&&this.refEntityId;
-            }else{
-                return this.preprocessed;
-            }
-        },
-        refEntityId(){
-            if(this.relation){
-                let refField=this.relation.refField;
-                let relationField=this.metaEntity.findField(refField);
-                if(relationField&&relationField.manyToOneRelation){
-                    let r=relationField.manyToOneRelation;
-                    let targetEntity=r.targetEntity;
-                    let refEntity=this.$store.getters['core/getEntity'](targetEntity);
-                    if(refEntity){
-                        let idField=this.$metaBase.findMetaEntity(targetEntity).getIdField().name;
-                        return refEntity[idField];
-                    }
-                    return null;
-                }
-            }
-            return null;
-        }
-    },
     data:function(){
         var metaEntity = metabase.findMetaEntity(this.entityName);
         return {
@@ -198,10 +171,35 @@ export default {
         //暂时只处理多对一关系
         buildRelationFilters(){
             var _filters='';
-            if(this.refEntityId){
-                _filters=`${this.relation.refField} eq ${this.refEntityId}`;
+            if(this.refEntityId()){
+                _filters=`${this.relation.refField} eq ${this.refEntityId()}`;
             }
             return _filters;
+        },
+        refEntityId(){
+            if(this.relation){
+                let refField=this.relation.refField;
+                let relationField=this.metaEntity.findField(refField);
+                if(relationField&&relationField.manyToOneRelation){
+                    let r=relationField.manyToOneRelation;
+                    let targetEntity=r.targetEntity.toLowerCase();
+                    let refEntity=this.$store.state.core.currentRouteData[targetEntity];
+                    if(refEntity){
+                        let idField=this.$metaBase.findMetaEntity(targetEntity).getIdField().name;
+                        return refEntity[idField];
+                    }
+                    return null;
+                }
+            }
+            return null;
+        },
+        canRender(){
+            //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
+            if(this.relation){
+                return this.refEntityId()&&this.preprocessed;
+            }else{
+                return this.preprocessed;
+            }
         }
     }
 }

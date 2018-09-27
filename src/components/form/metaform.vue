@@ -55,7 +55,7 @@
             var entity=metaEntity.getDefaultModel();
             if(this.layout.length==0){
                 _.forEach(metaEntity.getDefaultFormFields(),(metaFieldName)=>{
-                    this.layout.length.push({
+                    this.layout.push({
                         ctype:"meta-field",
                         name:metaFieldName,
                         context:this.fieldContext(metaFieldName)

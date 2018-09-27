@@ -1,5 +1,5 @@
 <template>
-    <b-list  v-if="canRender" ref="listInst"
+    <b-list  v-if="canRender()" ref="listInst"
             :columns="innerColumns"
             :query="innerQuery"
             :toolbar="toolbar"
@@ -116,14 +116,6 @@ export default {
         }
     },
     computed:{
-        canRender(){
-            //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
-            if(this.relation){
-                return this.preprocessed&&this.refEntityId;
-            }else{
-                return this.preprocessed;
-            }
-        },
         refEntityId(){
             if(this.relation){
                 let refField=this.relation.refField;
@@ -202,6 +194,14 @@ export default {
                 _filters=`${this.relation.refField} eq ${this.refEntityId}`;
             }
             return _filters;
+        },
+        canRender(){
+            //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
+            if(this.relation){
+                return this.preprocessed&&this.refEntityId;
+            }else{
+                return this.preprocessed;
+            }
         }
     }
 }

@@ -3,9 +3,17 @@
 var operations={
 
 };
+function register(operations) {
+    if(_.isArray(operations)){
+        _.forEach(operations,(op)=>{
+            registerSingle(op);
+        });
+    }else{
+        registerSingle(operations);
+    }
+}
 
-
-function register(operation) {
+function registerSingle(operation) {
     var name=operation.name;
     if(_.isNil(name)){
         console.log("hasn't name ,can't register it ,operation:"+JSON.stringify(operation));

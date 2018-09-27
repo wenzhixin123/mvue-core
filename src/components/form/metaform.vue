@@ -75,6 +75,7 @@
                 initByMetadata.initModelByQueryParams(this,this.entity);
                 //根据关系填充模型关系字段数据：只考虑多对一关系
                 initByMetadata.initModelByRelation(this,this.entity);
+                this.$store.commit("core/setEntity",{entityName:this.entityName,entity:this.entity});
                 this.initOthers();
             }else{//编辑或查看模式，需要从后端获取实体记录数据覆盖初始的模型数据，之后再继续初始化
                 this.reinitEntityModel();
@@ -84,7 +85,6 @@
             initOthers(){
                 //根据实体字段信息初始化表单默认验证规则
                 this.initValidateRulesByMetaEntity();
-                this.$store.commit("core/setEntity",{entityName:this.entityName,entity:this.entity});
                 //预处理完毕，表单可以渲染了
                 this.preprocessed=true;
                 //调用外部传入的初始化回调函数
@@ -95,6 +95,7 @@
             //根据数据id重新初始化entity模型数据
             reinitEntityModel(){
                 return this.dataResource.get({id: this.entityId}).then(({data})=> {
+                    this.$store.commit("core/setEntity",{entityName:this.entityName,entity:data});
                     //根据实体记录数据初始化操作权限
                     this.initPerm(data);
                     _.forIn(this.entity, (value, key) => {

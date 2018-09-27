@@ -158,15 +158,15 @@ export default {
                     }else {
                         if(key=="s"){
                             component["span"]=val;
-                        }if(key=="i"){
+                        }else if(key=="i"){
                             component["icon"]=val;
-                        }if(key=="t"){
+                        }else if(key=="t"){
                             component["title"]=val;
-                        }if(key=="n"){
+                        }else if(key=="n"){
                             component["name"]=val;
-                        }if(key=="v"){
+                        }else if(key=="v"){
                             component["value"]=val;
-                        }if(key=="c"){
+                        }else if(key=="c"){
                             component["class"]=val;
                         }else{
                             component[key]=val;

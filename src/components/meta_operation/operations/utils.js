@@ -20,7 +20,7 @@ function buildQuery(context){
         }
         //关系字段过滤条件附加到url
         if(context.grid.refEntityId){
-            _query[context.grid.relation.refField]=context.grid.refEntityId;
+            _query[context.grid.relation.refField]=context.grid.refEntityId();
         }
     }
     return _query;

@@ -86,7 +86,6 @@
 </template>
 <script>
 import metabase from '../../libs/metadata/metabase';
-
 import initByMetaView from './init-by-metaview';
 import metaservice from "../../services/meta/metaservice";
 import gridBase from '../grid/js/grid-base';
@@ -124,9 +123,9 @@ export default {
             
             innerToolbar:{
                 hide: (this.toolbar&&this.toolbar.hide)||false,
-                btns: this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.btns),//普通操作
-                singleBtns:this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.singleBtns),//基于单条数据的操作
-                batchBtns: this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.batchBtns),//基于多条数据的操作
+                btns: this.wrapBtns(this.toolbar&&this.toolbar.btns),//普通操作
+                singleBtns:this.wrapBtns(this.toolbar&&this.toolbar.singleBtns),//基于单条数据的操作
+                batchBtns: this.wrapBtns(this.toolbar&&this.toolbar.batchBtns),//基于多条数据的操作
                 rowSingleClick: (this.toolbar&&this.toolbar.rowSingleClick),//单击行的操作
                 quicksearch:{
                     fields: null,

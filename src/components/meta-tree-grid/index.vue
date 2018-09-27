@@ -33,7 +33,7 @@
                 required:false
             },
             handleOnTitleClick:{//点击标题列处理函数
-                type:Function,
+                type:[Function,Object,String],
                 required:false
             },
             relation:{//关联列表会提供关系配置{refField:''}

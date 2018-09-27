@@ -1,9 +1,9 @@
 import globalContext from '../../../libs/context';
 import { leapQueryConvertor } from "mvue-components";
-import operationConvertor from '../../mixins/operation-convertor';
+import operationManager from "../../../libs/operation/operations";
 import  gridProps from "./grid-props";
 export default{
-    mixins:[gridProps,operationConvertor],
+    mixins:[gridProps],
     data(){
         return {
             metaEntity: null,
@@ -15,9 +15,9 @@ export default{
             queryResource:null,
             innerToolbar:{
                 hide: (this.toolbar&&this.toolbar.hide)||false,
-                btns: this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.btns),//普通操作
-                singleBtns:this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.singleBtns),//基于单条数据的操作
-                batchBtns: this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.batchBtns),//基于多条数据的操作
+                btns: this.wrapBtns(this.toolbar&&this.toolbar.btns),//普通操作
+                singleBtns:this.wrapBtns(this.toolbar&&this.toolbar.singleBtns),//基于单条数据的操作
+                batchBtns: this.wrapBtns(this.toolbar&&this.toolbar.batchBtns),//基于多条数据的操作
                 rowSingleClick: (this.toolbar&&this.toolbar.rowSingleClick),//单击行的操作
                 quicksearch: (this.toolbar&&this.toolbar.quicksearch)||{
                     fields: null,
@@ -46,6 +46,7 @@ export default{
     },
     methods:{
         innerQuery(ctx){
+                ctx.quicksearchKeyword=this.quicksearchKeyword;
             //外部高级查询和内部高级查询只能二选一，如果同时出现，这里不会合并
             //外部高级查询:可通过设置组件的top slot区模板和属性filters
             //内部高级查询:如果组件属性toolbar.advanceSearchFields的有值，则内部默认的高级查询条件需要合并到ctx的filters和quicksearchKeyword中
@@ -65,7 +66,6 @@ export default{
                     };
                 });
                 ctx.filters=useInnerAdvSearchFilters;
-                ctx.quicksearchKeyword=this.quicksearchKeyword;
             }//外部高级查询的查询条件自动在ctx里边，不需要特殊处理
             //1 如果有来自url查询条件的默认查询参数自动添加进去
             //2 如果有来自列header的查询条件也附加上去
@@ -116,6 +116,9 @@ export default{
                 };
             }
             return context;
+        },
+        wrapBtns(btns){
+          return operationManager.batchCreate(btns);
         },
         //判断按钮是否禁用
         btnIsDisabled(btn){

@@ -5,7 +5,7 @@
             <Col v-for="(rowItem,itemIndex) in rowItems" :key="itemIndex" :span="rowItemSpan(rowItems,rowItem)">
                 <!--子元素还是个布局，用布局组件渲染-->
                 <template v-if="isArray(rowItem)">
-                    <meta-layout @popup-close="handleOnPopupClose" :settings="rowItem" :itemProcessor="itemProcessor"></meta-layout>
+                    <meta-layout @popup-close="handleOnPopupClose" :layout="rowItem" :itemProcessor="itemProcessor"></meta-layout>
                 </template>
                 <template v-else>
                     <component @popup-close="handleOnPopupClose" :is="rowItem.ctype" v-bind="componentProps(rowItem)"></component>
@@ -24,7 +24,7 @@
 export default {
     name:"meta-layout",
     props:{
-        settings:{//settings的length代表行，每个元素的length待办列，和二维数组对应
+        layout:{//settings的length代表行，每个元素的length待办列，和二维数组对应
             type:[Array],
             required:true
         },
@@ -33,7 +33,7 @@ export default {
         }
     },
     data(){
-        var processed=this.preprocess(this.settings);
+        var processed=this.preprocess(this.layout);
         return {
             innerSettings:processed
         };
@@ -66,21 +66,43 @@ export default {
         },
         //计算每个元素跨多少列，这里使用的iview的24列布局
         rowItemSpan(rowItems,rowItem){
+            var curRowSpan=this.resolveSpan(rowItem);
+            if(curRowSpan.isFix){
+                return curRowSpan.span;
+            }
+
+            var amount=24;
             var allSpan=0;
             _.each(rowItems,item=>{
-                if(item.span){
-                    allSpan+=item.span;
-                }else{
-                    allSpan+=1;
+                var rowSpan=this.resolveSpan(item);
+                if(rowSpan.isFix){
+                    amount=amount-rowSpan.span;
+                    return;
                 }
+                allSpan=allSpan+rowSpan.span;
             });
-            var itemSpan=1;
-            if(rowItem.span){
-                itemSpan=rowItem.span;
-            }
             //这里需要配置编写者自行保证总和为24列，暂不做特殊处理
-            var spanSize=Math.floor((24*itemSpan)/allSpan);
+            var spanSize=Math.floor((amount*curRowSpan.span)/allSpan);
             return spanSize;
+        },
+        resolveSpan(rowItem){
+            var span={
+              isFix:false,
+              span:1
+            };
+            var rowSpan=rowItem.span;
+            if(_.isNil(rowSpan)){
+                return span;
+            }
+            if(_.isString(rowSpan)){
+                if(rowSpan.indexOf("c")){
+                    span.isFix=true;
+                    rowSpan=rowSpan.replace("c","");
+                }
+                rowSpan=_.toSafeInteger(rowSpan);
+            }
+            span.span=rowSpan;
+            return span;
         },
         //附加到组件的参数过滤掉ctype等内置属性
         processItem(rowItem){
@@ -104,8 +126,14 @@ export default {
             this.$emit("popup-close");
         },
         cmdProcess(item){
-            if(_.isEmpty(item) || !_.isString(item)){
+            if( !_.isString(item)){
                 return item;
+            }
+            if(_.isEmpty(item)){
+                return {
+                    ctype:"txt",
+                    value:""
+                };
             }
             if(item.indexOf("@")!=0){
                 return item;
@@ -139,7 +167,7 @@ export default {
                         }if(key=="v"){
                             component["value"]=val;
                         }if(key=="c"){
-                            component["code"]=val;
+                            component["class"]=val;
                         }else{
                             component[key]=val;
                         }

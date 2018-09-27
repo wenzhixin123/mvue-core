@@ -18,7 +18,7 @@
             <div class="modal-inner-widget" :style="{height:modalHeight+'px'}" v-if="popupWidgetModal">
                 <component v-if="!isMetaLayout()" @popup-close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
                 </component>
-                <meta-layout v-if="isMetaLayout()" :settings="metaLayoutSettings()" @popup-close="close">
+                <meta-layout v-if="isMetaLayout()" :layout="metaLayoutSettings()" @popup-close="close">
                 </meta-layout>
             </div>
             <div slot="footer" :id="footerDomId"></div>

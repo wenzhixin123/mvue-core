@@ -1,7 +1,7 @@
 <template>
     <Tabs>
         <TabPane v-for="(pane,index) in panes" :key="index" :label="pane.title">
-            <meta-layout :settings="paneLayout(pane.layout)"></meta-layout>
+            <meta-layout :layout="paneLayout(pane.layout)"></meta-layout>
         </TabPane>
     </Tabs>
 </template>

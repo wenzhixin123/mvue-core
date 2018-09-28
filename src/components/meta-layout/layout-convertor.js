@@ -1,17 +1,17 @@
 import propParser from '../../services/tool/prop_parser';
-import context from '../../libs/context';
 function parseProps(layout,curInst){
     _.forEach(layout,lyt=>{
         _.forIn(lyt,(value,key)=>{
             if(value.value&&value.value.from){
                 value.type=value.type||"text";
-                let _v=propParser.parse(value,curInst,context.getRouter());
+                let _v=propParser.parse(value,curInst);
                 lyt[key]=_v;
             }
         });
     });
 }
-function convertSettings(_settings,curInst){
+import attachPropsProcessor from './attach-props-processor';
+function convertSettings(_settings,curInst,options){
     var temp=null;
     //对于只有一个组件的情况，自动转换为一列一行的布局
     if(_settings.ctype){
@@ -25,6 +25,8 @@ function convertSettings(_settings,curInst){
     }else{
         temp = _settings;
     }
+    //预处理，添加一些默认的组件配置属性，如meta-form的recordId来源
+    attachPropsProcessor.process(temp.layout,options);
     parseProps(temp.layout,curInst);
     return temp;
 }

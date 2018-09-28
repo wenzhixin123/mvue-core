@@ -71,8 +71,8 @@ export default {
         metaLayoutSettings(){
             var widget=this.operation.widget;
             var autoPageConfs=this.$store.getters['core/autoPageConfs'];
-            var settings=autoPageConfs[widget];
-            settings= metaLayoutConvertor.convert(settings);
+            var settings=_.cloneDeep(autoPageConfs[widget]);
+            settings= metaLayoutConvertor.convert(settings,this,{isPopup:true});
             return settings.layout;
         }
     }

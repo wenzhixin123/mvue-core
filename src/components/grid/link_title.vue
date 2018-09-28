@@ -4,6 +4,7 @@
     </div>
 </template>
 <script>
+    import controlTypeService from '../form/js/control_type_service';
 export default {
     props:{
         params:{
@@ -17,7 +18,8 @@ export default {
     },
     computed:{
       titleVal:function () {
-          var val=this.item[this.params.name];
+          var val = controlTypeService.formatData(this.item, this.params);
+          //var val=this.item[this.params.name];
           return val;
       }
     },

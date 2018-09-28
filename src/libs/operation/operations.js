@@ -19,6 +19,9 @@ function registerSingle(operation) {
         console.log("hasn't name ,can't register it ,operation:"+JSON.stringify(operation));
         return;
     }
+    if(!_.has(operation,"type")){
+        operation["type"]="common";
+    }
     operations[name]=operation;
 }
 

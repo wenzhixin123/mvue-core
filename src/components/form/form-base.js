@@ -373,9 +373,13 @@ export default {
                 let metaField=_this.metaEntity.findField(k);
                 if(metaField&&metaField.readonly){
                     //readonly字段不提交
-                }else{
-                    _model[k]=v;
+                    return;
                 }
+                if(_.isNil(v) && metaField&&metaField.required){
+                    //未赋值的必填字段，不提交
+                    return ;
+                }
+                _model[k]=v;
             });
             return _model;
         },

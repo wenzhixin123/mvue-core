@@ -7,7 +7,7 @@ import contextHelper from "../../../../libs/context";
 
 var operation= {
     name:"cancel",
-    title:"返回",
+    title:"取消",
     icon:"",
     operationType:"common",
     btnType:"default",

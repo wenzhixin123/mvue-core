@@ -39,8 +39,8 @@ function create(opts) {
     var created=_.assign({},template,opts);
 
     //根据type重写operationType
-    if(_.has(created,"action")){
-        created["operationType"]=created["action"];
+    if(_.has(created,"type")){
+        created["operationType"]=created["type"];
     }
     return created;
 }

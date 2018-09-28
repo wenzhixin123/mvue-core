@@ -8,7 +8,7 @@ var operation= {
     name:"batchDelete",
     title:"删除",
     icon:"ios-trash",
-    type:"warning",
+    btnType:"warning",
     operationType:"common",
     handler:null,
     disabled:function (ctx) {

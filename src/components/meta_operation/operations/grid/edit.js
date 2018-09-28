@@ -11,7 +11,7 @@ var operation= {
     icon: "md-create",
     to:null,
     operationType:"common",
-    type:"primary",
+    btnType:"primary",
     onclick:function(context,$optInst) {
         return impl(context,$optInst);
     }

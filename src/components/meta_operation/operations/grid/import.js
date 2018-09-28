@@ -7,7 +7,7 @@ var operation= {
     title:"导入",
     icon:"ios-upload-outline",
     operationType:"common",
-    type:"primary",
+    btnType:"primary",
     renderComponent:"meta-grid-import-data"
 };
 export default  operation

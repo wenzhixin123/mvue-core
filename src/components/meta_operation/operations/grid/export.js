@@ -12,7 +12,7 @@ var operation= {
     title:"导出",
     icon:"ios-download-outline",
     operationType:"common",
-    type:"primary",
+    btnType:"primary",
     onclick:function(context,$optInst) {
         return impl(context,$optInst);
     }

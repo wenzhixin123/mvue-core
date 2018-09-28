@@ -9,7 +9,7 @@ var operation= {
     title:"返回",
     icon:"",
     operationType:"common",
-    type:"default",
+    btnType:"default",
     onclick:function(context,$optInst) {
         return impl(context,$optInst);
     }

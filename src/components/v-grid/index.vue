@@ -45,7 +45,7 @@
                         :operation="btn"  :widget-context="getWidgetContext()" class="grid-primary-btn">
                     <Button slot-scope="{operation}" class="normal-btn"
                             :disabled="btnIsDisabled(operation)"
-                            :type="operation.type?operation.type:'primary'"  :icon="operation.icon">{{operation.title}}</Button>
+                            :type="operation.btnType||'primary'"  :icon="operation.icon">{{operation.title}}</Button>
                 </meta-operation>
                 <Dropdown v-if="innerToolbar.btns.length>btnSizeBeforeMore" >
                     <Button>

@@ -96,10 +96,6 @@ export default {
     data(){
         var formStatus=contextHelper.getMvueToolkit().utils.formActions.create;
         var entityId=this.recordId;
-        if(_.isEmpty(entityId)){
-            entityId=this.$route.params.id ||this.$route.query.id;
-        }
-
         if(!_.isEmpty(entityId)){
             formStatus=contextHelper.getMvueToolkit().utils.formActions.edit;
         }

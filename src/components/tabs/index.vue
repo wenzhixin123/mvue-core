@@ -1,7 +1,7 @@
 <template>
     <Tabs>
         <TabPane v-for="(pane,index) in panes" :key="index" :label="pane.title">
-            <meta-layout :layout="paneLayout(pane.layout)"></meta-layout>
+            <meta-layout :layout="paneLayout(pane)"></meta-layout>
         </TabPane>
     </Tabs>
 </template>
@@ -17,23 +17,13 @@
         },
         data(){
             return {
-                processed:false,
             }
         },
-        mounted:function () {
-            this.processed=true;
-        },
         methods:{
-                paneLayout:function (setting) {
-                    if(_.isArray(setting)){
-                        return setting;
-                    }
-                    var pageSetting=layoutConvertor.convert(setting);
-                    return pageSetting.layout;
-                }
-        },
-        components:{
-            metaLayout:require("../meta-layout/index")
+            paneLayout:function (setting) {
+                var pageSetting=layoutConvertor.convert(setting,this);
+                return pageSetting.layout;
+            }
         }
     }
 </script>

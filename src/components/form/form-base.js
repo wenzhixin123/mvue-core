@@ -216,7 +216,7 @@ export default {
                     _this.dataResource.update({id:this.entityId},_model).then(function({data}){
                         _this.isSavingToServer=false;
                         let afterSavePromise=_this.afterSave("on-edited",data,'编辑成功');
-                        afterSavePromise.then(()=>{resolve(_this.entity);},()=>{reject();});
+                        afterSavePromise.then(()=>{resolve({data:_this.entity});},()=>{reject();});
                     },function(){
                         _this.isSavingToServer=false;
                         reject();
@@ -230,7 +230,7 @@ export default {
                         _this.isSavingToServer=false;
                         let afterSavePromise=_this.afterSave("on-created",data,'保存成功');
                         afterSavePromise.then(()=>{
-                            resolve(data);
+                            resolve({data:data,isCreate:true});
                         },()=>{reject();});
                     },function(){
                         _this.isSavingToServer=false;
@@ -329,10 +329,6 @@ export default {
                     params:this.$route.params,
                     query:_query
                 });
-            }else if(this.completedAction=="closePopup"){
-                this.$emit("popup-close");
-            }else{
-                contextHelper.getRouter().go(-1);
             }
         },
         //表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等

@@ -10,7 +10,7 @@
             <slot name="toolbar" >
                 <template v-if="isView">
                     <meta-operation v-for="btn in innerToolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                        <Button slot-scope="{operation}" :type="operation.btnType || 'primary'"  :title="operation.title">
+                        <Button slot-scope="{operation}" :type="operation.type || 'primary'"  :title="operation.title">
                             <Icon :type="operation.icon" v-if="operation.icon"></Icon>
                             {{operation.title}}
                         </Button>
@@ -18,7 +18,7 @@
                 </template>
                 <template v-if="!isView">
                     <meta-operation v-for="btn in innerToolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                        <Button slot-scope="{operation}" :type="operation.btnType || 'primary'"  :title="operation.title">
+                        <Button slot-scope="{operation}" :type="operation.type || 'primary'"  :title="operation.title">
                             <Icon :type="operation.icon" v-if="operation.icon"></Icon>
                             {{operation.title}}
                         </Button>

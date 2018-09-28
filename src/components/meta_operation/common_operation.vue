@@ -17,7 +17,6 @@
 </div>
 </template>
 <script>
-import commonOperation from './js/common_operation';
 export default {
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
@@ -31,12 +30,14 @@ export default {
     },
     computed:{
         extendedOperation:function(){
+            return this.operation;
+            /*
             let commonOptName=this.operation.name;
             let commonOpt=commonOperation.createOperation(commonOptName);
             if(commonOpt){
                 return Object.assign({},commonOpt,this.operation);
             }
-            return null;
+            return null;*/
         }
     },
     data(){

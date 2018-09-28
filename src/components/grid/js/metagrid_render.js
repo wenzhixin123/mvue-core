@@ -2,8 +2,17 @@
  * 提供内置的列的渲染
  */
 import controlTypeService from '../../form/js/control_type_service';
-import gridOperations from "./metagrid_operation";
+import gridOperations from "../../../libs/operation/operations";
 import globalContext from "../../../libs/context";
+var pathToRegexp = require('path-to-regexp');
+
+function goto(router) {
+    if(_.has(router,"path")){
+        var path= pathToRegexp.compile(router.path)(router.params);
+        router.path=path;
+    }
+    globalContext.getRouter().push(router);
+}
 
 export default {
   /**
@@ -77,7 +86,17 @@ export default {
                     click: function (item) {
                         var handleOnTitleClickFunc=context.grid&&context.grid.handleOnTitleClick;
                         if(handleOnTitleClickFunc){
-                            handleOnTitleClickFunc(context, params);
+                            if(_.isFunction(handleOnTitleClickFunc)){
+                                handleOnTitleClickFunc(context, params);
+                            }else{
+                                var id=params.row.id;
+                                var router=handleOnTitleClickFunc;
+                                if(_.isString(router)){
+                                    router={path:router};
+                                }
+                                router=_.extend(router,{query:{id:id},params:{id:id}});
+                                goto(router);
+                            }
                             return ;
                         }
                         if(metaField.actionFunc){
@@ -88,7 +107,7 @@ export default {
                         var wrappedContext=_.extend({
                             selectedId:id
                         },context);
-                        var editorOp=gridOperations.createOperation("edit");
+                        var editorOp=gridOperations.create("edit");
                         editorOp.onclick(wrappedContext,{operation:{}});
                     }
                 }

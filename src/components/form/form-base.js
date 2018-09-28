@@ -2,11 +2,11 @@ import TransferDom from './js/transfer_dom';
 import constants from './js/constants';
 import  contextHelper from "../../libs/context";
 import metaformUtils from './js/metaform_utils';
-import operationConvertor from '../mixins/operation-convertor';
+import operationManager from "../../libs/operation/operations";
 import getParent from '../mixins/get-parent';
 var co = require('co');
 export default {
-    mixins:[operationConvertor,getParent],
+    mixins:[getParent],
     directives: { TransferDom },
     props:{
         toolbar:{
@@ -117,8 +117,8 @@ export default {
             subcomponentAfterSaveChain:[],//所有需要在表单保存后做继续操作的子组件集合
             innerRules:_.cloneDeep(this.rules),
             innerToolbar:{
-                editBtns:this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.editBtns),
-                viewBtns:this.convertToCommonOptIfNeeded(this.toolbar&&this.toolbar.viewBtns)
+                editBtns:operationManager.batchCreate(this.toolbar&&this.toolbar.editBtns),
+                viewBtns:operationManager.batchCreate(this.toolbar&&this.toolbar.viewBtns)
             }
         };
     },

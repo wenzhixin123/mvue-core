@@ -6,7 +6,7 @@ import ExportCsv from '../../grid/js/export_csv';
 import toolServices from '../../../services/tool/tool_service';
 import contextHelper from "../../../libs/context";
 
-import metaOperation from '../../grid/js/metagrid_operation';
+import metaOperation from '../../../libs/operation/operations';
 var pathToRegexp = require('path-to-regexp');
 /**
  * 获取当前选中的行id
@@ -50,7 +50,7 @@ function operationForCreate() {
         $optInst.mustStopRepeatedClick = false;
         //contextHelper.error({ content: `跳转页面未设置` });
         //这里如果不是按照部件页面规范定义的操作，跳转到旧的[create]实体操作方式执行
-        metaOperation.createOperation("create").onclick(context,$optInst);
+        metaOperation.create("create").onclick(context,$optInst);
         return;
       }
       var _query = _.extend({}, operation.queryParams);
@@ -79,7 +79,7 @@ function operationForEdit() {
         $optInst.mustStopRepeatedClick=false;
         //contextHelper.error({ content: `跳转页面未设置` });
         //这里如果不是按照部件页面规范定义的操作，跳转到旧的[edit]实体操作方式执行
-        metaOperation.createOperation("edit").onclick(context,$optInst);
+        metaOperation.create("edit").onclick(context,$optInst);
         return;
       }
       var _query = _.extend({ dataId: id }, operation.queryParams);
@@ -108,7 +108,7 @@ function operationForView() {
         $optInst.mustStopRepeatedClick = false;
         //contextHelper.error({ content: `跳转页面未设置` });
         //这里如果不是按照部件页面规范定义的操作，跳转到旧的[view]实体操作方式执行
-        metaOperation.createOperation("view").onclick(context,$optInst);
+        metaOperation.create("view").onclick(context,$optInst);
         return;
       }
       var _query = _.extend({ dataId: id, forceView:true }, operation.queryParams);

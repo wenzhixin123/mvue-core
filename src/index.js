@@ -74,6 +74,7 @@ import commonOperation from './components/meta_operation/js/common_operation';
 
 import  context from "./libs/context";
 import getParent from './components/mixins/get-parent';
+import operationManager from "./libs/operation/operations";
 
 //TODO delete just for test
 import mvueComponents from 'mvue-components';
@@ -87,7 +88,7 @@ let MvueCore={
     formConstants,
     formValidationPattern,
     controlTypeService,
-    operationManager:commonOperation,
+    operationManager:operationManager,
     context,
     metaLayoutConvertor,
     getParent

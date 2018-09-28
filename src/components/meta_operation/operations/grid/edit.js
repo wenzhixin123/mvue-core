@@ -30,9 +30,8 @@ function impl(context,$optInst){
     var _params={entityName:metaEntity.name};
     var defaultRouter={
         query:_.assign(_query,{id:id}),
-        params:_params
+        params:_.assign(_params,{id:id})
     }
-    debugger;
     var router=null;
     if($optInst&&$optInst.operation){
         router=gridUtils.buildRouteToFromOp($optInst.operation);
@@ -41,7 +40,7 @@ function impl(context,$optInst){
         router=buildRoutToFromEntity(metaEntity,id);
     }
     router=_.merge(defaultRouter,router);
-    router.query=_.assign(router.query,{"dataId":id});
+    //router.query=_.assign(router.query,{"dataId":id});
     gridUtils.goto(router);
 }
 

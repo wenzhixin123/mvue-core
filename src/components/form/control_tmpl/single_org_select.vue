@@ -60,7 +60,8 @@ export default {
     },
     methods: {
         buildQueryOptions(params,keyword){
-            var filters= `status eq 1 and (${this.getTitleField()} like '%${keyword}%')`;
+            var encodeKeyword=context.getMvueToolkit().utils.leapQueryValueEncode(keyword);
+            var filters= `status eq 1 and (${this.getTitleField()} like '%${encodeKeyword}%')`;
             params.filters=filters;
         },
         searchChange:function(keyword){

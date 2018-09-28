@@ -50,7 +50,8 @@ export default {
     },
     methods: {
         buildQueryOptions(params,keyword){
-            var filters=`${this.getTitleField()} like '%${keyword}%'`;
+            var encodeKeyword=context.getMvueToolkit().utils.leapQueryValueEncode(keyword);
+            var filters=`${this.getTitleField()} like '%${encodeKeyword}%'`;
             params.filters=filters;
             if(this.formItem.componentParams.orderbyField){
                 let orderbyType=this.formItem.componentParams.orderbyType||'asc';

@@ -77,39 +77,39 @@ export default {
 
     renderForLinkTitle: function (context, metaField,idFieldName) {
         return function (h, params) {
+            var btnOpts=null;
+            var clickHandler=context.grid&&context.grid.handleOnTitleClick;
+            if(clickHandler){
+                btnOpts={name:"edit"};
+                if(_.isFunction(clickHandler)){
+                    btnOpts["onclick"]=clickHandler;
+                }else if(_.isString(clickHandler)) {
+                    btnOpts["to"] = clickHandler;
+                }else{
+                    btnOpts=_.assign(btnOpts,clickHandler);
+                }
+            }
+            if(btnOpts==null){
+                if(context.grid.toolbar && context.grid.toolbar.singleBtns){
+                    _.forEach(context.grid.toolbar.singleBtns,btn=>{
+                        if(btn.name=="edit"){
+                            btnOpts=btn;
+                            return false;
+                        }
+                    });
+                }
+            }
+            if(btnOpts==null){
+                btnOpts={name:"edit"};
+            }
+            var oper=gridOperations.create(btnOpts);
+
             return h("meta-grid-link-title", {
                 props: {
                     params:metaField,
-                    item: params.row
-                },
-                on: {
-                    click: function (item) {
-                        var handleOnTitleClickFunc=context.grid&&context.grid.handleOnTitleClick;
-                        if(handleOnTitleClickFunc){
-                            if(_.isFunction(handleOnTitleClickFunc)){
-                                handleOnTitleClickFunc(context, params);
-                            }else{
-                                var id=params.row.id;
-                                var router=handleOnTitleClickFunc;
-                                if(_.isString(router)){
-                                    router={path:router};
-                                }
-                                router=_.extend(router,{query:{id:id},params:{id:id}});
-                                goto(router);
-                            }
-                            return ;
-                        }
-                        if(metaField.actionFunc){
-                            metaField.actionFunc.call(context, params);
-                            return ;
-                        }
-                        var id=item[idFieldName];
-                        var wrappedContext=_.extend({
-                            selectedId:id
-                        },context);
-                        var editorOp=gridOperations.create("edit");
-                        editorOp.onclick(wrappedContext,{operation:{}});
-                    }
+                    item: params.row,
+                    context:context,
+                    btn:oper
                 }
             });
         }

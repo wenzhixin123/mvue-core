@@ -1,7 +1,7 @@
 <template>
-    <div @click = "handleClick">
+    <meta-operation  :operation="btn" :widget-context="getWidgetContext()">
         <a class="grid-title-cell" :title="titleVal"  v-html="titleVal"></a>
-    </div>
+    </meta-operation>
 </template>
 <script>
     import controlTypeService from '../form/js/control_type_service';
@@ -11,9 +11,16 @@ export default {
             type:Object,
             required:true
         },
+        btn:{
+            type:Object,
+            required:true
+        },
         item:{
             type:Object,
             required:true
+        },
+        context:{
+            type:Object
         }
     },
     computed:{
@@ -26,6 +33,14 @@ export default {
     methods:{
         handleClick(){
             this.$emit("click",this.item);
+        },
+        getWidgetContext(){
+            return {
+                grid:this.context&&this.context.grid,
+                selectedId:this.item.id,
+                selectedItem:this.item,
+                metaEntity:this.context&&this.context.grid&&this.context.grid.metaEntity
+            }
         }
     }
 }

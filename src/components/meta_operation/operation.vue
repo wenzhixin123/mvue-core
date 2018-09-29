@@ -10,6 +10,7 @@ import propParser from '../../services/tool/prop_parser';
 import OperationUtils from './operations/utils';
 import operations from "./operations/register";
 import  operationManager from "../../libs/operation/operations";
+import getParent from '../mixins/get-parent';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
 var permParser={
@@ -39,6 +40,7 @@ var permParser={
 };
 //将不同的部件操作类型转成实际的操作
 export default {
+    mixins:[getParent],
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
             type:Object,

@@ -43,11 +43,20 @@ function getMetabase(projectId){
  */
 function currentSwagger(projectId){
   if(!projectId){
+    currentEngineUrl=context.getConfig().getApiBaseUrl();
+    if(!currentEngineUrl){
+      console.log("提示：apiBaseUrl未配置，暂时无法使用元数据相关功能");
+      return Promise.resolve();
+    }
     return new Promise(function(reslove,reject){
-      currentEngineUrl=context.getConfig().getApiBaseUrl();
       var swagger= currentEngineUrl+"/swagger.json";
       reslove(swagger);
     });
+  }
+  var metaserviceUrl=context.getConfig().getMetaserviceUrl();
+  if(!metaserviceUrl){
+    console.log("提示：service.metabase.endpoint未配置，暂时无法使用元数据相关功能");
+    return Promise.resolve();
   }
   return metaservice().getProject({id:projectId}).then(({data})=>{
     if(!data.engine||!data.engine.externalUrl){

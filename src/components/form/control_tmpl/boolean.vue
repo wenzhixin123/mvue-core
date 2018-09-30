@@ -34,6 +34,7 @@ export default {
     mounted:function(){
         var _this=this;
         this.valueObj=this.convert(this.value);
+        this.updateValue();
     },
     methods:{
         convert:function (newV) {
@@ -53,7 +54,7 @@ export default {
             }
             return reVal;
         },
-        updateValue: function ($checkbox) {
+        updateValue: function () {
             if(_.isNumber(this.value)){
                 this.$emit('input',this.valueObj);
             }else{

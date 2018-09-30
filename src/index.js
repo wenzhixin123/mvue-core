@@ -1,8 +1,8 @@
 function installGridAndForm(Vue){
-    Vue.component('entity-tree',require("./components/entity-tree/index"));
-    Vue.component('tabs',require("./components/tabs/index"));
-    Vue.component('sec',require("./components/section/index"));
-    Vue.component('txt',require("./components/text/index"));
+    Vue.component('meta-entity-tree',require("./components/entity-tree/index"));
+    Vue.component('b-tabs',require("./components/tabs/index"));
+    Vue.component('b-section',require("./components/section/index"));
+    Vue.component('b-text',require("./components/text/index"));
 
     Vue.component('meta-grid-render-html',require("./components/grid/render_html"));
     Vue.component('meta-grid-operation-btn',require("./components/grid/operation_btn"));

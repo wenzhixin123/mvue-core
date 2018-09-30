@@ -77,7 +77,7 @@ import getParent from './components/mixins/get-parent';
 import operationManager from "./libs/operation/operations";
 
 //TODO delete just for test
-import mvueComponents from 'mvue-components';
+//import mvueComponents from 'mvue-components';
 
 let MvueCore={
     install:install,
@@ -101,7 +101,7 @@ function install(Vue, opts = {}) {
     
     //TODO delete just for test
     //debugger
-    mvueComponents.context.init(Vue,{mvueToolkit:context.getMvueToolkit()});
+    //mvueComponents.context.init(Vue,{mvueToolkit:context.getMvueToolkit()});
 
     installGridAndForm(Vue);
     Vue.prototype.$metaBase=metabase;

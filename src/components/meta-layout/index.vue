@@ -131,7 +131,7 @@ export default {
             }
             if(_.isEmpty(item)){
                 return {
-                    ctype:"txt",
+                    ctype:"b-text",
                     value:""
                 };
             }

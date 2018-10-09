@@ -59,7 +59,6 @@ function installGridAndForm(Vue){
 //全局组件样式在这里引入，避免在内部重复引用
 require('./components/components.scss');
 import metabase from './libs/metadata/metabase';
-import metaentity from './libs/metadata/metaentity';
 
 import propParser from './services/tool/prop_parser';
 import linkplugin from './services/link/linkplugin';
@@ -83,7 +82,6 @@ import operationManager from "./libs/operation/operations";
 let MvueCore={
     install:install,
     metaBase:metabase,
-    metaEntity:metaentity,
     propParser:propParser,
     linkplugin,
     formConstants,
@@ -107,7 +105,6 @@ function install(Vue, opts = {}) {
 
     installGridAndForm(Vue);
     Vue.prototype.$metaBase=metabase;
-    Vue.prototype.$metaEntity=metaentity;
     Vue.prototype.$metaService=metaservice();
     Vue.prototype.$toolService=toolService();
     Vue.prototype.$http=context.getMvueToolkit().http;

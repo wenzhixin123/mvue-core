@@ -65,6 +65,7 @@ import propParser from './services/tool/prop_parser';
 import linkplugin from './services/link/linkplugin';
 import metaservice from './services/meta/metaservice';
 import toolService from './services/tool/tool_service';
+import treeService from './services/tool/tree-service';
 import metaLayoutConvertor from './components/meta-layout/layout-convertor';
 
 import formConstants from './components/form/js/constants';
@@ -91,7 +92,8 @@ let MvueCore={
     operationManager:operationManager,
     context,
     metaLayoutConvertor,
-    getParent
+    getParent,
+    treeService
 };
 
 //Vue插件安装入口函数

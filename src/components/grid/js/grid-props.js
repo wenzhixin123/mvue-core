@@ -38,10 +38,6 @@ export default{
             type: Number,
             default: 10
         },
-        "preprocessor": {//TODO 数据预处理函数，对获取到数据作预处理转换
-            type: Function,
-            required: false
-        },
         "pageSizeKey": {
             type: String,
             default: "page_size"

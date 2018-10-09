@@ -1,7 +1,7 @@
 <template>
     <Layout v-if="processed" class="com-wrapper" >
         <Sider hide-trigger class="tree-list-sidebar">
-            <entity-tree :settings="treeSettings" @on-select-change="onTreeSelectChange"></entity-tree>
+            <meta-entity-tree v-if="realTreeSettings" v-bind="realTreeSettings" @on-select-change="onTreeSelectChange"></meta-entity-tree>
         </Sider>
         <Content>
             <meta-grid ref="gridList"  v-bind="$props" :query="innerQuery">
@@ -44,8 +44,9 @@
                 type:Object,
                 default:function () {
                         return {
-                            relationField:"",
-                            entityName:""
+                            refField:"",//树查询条件对应的字段名
+                            entityName:"",//树数据查询的实体名称
+                            options:{}
                         }
                 }
             }
@@ -53,7 +54,8 @@
         data(){
             return {
                 processed:false,
-                selectedTreeNode:null
+                selectedTreeNode:null,
+                realTreeSettings:null
             }
         },
         mounted:function () {
@@ -64,7 +66,7 @@
             processSettings:function () {
                 //对setting进行预处理
                 var defaultTreeSetting=treeService.build(this.treeSettings.entityName,this.treeSettings.options);
-                _.assign(this.treeSettings,defaultTreeSetting);
+                this.realTreeSettings=defaultTreeSetting;
             },
             onTreeSelectChange:function (data) {
                 if(data && data.length>0){
@@ -79,7 +81,7 @@
                     if(this.selectedTreeNode==null){
                         return ;
                     }
-                    var treeFilter=`${this.treeSettings.relationField} eq '${this.selectedTreeNode.id}'`;
+                    var treeFilter=`${this.treeSettings.refField} eq '${this.selectedTreeNode.id}'`;
                     if(_.isEmpty(queryParams.filters)){
                         queryParams.filters=treeFilter;
                     }else{
@@ -89,7 +91,7 @@
             }
         },
         components:{
-            entityTree:require("../entity-tree/index"),
+            metaEntityTree:require("../entity-tree/index"),
             metaGrid:require("../grid/iview_grid")
         }
     }

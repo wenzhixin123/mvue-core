@@ -1,7 +1,7 @@
 <template>
     <Tabs>
         <TabPane v-for="(pane,index) in panes" :key="index" :label="pane.title">
-            <meta-layout :layout="paneLayout(pane)"></meta-layout>
+            <meta-layout :layout="paneLayout(pane)" class="b-tabs-pane-content"></meta-layout>
         </TabPane>
     </Tabs>
 </template>
@@ -27,3 +27,10 @@
         }
     }
 </script>
+<style lang="scss">
+.ivu-tabs-tabpane .b-tabs-pane-content{
+    padding-right:5px;
+    padding-left:5px;
+}
+</style>
+

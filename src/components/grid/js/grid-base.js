@@ -69,6 +69,13 @@ export default{
             }//外部高级查询的查询条件自动在ctx里边，不需要特殊处理
             //1 如果有来自url查询条件的默认查询参数自动添加进去
             //2 如果有来自列header的查询条件也附加上去
+            //这里如果外部也没有设置filters，给一个默认值，否则列表头部的查询会不生效
+            if(!ctx.filters){
+                ctx.filters={
+                    op:"and",
+                    rules:{}
+                }
+            }
             if(ctx.filters&&ctx.filters.rules){
                 ctx.filters.rules=Object.assign(ctx.filters.rules,this.filtersFromQuery,this.filtersFromColumnHeader);
             }

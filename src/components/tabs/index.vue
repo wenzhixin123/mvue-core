@@ -28,7 +28,7 @@
     }
 </script>
 <style lang="scss">
-.ivu-tabs-tabpane .ivu-form{
+.ivu-tabs-tabpane .b-tabs-pane-content .ivu-form{
     padding-right:16px;
     padding-left:16px;
 }

@@ -3,7 +3,7 @@
         <Tooltip v-if="initialCol&&initialCol.tooltip" transfer :content="titleVal" :disabled="!showTooltip" :max-width="300" class="ivu-table-cell-tooltip">
             <a ref="content" @mouseenter="handleTooltipIn" @mouseleave="handleTooltipOut" class="ivu-table-cell-tooltip-content">{{ titleVal }}</a>
         </Tooltip>
-        <a v-else style="display:block;" :class="{'ivu-table-cell-ellipsis':initialCol&&initialCol.ellipsis}" :title="titleVal"  v-html="titleVal"></a>
+        <a v-else style="display:block;" :class="{'ivu-table-cell-ellipsis':true}" :title="titleVal"  v-html="titleVal"></a>
     </meta-operation>
 </template>
 <script>

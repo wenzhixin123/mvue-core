@@ -27,7 +27,7 @@ function metaFieldToCol(context,metaField,initialCol) {
         col.render = renderManager.renderForOptsTitle(context,metaField);
         col.width=col.width||350;
     }else {
-        col.render=renderManager.renderForLinkTitle(context,metaField,context.metaEntity.getIdField().name);
+        col.render=renderManager.renderForLinkTitle(context,metaField,context.metaEntity.getIdField().name,initialCol);
     }
   } else if (metaField.type == "imgTitle") {
     col.render = renderManager.renderForImgTitle(context,metaField);
@@ -68,7 +68,7 @@ function metaFieldToCol(context,metaField,initialCol) {
     } else if (controlTypeService.isFileUpload(metaField.inputType)) {
       col.render = renderManager.renderForFileUpload(context,metaField);
     } else {
-      col.render = renderManager.renderForCommon(context,metaField);
+      col.render = renderManager.renderForCommon(context,metaField,initialCol);
     }
   }
   return col;

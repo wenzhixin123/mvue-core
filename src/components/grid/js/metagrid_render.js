@@ -75,7 +75,7 @@ export default {
     }
   },
 
-    renderForLinkTitle: function (context, metaField,idFieldName) {
+    renderForLinkTitle: function (context, metaField,idFieldName,initialCol) {
         return function (h, params) {
             var btnOpts=null;
             var clickHandler=context.grid&&context.grid.handleOnTitleClick;
@@ -109,7 +109,8 @@ export default {
                     params:metaField,
                     item: params.row,
                     context:context,
-                    btn:oper
+                    btn:oper,
+                    initialCol:initialCol
                 }
             });
         }
@@ -164,12 +165,13 @@ export default {
    * @param metaField
    * @returns {Function}
    */
-  renderForCommon: function (context, metaField) {
+  renderForCommon: function (context, metaField,initialCol) {
     return function (h, params) {
       var value = controlTypeService.formatData(params.row, metaField);
       return h("meta-grid-render-html", {
         props: {
-          value: value
+          value: value,
+          initialCol:initialCol
         }
       });
     }

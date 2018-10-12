@@ -1,5 +1,5 @@
 <template>
-    <meta-operation  :operation="btn" :widget-context="getWidgetContext()">
+    <meta-operation  :operation="btn" :widget-context="getWidgetContext()" class="link-title-opt">
         <Tooltip v-if="initialCol&&initialCol.tooltip" transfer :content="titleVal" :disabled="!showTooltip" :max-width="300" class="ivu-table-cell-tooltip">
             <a ref="content" @mouseenter="handleTooltipIn" @mouseleave="handleTooltipOut" class="ivu-table-cell-tooltip-content">{{ titleVal }}</a>
         </Tooltip>
@@ -60,7 +60,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.ivu-table-cell .widget-operation.div-inline-block{
+.ivu-table-cell .link-title-opt.div-inline-block{
     display: block;
 }
 </style>

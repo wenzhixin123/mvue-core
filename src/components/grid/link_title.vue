@@ -60,7 +60,7 @@ export default {
 }
 </script>
 <style lang="scss">
-.ivu-table-cell-ellipsis .widget-operation.div-inline-block{
+.ivu-table-cell .widget-operation.div-inline-block{
     display: block;
 }
 </style>

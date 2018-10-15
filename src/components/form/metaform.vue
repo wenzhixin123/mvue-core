@@ -167,7 +167,8 @@
                     afterSave:null//(model)
                 },
                 loadingFormData:false,//表示是否正在远程请求数据
-                subcomponentAfterSaveChain:[]//所有需要在表单保存后做继续操作的子组件集合
+                subcomponentAfterSaveChain:[],//所有需要在表单保存后做继续操作的子组件集合
+                validated:true//字段校验标记
             };
         },
         watch:{
@@ -271,8 +272,9 @@
                 var _this=this;
                 //启用智能校验
                 Utils.smartValidate(_this,this.entity,this.$validator,function(){
+                    _this.validated = true;
                     callback&&callback();
-                },()=>{failCallback&&failCallback();});
+                },()=>{_this.validated = false;failCallback&&failCallback();});
             },
             initForm(){
                 var formShortId = this.formId || this.$route.query.formShortId;

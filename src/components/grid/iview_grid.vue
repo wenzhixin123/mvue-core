@@ -511,7 +511,7 @@ export default {
             if(!this.viewOnSingleClickRow){
                 return;
             }
-            //处理由部件配置传入的单击行操作
+            //处理由部件配置传入的列表操作的第一个操作/*单击行操作*/
             var _rowSingleClick=this.innerToolbar.rowSingleClick;
             if(_rowSingleClick){
                 var _widgetCtx={
@@ -526,7 +526,7 @@ export default {
                 });
                 let commonOptName=operation.name;
                 //目前支持通用操作和脚本操作
-                if(commonOptName){//通用操作
+                if(commonOptName&&this.getCommonOpt(commonOptName)){//通用操作
                     let commonOpt=this.getCommonOpt(commonOptName);
                     if(commonOpt){
                         operation= _.extend(operation,commonOpt);

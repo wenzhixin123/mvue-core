@@ -117,6 +117,7 @@
                 });
             },
             layoutProcessor:function(item){
+                //处理["name","title"]写法的字段布局
                 if(_.isString(item)){
                     return {
                         ctype:"meta-field",
@@ -124,10 +125,21 @@
                         context:this.fieldContext(item)
                     }
                 }
+                //已经由命令行解析程序处理后的对象：参数解析完毕，--width 100
                 if(_.has(item,"value") &&(item.ctype=="meta-field"|| item.ctype=="metaField")){
                     item["name"]=item["value"];
                     delete item["value"];
                 }
+                var ignores=["value","icon","ctype","name","title","input-type","span","inputType","action","entityName","preprocessor",
+                    "context","model","showLabel","label","rules","required","error","showMessage",
+                    "labelFor","labelWidth","initWhenCreate","params"];
+                var params=item.params||{};
+                _.forIn(item,(v,k)=>{
+                    if(!_.includes(ignores,k)){
+                        params[k]=v;
+                    }
+                });
+                item.params=params;
                 return item;
             }
         }

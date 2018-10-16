@@ -29,7 +29,6 @@ function impl(context,$optInst){
     var _query=gridUtils.buildQuery(context);
     var _params={entityName:metaEntity.name};
     var defaultRouter={
-        query:_.assign(_query,{id:id}),
         params:_.assign(_params,{id:id})
     }
     var router=null;

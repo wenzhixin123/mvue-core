@@ -10,6 +10,11 @@ var uploadTypes={
         id: "PictureUpload", 
         title: "图片上传", 
         icon:"ivu-icon ivu-icon-image"
+    },
+    Portrait:{ 
+        id: "Portrait", 
+        title: "头像", 
+        icon:"ios-person-add-outline"
     }
 };
 var maxSize={
@@ -66,6 +71,18 @@ var componentParams={
             limit:true,
             max:maxSize.picture
         }
+    },
+    Portrait:{
+        multiple:{
+            isAllowed:false,//头像组件只能传一张图
+            max:1//
+        },
+        limitSize:{
+            limit:true,
+            max:maxSize.picture
+        },
+        width:130,//头像宽度px
+        height:150//头像高度px
     }
 };
 //判断是否上传相关组件
@@ -76,7 +93,7 @@ function isFileUpload(componentType){
     return componentType===uploadTypes.FileUpload.id;
 }
 function isPictureUpload(componentType){
-    return componentType===uploadTypes.PictureUpload.id;
+    return componentType===uploadTypes.PictureUpload.id||componentType===uploadTypes.Portrait.id;
 }
 export default {
     types:uploadTypes,

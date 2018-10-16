@@ -36,6 +36,7 @@ function installGridAndForm(Vue){
     Vue.component('MetaNumberInput',require('./components/form/control_tmpl/number_input')),
     Vue.component('MetaFileUpload',require('./components/form/control_tmpl/file_upload')),
     Vue.component('MetaPictureUpload',require('./components/form/control_tmpl/picture_upload')),
+    Vue.component('MetaPortrait',require('./components/form/control_tmpl/portrait')),
     Vue.component('MetaSingleUserSelect',require('./components/form/control_tmpl/single_user_select')),
     Vue.component('MetaSingleOrgSelect',require('./components/form/control_tmpl/single_org_select')),
     Vue.component('MetaMultiUserSelect',require('./components/form/control_tmpl/multi_user_select')),

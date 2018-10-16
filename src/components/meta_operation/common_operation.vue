@@ -1,7 +1,7 @@
 <template>
 <div>
     <!--有onclick的普通操作-->
-    <div v-if="extendedOperation&&!extendedOperation.renderComponent" @click.stop.prevent="buttonClick">
+    <div v-if="extendedOperation&&!extendedOperation.renderComponent" @click="buttonClick">
         <slot>
             <Button type="primary" size="small" 
                 :title="extendedOperation.title" >

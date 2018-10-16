@@ -106,6 +106,10 @@ function  initColumns(grid) {
   //如果没有传入任何columns，并且元数据信息存在，构造默认列
   if(!grid.innerColumns&&metaEntityObj){
     let defaultFormFields=metaEntityObj.getDefaultViewFields();
+    //这里注意一下，如果指定了只显示maxColumnsSize个列，其他列将忽略
+    if(grid.maxColumnsSize>0&&defaultFormFields.length>=grid.maxColumnsSize){
+      defaultFormFields=defaultFormFields.slice(0,grid.maxColumnsSize);
+    }
     _.each(defaultFormFields,function(fieldName){
       _cols.push({key:fieldName});
     });
@@ -122,9 +126,10 @@ function  initColumns(grid) {
           align: 'center'
       });
   }
-  //if(grid.innerToolbar.batchBtns&&grid.innerToolbar.batchBtns.length>0){
-  __cols.push({type: 'selection',key:'__selection__',width:50,align:"center"});
-  //}
+  //多选框列
+  if(grid.showSelection){
+    __cols.push({type: 'selection',key:'__selection__',width:50,align:"center"});
+  }
 
   _cols=__cols.concat(_cols);
   //如果操作列不和标题列合并，并且定义了单行操作，默认最后一列为操作列

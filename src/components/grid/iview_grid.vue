@@ -88,8 +88,9 @@
 import metabase from '../../libs/metadata/metabase';
 import initByMetadata from './js/init-by-metadata';
 import gridBase from './js/grid-base';
+import getParent from '../mixins/get-parent';
 export default {
-    mixins: [gridBase],
+    mixins: [gridBase,getParent],
     props: {
         "defaultSort": {//默认排序设置{key:'',order:'desc'}
             type: Object
@@ -113,6 +114,10 @@ export default {
         relation:{//关联列表会提供关系配置{refField:''}
             type:Object,
             required:false
+        },
+        maxColumnsSize:{//默认生成列时，列表最多显示的列数
+            type:Number,
+            required:false
         }
     },
     data:function(){
@@ -135,7 +140,11 @@ export default {
                 this.innerSort=initByMetadata.buildDefaultOrderby(this);
             }
             //如果有来自查询条件的默认过滤器初始化
-            var filtersFromQuery=initByMetadata.buildFiltersFromQuery(this);
+            var filtersFromQuery={};
+            //弹出框不读取query参数
+            if(!this.getParentPopup()){
+                filtersFromQuery=initByMetadata.buildFiltersFromQuery(this);
+            }
             this.filtersFromQuery=filtersFromQuery;
             //如果外部没有定义快捷查询字段，利用title语义字段构造
             if(this.innerToolbar&&

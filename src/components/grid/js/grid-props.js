@@ -54,6 +54,10 @@ export default{
             type: Boolean,
             default: true
         },
+        "showSelection": {//是否显示多选列
+            type: Boolean,
+            default: true
+        },
         wrapperClass: {
             type: [String, Object, Array],
             default: "default-list-wrapper"

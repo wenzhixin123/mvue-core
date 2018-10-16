@@ -140,7 +140,6 @@ export default{
             }
             return false;
         },
-        //选择多行
         //选择单行
         handleOnCurrentChange(currentRow,oldCurrentRow){
             this.$emit("on-current-change",currentRow,oldCurrentRow);

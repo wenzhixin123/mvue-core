@@ -123,8 +123,13 @@ module.exports=function (options) {
   metaEntity.getDefaultFormFields=function(){
     var fields=[];
     _.forIn(this.fields,function (metaField,key) {
-      if(!metaField.identity&&!_.includes(["redundant","createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
-        fields.push(key);
+      //标题字段排在最前面
+      if(metaField.semantics=="title"){
+        fields.splice(0,0,key);
+      }else{
+        if(!metaField.identity&&!_.includes(["redundant","createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
+          fields.push(key);
+        }
       }
     });
     return fields;
@@ -135,8 +140,13 @@ module.exports=function (options) {
   metaEntity.getDefaultViewFields=function(){
     var fields=[];
     _.forIn(this.fields,function (metaField,key) {
-      if(!metaField.identity&&!_.includes(["redundant"],metaField.semantics)){
-        fields.push(key);
+      //标题字段排在最前面
+      if(metaField.semantics=="title"){
+        fields.splice(0,0,key);
+      }else{
+        if(!metaField.identity&&!_.includes(["redundant"],metaField.semantics)){
+          fields.push(key);
+        }
       }
     });
     return fields;

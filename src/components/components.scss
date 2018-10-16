@@ -67,6 +67,14 @@
     background: #f3f3f3;
     color:rgba(0, 0, 0, 0.85); ;
 }
+//这里控制引用组件右边有搜索按钮弹出框的样式
+.bvue-select-group .multiselect{
+    display: table-cell;
+}
+.bvue-select-group .multiselect .multiselect__tags{
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
 
 .section{
     font-size: 14px;

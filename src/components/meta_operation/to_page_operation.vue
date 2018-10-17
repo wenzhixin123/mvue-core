@@ -67,7 +67,7 @@ export default {
             var context = Object.assign(this.widgetContext, this.operation);
             var id = context.selectedId;
             var metaEntity = context.metaEntity;
-            if(!context.selectedItem&&context.selectedItems){
+            if(!context.selectedItem&&context.selectedItems&&context.selectedItems.length){
                 //按钮放置的是在工具栏
                 context.selectedItem = context.selectedItems[(context.selectedItems.length-1)]
                 context.selectedId = context.selectedItem.id;

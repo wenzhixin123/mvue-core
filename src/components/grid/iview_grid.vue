@@ -102,6 +102,18 @@
             <span>总共{{totalCount}}条数据</span>
         </div>
     </div>
+
+    <Modal class="popup-widget-con" v-model="popupWidgetModal"
+           :width="modalWidth"
+           :title="modalTitle"
+           :scrollable="true"
+           :mask-closable="false"
+    >
+        <div class="modal-inner-widget" :style="{height:modalHeight+'px'}">
+            <meta-widget-page :widget-params="pageParams"></meta-widget-page>
+        </div>
+        <div slot="footer"></div>
+    </Modal>
 </div>
 </template>
 <script>
@@ -253,6 +265,12 @@ export default {
             multipleFiltersValue:"",//用户选择的默认条件值
             showQuickSearchInput:false,//toolbar concat模式时显示和隐藏快捷搜索框
             loadingData:false,//表示是否正在远程请求数据
+            //额外添加的参数--绑定单行弹窗操作
+            modalWidth:500,
+            modalHeight:340,
+            modalTitle:"",
+            popupWidgetModal:false,
+            pageParams:{},
         };
     },
     computed:{
@@ -539,6 +557,47 @@ export default {
                     }else{
                         var onclick=Function('"use strict";return ' + operation.onclick  )();
                         onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+                    }
+                }else if(operation.operationType=="toPage"){
+                    this.modalWidth = _rowSingleClick.modalWidth||500;
+                    this.modalHeight = _rowSingleClick.modalHeight||340;
+                    this.modalTitle = _rowSingleClick.page.title;
+
+                    function getIdFromContext(){
+                        var context = Object.assign(_widgetCtx, operation);
+                        var id = context.selectedId;
+                        var metaEntity = context.metaEntity;
+                        if(!context.selectedItem&&context.selectedItems&&context.selectedItems.length){
+                            //按钮放置的是在工具栏
+                            context.selectedItem = context.selectedItems[(context.selectedItems.length-1)]
+                            context.selectedId = context.selectedItem.id;
+                            id = context.selectedId;
+                        }
+                        if (!id&&context.selectedItem) {
+                            var selectedItem = context.selectedItem;
+                            if (selectedItem) {
+                                //计算id字段
+                                var idField = null;
+                                if (!_.isEmpty(metaEntity)) {
+                                    idField = metaEntity.getIdField();
+                                }
+                                id = selectedItem[idField];
+                            }
+                        }//获取传入的对象id和实体信息
+                        return {dataId:id,entity:metaEntity.metaEntityId};
+                    }
+
+                    this.close = function(){//关闭对话框
+                        this.pageParams = {pageId :""};
+                        this.popupWidgetModal=false;
+                    }
+
+                    Object.assign(this.$route.query,getIdFromContext());
+                    this.pageParams = Object.assign({pageId:operation.page.id},getIdFromContext());
+                    if(operation.isPopup){
+                        this.popupWidgetModal=!this.popupWidgetModal;
+                    }else{
+                        router.push({name:"defaultPageIndex",query:this.pageParams,params:this.pageParams});
                     }
                 }
             }

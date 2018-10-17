@@ -32,6 +32,7 @@ var cachedContext={
       org:{
           idField:"id",
           nameField:"name",
+          parentField:"parentId"
       }
   }
 }

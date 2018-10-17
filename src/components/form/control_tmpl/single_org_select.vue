@@ -4,28 +4,55 @@
                 <div v-text="viewModeValue()"></div>
         </template>
         <template v-else>
-             <Multiselect v-model="selectedItem"
-                        :options="dataItems"
-                        :placeholder="formItem.componentParams.placeholder||'请输入部门名称'"
-                        :disabled="disabled"
-                          :loading="isLoading"
-                        select-label="按enter键选择"
-                        selected-label="已选"
-                        deselect-label="按enter键取消选择"
-                          :show-no-results="true"
-                          :internal-search="false"
-                        :label="getTitleField()"
-                        @search-change="searchChange"
-                        :track-by="getIdField()">
-                <template slot="option" slot-scope="props">
-                    <div class="option__desc">
-                        <span class="option__title">{{ props.option[getTitleField()] }}</span>
-                    </div>
-                </template>
-                 <template slot="noResult">
-                     根据关键字，搜索不到任何部门
-                 </template>
-            </Multiselect>
+            <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">
+                <Multiselect v-model="selectedItem"
+                            :options="dataItems"
+                            :placeholder="selectPlaceholder"
+                            :disabled="disabled"
+                            :loading="isLoading"
+                            select-label="按enter键选择"
+                            selected-label="已选"
+                            deselect-label="按enter键取消选择"
+                            :show-no-results="true"
+                            :internal-search="false"
+                            :label="getTitleField()"
+                            @search-change="searchChange"
+                            :track-by="getIdField()">
+                    <template slot="option" slot-scope="props">
+                        <div class="option__desc">
+                            <span class="option__title">{{ props.option[getTitleField()] }}</span>
+                        </div>
+                    </template>
+                    <template slot="noResult">
+                        根据关键字，搜索不到任何部门
+                    </template>
+                </Multiselect>
+                <div class="ivu-btn ivu-btn-primary bvue-select-group-append" @click="toggleModal">
+                    <Icon :type="btnIcon"></Icon>
+                </div>
+                <Modal class="bvue-select-modal" v-model="popupWidgetModal"
+                        :width="modalWidth"
+                        :title="modalTitle"
+                        :scrollable="true"
+                        :mask-closable="false"
+                        >
+                        <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">
+                            <select-org ref="selectRef" v-if="popupWidgetModal"
+                            :initial-value="value"
+                            :multiple="false"
+                            :label-key="getTitleField()"
+                            :value-key="getIdField()"
+                            :query-placeholder="selectPlaceholder"
+                            :tree-expand-level="treeExpandLevel"
+                            :tree-leaf-key="treeLeafKey"
+                            :query-methods="queryMethods"></select-org>
+                        </div>
+                        <div slot="footer">
+                            <Button type="default" @click="close">取消</Button>
+                            <Button type="primary" @click="confirmSelect">确定</Button>
+                        </div>
+                </Modal>
+            </div>
         </template>
     </div>
 </template>
@@ -33,8 +60,10 @@
 import context from '../../../libs/context';
 import controlBase from '../js/control_base';
 import entitySelect from '../mixins/entity-select';
+import selectModal from '../mixins/select-modal';
+import selectOrgBase from './org-select/select-org-base';
 export default {
-    mixins: [controlBase,entitySelect],
+    mixins: [controlBase,entitySelect,selectModal,selectOrgBase],
     props: {
         "value":{type:String,default:null}
     },
@@ -48,6 +77,11 @@ export default {
             entityResource:entityResource,//获取部门数据的操作resource
             queryFields:this.buildSelectFields()//查询的冗余数据
         };
+    },
+    computed:{
+        selectPlaceholder(){
+            return this.formItem.componentParams.placeholder||'请输入部门名称';
+        }
     },
     watch:{
         "paths.orgApiUrl":function(newValue,oldValue){//监听地址，一旦设置值，用户操作的resource就可以构造了
@@ -75,7 +109,29 @@ export default {
         },
         getTitleField:function(){
             return context.getConsts().org.nameField;
+        },
+        //从选择列表选择数据确认后，反应到多选组件
+        confirmSelect(){
+            var selectRef=this.$refs.selectRef;
+            var selectedIds=selectRef.selectedIds||[];
+            var value=null;
+            if(selectedIds.length>0){
+                value=selectedIds[0];
+            }
+            if(!value){
+                this.$Modal.info({
+                    content:"请选择一行数据"
+                });
+                return;
+            }
+            this.entityResource.get({id:value}).then(({data})=>{
+                this.selectedItem=data;
+                this.close();
+            });
         }
+    },
+    components:{
+        selectOrg:require('./org-select/select-org')
     }
 }
 </script>

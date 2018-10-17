@@ -6,26 +6,58 @@
             </div>
         </template>
         <template v-else>
-            <Multiselect :multiple="true" v-model="selectedItem"
-                        :options="dataItems"
-                        :placeholder="formItem.componentParams.placeholder||'请输入用户姓名'"
-                        :disabled="disabled"
-                        select-label="按enter键选择"
-                        selected-label="已选"
-                        deselect-label="按enter键取消选择"
-                        :show-no-results="false"
-                        :label="getTitleField()"
-                        @search-change="searchChange"
-                        :track-by="getIdField()">
-                <template slot="option" slot-scope="props">
-                    <div class="option__desc">
-                        <span class="option__title">{{ props.option[getTitleField()] }}</span>
-                        <span>-</span>
-                        <span class="option__small">{{ props.option.email||props.option[getLoginField()] }}</span>
-                    </div>
-                </template>
-            </Multiselect>
-            <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
+            <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">
+                <Multiselect :multiple="true" v-model="selectedItem"
+                            :options="dataItems"
+                            :placeholder="formItem.componentParams.placeholder||'请输入用户姓名'"
+                            :disabled="disabled"
+                            select-label="按enter键选择"
+                            selected-label="已选"
+                            deselect-label="按enter键取消选择"
+                            :show-no-results="false"
+                            :label="getTitleField()"
+                            @search-change="searchChange"
+                            :track-by="getIdField()">
+                    <template slot="option" slot-scope="props">
+                        <div class="option__desc">
+                            <span class="option__title">{{ props.option[getTitleField()] }}</span>
+                            <span>-</span>
+                            <span class="option__small">{{ props.option.email||props.option[getLoginField()] }}</span>
+                        </div>
+                    </template>
+                    <template slot="noResult">
+                        根据关键字，搜索不到任何用户
+                    </template>
+                </Multiselect>
+                <div class="ivu-btn ivu-btn-primary bvue-select-group-append" @click="toggleModal">
+                    <Icon :type="btnIcon"></Icon>
+                </div>
+                <Modal class="bvue-select-modal" v-model="popupWidgetModal"
+                        :width="modalWidth"
+                        :title="modalTitle"
+                        :scrollable="true"
+                        :mask-closable="false"
+                        >
+                        <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">
+                            <select-user ref="selectRef" v-if="popupWidgetModal"
+                            :initial-value="value"
+                            :multiple="true"
+                            :label-key="getTitleField()"
+                            :value-key="getIdField()"
+                            :org-label-key="orgLabelKey()"
+                            :org-value-key="orgValueKey()"
+                            :render-format="renderFormat"
+                            :query-placeholder="selectPlaceholder"
+                            :tree-expand-level="treeExpandLevel"
+                            :tree-leaf-key="treeLeafKey"
+                            :query-methods="queryMethods"></select-user>
+                        </div>
+                        <div slot="footer">
+                            <Button type="default" @click="close">取消</Button>
+                            <Button type="primary" @click="confirmSelect">确定</Button>
+                        </div>
+                </Modal>
+            </div>
         </template>
     </div>
 </template>
@@ -33,8 +65,10 @@
 import context from '../../../libs/context';
 import controlBase from '../js/control_base';
 import entitySelect from '../mixins/entity-select';
+import selectModal from '../mixins/select-modal';
+import selectUserBase from './user-select/select-user-base';
 export default {
-    mixins: [controlBase,entitySelect],
+    mixins: [controlBase,entitySelect,selectModal,selectUserBase],
     props: {
         "value":{
             type:Array,
@@ -53,6 +87,11 @@ export default {
             entityResource:entityResource,//获取用户数据的操作resource
             queryFields:this.buildSelectFields(),//查询的冗余数据
         };
+    },
+    computed:{
+        selectPlaceholder(){
+            return this.formItem.componentParams.placeholder||'请输入用户姓名';
+        }
     },
     watch:{
         "paths.userApiUrl":function(newValue,oldValue){//监听地址，一旦设置值，用户操作的resource就可以构造了
@@ -82,7 +121,29 @@ export default {
         },
         getLoginField(){
             return context.getConsts().user.loginField;
+        },
+        //从选择列表选择数据确认后，反应到多选组件
+        confirmSelect(){
+            var selectRef=this.$refs.selectRef;
+            var selectedIds=selectRef.selectedIds||[];
+            var value=null;
+            if(selectedIds.length>0){
+                value=selectedIds;
+            }
+            if(!value){
+                this.$Modal.info({
+                    content:"未选择任何数据"
+                });
+                return;
+            }
+            this.entityResource.query({filters:`id in ${value.join(',')}`}).then(({data})=>{
+                this.selectedItem=data;
+                this.close();
+            });
         }
+    },
+    components:{
+        selectUser:require('./user-select/select-user')
     }
 }
 </script>

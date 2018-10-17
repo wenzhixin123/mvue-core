@@ -1,0 +1,170 @@
+<template>
+    <Row type="flex" justify="center" class="bvue-select-tree-group">
+        <i-col span="5">
+            <div class="bvue-select-tree">
+                <Tree :multiple="false" :data="orgTreeData" :load-data="queryOrgByParent" @on-select-change="handleOrgSelectChange"></Tree>
+            </div>
+        </i-col>
+        <i-col span="19">
+            <div class="bvue-select-transfer">
+                <search :query="queryKeyword" @on-query-clear="handleQueryClear" @on-query-change="handleQueryChange" :placeholder="queryPlaceholder" class="mb-sm" style="width:200px;" ></search>
+
+                <Transfer ref="transferRef" :data="sourceUsers" :titles="transferTitles" :target-keys="selectedIds" :render-format="renderFormat" style="height:300px;"
+                :list-style="listStyle" @on-change="handleTransferChange" @on-selected-change="handleTransferSelectedChange"></Transfer>
+
+                <Page :current.sync="currentPage" :page-size="pageSize" :total="total" @on-change="handleCurrentPageChange" size="small" class="mt-sm"></Page>
+            </div>
+        </i-col>
+    </Row>
+</template>
+
+<script>
+    import context from '../../../../libs/context';
+    import orgTree from './org-tree';
+    export default {
+        mixins: [orgTree],
+        props: {
+            initialValue: {
+                type: [String, Array],
+                default() {
+                    return null;
+                }
+            },
+            queryMethods: {
+                type: Object,
+                required: true
+            },
+            multiple: {
+                type: Boolean,
+                default: false
+            },
+            labelKey: {
+                type: String
+            },
+            valueKey: {
+                type: String
+            },
+            orgLabelKey: {
+                type: String
+            },
+            orgValueKey: {
+                type: String
+            },
+            renderFormat: {
+                type: Function
+            },
+            queryPlaceholder: {
+                type: String
+            }
+        },
+        watch: {
+            initialValue: {
+                handler() {
+                    var ids = [];
+                    if ((!this.multiple) && this.initialValue) {
+                        ids = [this.initialValue];
+                    } else {
+                        ids = _.cloneDeep(this.initialValue) || [];
+                    }
+                    if (!_.isEqual(ids, this.selectedIds)) {
+                        this.selectedIds = ids;
+                        this.pageQueryUserByOrg();
+                    }
+                },
+                immediate: true
+            },
+            queryKeyword: {
+                handler() {
+                  if(!this.queryKeyword){
+                    this.pageQueryUserByOrg();
+                  }else{
+                    this.pageQueryUserByKeyword();
+                  }
+                }
+            }
+        },
+        data() {
+            return {
+                transferTitles:["用户列表","已选用户"],
+                changedQueue: [],
+                selectedOrgIds: [],
+                selectedIds: [],
+                sourceUsers: [],
+                selectedKeys: [],
+                listStyle: {
+                    height: '100%',
+                    width: '45%'
+                },
+                currentPage: 1,
+                pageSize: 10,
+                total: 0,
+
+                queryKeyword: ''
+            };
+        },
+        mounted() {
+            this.buildRootOrg();
+        },
+        methods: {
+            //选择部门树节点后，查询此部门的用户数据
+            handleOrgSelectChange(data) {
+                var orgIds = [];
+                _.each(data, sd => {
+                    orgIds.push(sd.id);
+                });
+                this.queryKeyword="";
+                this.selectedOrgIds = orgIds;
+                this.pageQueryUserByOrg();
+            },
+            pageQueryUserByOrg() {
+                context.getMvueToolkit().utils.smartSearch(this, () => {
+                  this.queryMethods.pageQueryUserByOrg(this.selectedOrgIds, this.selectedIds, { page: this.currentPage, pageSize: this.pageSize }).then(res => {
+                      var users = res.data;
+                      this.total = res.total;
+                      _.each(users, user => {
+                          user.key = user[this.valueKey];
+                      })
+                      this.sourceUsers = users;
+                  });
+                }, "changedQueue");
+            },
+            pageQueryUserByKeyword() {
+                context.getMvueToolkit().utils.smartSearch(this, () => {
+                  this.queryMethods.pageQueryUserByKeyword(this.queryKeyword, this.selectedIds, { page: this.currentPage, pageSize: this.pageSize }).then(res => {
+                      var users = res.data;
+                      this.total = res.total;
+                      _.each(users, user => {
+                          user.key = user[this.valueKey];
+                      })
+                      this.sourceUsers = users;
+                  });
+                }, "changedQueue");
+            },
+            handleTransferChange(targetKeys, direction, moveKeys) {
+                if (direction == 'right' && moveKeys.length > 0 && (!this.multiple)) {
+                    this.selectedIds = [moveKeys[moveKeys.length - 1]];
+                } else {
+                    this.selectedIds = targetKeys;
+                }
+            },
+            handleTransferSelectedChange(sourceSelected,targetSelected){
+                //单选自动移到右边已选
+                if(sourceSelected.length>0&&(!this.multiple)){
+                    this.$refs.transferRef.moveTo("right");
+                }
+            },
+            handleCurrentPageChange() {
+                this.pageQueryUserByOrg();
+            },
+            handleQueryClear() {
+                this.queryKeyword = '';
+            },
+            handleQueryChange(val) {
+                this.queryKeyword = val;
+            }
+        },
+        components: {
+            search: require('./search')
+        }
+    };
+</script>

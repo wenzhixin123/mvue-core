@@ -403,6 +403,7 @@
                 var _this=this;
                 //初始化表单验证
                 var formItems=metaformUtils.getAllFieldItems(metaForm);
+                _this.metaEntity.metaEntityId = metaForm.metaEntityId;//存入实体id
                 _.each(formItems,function(formItem){
                     metaformUtils.initValidation(_this.$validator,formItem,_this.metaEntity,_this.entityId);
                 });

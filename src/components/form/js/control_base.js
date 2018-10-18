@@ -160,10 +160,7 @@ export default {
          * @param {*} _model 
          */
         calc(_model){
-            var ds=this.context.metaEntity.dataResource();
-            return ds.calc(_model).then(function({data}){
-                return data;
-            });
+            return this.context.metaEntity.fillDefault(_model);
         },
         isReadonly(){//字段是否只读
             //设计模式返回

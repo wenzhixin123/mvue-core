@@ -118,9 +118,13 @@
 
                 //创建模式，继续初始化，因为初始模型数据已经存在了
                 if(this.isCreate){
-                    //如果url参数是实体的字段则填充相应的模型数据
-                    initByMetadata.initModelByQueryParams(this,this.entity);
-                    this.initOthers();
+                    //先根据后端定义填充所有属性的默认值
+                    this.metaEntity.fillDefault(this.entity).then(_entity=>{
+                        this.entity=_entity;
+                        //如果url参数是实体的字段则填充相应的模型数据
+                        initByMetadata.initModelByQueryParams(this,this.entity);
+                        this.initOthers();
+                    });
                 }else{//编辑或查看模式，需要从后端获取实体记录数据覆盖初始的模型数据，之后再继续初始化
                     this.reinitEntityModel();
                 }

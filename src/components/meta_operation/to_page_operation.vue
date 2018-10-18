@@ -29,7 +29,7 @@
                :mask-closable="false"
         >
             <div class="modal-inner-widget" :style="{height:modalHeight+'px'}">
-                <meta-widget-page :widget-params="pageParams"></meta-widget-page>
+                <meta-widget-page :vue-modal="this" :widget-params="pageParams"></meta-widget-page>
             </div>
             <div slot="footer"></div>
         </Modal>

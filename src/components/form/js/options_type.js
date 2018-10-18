@@ -16,6 +16,11 @@ var optionsTypes={
         id: "CheckboxGroup", 
         title: "复选框", 
         icon:"ivu-icon ivu-icon-android-checkbox-outline"
+    },
+    PrivilegeSet:{ 
+        id: "PrivilegeSet", 
+        title: "权限集",
+        icon:"ivu-icon ivu-icon-ios-checkbox-outline"
     }
 };
 function baseOptions(){
@@ -57,6 +62,9 @@ var componentParams={
             text:"其他",
             required:false
         }
+    },
+    PrivilegeSet:{
+        options:[]
     }
 };
 //构建一个新的选项
@@ -76,11 +84,34 @@ function isSingleOption(componentType){
     return componentType===optionsTypes.RadioButton.id
     ||componentType===optionsTypes.SingleSelect.id;
 }
+function toDiscreteValue(v){//255 ->1 2 4 8 16 32 64 128
+    var r=[];
+    if(v<=0){
+        return r;
+    }
+    var binaryString=v.toString(2);
+    var len=binaryString.length;
+    for(let i=0;i<len;++i){
+        let b=binaryString.charAt(i);
+        if(b==="1"){
+            r.push(Math.pow(2,len-1-i).toString());
+        }
+    }
+    return r;
+}
+//判断是否是权限集
+function isPrivilegeSet(componentType){
+    return componentType===optionsTypes.PrivilegeSet.id;
+}
 function formatData(componentType,item,metaField){
     let fieldName=metaField.name;
     let origin=item[fieldName];
     if(_.isNil(origin)||origin===''){
         return "";
+    }
+    //权限集，先将权限集对应的整数分解成权限值数组
+    if(isPrivilegeSet(componentType)){
+        origin=toDiscreteValue(origin);
     }
     let rkey=constants.entityModelRedundantKey;
     let titleKey=constants.entityModelTitleKey;
@@ -122,5 +153,6 @@ export default{
     isSingleSelect:isSingleSelect,
     isSingleOption:isSingleOption,
     formatData:formatData,
-    fillComponentParams:fillComponentParams
+    fillComponentParams:fillComponentParams,
+    toDiscreteValue:toDiscreteValue
 }

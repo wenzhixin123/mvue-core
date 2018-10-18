@@ -118,6 +118,15 @@ module.exports=function (options) {
     return model;
   }
   /**
+   * 根据传入的model，从后台填充所有属性定义的默认值
+   */
+  metaEntity.fillDefault=function(model){
+    var ds=this.dataResource();
+    return ds.calc(model).then(function({data}){
+        return data;
+    });
+  }
+  /**
    * 构造实体默认表单显示的所有字段
    */
   metaEntity.getDefaultFormFields=function(){

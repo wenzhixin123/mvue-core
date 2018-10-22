@@ -25,12 +25,13 @@
              @on-select="handleOnSelect"
              @on-select-cancel="handleOnSelectCancel"
              @on-select-all="handleOnSelectAll"
+             @on-select-cancel-all="handleOnSelectCancelAll"
              @on-selection-change="handleOnSelectionChange"
+             @on-sort-change="handleSortChange"
              @on-filter-change="handleOnFilterChange"
              @on-row-click="handleOnRowClick"
              @on-row-dblclick="handleOnRowDblclick"
-             @on-expand="handleOnExpand"
-             @on-sort-change="handleSortChange">
+             @on-expand="handleOnExpand">
              <template slot="top">
                 <slot name="top">
                     <!-- 高级搜索区 -->
@@ -89,8 +90,9 @@ import metabase from '../../libs/metadata/metabase';
 import initByMetaView from './init-by-metaview';
 import metaservice from "../../services/meta/metaservice";
 import gridBase from '../grid/js/grid-base';
+import gridEvents from '../grid/js/grid-events';
 export default {
-    mixins: [gridBase],
+    mixins: [gridBase, gridEvents],
     props: {
         "viewId": {//视图配置id，所有视图配置数据、元数据信息都由这个参数获取
             type: String,

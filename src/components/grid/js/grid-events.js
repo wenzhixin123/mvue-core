@@ -1,0 +1,38 @@
+export default {
+  methods: {
+    handleOnCurrentChange(currentRow,oldCurrentRow){
+      this.$emit("on-current-change",currentRow,oldCurrentRow);
+    },
+    handleOnSelect(selection,row){
+      this.$emit("on-select",selection,row);
+    },
+    handleOnSelectCancel(selection,row){
+      this.$emit("on-select-cancel",selection,row);
+    },
+    handleOnSelectAll(selection){
+      this.$emit("on-select-all",selection);
+    },
+    handleOnSelectAllCancel(selection){
+      this.$emit("on-select-all-cancel",selection);
+    },
+    handleOnSelectionChange(selection){
+      this.selectedItems=selection;
+      this.$emit("on-selection-change",selection);
+    },
+    handleSortChange({column,key,order}){
+      this.$emit("on-sort-change",{column,key,order});
+    },
+    handleOnFilterChange(row){
+      this.$emit("on-filter-change",row);
+    },
+    handleOnRowClick(row,index){
+      this.$emit("on-row-click",row,index);
+    },
+    handleOnRowDblclick(row,index){
+      this.$emit("on-row-dblclick",row,index);
+    },
+    handleOnExpand(row,status){
+      this.$emit("on-expand",row,status);
+    },
+  }
+}

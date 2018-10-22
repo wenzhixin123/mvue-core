@@ -25,12 +25,14 @@
              @on-select="handleOnSelect"
              @on-select-cancel="handleOnSelectCancel"
              @on-select-all="handleOnSelectAll"
+             @on-select-cancel-all="handleOnSelectCancelAll"
              @on-selection-change="handleOnSelectionChange"
+             @on-sort-change="handleSortChange"
              @on-filter-change="handleOnFilterChange"
              @on-row-click="handleOnRowClick"
              @on-row-dblclick="handleOnRowDblclick"
              @on-expand="handleOnExpand"
-             @on-sort-change="handleSortChange">
+    >
              <template slot="top">
                 <slot name="top">
                     <!-- 高级搜索区 -->
@@ -88,9 +90,10 @@
 import metabase from '../../libs/metadata/metabase';
 import initByMetadata from './js/init-by-metadata';
 import gridBase from './js/grid-base';
+import gridEvents from './js/grid-events';
 import getParent from '../mixins/get-parent';
 export default {
-    mixins: [gridBase,getParent],
+    mixins: [gridBase, gridEvents, getParent],
     props: {
         "defaultSort": {//默认排序设置{key:'',order:'desc'}
             type: Object

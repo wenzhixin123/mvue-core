@@ -10,9 +10,8 @@
 </div>
 </template>
 <script>
-import mvueToolkit from "mvue-toolkit";
-var Config=require("../../config/config.js");
 import OperationUtils from './js/operation_utils';
+var Config=require("../../config/config.js");
 
 export default {
     props:{

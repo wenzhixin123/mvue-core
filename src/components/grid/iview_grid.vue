@@ -123,6 +123,9 @@ import commonOperation from '../meta_operation/js/common_operation';//widgetMode
 import noneWidgetModeCommonOperation from './js/metagrid_operation';//widgetMode false
 import gridBase from './js/entity_grid_base';
 import utils from '../../libs/utils';
+
+var Config=require("../../config/config.js");
+
 export default {
     mixins:[gridBase],
     props: {
@@ -526,6 +529,7 @@ export default {
         },
         //begin 单击行
         handleOnRowClick(row,index){
+            let _t = this;
             if(!this.viewOnSingleClickRow){
                 return;
             }
@@ -555,12 +559,26 @@ export default {
                         operation.onclick(_widgetCtx,{operation:operation});
                         return;
                     }
-                }else if(operation.onclick){//脚本操作
-                    if(_.isFunction(operation.onclick)){
-                        operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+                }else if(operation.operationType=="execOperation"){//脚本操作
+                    function cellExecScript(){
+                        OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                            if(_.isFunction(_t.implCode)){
+                                _t.implCode(Object.assign(_widgetCtx,operation),{operation:operation});
+                            }else{
+                                var onclick=Function('"use strict";return ' + _t.implCode  )();
+                                onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+                            }
+                            OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                        });
+                    }
+                    if(_t.implCode){
+                        cellExecScript();
                     }else{
-                        var onclick=Function('"use strict";return ' + operation.onclick  )();
-                        onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+                        //获取执行代码
+                        mvueCore.resource(`meta_operation/${operation.operationId}`, null, {root: _.trimEnd(Config.getMetadApiEndpoint(), '/')}).get({}).then(({ data }) => {
+                            _t.implCode=data.implCode;
+                            cellExecScript();
+                        });
                     }
                 }else if(operation.operationType=="toPage"||operation.operationType=="toOperation"){
                     this.modalWidth = _rowSingleClick.modalWidth||500;

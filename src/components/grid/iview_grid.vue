@@ -538,6 +538,10 @@ export default {
                     selectedId: row.id,
                     selectedItem: row
                 };
+                if(_.isFunction(_rowSingleClick)){
+                    _rowSingleClick(_widgetCtx);
+                    return false;
+                }
                 var operation=OperationUtils.expandOperation(_rowSingleClick,{
                     operation:_rowSingleClick,
                     widgetContext:_widgetCtx

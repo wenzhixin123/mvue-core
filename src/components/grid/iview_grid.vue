@@ -618,11 +618,14 @@ export default {
                     }
                     Object.assign(this.$route.query,getIdFromContext());
                     this.pageParams = Object.assign({pageId:operation.pageId},getIdFromContext());
-                    if(operation.isPopup){
-                        this.popupWidgetModal=!this.popupWidgetModal;
-                    }else{
-                        router.push({name:"defaultPageIndex",query:this.pageParams,params:this.pageParams});
-                    }
+                    OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                        if(operation.isPopup){
+                            this.popupWidgetModal=!this.popupWidgetModal;
+                        }else{
+                            router.push({name:"defaultPageIndex",query:this.pageParams,params:this.pageParams});
+                        }
+                        OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                    });
                 }
             }
             //这里btns必须包含view操作

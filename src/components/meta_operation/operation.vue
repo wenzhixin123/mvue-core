@@ -1,5 +1,5 @@
 <template>
-    <div class="widget-operation div-inline-block" v-if="showOperation">
+    <div class="widget-operation div-inline-block">
         <component @triggered="triggered" @successed="successed" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot :operation="extendedOperation"></slot>
         </component>
@@ -9,7 +9,7 @@
 import propParser from '../../services/tool/prop_parser';
 import OperationUtils from './js/operation_utils';
 //操作类型定义
-var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
+var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',toOperation:'toOperation'};
 var permParser={
     //来自表单的取消、开启编辑、编辑、删除权限
     "formCancel":function(widgetContext){
@@ -117,6 +117,8 @@ export default {
         toPageOperation:require('./to_page_operation'),
         popupOperation:require('./popup_operation'),
         scriptOperation:require('./script_operation'),
+        execOperationOperation:require('./script_operation'),
+        toOperationOperation:require('./to_operation_operation')
     }
 }
 </script>

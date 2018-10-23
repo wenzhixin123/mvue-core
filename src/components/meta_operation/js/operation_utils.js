@@ -9,6 +9,22 @@ var utils={
             }
         });
         return _.extend(operation,params);
+    },
+    execution(operation,_widgetCtx,before_after){
+        //操作执行前后逻辑
+        return new Promise(function(resolve, reject) {
+            let value=true;
+            if(operation[before_after]) {
+                if (_.isFunction(operation[before_after])) {
+                    value = operation[before_after](_widgetCtx, this)
+                } else {
+                    value = Function('"use strict";return ' + operation[before_after])(_widgetCtx, this);
+                }
+                resolve(value);
+            }else{
+                resolve(value);
+            }
+        });
     }
 };
 export default utils;

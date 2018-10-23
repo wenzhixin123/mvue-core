@@ -562,10 +562,10 @@ export default {
                         var onclick=Function('"use strict";return ' + operation.onclick  )();
                         onclick(Object.assign(_widgetCtx,operation),{operation:operation});
                     }
-                }else if(operation.operationType=="toPage"){
+                }else if(operation.operationType=="toPage"||operation.operationType=="toOperation"){
                     this.modalWidth = _rowSingleClick.modalWidth||500;
                     this.modalHeight = _rowSingleClick.modalHeight||340;
-                    this.modalTitle = _rowSingleClick.page.title;
+                    this.modalTitle = _rowSingleClick.title;
 
                     function getIdFromContext(){
                         var context = Object.assign(_widgetCtx, operation);
@@ -595,9 +595,11 @@ export default {
                         this.pageParams = {pageId :""};
                         this.popupWidgetModal=false;
                     }
-
+                    if(operation.operationType=="toOperation"){
+                        this.$route.query.byOperation = true;
+                    }
                     Object.assign(this.$route.query,getIdFromContext());
-                    this.pageParams = Object.assign({pageId:operation.page.id},getIdFromContext());
+                    this.pageParams = Object.assign({pageId:operation.pageId},getIdFromContext());
                     if(operation.isPopup){
                         this.popupWidgetModal=!this.popupWidgetModal;
                     }else{

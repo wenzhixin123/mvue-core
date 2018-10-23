@@ -22,7 +22,7 @@
                 </Button>
             </slot>
         </div>
-        <Modal class="popup-widget-con" v-model="popupWidgetModal"
+        <Modal v-if="operation.isPopup" class="popup-widget-con" v-model="popupWidgetModal"
                :width="modalWidth"
                :title="modalTitle"
                :scrollable="true"
@@ -36,6 +36,7 @@
     </div>
 </template>
 <script>
+import OperationUtils from './js/operation_utils';
 export default {
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
@@ -48,7 +49,7 @@ export default {
         }
     },
     data(){
-        if(!this.operation.page){
+        if(!this.operation.pageId){
             this.$Modal.error({
                 title:"错误",
                 content:"page参数缺失"
@@ -57,7 +58,7 @@ export default {
         return {
             modalWidth:this.operation.modalWidth||500,
             modalHeight:this.operation.modalHeight||340,
-            modalTitle:this.operation.page.title,
+            modalTitle:this.operation.title,
             popupWidgetModal:false,
             pageParams:{}
         };
@@ -88,24 +89,32 @@ export default {
 
         },
         gotoPage(){
-            if(!this.operation.page){
-                return;
-            }
-            //所有跳转都带入dataId数据id,entity实体id
-            var _query=_.extend({},this.getIdFromContext(),this.operation.queryParams);
-            var pageId=this.operation.page.id;
-            var _params=_.extend({pageId:pageId},this.operation.pathParams);
-            router.push({name:"defaultPageIndex",query:_query,params:_params});
-            this.$emit("triggered","toPage");
+            let _t = this;
+            var _widgetCtx = Object.assign(this.widgetContext, this.operation);
+            OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                //所有跳转都带入dataId数据id,entity实体id
+                var _query=_.extend({},_t.getIdFromContext(),_t.operation.queryParams);
+                var pageId=_t.operation.pageId;
+                var _params=_.extend({pageId:pageId,byOperation:false},_t.operation.pathParams);
+                router.push({name:"defaultPageIndex",query:_query,params:_params});
+                _t.$emit("triggered","toPage");
+                OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
+            })
         },
         toggleModal(){
-            if(!this.operation.page){
-                return;
-            }
-            Object.assign(this.$route.query,this.getIdFromContext());
-            this.pageParams = Object.assign({pageId:this.operation.page.id},this.getIdFromContext());
-            this.popupWidgetModal=!this.popupWidgetModal;
-            this.$emit("triggered","popup");
+            let _t = this;
+            var _widgetCtx = Object.assign(this.widgetContext, this.operation);
+            OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                //所有跳转都带入dataId数据id,entity实体id
+                if(!_t.operation.pageId){
+                    return;
+                }
+                Object.assign(_t.$route.query,_t.getIdFromContext());
+                _t.pageParams = Object.assign({pageId:_t.operation.pageId},_t.getIdFromContext());
+                _t.popupWidgetModal=!_t.popupWidgetModal;
+                _t.$emit("triggered","popup");
+                OperationUtils.execution(_t.operation,_widgetCtx,"afterExecCode")//执行后
+            })
         },
         close(){//关闭对话框
             this.pageParams = {pageId :""};

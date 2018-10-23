@@ -26,7 +26,7 @@
             }
         },
         data(){
-            if(!this.operation.page){
+            if(!this.operation.pageId){
                 this.$Modal.error({
                     title:"错误",
                     content:"page参数缺失"

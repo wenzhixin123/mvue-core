@@ -33,17 +33,34 @@ export default {
     methods:{
         execScript(){
             let _t = this;
-            if(this.mustStopRepeatedClick){
-                return;
-            }
-            if(_t.implCode){
-                _t.cellExecScript();
-            }else{
-                //获取执行代码
-                mvueCore.resource(`meta_operation/${_t.operation.operationId}`, null, {root: _.trimEnd(Config.getMetadApiEndpoint(), '/')}).get({}).then(({ data }) => {
-                    _t.implCode=data.implCode;
+            if(this.operation.onclick) {
+                if (this.mustStopRepeatedClick) {
+                    return;
+                }
+                var _widgetCtx = Object.assign(this.widgetContext, this.operation);
+                if (_.isFunction(this.operation.onclick)) {
+                    this.mustStopRepeatedClick = true;
+                    this.operation.onclick(_widgetCtx, this);
+                } else {
+                    this.mustStopRepeatedClick = true;
+                    var onclick = Function('"use strict";return ' + this.operation.onclick)();
+                    onclick(_widgetCtx, this);
+                }
+                this.mustStopRepeatedClick = false;
+                this.$emit("triggered", "script");
+            }else {
+                if (this.mustStopRepeatedClick) {
+                    return;
+                }
+                if (_t.implCode) {
                     _t.cellExecScript();
-                });
+                } else {
+                    //获取执行代码
+                    mvueCore.resource(`meta_operation/${_t.operation.operationId}`, null, {root: _.trimEnd(Config.getMetadApiEndpoint(), '/')}).get({}).then(({data}) => {
+                        _t.implCode = data.implCode;
+                        _t.cellExecScript();
+                    });
+                }
             }
         },
         cellExecScript(){

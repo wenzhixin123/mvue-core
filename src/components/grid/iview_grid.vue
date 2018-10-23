@@ -559,6 +559,13 @@ export default {
                         operation.onclick(_widgetCtx,{operation:operation});
                         return;
                     }
+                }else if(operation.onclick){//脚本操作
+                    if(_.isFunction(operation.onclick)){
+                        operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+                    }else{
+                        var onclick=Function('"use strict";return ' + operation.onclick  )();
+                        onclick(Object.assign(_widgetCtx,operation),{operation:operation});
+                    }
                 }else if(operation.operationType=="execOperation"){//脚本操作
                     function cellExecScript(){
                         OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{

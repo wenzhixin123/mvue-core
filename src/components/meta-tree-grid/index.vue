@@ -11,7 +11,7 @@
                        @on-select="handleOnSelect"
                        @on-select-cancel="handleOnSelectCancel"
                        @on-select-all="handleOnSelectAll"
-                       @on-select-cancel-all="handleOnSelectCancelAll"
+                       @on-select-all-cancel="handleOnSelectAllCancel"
                        @on-selection-change="handleOnSelectionChange"
                        @on-sort-change="handleSortChange"
                        @on-filter-change="handleOnFilterChange"

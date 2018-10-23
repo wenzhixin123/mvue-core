@@ -26,7 +26,7 @@
             }
         },
         data(){
-            if(!this.operation.pageId){
+            if(!this.operation.operationId){
                 this.$Modal.error({
                     title:"错误",
                     content:"page参数缺失"
@@ -37,13 +37,37 @@
             };
         },
         methods:{
+            getIdFromContext(){
+                var context = Object.assign(this.widgetContext, this.operation);
+                var id = context.selectedId;
+                var metaEntity = context.metaEntity;
+                if(!context.selectedItem&&context.selectedItems&&context.selectedItems.length){
+                    //按钮放置的是在工具栏
+                    context.selectedItem = context.selectedItems[(context.selectedItems.length-1)]
+                    context.selectedId = context.selectedItem.id;
+                    id = context.selectedId;
+                }
+                if (!id&&context.selectedItem) {
+                    var selectedItem = context.selectedItem;
+                    if (selectedItem) {
+                        //计算id字段
+                        var idField = null;
+                        if (!_.isEmpty(metaEntity)) {
+                            idField = metaEntity.getIdField();
+                        }
+                        id = selectedItem[idField];
+                    }
+                }//获取传入的对象id和实体信息
+                return {dataId:id,entity:metaEntity.metaEntityId};
+
+            },
             gotoPage(){
                 let _t = this;
                 var _widgetCtx = Object.assign(this.widgetContext, this.operation);
                 OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
                     //所有跳转都带入dataId数据id,entity实体id
                     var _query=_.extend({},_t.getIdFromContext(),_t.operation.queryParams);
-                    var pageId=_t.operation.page.id;
+                    var pageId=_t.operation.operationId;
                     var _params=_.extend({pageId:pageId,byOperation:true},_t.operation.pathParams);
                     router.push({name:"defaultPageIndex",query:_query,params:_params});
                     _t.$emit("triggered","toPage");

@@ -30,6 +30,8 @@ function impl(context,$optInst){
             }else{
                 contextHelper.getRouter().go(-1);
             }
+        }else{
+            form.$emit("popup-close");
         }
         if(_.isFunction(operation.onSuccess)){
             operation.onSuccess(res,form);

@@ -302,7 +302,7 @@ function loadMetaRelationFromProperty(context,propertyName,property){
       _property: property
   };
   if(metaRelation.embedded){
-      metaRelation.joinFields=property["x-embedded-field"];
+      metaRelation.joinFields=[property["x-embedded-field"]];
   }
   return metaRelation;
 }

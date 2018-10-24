@@ -40,11 +40,11 @@ export default {
                 var _widgetCtx = Object.assign(this.widgetContext, this.operation);
                 if (_.isFunction(this.operation.onclick)) {
                     this.mustStopRepeatedClick = true;
-                    this.operation.onclick(_widgetCtx, this,factoryApi);
+                    this.operation.onclick(_widgetCtx, this,window.factoryApi);
                 } else {
                     this.mustStopRepeatedClick = true;
                     var onclick = Function('"use strict";return ' + this.operation.onclick)();
-                    onclick(_widgetCtx, this,factoryApi);
+                    onclick(_widgetCtx, this,window.factoryApi);
                 }
                 this.mustStopRepeatedClick = false;
                 this.$emit("triggered", "script");
@@ -69,11 +69,11 @@ export default {
                 //所有跳转都带入dataId数据id,entity实体id
                 if(_.isFunction(this.implCode)){
                     this.mustStopRepeatedClick=true;
-                    this.implCode(_widgetCtx,this,factoryApi);
+                    this.implCode(_widgetCtx,this,window.factoryApi);
                 }else{
                     this.mustStopRepeatedClick=true;
                     var onclick=Function('"use strict";return ' + this.implCode  )();
-                    onclick(_widgetCtx,this,factoryApi);
+                    onclick(_widgetCtx,this,window.factoryApi);
                 }
                 this.mustStopRepeatedClick=false;
                 this.$emit("triggered","script");

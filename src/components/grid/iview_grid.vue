@@ -123,7 +123,6 @@ import commonOperation from '../meta_operation/js/common_operation';//widgetMode
 import noneWidgetModeCommonOperation from './js/metagrid_operation';//widgetMode false
 import gridBase from './js/entity_grid_base';
 import utils from '../../libs/utils';
-
 var Config=require("../../config/config.js");
 
 export default {
@@ -561,19 +560,19 @@ export default {
                     }
                 }else if(operation.onclick){//脚本操作
                     if(_.isFunction(operation.onclick)){
-                        operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation},factoryApi);
+                        operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApi);
                     }else{
                         var onclick=Function('"use strict";return ' + operation.onclick  )();
-                        onclick(Object.assign(_widgetCtx,operation),{operation:operation},factoryApi);
+                        onclick(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApi);
                     }
                 }else if(operation.operationType=="execOperation"){//脚本操作
                     function cellExecScript(){
                         OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
                             if(_.isFunction(_t.implCode)){
-                                _t.implCode(Object.assign(_widgetCtx,operation),{operation:operation},factoryApi);
+                                _t.implCode(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApi);
                             }else{
                                 var onclick=Function('"use strict";return ' + _t.implCode  )();
-                                onclick(Object.assign(_widgetCtx,operation),{operation:operation},factoryApi);
+                                onclick(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApi);
                             }
                             OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                         });

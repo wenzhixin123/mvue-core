@@ -39,14 +39,14 @@ function impl(context,$optInst){
         router=gridUtils.buildRouteToFromOp($optInst.operation);
     }
     if(router==null){
-        router=buildRoutToFromEntity(metaEntity,id);
+        router=buildRouteToFromEntity(metaEntity,id);
     }
     router=_.merge(defaultRouter,router);
     //router.query=_.assign(router.query,{"dataId":id});
     gridUtils.goto(router);
 }
 
-function buildRoutToFromEntity(metaEntity,id) {
+function buildRouteToFromEntity(metaEntity,id) {
     var path=metaEntity.formPathForEdit(id);
     if(_.isEmpty(path)){
         alert("not implement,please set createPath");

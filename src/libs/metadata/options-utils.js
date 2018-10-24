@@ -6,7 +6,8 @@ const optionTitleKey='text';
  */
 function getOptionText(metaField,optionId,cascade){
     if(!metaField.inputTypeParams.options){
-        return '';
+        console.log(`选项类型字段${metaField.name}:inputTypeParams.options参数未设置`);
+        return _.isArray(optionId)?[]:'';
     }
     var initOptions=metaField.inputTypeParams.options;
     var options=_.keyBy(initOptions,opt=>{return opt.id});

@@ -37,6 +37,13 @@ function formatData(componentType,item,metaField){
     let optionTexts=optionsUtils.getOptionText(metaField,origin,true);
     return optionTexts.join("/")||origin.join("/");
 }
+//由swagger.json生成的metaField构造组件参数
+function fillComponentParams(formItem,metaField){
+    var options=metaField.inputTypeParams["options"];
+    if(options){
+        formItem.componentParams.cascadeOptions.options=_.cloneDeep(options);
+    }
+}
 export default{
     types:types,
     componentParams:componentParams,
@@ -44,5 +51,6 @@ export default{
     defaultValue:defaultValue,
     selectTexts:selectTexts,
     accept:accept,
-    formatData:formatData
+    formatData:formatData,
+    fillComponentParams:fillComponentParams
 }

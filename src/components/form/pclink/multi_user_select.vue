@@ -58,38 +58,26 @@ export default {
     methods: {
         initValue(){
             this.innerValue=_.cloneDeep(this.value);
-            let innerTextArray=[];
-            let _this=this;
-            _.each(this.innerValue,function(v){
-                let exData=_this.getExData(v);
-                if(exData){
-                    innerTextArray.push(exData);
-                }
+            let textsPromise=this.getEntityExData(this.innerValue);
+            textsPromise.then(texts=>{
+                this.innerText=texts.join(",");
             });
-            this.innerText=innerTextArray.join(",");
-            //如果id为空，显示文本也应该清空
-            if(!this.innerValue||this.innerValue.length===0){
-                this.innerText="";
-            }
         },
         onSelect:function(selectItems){
             let valueArray=[],textArray=[];
             let _this=this;
             var idField=this.getIdField();
             var titleField=this.getTitleField();
-            var exData={};
             _.each(selectItems,function(selectItem){
                 let value=selectItem[idField];
                 let text=selectItem[titleField];
                 valueArray.push(value);
                 textArray.push(text);
-                exData[value]=_this.buildExData(text);
             });
             this.innerValue=valueArray;
             this.innerText=textArray.join(",");
             this.$emit('input',this.innerValue);
             this.dispatch('FormItem', 'on-form-blur', this.innerValue);
-            this.$emit("exDataChanged",exData,this.formItem.dataField);
         },
         onRemove:function(item){
             this.innerValue=[];

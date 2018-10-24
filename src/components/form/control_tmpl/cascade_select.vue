@@ -74,24 +74,10 @@ export default {
         handleChange(value,selectedData){
             var emitValue=_.cloneDeep(value);
             this.$emit('input',emitValue);
-            this.emitExData(selectedData);
-        },
-        emitExData:function(selectedData){
-            let _this=this;
-            var exData={};
-            _.each(selectedData,function(item){
-                exData[item.value]=_this.buildExData(item.text);
-            });
-            this.$emit("exDataChanged",exData,this.formItem.dataField);
         },
         viewModeValue(){
             if(this.valueObj&&this.valueObj){
-                let texts=[];
-                let _this=this;
-                _.each(this.valueObj,function(id){
-                    let exValue=_this.getExData(id);
-                    texts.push(exValue);
-                });
+                let texts=this.getOptionsExData(this.valueObj);
                 return texts.join("/");
             }
             return "";

@@ -8,7 +8,6 @@
             :model="entity" :metaField="metaField"  :formItem="formItem">
             <component
                 v-model="entity[name]"
-                @exDataChanged="exDataChanged"
                 :is="componentName(formItem)"
                 :paths="paths"
                 :model="entity"
@@ -166,7 +165,7 @@ export default {
         },
         fieldStatus:function () {
             var status=this.action;
-            if(_.isEmpty(status)){
+            if(_.isNil(status)){
                 if(this.form&&this.form.isView){
                     status=Utils.formActions.view;
                 }else{
@@ -187,12 +186,6 @@ export default {
             }
             if(this.inputType){
                 metaField.inputType=this.inputType;
-            }
-        },
-        //表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等
-        exDataChanged:function(newValue,dataField){
-            if(this.form){
-                this.form.exDataChanged(newValue,dataField);
             }
         },
         componentName(formItem){

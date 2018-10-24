@@ -2,6 +2,7 @@ import controlTypeService from './control_type_service';
 import constants from './constants';
 import widgetMode from './widget-mode';
 import {emitter}  from 'mvue-components';
+import optionsUtils from '../../../libs/metadata/options-utils';
 export default {
     mixins:[emitter],
     props:{
@@ -81,19 +82,64 @@ export default {
         }
     },
     methods:{
-        buildExData(value){//构造组件需要保存的冗余数据
-            var exData={};
-            exData[constants.entityModelTitleKey]=value;
-            return exData;
-        },
-        getExData(id){//编辑模式获取当前表单数据字段id的冗余数据
-            if(!id){
-                return null;
+        //通过选项id获取选项字段类型数据的显示文字，供显示使用
+        getOptionsExData(optionId){
+            if(!optionId){
+                return '';
             }
-            var _data=this.model&&this.model[constants.entityModelRedundantKey];
-            _data=_data||{};
-            _data= _data[this.formItem.dataField]||{};
-            return _data[id]&&_data[id][constants.entityModelTitleKey];
+            var metaEntity=this.context.metaEntity;
+            if(metaEntity){
+                let metaField=metaEntity.findField(this.formItem.dataField);
+                return optionsUtils.getOptionText(metaField,optionId);
+            }
+            return _.isArray(optionId)?[]:'';
+        },
+        //通过数据id获取引用实体数据的title语义数据，供显示使用
+        getEntityExData(id){
+            if(!id){
+                return '';
+            }
+            var metaEntity=this.context.metaEntity;
+            var targetTitleField=this.getTitleField();
+            //先在expand的关系数据中取
+            if(metaEntity){
+                let metaField=metaEntity.findField(this.formItem.dataField);
+                if (metaField) {
+                    //处理多对一关系和嵌入关系
+                    let relation=metaField.manyToOneRelation||metaField.embeddedRelation;
+                    if(relation){
+                        if(this.model&&this.model[relation.name]){
+                            let rData=this.model[relation.name];
+                            if(!_.isArray(id)){//单值
+                                return Promise.resolve(rData[targetTitleField]);
+                            }else{//多值
+                                let titleArray=[];
+                                _.each(rData,rd=>{
+                                    titleArray.push(rd[targetTitleField]);
+                                });
+                                return Promise.resolve(titleArray);
+                            }
+                        }
+                    }
+                }
+            }
+            //如果没有关系数据，远程查询引用数据
+            if(this.entityResource){
+                if(!_.isArray(id)){
+                    return this.entityResource.get({id:id}).then(({data})=>{
+                        return data[targetTitleField];
+                    });
+                }else{
+                    return this.entityResource.query({filters:`${this.getIdField()} in ${id.join(',')}`}).then(({data})=>{
+                        let titleArray=[];
+                        _.each(data,d=>{
+                            titleArray.push(d[targetTitleField]);
+                        });
+                        return titleArray;
+                    });
+                }
+            }
+            return _.isArray(id)?[]:'';
         },
         isCreate(){//判断当前表单是否为新建模式
             if(this.context

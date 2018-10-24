@@ -236,7 +236,21 @@ function loadMetaFieldFromProperty(context,propertyName,property){
   fillInputTypeParams(metaField,property);
   return metaField;
 }
-
+//转换选项集
+function optionsConvert(options,metaField){
+  let _options=[];
+  _.each(options,function (item,index) {
+    _options.push({
+      id:item.value,
+      text:item.title,
+      checked:metaField.default==item.value?true:false
+    });
+  });
+  if(options.children){
+    _options.children=optionsConvert(options.children,metaField);
+  }
+  return _options;
+}
 /**
  * 设置metaField的inputTypeParams参数
  * @param metaField
@@ -270,18 +284,10 @@ function fillInputTypeParams(metaField,property) {
     metaField.inputTypeParams["format"]=property["format"];
   }
   if(property["x-options"]&&property["x-options"].items){
-    let options=[];
-    _.each(property["x-options"].items,function (item,index) {
-      options.push({
-        id:item.value,
-        text:item.title,
-        checked:metaField.default==item.value?true:false
-      });
-    });
+    let options=optionsConvert(property["x-options"].items,metaField);
     metaField.inputTypeParams["options"]=options;
   }
 }
-
 /**
  * 根据关系属性构造关系
  * @param context

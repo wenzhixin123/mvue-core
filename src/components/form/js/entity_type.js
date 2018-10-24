@@ -1,5 +1,4 @@
-import constants from './constants'
-import metabase from '../../../libs/metadata/metabase'
+import metabase from '../../../libs/metadata/metabase';
 var types={
     RefEntity:{ 
         id: "RefEntity", 
@@ -39,15 +38,22 @@ function formatData(componentType,item,metaField){
     if(_.isNil(origin)||origin===''){
         return "";
     }
-    let rkey=constants.entityModelRedundantKey;
-    let titleKey=constants.entityModelTitleKey;
-    var $data=(item[rkey]&&item[rkey][fieldName])||{};
-    var result= $data[origin]&&$data[origin][titleKey];
-    result=result||origin;
-    return result;
+    var relation=metaField.manyToOneRelation||metaField.embeddedRelation;
+    var expandData=item[relation.name];
+    let targetEntity=metabase.findMetaEntity(relation.targetEntity);
+    let titleField=targetEntity.firstTitleField().name;
+    if(_.isArray(origin)){
+        let titleArray=[];
+        _.each(expandData,ed=>{
+            titleArray.push(ed[titleField]);
+        });
+        return titleArray.join(',');
+    }else{
+        return expandData[titleField];
+    }
 }
 function fillComponentParams(formItem,metaField){
-    var relation=metaField.manyToOneRelation;
+    var relation=metaField.manyToOneRelation||metaField.embeddedRelation;
     var itemEntityName=metaField.xAttrs&&metaField.xAttrs.targetEntity;
     var targetEntityName=null;
     if(relation){

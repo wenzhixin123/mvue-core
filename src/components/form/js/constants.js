@@ -1,7 +1,5 @@
 import context from "../../../libs/context";
 export default {
-    entityModelRedundantKey:'_data',
-    entityModelTitleKey:'title',
     paths(){
         return {
             uploadUrl:context.getConfig().getUploadUrl(),

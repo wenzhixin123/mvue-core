@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-                <div v-text="viewModeValue()"></div>
+                <div v-text="viewModeValue"></div>
         </template>
         <template v-else>
             <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">

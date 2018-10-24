@@ -69,32 +69,14 @@ export default {
             if(!_.isEqual(this.valueObj,_defaultSelected)){
                 this.valueObj=_.cloneDeep(_defaultSelected);
                 this.$emit('input',this.toSumValue());
-                this.emitExData();
             }
         },
         updateValue: function (vals) {
             this.$emit('input',this.toSumValue());
-            this.emitExData();
-        },
-        emitExData:function(othersValue){
-            var _this=this;
-            var exData={};
-            var optionsMap=_.keyBy(this.formItem.componentParams.options,function (option) {
-                return option.id;
-            });
-            _.each(this.valueObj,function(selectedId){
-                exData[selectedId]=_this.buildExData(optionsMap[selectedId].text);
-            });
-            this.$emit("exDataChanged",exData,this.formItem.dataField);
         },
         viewModeValue(){
             if(this.valueObj&&this.valueObj){
-                let texts=[];
-                let _this=this;
-                _.each(this.valueObj,function(id){
-                    let exValue=_this.getExData(id);
-                    texts.push(exValue);
-                });
+                let texts=this.getOptionsExData(this.valueObj);
                 return texts.join(",");
             }
             return "";

@@ -327,11 +327,6 @@ export default {
                 });
             }
         },
-        //表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等
-        //这个方法会在metafield组件内部触发
-        exDataChanged:function(newValue,dataField){
-            metaformUtils.exDataChanged(this.entity,newValue,dataField);
-        },
         //工具栏是否有按钮存在，没有按钮的话，工具栏隐藏
         hasButtons(){
             if(!this.toolbar){

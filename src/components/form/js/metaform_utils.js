@@ -285,15 +285,6 @@ function initValidation(formItem,metaEntity,dataId,entity) {
     }
     return rules;
 }
-//表单记录扩展数据填充，如选择用户之后用户名称存储、选项类型其他选项对应的填写值等
-function exDataChanged(model,newValue,dataField){
-    if(dataField){
-        let rkey=constants.entityModelRedundantKey;
-        model[rkey]=model[rkey]||{};
-        model[rkey][dataField]=model[rkey][dataField]||{};
-        model[rkey][dataField]=newValue;
-    }
-}
 //根据表单布局项，计算组件对应的渲染组件（pclink将使用原生选人控件）
 function metaComponentType(formItem){
     var ct=formItem.componentType;
@@ -314,6 +305,5 @@ export default{
     getFormItemById:getFormItemById,
     indexOfFormItem:indexOfFormItem,
     initValidation:initValidation,
-    exDataChanged:exDataChanged,
     metaComponentType:metaComponentType
 }

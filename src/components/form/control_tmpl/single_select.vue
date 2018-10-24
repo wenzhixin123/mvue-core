@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-                <div v-text="getExData(valueObj)"></div>
+                <div v-text="getOptionsExData(valueObj)"></div>
         </template>
         <template v-else>
             <Select v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
@@ -54,7 +54,6 @@ export default {
                 if(option.checked){
                     _this.valueObj=option.id;
                     _this.$emit('input',_this.valueObj);
-                    _this.emitExData(option.id,option.text);
                     return false;
                 }
             });
@@ -67,14 +66,6 @@ export default {
             var optionsMap=_.keyBy(this.formItem.componentParams.options,function (item) {
                 return item["id"];
             });
-            if(value&&optionsMap[value]){
-                this.emitExData(value,optionsMap[value].text);
-            }
-        },
-        emitExData:function(id,text){
-            var exData={};
-            exData[id]=this.buildExData(text);
-            this.$emit("exDataChanged",exData,this.formItem.dataField);
         }
     }
 }

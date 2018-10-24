@@ -8,6 +8,7 @@ export default{
             queryLimit:10,
             historyItems:[],//选中过的历史选项
             cachedDataItems:null,//默认提示的可选数据
+            viewModeValue:""
         };
     },
     computed:{
@@ -39,6 +40,9 @@ export default{
         this.doSearchForCache(function(items)  {
             _this.ensureHistoryItems(items);
         });
+        if(this.viewMode){
+            this.getViewModeValue()
+        }
     },
     methods:{
         //第一次进入页面时执行初始化
@@ -61,30 +65,21 @@ export default{
         //单选
         notifySingleSelect:function(){
             var idField=this.getIdField();
-            var titleField=this.getTitleField();
-            var exData={},sid=null,exDataItem=null;
+            var sid=null;
             if(this.selectedItem){
                 sid=this.selectedItem[idField];
-                exDataItem=this.buildExData(this.selectedItem[titleField]);
-                exData[sid]=exDataItem;
             }
-            this.$emit("exDataChanged",exData,this.formItem.dataField);
             this.$emit('input',sid);
             this.dispatch('FormItem', 'on-form-change', sid);
         },
         //多选
         notifyMultipleSelect(){
             var idField=this.getIdField();
-            var titleField=this.getTitleField();
-            var exData={};
             var sIds=[];
             _.each(this.selectedItem,(sitem)=>{
                 var sid=sitem[idField];
                 sIds.push(sid);
-                var exDataItem=this.buildExData(sitem[titleField]);
-                exData[sid]=exDataItem;
             });
-            this.$emit("exDataChanged",exData,this.formItem.dataField);
             this.$emit('input',sIds);
             this.dispatch('FormItem', 'on-form-change', sIds);
         },
@@ -200,21 +195,18 @@ export default{
                 },"changedQueue");
             }
         },
-        viewModeValue(){
-            if(_.isArray(this.selectedItem)){
-                let texts=[];
-                let _this=this;
-                _.each(this.selectedItem,function(item){
-                    let id=item[_this.getIdField()];
-                    let exValue=_this.getExData(id);
-                    texts.push(exValue);
+        //获取查看模式的显示数据
+        getViewModeValue(){
+            if(_.isArray(this.value)){
+                let textsPromise=this.getEntityExData(this.value);
+                textsPromise.then(texts=>{
+                    this.viewModeValue=texts.join(",");
                 });
-                return texts.join(",");
+            }else{
+                this.getEntityExData(this.value).then(text=>{
+                    this.viewModeValue=text;
+                });
             }
-            if(this.selectedItem){
-                return selectedItem[this.getTitleField()]
-            }
-            return "";
         }
     }
 }

@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div v-text="getExData(valueObj)"></div>
+            <div v-text="getOptionsExData(valueObj)"></div>
         </template>
         <template v-else>
             <RadioGroup v-model="valueObj" @on-change="updateValue" >
@@ -48,7 +48,6 @@ export default {
                     _this.valueObj=option.id;
                     _this.updateValue(option.id);
                     _this.$emit('input',_this.valueObj);
-                    _this.emitExData(option.id,option.text);
                     return false;
                 }
             });
@@ -65,14 +64,6 @@ export default {
                }
             });
             this.$emit('input',val);
-            if(selectedItem!=null){
-                this.emitExData(selectedItem.id,selectedItem.text);
-            }
-        },
-        emitExData:function(id,text){
-            var exData={};
-            exData[id]=this.buildExData(text);
-            this.$emit("exDataChanged",exData,this.formItem.dataField);
         }
     }
 }

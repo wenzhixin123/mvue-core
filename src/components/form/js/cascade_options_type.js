@@ -1,5 +1,5 @@
 const uuidv1 = require('uuid/v1');
-import constants from './constants'
+import optionsUtils from '../../../libs/metadata/options-utils';
 
 var defaultValue=[
     {id:uuidv1(),text:"选项1",children:[]},
@@ -34,16 +34,7 @@ function formatData(componentType,item,metaField){
     if(_.isNil(origin)||origin===''){
         return "";
     }
-    let rkey=constants.entityModelRedundantKey;
-    var $data=(item[rkey]&&item[rkey][fieldName])||{};
-    let titleKey=constants.entityModelTitleKey;
-    let optionTexts=[];
-    _.each(origin,function(v){
-        let optionText=$data[v][titleKey];
-        if(!_.isNil(optionText)){
-            optionTexts.push(optionText);
-        }
-    });
+    let optionTexts=optionsUtils.getOptionText(metaField,origin);
     return optionTexts.join("/")||origin.join("/");
 }
 export default{

@@ -126,6 +126,32 @@ module.exports=function (options) {
         return data;
     });
   }
+  //获取所有的关系字段组成的expand（除去几个特殊的默认字段），供leap的query使用
+  metaEntity.getExpand=function(_fields){
+    var expand=[];
+    //外部指定字段名数组
+    if(_fields){
+      _.each(_fields,f=>{
+        var metaField=this.findField(f);
+        if(metaField&&metaField.manyToOneRelation){
+          expand.push(metaField.manyToOneRelation.name);
+        }else if(metaField&&metaField.embeddedRelation){
+          expand.push(metaField.embeddedRelation.name);
+        }
+      });
+    }else{//默认所有普通字段
+      _.forIn(this.fields,function (metaField,key) {
+        if(!_.includes(["redundant","createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
+          if(metaField.manyToOneRelation){
+            expand.push(metaField.manyToOneRelation.name);
+          }else if(metaField.embeddedRelation){
+            expand.push(metaField.embeddedRelation.name);
+          }
+        }
+      });
+    }
+    return expand.join(",");
+  }
   /**
    * 构造实体默认表单显示的所有字段
    */

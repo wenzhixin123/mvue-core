@@ -1,4 +1,4 @@
-import constants from './constants'
+import entityType from './entity_type';
 var orgUserTypes={
     SingleUserSelect:{ 
         id: "SingleUserSelect", 
@@ -70,30 +70,7 @@ function switchableComponents(componentType){
     return false;
 }
 function formatData(componentType,item,metaField){
-    let fieldName=metaField.name;
-    let origin=item[fieldName];
-    if(_.isNil(origin)||origin===''){
-        return "";
-    }
-    let rkey=constants.entityModelRedundantKey;
-    let titleKey=constants.entityModelTitleKey;
-    var $data=(item[rkey]&&item[rkey][fieldName])||{};
-    var result="";
-    //单选
-    if(orgUserTypes.SingleUserSelect.id===componentType||orgUserTypes.SingleOrgSelect.id===componentType){
-        result= $data[origin]&&$data[origin][titleKey];
-        result=result||origin;
-    }else if(orgUserTypes.MultiUserSelect.id===componentType||orgUserTypes.MultiOrgSelect.id===componentType){
-    //多选
-        let names=[];
-        _.each(origin,function(id){
-            let name=$data[id]&&$data[id][titleKey];
-            name=name||id;
-            names.push(name);
-        });
-        result= names.join(",");
-    }
-    return result;
+    return entityType.formatData(componentType,item,metaField);
 }
 
 export default{

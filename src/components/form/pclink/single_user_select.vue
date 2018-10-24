@@ -63,22 +63,16 @@ export default {
     methods: {
         initValue(){
             this.innerValue=this.value;
-            let exData=this.getExData(this.innerValue);
-            if(exData){
-                this.innerText=exData;
-            }
-            //如果id为空，显示文本也应该清空
-            if(!this.innerValue){
-                this.innerText="";
-            }
+            let textsPromise=this.getEntityExData(this.innerValue);
+            textsPromise.then(text=>{
+                this.innerText=text;
+            });
         },
         onSelect:function(selectItem){
             var idField=this.getIdField();
             var titleField=this.getTitleField();
             this.innerValue=selectItem[idField];
             this.innerText=selectItem[titleField];
-            var exData=this.buildExData(this.innerText);
-            this.emitExData(this.innerValue,exData);
             this.$emit('input',this.innerValue);
             this.dispatch('FormItem', 'on-form-blur', this.innerValue);
         },
@@ -93,11 +87,6 @@ export default {
         },
         getTitleField:function(){
             return "name";
-        },
-        emitExData:function(id,data){
-            var exData={};
-            exData[id]=data;
-            this.$emit("exDataChanged",exData,this.formItem.dataField);
         },
         showPcLinkSelectModal(){
             var _this=this;

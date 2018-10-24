@@ -98,7 +98,8 @@
             },
             //根据数据id重新初始化entity模型数据
             reinitEntityModel(){
-                return this.dataResource.get({id: this.entityId}).then(({data})=> {
+                var expand= this.metaEntity.getExpand();
+                return this.dataResource.get({id: this.entityId,expand:expand}).then(({data})=> {
                     this.$store.commit("core/setEntity",{entityName:this.entityName,entity:data});
                     //根据实体记录数据初始化操作权限
                     this.initPerm(data);

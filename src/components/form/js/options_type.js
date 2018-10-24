@@ -1,5 +1,5 @@
 const uuidv1 = require('uuid/v1');
-import constants from './constants'
+import optionsUtils from '../../../libs/metadata/options-utils';
 //定义基础组件：选项类型
 var optionsTypes={
     RadioButton:{ 
@@ -113,29 +113,11 @@ function formatData(componentType,item,metaField){
     if(isPrivilegeSet(componentType)){
         origin=toDiscreteValue(origin);
     }
-    let rkey=constants.entityModelRedundantKey;
-    let titleKey=constants.entityModelTitleKey;
-    var $data=(item[rkey]&&item[rkey][fieldName])||{};
-    if(metaField.inputTypeParams&&metaField.inputTypeParams.options){
-        let optionMap={};
-        _.each(metaField.inputTypeParams.options,function(opt){
-            optionMap[opt.id]={};
-            optionMap[opt.id][titleKey]=opt.text;
-        });
-        $data=optionMap;
-    }
+    let optionText=optionsUtils.getOptionText(metaField,origin);
     if(isSingleOption(componentType)){//单选
-        let optionText=$data[origin]&&$data[origin][titleKey];
-        return optionText||origin;
+        return optionText;
     }else{
-        let optionTexts=[];
-        _.each(origin,function(v){
-          let optionText=$data[v][titleKey];
-          if(!_.isNil(optionText)){
-              optionTexts.push(optionText);
-          }
-        });
-        return optionTexts.join(",")||origin.join(",");
+        return optionText.join(",");
     }
 }
 //由swagger.json生成的metaField构造组件参数

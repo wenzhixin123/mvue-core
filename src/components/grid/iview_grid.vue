@@ -171,6 +171,17 @@ export default {
                     }
                 }
             }
+            //将需要expand的字段添加到查询参数中
+            let _fields=[];
+            _.each(this.innerColumns,c=>{
+                if(c.key){
+                    _fields.push(c.key);
+                }
+            });
+            let _expand=this.metaEntity.getExpand(_fields);
+            if(_expand){
+                params.expand=_expand;
+            }
             //关系列表自动补充关系字段过滤条件
             let relationFilters=this.buildRelationFilters();
             if(relationFilters){

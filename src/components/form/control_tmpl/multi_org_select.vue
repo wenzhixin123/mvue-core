@@ -2,7 +2,7 @@
     <div :style="{width:formItem.componentParams.width+'%'}">
         <template v-if="viewMode">
             <div class="form-item-view-con" v-if="isNotEmpty(selectedItem)">
-                <div v-text="viewModeValue()"></div>
+                <div v-text="viewModeValue"></div>
             </div>
         </template>
         <template v-else>

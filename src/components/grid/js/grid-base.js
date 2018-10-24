@@ -109,14 +109,19 @@ export default{
                 //是否-传入了上下文内容
                 context = this.context
             }else {
+                let idField=_self.metaEntity.getIdField().name;
                 context = {
                     grid: $.extend(_self, {checked: _self.selectedItems}),
                     metaEntity: _self.metaEntity,
                     selectedIds: _self.selectedItems.map(function (obj) {
-                        return obj.id
+                        return obj[idField]
                     }),
                     selectedItems: _self.selectedItems
                 };
+                if(_self.selectedItems&&_self.selectedItems.length==1){
+                    context.selectedId=_self.selectedItems[0][idField];
+                    context.selectedItem=_self.selectedItems[0];
+                }
             }
             return context;
         },

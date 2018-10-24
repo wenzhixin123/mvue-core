@@ -11,6 +11,9 @@ var operation= {
     to:null,
     operationType:"common",
     btnType:"primary",
+    disabled:function (ctx) {//兼容放在grid头部的button区的控制：仅当选择一条数据时可用
+        return !(ctx.selectedItems && ctx.selectedItems.length ==1);
+    },
     onclick:function(context,$optInst) {
         return impl(context,$optInst);
     }

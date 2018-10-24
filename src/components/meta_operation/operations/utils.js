@@ -38,6 +38,11 @@ function getIdFromContext(context){
                 idField=metaEntity.getIdField();
             }
             id=selectedItem[idField];
+        }else{//这里兼容处理一下：如果操作放到了多选区域，如果选择一项时也可以执行只需一条数据的操作
+            let checkedOne=context.selectedItems && context.selectedItems.length==1;
+            if(checkedOne){
+                id=context.selectedItems[0][idField];
+            }
         }
     }
     return id;

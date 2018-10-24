@@ -177,11 +177,12 @@ function loadMetaEntityFromMode(context,modelName,model){
             (relationField.inputType==controlTypeService.componentTypes.SingleLineText.id))){
             relationField.inputType=controlTypeService.componentTypes.RefEntity.id;
           }
+        }else if(metaRelation.type=="many-to-many" && metaRelation.embedded){
+            relationField.embeddedRelation=metaRelation;
         }
       }
     });
-
-      metaEntity.relations[metaRelation.name]=metaRelation;
+    metaEntity.relations[metaRelation.name]=metaRelation;
   });
   //初始化实体模型数据
   metaEntity.defaultModel=metaEntity.getDefaultModel();
@@ -295,16 +296,20 @@ function fillInputTypeParams(metaField,property) {
  * @param property
  */
 function loadMetaRelationFromProperty(context,propertyName,property){
-  var metaRelation={
-    name:propertyName,
-    type:firstNotNaN(property["x-relation-type"],"many-to-one"),
-    sourceEntity:context.metaEntity.name,
-    targetEntity:property["x-target-entity"],
-    joinEntity:property["x-join-entity"],
-    joinFields:property["x-join-fields"],     //[{"local":"updatedBy","target":"userId"}]
-    expandable:firstNotNaN(property["x-expandable"],false),
-    _property:property
+  var metaRelation= {
+      name: propertyName,
+      type: firstNotNaN(property["x-relation-type"], "many-to-one"),
+      sourceEntity: context.metaEntity.name,
+      targetEntity: property["x-target-entity"],
+      joinEntity: property["x-join-entity"],
+      joinFields: property["x-join-fields"],     //[{"local":"updatedBy","target":"userId"}]
+      expandable: firstNotNaN(property["x-expandable"], false),
+      embedded: firstNotNaN(property["x-embedded"], false),
+      _property: property
   };
+  if(metaRelation.embedded){
+      metaRelation.joinFields=[property["x-embedded-field"]];
+  }
   return metaRelation;
 }
 

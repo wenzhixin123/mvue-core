@@ -101,10 +101,6 @@ export default{
             this.advanceSearchFilters=advanceSearchFilters;
             this.reload();
         },
-        //begin 单击行
-        handleOnRowClick(row,index){
-            this.$emit("on-row-click",row,index);
-        },
         //end 单击行
         getWidgetContext(){
             //获取操作需要的一些参数
@@ -140,37 +136,6 @@ export default{
             }
             return false;
         },
-        //选择单行
-        handleOnCurrentChange(currentRow,oldCurrentRow){
-            this.$emit("on-current-change",currentRow,oldCurrentRow);
-        },
-        handleOnSelect(selection,row){
-            this.$emit("on-select",selection,row);
-        },
-        handleOnSelectCancel(selection,row){
-            this.$emit("on-select-cancel",selection,row);
-        },
-        handleOnSelectAll(selection){
-            this.$emit("on-select-all",selection);
-        },
-        //选择多行
-        handleOnSelectionChange(selection){
-            this.selectedItems=selection;
-            this.$emit("on-selection-change",selection);
-        },
-        handleOnRowDblclick(row,index){
-            this.$emit("on-row-dblclick",row,index);
-        },
-        handleOnExpand(row,status){
-            this.$emit("on-expand",row,status);
-        },
-        //排序列
-        handleSortChange({column,key,order}){
-            this.$emit("on-sort-change",{column,key,order});
-        },
-        handleOnFilterChange(row){
-            this.$emit("on-filter-change",row);
-        }
     },
     components:{
         advanceSearch:require("../advance_search")

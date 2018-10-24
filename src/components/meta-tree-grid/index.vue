@@ -4,7 +4,20 @@
             <meta-entity-tree v-if="realTreeSettings" v-bind="realTreeSettings" @on-select-change="onTreeSelectChange"></meta-entity-tree>
         </Sider>
         <Content>
-            <meta-grid ref="gridList"  v-bind="$props" :query="innerQuery">
+            <meta-grid ref="gridList"
+                       v-bind="$props"
+                       :query="innerQuery"
+                       @on-current-change="handleOnCurrentChange"
+                       @on-select="handleOnSelect"
+                       @on-select-cancel="handleOnSelectCancel"
+                       @on-select-all="handleOnSelectAll"
+                       @on-select-all-cancel="handleOnSelectAllCancel"
+                       @on-selection-change="handleOnSelectionChange"
+                       @on-sort-change="handleSortChange"
+                       @on-filter-change="handleOnFilterChange"
+                       @on-row-click="handleOnRowClick"
+                       @on-row-dblclick="handleOnRowDblclick"
+                       @on-expand="handleOnExpand">
             </meta-grid>
         </Content>
     </Layout>
@@ -12,10 +25,11 @@
 
 <script>
     import { leapQueryConvertor } from "mvue-components";
-    import  gridProps from "../grid/js/grid-props";
+    import gridProps from "../grid/js/grid-props";
+    import gridEvents from "../grid/js/grid-events";
     import treeService from "../../services/tool/tree-service";
     export default {
-        mixins:[gridProps],
+        mixins:[gridProps, gridEvents],
         props: {
             "defaultSort": {//默认排序设置{key:'',order:'desc'}
                 type: Object

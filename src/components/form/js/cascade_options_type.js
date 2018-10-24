@@ -34,7 +34,7 @@ function formatData(componentType,item,metaField){
     if(_.isNil(origin)||origin===''){
         return "";
     }
-    let optionTexts=optionsUtils.getOptionText(metaField,origin);
+    let optionTexts=optionsUtils.getOptionText(metaField,origin,true);
     return optionTexts.join("/")||origin.join("/");
 }
 export default{

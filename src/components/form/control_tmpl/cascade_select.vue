@@ -77,7 +77,7 @@ export default {
         },
         viewModeValue(){
             if(this.valueObj&&this.valueObj){
-                let texts=this.getOptionsExData(this.valueObj);
+                let texts=this.getOptionsExData(this.valueObj,true);
                 return texts.join("/");
             }
             return "";

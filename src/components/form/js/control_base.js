@@ -83,14 +83,14 @@ export default {
     },
     methods:{
         //通过选项id获取选项字段类型数据的显示文字，供显示使用
-        getOptionsExData(optionId){
+        getOptionsExData(optionId,cascade){
             if(!optionId){
                 return '';
             }
             var metaEntity=this.context.metaEntity;
             if(metaEntity){
                 let metaField=metaEntity.findField(this.formItem.dataField);
-                return optionsUtils.getOptionText(metaField,optionId);
+                return optionsUtils.getOptionText(metaField,optionId,cascade);
             }
             return _.isArray(optionId)?[]:'';
         },

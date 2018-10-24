@@ -117,7 +117,7 @@ function formatData(componentType,item,metaField){
     if(isSingleOption(componentType)){//单选
         return optionText;
     }else{
-        return optionText.join(",");
+        return optionText&&optionText.join(",");
     }
 }
 //由swagger.json生成的metaField构造组件参数

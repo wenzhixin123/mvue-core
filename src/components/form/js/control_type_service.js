@@ -146,7 +146,7 @@ function buildFormItemByComponentType(componentType){
         }
         componentParams.title=componentTypes[componentType].title;
     }
-    formItem.componentParams=componentParams;
+    formItem.componentParams=_.cloneDeep(componentParams);
     return formItem;
 }
 //格式化输出组件的数据显示

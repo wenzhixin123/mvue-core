@@ -43,13 +43,14 @@ function getMetabase(projectId){
  */
 function currentSwagger(projectId){
   if(!projectId){
-    currentEngineUrl=context.getConfig().getApiBaseUrl();
-    if(!currentEngineUrl){
+    var swaggerBaseUrl=context.getConfig().getApiBaseUrl();
+    currentEngineUrl="";
+    if(!swaggerBaseUrl){
       console.log("提示：apiBaseUrl未配置，暂时无法使用元数据相关功能");
       return Promise.resolve();
     }
     return new Promise(function(reslove,reject){
-      var swagger= currentEngineUrl+"/swagger.json";
+      var swagger= swaggerBaseUrl+"/swagger.json";
       reslove(swagger);
     });
   }

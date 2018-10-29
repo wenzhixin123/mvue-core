@@ -238,7 +238,7 @@ function buildFormItemByMetaField(metaField){
     }
     //长度规则
     if(metaField.inputTypeParams["maxLength"]||metaField.inputTypeParams["minLength"]){
-        formItem.limitLength={
+        formItem.componentParams.limitLength={
             limit:true,
             max:metaField.inputTypeParams["maxLength"],
             min:metaField.inputTypeParams["minLength"]

@@ -232,11 +232,11 @@ function initValidation(formItem,metaEntity,dataId,entity) {
         };
         rules.push(lenRule);
         if (params.limitLength.max > 0) {
-            lenRule.max = [params.limitLength.max];
+            lenRule.max = params.limitLength.max;
             lenRule["message"]=`${fieldTitle}长度不能超过${params.limitLength.max}`
         }
         if (params.limitLength.min > 0) {
-            lenRule.min = [params.limitLength.min];
+            lenRule.min = params.limitLength.min;
             lenRule["message"]=`${fieldTitle}长度不少于${params.limitLength.min}`
         }
         if(params.limitLength.max > 0 && params.limitLength.min > 0){
@@ -251,11 +251,11 @@ function initValidation(formItem,metaEntity,dataId,entity) {
         };
         rules.push(rangeRule);
         if (params.limitRange.max > 0) {
-            rangeRule.max = [params.limitRange.max];
+            rangeRule.max = params.limitRange.max;
             rangeRule["message"]=`${fieldTitle}不大于${params.limitRange.max}`
         }
         if (params.limitRange.min > 0) {
-            rangeRule.min = [params.limitRange.min];
+            rangeRule.min = params.limitRange.min;
             rangeRule["message"]=`${fieldTitle}不小于${params.limitRange.min}`
         }
         if(params.limitRange.min > 0 && params.limitRange.max > 0){

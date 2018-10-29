@@ -217,7 +217,8 @@ function loadMetaFieldFromProperty(context,propertyName,property){
     updatable:firstNotNaN(property["x-updatable"],property["readOnly"],true),
     sortable:firstNotNaN(property["x-sortable"],false),
     filterable:firstNotNaN(property["x-filterable"],false),
-    inputType:property["x-input"],
+      selectable:firstNotNaN(property["x-selectable"],true),
+      inputType:property["x-input"],
     inputTypeParams:{},
     semantics:property["x-meaning"],
     isTitleField:"title"===property["x-meaning"],
@@ -264,25 +265,33 @@ function fillInputTypeParams(metaField,property) {
     let inputType=controlTypeService.getMetaFieldComponentType(metaField);
     metaField.inputType=inputType;
   }
-  if(_.isNaN(property["maxLength"])){
+  if(!_.isNaN(property["maxLength"])){
     metaField.inputTypeParams["maxLength"]=property["maxLength"];
+    if(metaField.inputType==controlTypeService.componentTypes.SingleLineText.id
+        || metaField.inputType==controlTypeService.componentTypes.MultiLineText.id){
+        if(property["maxLength"]>50){
+            metaField.inputTypeParams["maxLength"]=property["maxLength"]/2;
+        }else{
+            metaField.inputTypeParams["maxLength"]=property["maxLength"];
+        }
+    }
   }
-  if(_.isNaN(property["minLength"])){
+  if(!_.isNaN(property["minLength"])){
     metaField.inputTypeParams["minLength"]=property["minLength"];
   }
-  if(_.isNaN(property["pattern"])){
+  if(!_.isNaN(property["pattern"])){
     metaField.inputTypeParams["pattern"]=property["pattern"];
   }
-  if(_.isNaN(property["maximum"])){
+  if(!_.isNaN(property["maximum"])){
     metaField.inputTypeParams["max"]=property["maximum"];
   }
-  if(_.isNaN(property["minimum"])){
+  if(!_.isNaN(property["minimum"])){
     metaField.inputTypeParams["min"]=property["minimum"];
   }
-  if(_.isNaN(property["enum"])){
+  if(!_.isNaN(property["enum"])){
     metaField.inputTypeParams["enums"]=property["enum"];
   }
-  if(_.isNaN(property["format"])){
+  if(!_.isNaN(property["format"])){
     metaField.inputTypeParams["format"]=property["format"];
   }
   if(property["x-options"]&&property["x-options"].items){

@@ -80,6 +80,7 @@
             :columns="innerColumns" 
             :data="filteredData"
             :highlight-row="highlightRow"
+            :show-header="showHeader"
             @on-current-change="handleOnCurrentChange"
             @on-selection-change="handleOnSelectionChange"
             @on-row-click="handleOnRowClick"
@@ -219,6 +220,10 @@ export default {
       },
       "metaEntityName":{//元数据实体名称，可由外部传入
           type:String
+      },
+      "showHeader":{//是否显示标头
+          type:Boolean,
+          default:true
       }
     },
     data:function(){

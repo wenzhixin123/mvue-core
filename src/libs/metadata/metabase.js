@@ -85,7 +85,7 @@ function  initMetabase(projectId,forceReload) {
         if (!swagger) {
             return;
         }
-        context.getMvueToolkit().http.get(swagger).then(function ({data}) {
+        return context.getMvueToolkit().http.get(swagger).then(function ({data}) {
             loadMetabase(data, projectId);
             console.log("load metabase from " + swagger);
         }).catch(function (error) {

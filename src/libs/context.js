@@ -27,7 +27,8 @@ var cachedContext={
           idField:"id",
           nameField:"name",
           loginField:"userName",
-          detailFields:"mobile,email"
+          detailFields:"mobile,email",
+          orgField:"orgId"
       },
       org:{
           idField:"id",

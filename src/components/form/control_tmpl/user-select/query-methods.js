@@ -6,6 +6,9 @@ function getUserIdField(){
 function getUserTitleField(){
     return context.getConsts().user.nameField;
 };
+function getUserOrgField(){
+    return context.getConsts().user.orgField;
+};
 function getOrgIdField(){
     return context.getConsts().org.idField;
 };
@@ -113,7 +116,7 @@ function queryUserByIds(userIds){
 function pageQueryUserByOrg(orgIds,userIds,pageParams){//{page:1,pageSize:10}
     var filters='';
     if(!_.isEmpty(orgIds)){
-        filters=`${getOrgIdField()} in '${orgIds.join(',')}'`;
+        filters=`${getUserOrgField()} in '${orgIds.join(',')}'`;
     }
     var one = userService().query({total:true,page:pageParams.page,page_size:pageParams.pageSize,filters:filters});
     return new Promise((resolve,reject)=>{

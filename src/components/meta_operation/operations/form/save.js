@@ -23,15 +23,20 @@ function impl(context,$optInst){
         return;
     }
     var operation=$optInst.operation;
+    //判断是否是弹出的表单
+    var isInPopup=!!form.getParentPopup();
     form.doSaveModel().then((res)=>{
-        if(res&&res.isCreate){
-            if(form.completedAction=="closePopup"){
+        if(form.completedAction=="close"){
+            if(isInPopup){
                 form.$emit("popup-close");
             }else{
                 contextHelper.getRouter().go(-1);
             }
         }else{
-            form.$emit("popup-close");
+            //创建模式，未设置completedAction
+            if(res&&res.isCreate){
+                contextHelper.getRouter().go(-1);
+            }
         }
         if(_.isFunction(operation.onSuccess)){
             operation.onSuccess(res,form);

@@ -162,7 +162,8 @@ function initValidation(formItem,metaEntity,dataId,entity) {
                 }
                 var params = {};
                 params[fieldName] = value;
-                contextHelper.getMvueToolkit().http.get(metaEntity.resourceUrl, {params: params})
+                var resource=metaEntity.dataResource();
+                resource.query(params)
                     .then(function ({data}) {
                         //创建模式dataId为空，如果有数据返回则表示重复了
                         if((!dataId)&&data.length>0){

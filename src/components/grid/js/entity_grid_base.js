@@ -212,7 +212,7 @@ export default {
                 //_this.setDefaultQueryOptions();
                 //return;
             }
-            metaservice.getViewByShortId(Object.assign({id: viewShortId},setData))
+            metaservice.getViewByDefaultShortId(Object.assign({id: viewShortId},setData))
                 .then(({ data }) => {
                     if(setData.getDefaultForm&&data.viewFields){
                         //取的是默认视图

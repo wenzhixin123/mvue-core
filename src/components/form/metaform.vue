@@ -296,7 +296,7 @@
                     this.initDefault();
                     return;
                 }
-                metaservice.getFormByShortId(Object.assign({id:formShortId,resolve:true},setData))
+                metaservice.getFormByDefaultShortId(Object.assign({id:formShortId,resolve:true},setData))
                     .then(({ data }) => {
                         //存在自定义表单，按表单元数据构建表单
                         _this.metaFormLayout=true;

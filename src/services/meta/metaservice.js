@@ -7,13 +7,15 @@ var Config=require("../../config/config.js");
 var metaserviceUrl=Config.getMetaserviceUrl();
 
 var customActions = {
-    getFormByShortId: {method: 'GET', url: 'meta_form/default/short{/id}'},
+    getFormByShortId: {method: 'GET', url: 'meta_form/short{/id}'},
+    getFormByDefaultShortId: {method: 'GET', url: 'meta_form/default/short{/id}'},
     getProject: {method: 'GET', url: 'meta_project{/id}'},
     getSuite: {method: 'GET', url: 'meta_suite{/id}'},
     getSuiteDataSetting: {method: 'GET', url: 'meta_suite_data_setting{/id}'},
     saveArchive: {method: 'POST', url: 'meta_suite_data_setting/archive',headers: { 'content-type': 'application/x-www-form-urlencoded; charset=UTF-8' }, emulateJSON: true},
     getView: {method: 'GET', url: 'meta_view{/id}'},
-    getViewByShortId: {method: 'GET', url: 'meta_view/default/short{/id}'},
+    getViewByShortId: {method: 'GET', url: 'meta_view/short{/id}'},
+    getViewByDefaultShortId: {method: 'GET', url: 'meta_view/default/short{/id}'},
     getEntityTemplate:{method:'GET',url:'meta_template/entity_template'},
     getEntity:{method:'GET',url:'meta_entity{/id}'}
 };
@@ -29,5 +31,8 @@ export default{
     getView:$resource.getView,
     getViewByShortId:$resource.getViewByShortId,
     getEntityTemplate:$resource.getEntityTemplate,
-    getEntity:$resource.getEntity
+    getEntity:$resource.getEntity,
+    getFormByDefaultShortId:$resource.getFormByDefaultShortId,
+    getViewByDefaultShortId:$resource.getViewByDefaultShortId
+
 }

@@ -7,6 +7,7 @@ function forMetaForm(layout,options){
                     type:"text",
                     value:{from:"context",key:"selectedId"}
                 };
+                lyt.transfer=true;
             }else{
                 lyt.recordId={
                     type:"text",

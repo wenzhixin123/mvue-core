@@ -167,10 +167,14 @@ var columnTypeMapping={
     date:componentTypes.Date.id,
     time:componentTypes.Time.id,
     datetime:componentTypes.DateTime.id,
+    "date-time":componentTypes.DateTime.id,
     timestamp:componentTypes.DateTime.id,
+    boolean:componentTypes.Boolean.id,
     float:componentTypes.NumberInput.id,
     double:componentTypes.NumberInput.id,
     int:componentTypes.NumberInput.id,
+    smalint:componentTypes.NumberInput.id,
+    integer:componentTypes.NumberInput.id,
     tinyint:componentTypes.NumberInput.id,
     bigint:componentTypes.NumberInput.id,
     numeric:componentTypes.NumberInput.id,
@@ -185,19 +189,39 @@ function getMetaFieldComponentType(metaField){
     if(metaField.inputType){
         return metaField.inputType;
     }
-    var columnType=metaField.columnType;
-    var columnLength=metaField.columnLength||0;
-    if(columnTypeMapping[columnType]){
-        return columnTypeMapping[columnType];
+    var columnType=metaField.type;
+    var columnLength=metaField.maxLength||0;
+    var inputType=componentTypes.SingleLineText.id;
+    if(columnType==="string" && columnLength>200) {
+        inputType= componentTypes.MultiLineText.id;
     }
-    if(columnType==="varchar") {
-        if(columnLength<=200){
-            return componentTypes.SingleLineText.id;
-        }else if(columnLength>200){
-            return componentTypes.MultiLineText.id;
+    //按映射类型
+    if(columnTypeMapping[inputType]){
+        inputType= columnTypeMapping[inputType];
+    }
+    if(columnTypeMapping[metaField.format]){
+        inputType= columnTypeMapping[metaField.format];
+    }
+    //处理多对一引用类型
+    if(metaField.isRelationField && metaField.manyToOneRelation){
+        var relation=metaField.manyToOneRelation;
+        if("user"==relation.targetEntity.toLowerCase()){
+            inputType=componentTypes.SingleUserSelect.id;
+        }else if("organization"==relation.targetEntity.toLowerCase()){
+            inputType=componentTypes.SingleOrgSelect.id;
+        }else{
+            inputType=componentTypes.RefEntity.id;
         }
     }
-    return componentTypes.SingleLineText.id;
+    //处理枚举类型
+    if(metaField.enum){
+        if(metaField.enum.length<=5){
+            inputType=componentTypes.RadioButton.id;
+        }else{
+            inputType=componentTypes.SingleSelect.id;
+        }
+    }
+    return inputType;
 }
 //根据实体的所有字段构造默认的表单layout
 function buildFormLayoutByMetaFields(metaFields){

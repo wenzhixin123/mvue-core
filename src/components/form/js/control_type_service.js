@@ -224,8 +224,9 @@ function buildFormItemByMetaField(metaField){
     //是否唯一
     formItem.componentParams.unique=metaField.unique;
     //placeholder默认填充
-    if(metaField.placeholder){
-        formItem.componentParams.placeholder=metaField.placeholder;
+    var placeholder=metaField.placeholder || metaField.description;
+    if(placeholder){
+        formItem.componentParams.placeholder=placeholder;
     }
     //验证规则
     if(metaField.inputTypeParams["pattern"]){

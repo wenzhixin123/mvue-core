@@ -8,6 +8,10 @@ function parseProps(layout,curInst){
                 lyt[key]=_v;
             }
         });
+        //新建操作会清掉recordId
+        if(curInst&&curInst.operation&&curInst.operation.name=="create"&&lyt.ctype=="meta-form"){
+            lyt.recordId=null;
+        }
     });
 }
 import attachPropsProcessor from './attach-props-processor';

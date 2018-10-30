@@ -191,12 +191,33 @@ export default {
             }
             this.viewShortId=viewShortId;
             var _this = this;
-            if(!viewShortId){
-                _this.setDefaultQueryOptions();
-                return;
+            var isWin = (navigator.platform == "Win32") || (navigator.platform == "Windows");
+            var isMac = (navigator.platform == "Mac68K") || (navigator.platform == "MacPPC") || (navigator.platform == "Macintosh") || (navigator.platform == "MacIntel");
+            let pcType = "";
+            if(isWin){
+                pcType = 4
+            }else if(isMac){
+                pcType = 8
             }
-            metaservice.getViewByShortId({id: viewShortId})
+            let setData = {terminalType:pcType}
+            if(viewShortId){
+                if(this.$route.query.entity){
+                    //只存在实体id则查询默认视图
+                    setData.getDefaultForm = true;
+                    setData.id = this.$route.query.entity
+                }else{
+                    //_this.setDefaultQueryOptions();
+                    //return;
+                }
+                //_this.setDefaultQueryOptions();
+                //return;
+            }
+            metaservice.getViewByShortId(Object.assign({id: viewShortId},setData))
                 .then(({ data }) => {
+                    if(setData.getDefaultForm&&data.viewFields){
+                        //取的是默认视图
+                        data = data.viewFields
+                    }
                     //需要通过viewId--获取配置,不需要预定义
                     _this.viewDef = data;//存入视图配置
                     _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);

@@ -104,6 +104,12 @@
         </div>
     </div>
 
+<!--    <slot name="modal"
+          :modalWidth="modalWidth"
+          :modalHeight="modalHeight"
+          :pageParams="pageParams"
+          :popupWidgetModal="popupWidgetModal"
+    ></slot>-->
     <Modal class="popup-widget-con" v-model="popupWidgetModal"
            :width="modalWidth"
            :title="modalTitle"

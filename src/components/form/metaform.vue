@@ -278,12 +278,25 @@
             },
             initForm(){
                 var formShortId = this.formId || this.$route.query.formShortId;
-                if(_.isEmpty(formShortId)){
+                var _this = this;
+                var isWin = (navigator.platform == "Win32") || (navigator.platform == "Windows");
+                var isMac = (navigator.platform == "Mac68K") || (navigator.platform == "MacPPC") || (navigator.platform == "Macintosh") || (navigator.platform == "MacIntel");
+                let pcType = "";
+                if(isWin){
+                    pcType = 4
+                }else if(isMac){
+                    pcType = 8
+                }
+                let setData = {terminalType:pcType}
+                if(!formShortId&&this.$route.query.entity){
+                    //只存在实体id则查询默认表单视图
+                    setData.getDefaultForm = true;
+                    setData.id = this.$route.query.entity
+                }else if(_.isEmpty(formShortId)){
                     this.initDefault();
                     return;
                 }
-                var _this = this;
-                metaservice.getFormByShortId({id:formShortId,resolve:true})
+                metaservice.getFormByShortId(Object.assign({id:formShortId,resolve:true},setData))
                     .then(({ data }) => {
                         //存在自定义表单，按表单元数据构建表单
                         _this.metaFormLayout=true;

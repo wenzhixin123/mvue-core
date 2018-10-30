@@ -42,6 +42,9 @@ function formatData(componentType,item,metaField){
     var expandData=item[relation.name];
     let targetEntity=metabase.findMetaEntity(relation.targetEntity);
     let titleField=targetEntity.firstTitleField().name;
+    if(!titleField || !expandData){
+        return origin;
+    }
     if(_.isArray(origin)){
         let titleArray=[];
         _.each(expandData,ed=>{

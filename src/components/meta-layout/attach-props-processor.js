@@ -17,7 +17,7 @@ function forMetaForm(layout,options){
         }
         if(lyt.ctype=="meta-form"&&(!_.has(lyt,"completedAction"))){
             if(isPopup){
-                lyt.completedAction="closePopup";
+                lyt.completedAction="close";
             }
         }
     });

@@ -1,15 +1,16 @@
 var context = require("../context").default;
 module.exports=function (options) {
     var metaEntity=_.extend({
-      name:"",
-      title:"",
-      description:"",
-      isRemote:false,
-      tableDroppable:false,
-      tableFieldAddable:false,
-      fields:{},
-      relations:{},
-      _model:null
+        name: "",
+        title: "",
+        description: "",
+        isRemote: false,
+        tableDroppable: false,
+        tableFieldAddable: false,
+        fields: {},
+        relations: {},
+        engineUrl: "",
+        _model: null
     },options);
 
   /**
@@ -186,22 +187,22 @@ module.exports=function (options) {
     });
     return fields;
   }
-  metaEntity.dataResourceUrl=function(){
-    var pathname=_.trim(this.resourceUrl,'/');
-    var resourceName=pathname+'{/id}';
-    return resourceName;
+  metaEntity.dataResourceUrl=function() {
+      var entityPath = _.snakeCase(this.name);
+      var resourceName = `${this.engineUrl}/${entityPath}{/id}`;
+      return resourceName;
   }
   /**
-   * 构造实体数据crud操作的vue-resource对象
+   * 构造实体数据crud操作的vue-resource对象,
    */
-  metaEntity.dataResource=function(){
-    var pathname=_.trim(this.resourceUrl,'/');
-    var resourceName=this.dataResourceUrl();
-    var customActions = {
-      calc: {method: 'POST', url: `${pathname}/calc`}
-    };
-    var dataResource = context.buildResource(resourceName,customActions);
-    return dataResource;
+  metaEntity.dataResource=function() {
+      var entityPath = _.snakeCase(this.name);
+      var resourceName = `${entityPath}{/id}`;
+      var customActions = {
+          calc: {method: 'POST', url: `${entityPath}/calc`}
+      };
+      var dataResource = context.buildResource(resourceName, customActions,{root:this.engineUrl});
+      return dataResource;
   }
   /**
    * 构造默认的创建表单Path

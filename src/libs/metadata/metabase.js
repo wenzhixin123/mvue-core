@@ -44,7 +44,7 @@ function getMetabase(projectId){
 function currentSwagger(projectId){
   if(!projectId){
     var swaggerBaseUrl=context.getConfig().getApiBaseUrl();
-    currentEngineUrl="";
+    currentEngineUrl=context.getConfig().getApiBaseUrl();
     if(!swaggerBaseUrl){
       console.log("提示：apiBaseUrl未配置，暂时无法使用元数据相关功能");
       return Promise.resolve();
@@ -129,13 +129,12 @@ function loadMetabase(swagger,projectId){
  * @param model
  */
 function loadMetaEntityFromMode(context,modelName,model){
-  var entityPath=_.snakeCase(modelName);
   var opt={
     name:modelName,
     title:model.title,
     description:model.description,
     _model:model,
-    resourceUrl:`${currentEngineUrl}/${entityPath}`,
+    engineUrl:_.trim(currentEngineUrl,'/'),
     projectId:currentProjectId
   };
   var metaEntity=MetaEntityCls(opt);

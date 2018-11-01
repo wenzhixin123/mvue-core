@@ -89,10 +89,10 @@
     </div>
     <div class="tableBox-tool" v-if="pager">
         <div class="pagination form-inline font12">
-            <a class="btn btn-sm btn-default" :disabled="pageIndex<=1" @click="pageIndexOne">首页</a>
-            <a class="btn btn-sm btn-default" :disabled="pageIndex<=1" @click="pageIndexPrevious">上一页</a>
-            <a class="btn btn-sm btn-default" :disabled="pageIndex>=pageCount" @click="pageIndexNext">下一页</a>
-            <a class="btn btn-sm btn-default" :disabled="pageIndex>=pageCount" @click="pageIndexLast">尾页</a>
+            <a class="btn btn-sm btn-default" :disabled="pageIndex<=1" @click="pageIndexOne">{{pageType=="compact"?"<<":"首页"}}</a>
+            <a class="btn btn-sm btn-default" :disabled="pageIndex<=1" @click="pageIndexPrevious">{{pageType=="compact"?"<":"上一页"}}</a>
+            <a class="btn btn-sm btn-default" :disabled="pageIndex>=pageCount" @click="pageIndexNext">{{pageType=="compact"?">":"下一页"}}</a>
+            <a class="btn btn-sm btn-default" :disabled="pageIndex>=pageCount" @click="pageIndexLast">{{pageType=="compact"?">>":"尾页"}}</a>
             <span class="form-group">
             <select class="form-control div-inline-block font12" style="height:30px;" v-model="pageSize">
                 <option v-for="(s,index) in pagerSizes" :key="index" :value="s" :title="index" :selected="pageSize===s">
@@ -230,6 +230,10 @@ export default {
       "showHeader":{//是否显示标头
           type:Boolean,
           default:true
+      },
+      "pageType": {//'compact':紧凑型分页部件布局；不设置用默认布局
+        type: String,
+        required: false
       }
     },
     data:function(){
@@ -592,7 +596,7 @@ export default {
                         cellExecScript();
                     }else{
                         //获取执行代码
-                        mvueCore.resource(`meta_operation/${operation.operationId}`, null, {root: _.trimEnd(Config.getMetadApiEndpoint(), '/')}).get({}).then(({ data }) => {
+                        mvueCore.resource(`meta_operation/${operation.operationId}`, null, {root: _.trimEnd(/*Config.getMetadApiEndpoint()*/Config.getMetaserviceUrl(), '/')}).get({}).then(({ data }) => {
                             _t.implCode=data.implCode;
                             cellExecScript();
                         });

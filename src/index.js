@@ -3,6 +3,7 @@ function installGridAndForm(Vue){
     Vue.component('meta-grid-operation-btn',require("./components/grid/operation_btn"));
     Vue.component('meta-grid-img-title',require("./components/grid/img_title"));
     Vue.component('meta-grid-opts-title',require("./components/grid/opts_title"));
+    Vue.component('meta-grid-img-opts-title',require("./components/grid/img_opts_title"));
     Vue.component('meta-grid-pictures',require("./components/grid/pictures"));
     Vue.component('meta-grid-files',require("./components/grid/files"));
     Vue.component('meta-grid-import-data',require("./components/grid/import_data.vue"));

@@ -85,7 +85,26 @@ export default {
       });
     }
   },
-
+  /**
+   * 带操作图片的标题头显示
+   * @returns {*}
+   */
+  renderForImgOptsTitle: function (context, metaField) {
+    let btns=context.grid.innerToolbar.singleBtns;
+    return function (h, params) {
+      return h("meta-grid-img-opts-title", {
+        props: {
+          params: {
+            metaField:metaField,
+            wordlimit:31
+          },
+          btns:btns,
+          item: params.row,
+          grid:context.grid
+        }
+      });
+    }
+  },
   /**
    * 操作列
    * @param metaField

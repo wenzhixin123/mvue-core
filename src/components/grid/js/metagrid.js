@@ -27,6 +27,8 @@ function metaFieldToCol(context,metaField) {
     col.width=col.width||350;
   } else if (metaField.type == "imgTitle") {
     col.render = renderManager.renderForImgTitle(context,metaField);
+  } else if (metaField.type == "imgOptsTitle") {
+    col.render = renderManager.renderForImgOptsTitle(context,metaField);
   } else {
     if (controlTypeService.isPictureUpload(metaField.inputType)) {
       col.render = renderManager.renderForPictureUpload(context,metaField);

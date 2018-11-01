@@ -108,7 +108,7 @@ module.exports=function (options) {
   metaEntity.getDefaultModel=function(){
     var model={};
     _.forIn(this.fields,function (metaField,key) {
-      if(!metaField.identity&&!_.includes(["createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
+      if(!_.includes(["createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
         if(metaField.inputTypeParams["options"]){//选项类型默认值由options的checked属性指定
           model[key]=null;
         }else{
@@ -164,6 +164,20 @@ module.exports=function (options) {
         fields.splice(0,0,key);
       }else{
         if(!metaField.identity&&!_.includes(["redundant","createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
+          fields.push(key);
+        }
+      }
+    });
+    return fields;
+  }
+  metaEntity.getDefaultFormFieldsWithIds=function(){
+    var fields=[];
+    _.forIn(this.fields,function (metaField,key) {
+      //标题字段排在最前面
+      if(metaField.semantics=="title"){
+        fields.splice(0,0,key);
+      }else{
+        if(!_.includes(["redundant","createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
           fields.push(key);
         }
       }

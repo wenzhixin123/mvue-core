@@ -112,7 +112,7 @@
             //根据实体字段信息初始化表单默认验证规则
             initValidateRulesByMetaEntity:function () {
                 var _this=this;
-                _.forEach(_this.metaEntity.getDefaultFormFields(),function (fieldName) {
+                _.forEach(_this.metaEntity.getDefaultFormFieldsWithIds(),function (fieldName) {
                     var metaField=_this.metaEntity.findField(fieldName);
                     var formItem=controlTypeService.buildFormItemByMetaField(metaField);
                     var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId,_this.entity);

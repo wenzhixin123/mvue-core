@@ -187,15 +187,29 @@ function initValidation(formItem,metaEntity,dataId,entity) {
         rules.push(uniqueRule);
     }
     //验证规则
-    if (params.validation
+    if ((params.validation
         && params.validation.validate
         && params.validation.rule
-        && params.validation.rule.pattern) {
-        rules.push({
-            type: "regexp",
-            pattern: params.validation.rule.pattern,
-            message: `${fieldTitle}验证失败`
-        });
+        && params.validation.rule.pattern)||
+        (params.validation
+        && params.validation.pattern)||
+        (params.validation
+        && params.validation.rules)) {
+            if(params.validation.pattern){
+                rules.push({
+                    type: "regexp",
+                    pattern: params.validation.pattern,
+                    message: `${fieldTitle}验证失败`
+                });
+            }else if(params.validation.rules){
+                rules=rules.concat(_.cloneDeep(params.validation.rules));
+            }else{
+                rules.push({
+                    type: "regexp",
+                    pattern: params.validation.rule.pattern,
+                    message: `${fieldTitle}验证失败`
+                });
+            }
     }
     if (params.validation
         && params.validation.validate

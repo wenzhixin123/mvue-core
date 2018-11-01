@@ -40,7 +40,7 @@ export default{
     watch:{
         quicksearchKeyword: function () {
             if (this.pager) {
-                this.reload();
+                this.reloadByQuickSearch();
             }
         }
     },
@@ -88,12 +88,22 @@ export default{
                 });
             }
         },
-        reload:function(){
+        reloadByQuickSearch:function(){
             var _self=this;
+            var delay=500;
+            if(this.innerToolbar && this.innerToolbar.quicksearch.delay){
+                delay=this.innerToolbar.quicksearch.delay;
+            }
+            if(delay<0){
+                return;
+            }
             //智能搜索，快速连续调用多次只会执行一次
             globalContext.getMvueToolkit().utils.smartSearch(this, () =>{
-                this.$refs.listInst.doReload();
-            },"changedQueue");
+                this.reloadList();
+            },"changedQueue",delay);
+        },
+        reload:function () {
+            this.$refs.listInst.doReload();
         },
         //高级查询
         doAdvanceSearch(advanceSearchFilters,quicksearchKeyword){

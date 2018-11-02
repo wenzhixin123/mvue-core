@@ -129,14 +129,17 @@ function loadMetabase(swagger,projectId){
  * @param model
  */
 function loadMetaEntityFromMode(context,modelName,model){
-  var opt={
-    name:modelName,
-    title:model.title,
-    description:model.description,
-    _model:model,
-    engineUrl:_.trim(currentEngineUrl,'/'),
-    projectId:currentProjectId
-  };
+  var opt= {
+      name: modelName,
+      title: model.title,
+      entityPath: _.trim(firstNotNaN(model["x-entity-path"], _.snakeCase(modelName))),
+      ui: firstNotNaN(model["x-entity-ui"], "gen"),
+      description: model.description,
+      _model: model,
+      engineUrl: _.trim(currentEngineUrl, '/'),
+      projectId: currentProjectId
+  }
+
   var metaEntity=MetaEntityCls(opt);
   var propertyContext=_.extend({
     metaEntity:metaEntity,
@@ -345,16 +348,22 @@ export default{
    * @returns {*}
    */
   findMetaEntity:function (metaEntityName) {
-    if(!metaEntityName){
-      return null;
-    }
-    var metabase=getMetabase(currentProjectId);
-    var metaEntity= metabase.entities[metaEntityName.toLowerCase()];
-    if(_.isEmpty(metaEntity)){
-      return null;
-    }
-    var metaEntityCloned =MetaEntityCls(metaEntity);
-    return metaEntityCloned;
+      if (!metaEntityName) {
+          return null;
+      }
+      var metabase = getMetabase(currentProjectId);
+      var metaEntity = metabase.entities[metaEntityName.toLowerCase()];
+      if (_.isEmpty(metaEntity)) {
+          return null;
+      }
+      var metaEntityCloned = MetaEntityCls(metaEntity);
+      metaEntityCloned.getMetabase = function () {
+          return metabase;
+      };
+      metaEntityCloned.getRaw = function () {
+          return metaEntity;
+      };
+      return metaEntityCloned;
   },
   /**
    * 获取所有实体

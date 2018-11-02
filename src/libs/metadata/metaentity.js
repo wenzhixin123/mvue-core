@@ -3,6 +3,7 @@ module.exports=function (options) {
     var metaEntity=_.extend({
         name: "",
         title: "",
+        entityPath:"",
         description: "",
         isRemote: false,
         tableDroppable: false,
@@ -10,7 +11,7 @@ module.exports=function (options) {
         fields: {},
         relations: {},
         engineUrl: "",
-        settings:null,
+        ui:null,
         _model: null
     },options);
 
@@ -189,43 +190,74 @@ module.exports=function (options) {
     return fields;
   }
   metaEntity.dataResourceUrl=function() {
-      var entityPath = _.snakeCase(this.name);
-      var resourceName = `${this.engineUrl}/${entityPath}{/id}`;
+      var resourceName = `${this.engineUrl}/${this.entityPath}{/id}`;
       return resourceName;
   }
   /**
    * 构造实体数据crud操作的vue-resource对象,
    */
   metaEntity.dataResource=function() {
-      var entityPath = _.snakeCase(this.name);
-      var resourceName = `${entityPath}{/id}`;
+      var resourceName = `${this.entityPath}{/id}`;
       var customActions = {
-          calc: {method: 'POST', url: `${entityPath}/calc`},
-          settings:{method:'GET',url:"http://localhost:9595/config/entities/menu.json"}
+          calc: {method: 'POST', url: `${this.entityPath}/calc`},
+          ui:{method:'GET',url: `${this.entityPath}/_ui.json`}
       };
       var dataResource = context.buildResource(resourceName, customActions,{root:this.engineUrl});
       return dataResource;
   }
-    metaEntity.getSettings=function() {
-        var promise=Promise.resolve();
-        if(this.settings!=null){
-         return promise.then(()=>this.settings);
+    metaEntity.isUIEnable=function() {
+        if(this.ui=="none"){
+            return false;
         }
-      var resource=this.dataResource();
-      return resource.settings().then(({data})=>{
-        this.settings=data;
-        return this.settings;
-      });
+        return true;
     }
+
+    metaEntity.getUISettings=function() {
+        if (this.ui == "none") {
+            throw `ui for entity(${this.name}) is disabled`;
+        }
+        var promise = Promise.resolve();
+        if (_.isString(this.ui)) {
+            if(this.ui=="gen"){
+                return promise.then(() =>{
+                    this.ui=defaultUI(this);
+                    this.getRaw().ui=this.ui;
+                    return this.ui;
+                });
+            }else if(this.ui=="conf"){
+                var resource = this.dataResource();
+                return resource.ui().then(({data}) => {
+                    var merged=defaultUI(this);
+                    _.forIn(data,(val,key)=>{
+                        if(_.isPlainObject(val)){
+                            merged[key]=mergeUISettings(merged[key],val);
+                        }else{
+                            merged[key]=val;
+                        }
+                    });
+                    this.ui = merged;
+                    this.getRaw().ui=this.ui;
+                    return this.ui;
+                });
+            }
+        }
+        return promise.then(() => this.ui);
+    }
+
     metaEntity.getFormSettings=function (formType) {
-        return this.getSettings().then(st=>{
-          if(st==null){
+        return this.getUISettings().then(ui=>{
+          if(ui==null){
             return null;
           }
-          if(_.has(st,formType)){
-            return st[formType];
+          var st={};
+          if(_.has(ui,formType)){
+              st= ui[formType];
           }
-          return st["form"];
+          if(formType!="form"){
+              var formSt=ui["form"]||{};
+              st=mergeUISettings(st,formSt);
+          }
+          return st;
         });
     }
 
@@ -254,6 +286,52 @@ module.exports=function (options) {
     return path;
   }
 
+  metaEntity.extendUISettings=function (to,from) {
+        return mergeUISettings(to,from);
+  }
+
+    function mergeUISettings(to,from) {
+        var childMerge = ["toolbar"];
+        if(!to){
+            to={};
+        }
+        _.forIn(from, (val, key) => {
+            if (!_.includes(childMerge, key)) {
+                to[key] = val;
+                return;
+            }
+            var merged = _.extend({}, to[key] || {}, val);
+            to[key] = merged;
+        });
+        return to;
+    }
+
+  function defaultUI(mEntity) {
+      var titleField=mEntity.firstTitleField();
+      var list={
+          entityName:mEntity.name,
+          toolbar:{
+              btns:["create"],
+              singleBtns:["edit","del"],
+              quicksearch:{
+                  fields:[(titleField&&titleField.name)],
+                  placeholder:`根据${titleField && titleField.title}搜索`
+              }
+          }
+      };
+      var form= {
+          entityName:mEntity.name,
+          layout: mEntity.getDefaultFormFields(),
+          labelWidth:120,
+          toolbar:{
+              "editBtns": ["cancel","save"]
+          }
+      };
+      return {
+          list:list,
+          form:form
+      };
+  }
   return metaEntity;
 }
 

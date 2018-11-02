@@ -116,7 +116,7 @@ export default {
             type:[Function,Object,String],
             required:false
         },
-        relation:{//关联列表会提供关系配置{refField:''}
+        relation:{//关联列表会提供关系配置，如多对一关系示例：{refField:'orgId'}或者{sourceEntityName:'organization',name:"users"}，多对多关系：{sourceEntityName:'organization',name:"users"}
             type:Object,
             required:false
         },
@@ -127,9 +127,10 @@ export default {
     },
     data:function(){
         var metaEntity = metabase.findMetaEntity(this.entityName);
+        var qr=this.ifOneToManyGrid()?this.buildOneToManyGridQueryResource():metaEntity.dataResource();
         return {
             metaEntity:metaEntity,
-            queryResource:metaEntity.dataResource(),
+            queryResource:qr,
             innerSort:_.cloneDeep(this.defaultSort),
             innerColumns:_.cloneDeep(this.columns),
         };
@@ -138,6 +139,26 @@ export default {
         this.initByMetadata();
     },
     methods:{
+        buildOneToManyGridQueryResource(){
+            let sourceMetaEntity=this.$metaBase.findMetaEntity(this.relation.sourceEntityName);
+            //这里返回的是以关系命名的方法对象，而不是原始的查询对象
+            return sourceMetaEntity.dataResource()[this.relation.name];
+        },
+        ifOneToManyGrid(){//是否一对多关系列表
+            var relationName=this.relation&&this.relation.name;
+            if(relationName){
+                let sourceEntityName=this.relation.sourceEntityName;
+                if(!sourceEntityName){
+                    return false;
+                }
+                let sourceMetaEntity=this.$metaBase.findMetaEntity(sourceEntityName);
+                let relation=sourceMetaEntity.relations[relationName];
+                if(relation.type=="one-to-many"){
+                    return true;
+                }
+            }
+            return false;
+        },
         //利用元数据信息填充grid相关属性
         initByMetadata(){
             //如果外部没有指定默认排序，则使用实体更新时间字段作为默认排序
@@ -187,10 +208,25 @@ export default {
             if(_expand){
                 params.expand=_expand;
             }
-            //关系列表自动补充关系字段过滤条件
-            let relationFilters=this.buildRelationFilters();
-            if(relationFilters){
-                params.filters=params.filters?`(${params.filters}) and ${relationFilters}`:`${relationFilters}`
+            if(this.relation){
+                this.fillParamsWithRelation(params);
+            }
+        },
+        //对于多对一关系和多对多关系，自动添加相关查询参数
+        fillParamsWithRelation(params){
+            var relationName=this.relation.name;
+            if(this.ifOneToManyGrid()){
+                let sourceEntityName=this.relation.sourceEntityName;
+                let sourceMetaEntity=this.$metaBase.findMetaEntity(sourceEntityName);
+                //父实体的数据
+                let refEntity=this.$store.state.core.currentRouteData[sourceEntityName];
+                let idField=sourceMetaEntity.getIdField().name;
+                params['parentEntityId']=refEntity[idField];
+            }else if(this.relation.refField){//多对一关系，根据指定的字段找到关系过滤条件
+                let relationFilters=this.buildRelationFilters();
+                if(relationFilters){
+                    params.filters=params.filters?`(${params.filters}) and ${relationFilters}`:`${relationFilters}`
+                }
             }
         },
         //暂时只处理多对一关系
@@ -221,7 +257,11 @@ export default {
         canRender(){
             //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
             if(this.relation){
-                return this.refEntityId()&&this.preprocessed;
+                if(this.ifOneToManyGrid()){
+                    return this.$store.state.core.currentRouteData[this.relation.sourceEntityName]&&this.preprocessed;
+                }else{
+                    return this.refEntityId()&&this.preprocessed;
+                }
             }else{
                 return this.preprocessed;
             }

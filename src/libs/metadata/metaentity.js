@@ -110,7 +110,7 @@ module.exports=function (options) {
   metaEntity.getDefaultModel=function(){
     var model={};
     _.forIn(this.fields,function (metaField,key) {
-      if(!metaField.identity&&!_.includes(["createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
+      if(!_.includes(["createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
         if(metaField.inputTypeParams["options"]){//选项类型默认值由options的checked属性指定
           model[key]=null;
         }else{
@@ -172,6 +172,20 @@ module.exports=function (options) {
     });
     return fields;
   }
+  metaEntity.getDefaultFormFieldsWithIds=function(){
+    var fields=[];
+    _.forIn(this.fields,function (metaField,key) {
+      //标题字段排在最前面
+      if(metaField.semantics=="title"){
+        fields.splice(0,0,key);
+      }else{
+        if(!_.includes(["redundant","createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
+          fields.push(key);
+        }
+      }
+    });
+    return fields;
+  }
   /**
    * 构造实体默认视图显示的所有字段
    */
@@ -202,6 +216,14 @@ module.exports=function (options) {
           calc: {method: 'POST', url: `${this.entityPath}/calc`},
           ui:{method:'GET',url: `${this.entityPath}/_ui.json`}
       };
+      //一对多关系接口附加
+      _.forIn(this.relations,(metaRelation,key)=>{
+        var type=metaRelation.type,name=metaRelation.name;
+        var pathName=_.kebabCase(name);
+        if(type=='one-to-many'){
+          customActions[name]={method: 'GET', url: `${entityPath}{/parentEntityId}/${pathName}`}
+        }
+      });
       var dataResource = context.buildResource(resourceName, customActions,{root:this.engineUrl});
       return dataResource;
   }

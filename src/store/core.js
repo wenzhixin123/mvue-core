@@ -1,6 +1,8 @@
 const state = {
   currentRouteData:{},//当前路由的公共数据
-  autoPageConfs:{}//当前系统所有动态页面组件的配置集合
+  autoPageConfs:{},//当前系统所有动态页面组件的配置集合
+  pageTitle:'',//当前页面的标题
+  pageTitleSourceId:''//当前页面的title来自哪个id的组件
 }
 //公共的计算属性
 const getters = {
@@ -30,6 +32,27 @@ const mutations = {
   },
   clearCurrentRouteData (state) {
     state.currentRouteData={}
+  },
+  setPageTitleSourceId(state,sourceId){
+    //当且仅有一个生效
+    if(!state.pageTitleSourceId){
+      state.pageTitleSourceId=sourceId;
+    }
+  },
+  //强制设置页面标题
+  setPageTitleCoercively(state,title){
+    state.pageTitle=title;
+  },
+  setPageTitle(state,{title,sourceId}){
+    //如果pageTitle已设置，不再设置
+    if(state.pageTitle){
+      return;
+    }
+    if(!state.pageTitleSourceId){//如果页面未指定title来源，谁先来谁先设置
+      state.pageTitle=title;
+    }else if(sourceId&&(state.pageTitleSourceId===sourceId)){//如果页面指定的source和设置来源一致，则设置生效
+      state.pageTitle=title;
+    }
   }
 }
 

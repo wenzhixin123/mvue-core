@@ -19,6 +19,7 @@ function installGridAndForm(Vue){
     Vue.component('meta-v-grid',require("./components/v-grid/index"));
     Vue.component('meta-v-form',require("./components/v-form/index"));
     Vue.component('meta-layout',require("./components/meta-layout/index"));
+    Vue.component('meta-page',require("./components/meta-page/index"));
 
     Vue.component('MetaSingleLineText',require('./components/form/control_tmpl/single_line_text')),
     Vue.component('MetaMultiLineText',require('./components/form/control_tmpl/multi_line_text')),

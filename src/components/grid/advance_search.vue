@@ -1,15 +1,15 @@
 <template>
     <div class="grid-advance-search-con">
         <div v-if="toolbarType=='compact'" @click="advanceSearch" class="concat-toolbar-btn"><Icon type="funnel"></Icon>高级</div>
-        <Button v-else @click="advanceSearch" type="default"><Icon type="funnel"></Icon>高级</Button>
+        <Button v-else @click="advanceSearch" type="default"><Icon type="funnel"></Icon>高级搜索</Button>
         <Modal
                 v-model="searchModal"
                 title="高级筛选"  ok-text="搜索" cancel-text="重置"
                 @on-ok="doSearch"
                 @on-cancel="doReset">
             <Form ref="advanceSearchForm" :model="model">
-                <FormItem label="关键字">
-                    <Input v-model="innerQuicksearchKeyword" placeholder="搜索关键字..."></Input>
+                <FormItem label="关键字" v-if="quicksearch&&quicksearch.fields">
+                    <Input v-model="innerQuicksearchKeyword" :placeholder="quicksearch.placeholder"></Input>
                 </FormItem>
                 <meta-field v-for="key in advanceSearchFields" :model="model" :key="key" :name="key" :entity-name="entityName" :input-type="inputType(key)">
                 </meta-field>
@@ -28,6 +28,9 @@ export default {
         "advanceSearchFields":{
             type:Array,
             require:true
+        },
+        quicksearch:{
+            type:Object,
         },
         quicksearchKeyword:{
             type:String
@@ -127,7 +130,7 @@ export default {
 <style lang="less" scoped>
 .grid-advance-search-con{
     display:inline-block;
-    margin-left:4px;
+    margin-right: 4px;
 }
 </style>
 

@@ -70,17 +70,20 @@
              </template>
             <template slot="header-quicksearch">
                 <slot name="header-quicksearch">
-                    <Input class="quicksearch-input" v-if="toolbar.quicksearch&&toolbar.quicksearch.fields" v-model="quicksearchKeyword" :placeholder="toolbar.quicksearch.placeholder" icon="search"/>
+                    <Input class="quicksearch-input" search  v-if="toolbar.quicksearch&&toolbar.quicksearch.fields"
+                           v-model="quicksearchKeyword" @on-search="reload"
+                           :placeholder="toolbar.quicksearch.placeholder"  />
+                    <advance-search
+                            :quicksearch-keyword="quicksearchKeyword"
+                            :quicksearch="toolbar.quicksearch"
+                            v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0"
+                            :entity-name="entityName"
+                            :advance-search-fields="innerToolbar.advanceSearchFields"
+                            @do-advance-search="doAdvanceSearch"></advance-search>
                 </slot>
              </template>
             <template slot="header-right">
                 <slot name="header-right">
-                    <advance-search 
-                        :quicksearch-keyword="quicksearchKeyword" 
-                        v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" 
-                        :entity-name="entityName"
-                        :advance-search-fields="innerToolbar.advanceSearchFields" 
-                        @do-advance-search="doAdvanceSearch"></advance-search>
                 </slot>
             </template>
     </b-list>

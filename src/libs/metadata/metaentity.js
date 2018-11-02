@@ -10,6 +10,7 @@ module.exports=function (options) {
         fields: {},
         relations: {},
         engineUrl: "",
+        settings:null,
         _model: null
     },options);
 
@@ -213,7 +214,8 @@ module.exports=function (options) {
       var entityPath = _.snakeCase(this.name);
       var resourceName = `${entityPath}{/id}`;
       var customActions = {
-          calc: {method: 'POST', url: `${entityPath}/calc`}
+          calc: {method: 'POST', url: `${entityPath}/calc`},
+          settings:{method:'GET',url:"http://localhost:9595/config/entities/menu.json"}
       };
       //一对多关系接口附加
       _.forIn(this.relations,(metaRelation,key)=>{
@@ -226,6 +228,29 @@ module.exports=function (options) {
       var dataResource = context.buildResource(resourceName, customActions,{root:this.engineUrl});
       return dataResource;
   }
+    metaEntity.getSettings=function() {
+        var promise=Promise.resolve();
+        if(this.settings!=null){
+         return promise.then(()=>this.settings);
+        }
+      var resource=this.dataResource();
+      return resource.settings().then(({data})=>{
+        this.settings=data;
+        return this.settings;
+      });
+    }
+    metaEntity.getFormSettings=function (formType) {
+        return this.getSettings().then(st=>{
+          if(st==null){
+            return null;
+          }
+          if(_.has(st,formType)){
+            return st[formType];
+          }
+          return st["form"];
+        });
+    }
+
   /**
    * 构造默认的创建表单Path
    */

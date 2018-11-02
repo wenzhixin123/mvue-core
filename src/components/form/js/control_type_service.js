@@ -297,7 +297,8 @@ function defaultValueTypes(formItem){
 var semantics=[
     {id:"title",title:"标题"},
     {id:"member",title:"成员"},
-    {id:"manager",title:"管理员"}
+    {id:"manager",title:"管理员"},
+    {id:"belongDept",title:"所属部门"}
 ];
 //值可设置的类型：默认值和固定值
 var valueTypes={

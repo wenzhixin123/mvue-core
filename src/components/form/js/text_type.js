@@ -11,7 +11,11 @@ var textTypes={
         title: "多行文本", 
         icon:"ivu-icon ivu-icon-ios-list-outline" 
     },
-    
+    Password:{ 
+        id: "Password", 
+        title: "密文", 
+        icon:"ivu-icon ivu-icon-ios-lock-outline"
+    }
 };
 //定义文本类型组件的扩展参数
 function textBaseInputRules(componentType){
@@ -19,7 +23,7 @@ function textBaseInputRules(componentType){
         placeholder:"",
         unique:false,
         limitLength:{
-            limit:false,
+            limit:true,
             max:200,
             min:0
         },
@@ -34,6 +38,10 @@ function textBaseInputRules(componentType){
     };
     if(componentType===textTypes.MultiLineText.id){
         base.limitLength.max=2000;
+    }
+    if(componentType===textTypes.Password.id){
+        base.limitLength.max=20;
+        base.showBtn=false;
     }
     return base;
 };

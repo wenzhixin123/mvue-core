@@ -2,7 +2,7 @@
     <FormItem  :prop="name"  :label-for="labelFor" v-show="!innerContext.hidden"
         :rules="rules" :show-message="showMessage">
         <template v-if="showLabel" slot="label">
-            <slot name="label">{{ metaField.title}}</slot>
+            <slot name="label">{{ metaField.title}}<info-tip v-if="description" :content="description"></info-tip></slot>
         </template>
         <slot v-if="formItem"
             :model="entity" :metaField="metaField"  :formItem="formItem">
@@ -138,6 +138,11 @@ export default {
         this.overrideProps(metaField);
         var formItem=controlTypeService.buildFormItemByMetaField(metaField);
         formItem.componentParams=_.extend(formItem.componentParams,this.params);
+        //构造字段描述
+        var description=null;
+        if(formItem.componentParams.description){
+            description=formItem.componentParams.description;
+        }
         if(this.preprocessor){
             this.preprocessor(formItem,this);
         }
@@ -155,7 +160,8 @@ export default {
             metaEntity:metaEntity,
             metaField:metaField,
             entity:entity,
-            paths:constants.paths()
+            paths:constants.paths(),
+            description:description
         }
     },
     computed: {
@@ -191,6 +197,9 @@ export default {
         componentName(formItem){
             return metaformUtils.metaComponentType(formItem);
         }
+    },
+    components:{
+        infoTip:require('./info-tip')
     }
 }
 </script>

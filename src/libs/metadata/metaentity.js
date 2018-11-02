@@ -221,7 +221,7 @@ module.exports=function (options) {
         var type=metaRelation.type,name=metaRelation.name;
         var pathName=_.kebabCase(name);
         if(type=='one-to-many'){
-          customActions[name]={method: 'GET', url: `${entityPath}{/parentEntityId}/${pathName}`}
+          customActions[name]={method: 'GET', url: `${this.entityPath}{/parentEntityId}/${pathName}`}
         }
       });
       var dataResource = context.buildResource(resourceName, customActions,{root:this.engineUrl});

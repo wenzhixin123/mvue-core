@@ -99,7 +99,7 @@ export default{
             }
             //智能搜索，快速连续调用多次只会执行一次
             globalContext.getMvueToolkit().utils.smartSearch(this, () =>{
-                this.reloadList();
+                this.reload();
             },"changedQueue",delay);
         },
         reload:function () {

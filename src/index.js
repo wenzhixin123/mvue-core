@@ -50,7 +50,7 @@ function installGridAndForm(Vue){
     Vue.component('meta-field',require('./components/form/metafield'));
     Vue.component('meta-form',require('./components/form/metaform'));
     Vue.component('MetaIssuedNumber',require('./components/form/control_tmpl/issued_number'));
-    Vue.component('MetaPrivilegeSet',require('./components/form/control_tmpl/privilege-set'));
+    Vue.component('MetaBitCode',require('./components/form/control_tmpl/bit-code'));
     Vue.component('MetaPassword',require('./components/form/control_tmpl/password'));
 
      //begin new added for pclink

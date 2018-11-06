@@ -46,6 +46,12 @@
                     return [];
                 }
             },
+            pageTitleTmpl:{//页面title的模板，与es6模板语法一致，例如'新建--${entity.title}'
+                type:String
+            },
+            id:{
+                type:String
+            }
         },
         data:function(){
             var metaEntity=this.$metaBase.findMetaEntity(this.entityName);
@@ -86,9 +92,28 @@
             }
         },
         methods:{
+            commitPageTitle(){
+                var title='';
+                if(this.pageTitleTmpl){
+                    let func= new Function('entity',`return \`${this.pageTitleTmpl}\``);
+                    title=func(this.entity);
+                }else{
+                    let titleField=this.metaEntity.firstTitleField().name;
+                    if(this.isCreate){
+                        title=`新建${this.metaEntity.title}`;
+                    }else if(this.isEdit){
+                        title=`编辑${this.metaEntity.title}-${this.entity[titleField]}`;
+                    }else{
+                        title=`查看${this.metaEntity.title}-${this.entity[titleField]}`;
+                    }
+                }
+                this.$store.commit('core/setPageTitle',{title:title,sourceId:this.id});
+            },
             initOthers(){
                 //根据实体字段信息初始化表单默认验证规则
                 this.initValidateRulesByMetaEntity();
+                //通知页面表单这边需要修改页面标题，并提交变化后的标题数据
+                this.commitPageTitle();
                 //预处理完毕，表单可以渲染了
                 this.preprocessed=true;
                 //调用外部传入的初始化回调函数

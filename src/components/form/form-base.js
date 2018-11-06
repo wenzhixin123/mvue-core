@@ -73,8 +73,7 @@ export default {
             default:"right",
         },
         labelWidth:{
-            type:Number,
-            default:80
+            type:Number
         },
         showMessage:{
             type:Boolean,
@@ -139,6 +138,15 @@ export default {
             }else{
                 return `#default-form-uuid-${this.entityName}`;
             }
+        },
+        itemLabelWith(){
+            if(this.labelPosition=="top"){
+                return this.labelWidth;
+            }
+            if(typeof this.labelWidth=="undefined" || this.labelWidth==null){
+                return 80;
+            }
+            return this.labelWidth;
         }
     },
     watch:{

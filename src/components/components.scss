@@ -104,3 +104,11 @@
 .ivu-input-number{
     width:100%;
 }
+
+//表单的上下布局时，重写margin，以及加粗标题
+.ivu-form-label-top .ivu-form-item{
+    margin-bottom: 8px;
+}
+.ivu-form-label-top .ivu-form-item-label{
+    font-weight: bolder;
+}

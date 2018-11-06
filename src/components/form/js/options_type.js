@@ -17,8 +17,8 @@ var optionsTypes={
         title: "复选框", 
         icon:"ivu-icon ivu-icon-android-checkbox-outline"
     },
-    PrivilegeSet:{ 
-        id: "PrivilegeSet", 
+    BitCode:{
+        id: "BitCode",
         title: "权限集",
         icon:"ivu-icon ivu-icon-ios-checkbox-outline"
     }
@@ -63,7 +63,7 @@ var componentParams={
             required:false
         }
     },
-    PrivilegeSet:{
+    BitCode:{
         options:[]
     }
 };
@@ -99,9 +99,9 @@ function toDiscreteValue(v){//255 ->1 2 4 8 16 32 64 128
     }
     return r;
 }
-//判断是否是权限集
-function isPrivilegeSet(componentType){
-    return componentType===optionsTypes.PrivilegeSet.id;
+//判断是否是二进制码
+function isBitCode(componentType){
+    return componentType===optionsTypes.BitCode.id;
 }
 function formatData(componentType,item,metaField){
     let fieldName=metaField.name;
@@ -110,7 +110,7 @@ function formatData(componentType,item,metaField){
         return "";
     }
     //权限集，先将权限集对应的整数分解成权限值数组
-    if(isPrivilegeSet(componentType)){
+    if(isBitCode(componentType)){
         origin=toDiscreteValue(origin);
     }
     let optionText=optionsUtils.getOptionText(metaField,origin);

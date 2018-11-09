@@ -697,7 +697,7 @@ export default {
         width:100%;
     }
     .grid-con{
-        overflow: hidden;
+        /*overflow: hidden;*/
         position: relative;
         .toolbar-batch-operations{
             position: absolute;
@@ -705,7 +705,7 @@ export default {
             left:77px;
             z-index:2;
             background-color:#f3f3f3;
-            width:100%;
+            width:90%;
             height:40px;
             .ivu-btn{
                 font-size:12px;

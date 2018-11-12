@@ -302,15 +302,15 @@ function initValidation(formItem,metaEntity,dataId,entity) {
 }
 //根据表单布局项，计算组件对应的渲染组件（pclink将使用原生选人控件）
 function metaComponentType(formItem){
-    var ct=formItem.componentType;
+    var ct=_.kebabCase(formItem.componentType);
     if(controlTypeService.isOrguserType(ct)){
         if(linkplugin.isInPc){//pclink将使用原生选人控件
-            return `MetaPclink${ct}`;
+            return `m-pclink-${ct}`;
         }else{
-            return `Meta${ct}`;
+            return `m-${ct}`;
         }
     }else{
-        return `Meta${ct}`;
+        return `m-${ct}`;
     }
 }
 export default{

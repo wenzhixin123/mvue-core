@@ -233,7 +233,7 @@ function operationForBatchDelete() {
  */
 function operationForImport() {
   var operation = {
-    renderComponent: "meta-grid-import-data"
+    renderComponent: "m-grid-import-data"
   };
   return operation;
 }

@@ -307,7 +307,7 @@ function operationForImport(){
     id:"import",
     title:"导入",
     icon:"ios-upload-outline",
-    renderComponent:"meta-grid-import-data"
+    renderComponent:"m-grid-import-data"
   };
   operation[Utils.dataPermField]=Utils.permValues.create;
   return operation;

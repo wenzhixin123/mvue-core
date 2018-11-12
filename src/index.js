@@ -1,65 +1,154 @@
-function installGridAndForm(Vue){
-    Vue.component('meta-entity-tree',require("./components/entity-tree/index"));
-    Vue.component('b-tabs',require("./components/tabs/index"));
-    Vue.component('b-section',require("./components/section/index"));
-    Vue.component('b-text',require("./components/text/index"));
+import tabs from './components/tabs/index';
+import section from './components/section/index';
+import text from './components/text/index';
 
-    Vue.component('meta-grid-render-html',require("./components/grid/render_html"));
-    Vue.component('meta-grid-operation-btn',require("./components/grid/operation_btn"));
-    Vue.component('meta-grid-img-title',require("./components/grid/img_title"));
-    Vue.component('meta-grid-opts-title',require("./components/grid/opts_title"));
-    Vue.component('meta-grid-link-title',require("./components/grid/link_title"));
-    Vue.component('meta-grid-pictures',require("./components/grid/pictures"));
-    Vue.component('meta-grid-files',require("./components/grid/files"));
-    Vue.component('meta-grid-import-data',require("./components/grid/import_data.vue"));
-    Vue.component('meta-grid',require("./components/grid/iview_grid.vue"));
-    Vue.component('meta-tree-grid',require("./components/meta-tree-grid/index"));
-    Vue.component('meta-operation',require("./components/meta_operation/operation"));
+import gridRenderHtml from './components/grid/render_html';
+import gridOperationBtn from './components/grid/operation_btn';
+import gridImgTitle from './components/grid/img_title';
+import gridOptsTitle from './components/grid/opts_title';
+import gridLinkTitle from './components/grid/link_title';
+import gridPictures from './components/grid/pictures';
+import gridFiles from './components/grid/files';
+import gridImportData from './components/grid/import_data.vue';
 
-    Vue.component('meta-v-grid',require("./components/v-grid/index"));
-    Vue.component('meta-v-form',require("./components/v-form/index"));
-    Vue.component('meta-layout',require("./components/meta-layout/index"));
-    Vue.component('meta-page',require("./components/meta-page/index"));
+import operation from './components/meta_operation/operation';
 
-    Vue.component('MetaSingleLineText',require('./components/form/control_tmpl/single_line_text')),
-    Vue.component('MetaMultiLineText',require('./components/form/control_tmpl/multi_line_text')),
-    Vue.component('MetaRadioButton',require('./components/form/control_tmpl/radio_button')),
-    Vue.component('MetaDescription',require('./components/form/control_tmpl/description')),
-    Vue.component('MetaDivisionLine',require('./components/form/control_tmpl/division_line')),
-    Vue.component('MetaCheckboxGroup',require('./components/form/control_tmpl/checkbox_group')),
-    Vue.component('MetaSingleSelect',require('./components/form/control_tmpl/single_select')),
-    Vue.component('MetaDate',require("./components/form/control_tmpl/date")),
-    Vue.component('MetaDateRange',require("./components/form/control_tmpl/daterange")),
-    Vue.component('MetaTime',require("./components/form/control_tmpl/time")),
-    Vue.component('MetaTimeRange',require("./components/form/control_tmpl/timerange")),
-    Vue.component('MetaDateTime',require("./components/form/control_tmpl/datetime")),
-    Vue.component('MetaDateTimeRange',require("./components/form/control_tmpl/datetimerange")),
-    Vue.component('MetaNumberInput',require('./components/form/control_tmpl/number_input')),
-    Vue.component('MetaFileUpload',require('./components/form/control_tmpl/file_upload')),
-    Vue.component('MetaPictureUpload',require('./components/form/control_tmpl/picture_upload')),
-    Vue.component('MetaPortrait',require('./components/form/control_tmpl/portrait')),
-    Vue.component('MetaSingleUserSelect',require('./components/form/control_tmpl/single_user_select')),
-    Vue.component('MetaSingleOrgSelect',require('./components/form/control_tmpl/single_org_select')),
-    Vue.component('MetaMultiUserSelect',require('./components/form/control_tmpl/multi_user_select')),
-    Vue.component('MetaMultiOrgSelect',require('./components/form/control_tmpl/multi_org_select')),
-    Vue.component('MetaCascadeSelect',require('./components/form/control_tmpl/cascade_select')),
-    Vue.component('MetaRefEntity',require('./components/form/control_tmpl/ref_entity')),
-    Vue.component('MetaMultiRefEntity',require('./components/form/control_tmpl/multi_ref_entity')),
-    Vue.component('MetaBoolean',require('./components/form/control_tmpl/boolean')),
-    Vue.component('MetaGroup',require('./components/form/control_tmpl/group'));
-    Vue.component('meta-field',require('./components/form/metafield'));
-    Vue.component('meta-form',require('./components/form/metaform'));
-    Vue.component('MetaIssuedNumber',require('./components/form/control_tmpl/issued_number'));
-    Vue.component('MetaBitCode',require('./components/form/control_tmpl/bit-code'));
-    Vue.component('MetaPassword',require('./components/form/control_tmpl/password'));
+import grid from './components/grid/iview_grid.vue';
+import entityTree from './components/entity-tree/index';
+import treeGrid from './components/meta-tree-grid/index';
+import vgrid from './components/v-grid/index';
+import vform from './components/v-form/index';
+import layout from './components/meta-layout/index';
+import page from './components/meta-page/index';
+import mfield from './components/form/metafield';
+import mform from './components/form/metaform';
 
-     //begin new added for pclink
-    Vue.component('MetaPclinkSingleUserSelect',require("./components/form/pclink/single_user_select"));
-    Vue.component('MetaPclinkSingleOrgSelect',require("./components/form/pclink/single_org_select"));
-    Vue.component('MetaPclinkMultiUserSelect',require("./components/form/pclink/multi_user_select"));
-    Vue.component('MetaPclinkMultiOrgSelect',require("./components/form/pclink/multi_org_select"));
-    //end new added for pclink
-}
+import Description from './components/form/control_tmpl/description';
+import DivisionLine from './components/form/control_tmpl/division_line';
+import Group from './components/form/control_tmpl/group'
+
+import SingleLineText from './components/form/control_tmpl/single_line_text';
+import MultiLineText from './components/form/control_tmpl/multi_line_text';
+import RadioButton from './components/form/control_tmpl/radio_button';
+import CheckboxGroup from './components/form/control_tmpl/checkbox_group';
+import SingleSelect from './components/form/control_tmpl/single_select';
+import Date from './components/form/control_tmpl/date';
+import Time from './components/form/control_tmpl/time';
+import DateTime from './components/form/control_tmpl/datetime';
+
+import DateRange from './components/form/control_tmpl/daterange';
+import TimeRange from './components/form/control_tmpl/timerange';
+import DateTimeRange from './components/form/control_tmpl/datetimerange';
+
+import NumberInput from './components/form/control_tmpl/number_input';
+import FileUpload from './components/form/control_tmpl/file_upload';
+import PictureUpload from './components/form/control_tmpl/picture_upload';
+import Portrait from './components/form/control_tmpl/portrait';
+import SingleUserSelect from './components/form/control_tmpl/single_user_select';
+import SingleOrgSelect from './components/form/control_tmpl/single_org_select';
+import MultiUserSelect from './components/form/control_tmpl/multi_user_select';
+import MultiOrgSelect from './components/form/control_tmpl/multi_org_select';
+import CascadeSelect from './components/form/control_tmpl/cascade_select';
+import RefEntity from './components/form/control_tmpl/ref_entity';
+import MultiRefEntity from './components/form/control_tmpl/multi_ref_entity';
+import Boolean from './components/form/control_tmpl/boolean';
+import IssuedNumber from './components/form/control_tmpl/issued_number';
+import BitCode from './components/form/control_tmpl/bit-code';
+import Password from './components/form/control_tmpl/password';
+//link特殊打开的组件
+import PclinkSingleUserSelect from './components/form/pclink/single_user_select';
+import PclinkSingleOrgSelect from './components/form/pclink/single_org_select';
+import PclinkMultiUserSelect from './components/form/pclink/multi_user_select';
+import PclinkMultiOrgSelect from './components/form/pclink/multi_org_select';
+const formComponents={
+    Description,
+    DivisionLine,
+    Group,
+    SingleLineText,
+    MultiLineText,
+    RadioButton,
+    CheckboxGroup,
+    SingleSelect,
+    Date,
+    Time,
+    DateTime,
+
+    DateRange,
+    TimeRange,
+    DateTimeRange,
+
+    NumberInput,
+    Number:NumberInput,
+
+    FileUpload,
+    MultiFileUpload:FileUpload,
+
+    PictureUpload,
+    MultiImageUpload:PictureUpload,
+
+    Portrait,
+    Avatar:Portrait,
+
+    SingleUserSelect,
+    SingleOrgSelect,
+    MultiUserSelect,
+    MultiOrgSelect,
+    CascadeSelect,
+    RefEntity,
+    MultiRefEntity,
+    Boolean,
+    IssuedNumber,
+    BitCode,
+    Password,
+
+    PclinkSingleUserSelect,
+    PclinkSingleOrgSelect,
+    PclinkMultiUserSelect,
+    PclinkMultiOrgSelect
+};
+const gridInnerComponents={
+    'm-grid-render-html':gridRenderHtml,
+    'm-grid-operation-btn':gridOperationBtn,
+    'm-grid-img-title':gridImgTitle,
+    'm-grid-opts-title':gridOptsTitle,
+    'm-grid-link-title':gridLinkTitle,
+    'm-grid-pictures':gridPictures,
+    'm-grid-files':gridFiles,
+    'm-grid-import-data':gridImportData,
+    'meta-operation':operation,
+    'm-operation':operation
+};
+//旧的组件定义，文档中会废除
+const oldFasionComponents={
+    'b-tabs':tabs,
+    'b-section':section,
+    'b-text':text,
+    'meta-field':mfield,
+    'meta-form':mform,
+    'meta-grid':grid,
+    'meta-entity-tree':entityTree,
+    'meta-tree-grid':treeGrid,
+    'meta-v-grid':vgrid,
+    'meta-v-form':vform,
+    'meta-layout':layout,
+    'meta-page':page,
+};
+//新对外暴露的组件，文档会以这里的组件为准
+const mComponents={
+    'm-tabs':tabs,
+    'm-section':section,
+    'm-text':text,
+    'm-field':mfield,
+    'm-form':mform,
+    'm-grid':grid,
+    'm-entity-tree':entityTree,
+    'm-tree-grid':treeGrid,
+    'm-v-grid':vgrid,
+    'm-v-form':vform,
+    'm-layout':layout,
+    'm-page':page
+};
+const allComponents=_.extend({},gridInnerComponents,oldFasionComponents,mComponents);
 //全局组件样式在这里引入，避免在内部重复引用
 require('./components/components.scss');
 import metabase from './libs/metadata/metabase';
@@ -107,7 +196,15 @@ function install(Vue, opts = {}) {
     //debugger
     //mvueComponents.context.init(Vue,{mvueToolkit:context.getMvueToolkit()});
 
-    installGridAndForm(Vue);
+    //注册组件到vue
+    Object.keys(allComponents).forEach(key => {
+        Vue.component(key, allComponents[key]);
+    });
+    //注册表单字段组件到vue
+    Object.keys(formComponents).forEach(key => {
+        let name=`m-${_.kebabCase(key)}`;
+        Vue.component(name,formComponents[key]);
+    });
     Vue.prototype.$metaBase=metabase;
     Vue.prototype.$metaService=metaservice();
     Vue.prototype.$toolService=toolService();

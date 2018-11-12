@@ -22,7 +22,7 @@ export default {
    */
   renderForPictureUpload: function (context, metaField) {
     return function (h, params) {
-      return h("meta-grid-pictures", {
+      return h("m-grid-pictures", {
         props: {
           params: {
             metaField:metaField,
@@ -41,7 +41,7 @@ export default {
    */
   renderForFileUpload: function(context, metaField) {
     return function (h, params) {
-      return h("meta-grid-files", {
+      return h("m-grid-files", {
         props: {
           params: {
             metaField:metaField,
@@ -59,7 +59,7 @@ export default {
    */
   renderForImgTitle: function (context, metaField) {
     return function (h, params) {
-      return h("meta-grid-img-title", {
+      return h("m-grid-img-title", {
         props: {
           params: _.extend({
               uploadUrl:globalContext.getConfig().getUploadUrl()
@@ -104,7 +104,7 @@ export default {
             }
             var oper=gridOperations.create(btnOpts);
 
-            return h("meta-grid-link-title", {
+            return h("m-grid-link-title", {
                 props: {
                     params:metaField,
                     item: params.row,
@@ -123,7 +123,7 @@ export default {
   renderForOptsTitle: function (context, metaField) {
     let btns=context.grid.innerToolbar.singleBtns;
     return function (h, params) {
-      return h("meta-grid-opts-title", {
+      return h("m-grid-opts-title", {
         props: {
           params: {
             metaField:metaField,
@@ -150,7 +150,7 @@ export default {
   renderForOperation:function (context,metaField) {
     let btns=context.grid.innerToolbar.singleBtns;
     return function(h,params){
-      return h("meta-grid-operation-btn",{
+      return h("m-grid-operation-btn",{
         props:{
           btns:btns,
           item: params.row,
@@ -168,7 +168,7 @@ export default {
   renderForCommon: function (context, metaField,initialCol) {
     return function (h, params) {
       var value = controlTypeService.formatData(params.row, metaField);
-      return h("meta-grid-render-html", {
+      return h("m-grid-render-html", {
         props: {
           value: value,
           initialCol:initialCol

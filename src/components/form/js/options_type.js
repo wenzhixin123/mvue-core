@@ -12,6 +12,11 @@ var optionsTypes={
         title: "单选下拉框", 
         icon:"ivu-icon ivu-icon-arrow-down-b"
     },
+    MultiSelect:{ 
+        id: "MultiSelect", 
+        title: "多选下拉框",
+        icon:"ivu-icon ivu-icon-ios-checkmark-circle-outline"
+    },
     CheckboxGroup:{ 
         id: "CheckboxGroup", 
         title: "复选框", 
@@ -51,6 +56,10 @@ var componentParams={
         }
     },
     SingleSelect:{
+        options:baseOptions(),
+        selectText:"请选择"
+    },
+    MultiSelect:{
         options:baseOptions(),
         selectText:"请选择"
     },

@@ -32,6 +32,7 @@ import MultiLineText from './components/form/control_tmpl/multi_line_text';
 import RadioButton from './components/form/control_tmpl/radio_button';
 import CheckboxGroup from './components/form/control_tmpl/checkbox_group';
 import SingleSelect from './components/form/control_tmpl/single_select';
+import MultiSelect from './components/form/control_tmpl/multi-select';
 import Date from './components/form/control_tmpl/date';
 import Time from './components/form/control_tmpl/time';
 import DateTime from './components/form/control_tmpl/datetime';
@@ -69,6 +70,7 @@ const formComponents={
     RadioButton,
     CheckboxGroup,
     SingleSelect,
+    MultiSelect,
     Date,
     Time,
     DateTime,

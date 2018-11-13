@@ -34,10 +34,7 @@ const mutations = {
     state.currentRouteData={}
   },
   setPageTitleSourceId(state,sourceId){
-    //当且仅有一个生效
-    if(!state.pageTitleSourceId){
-      state.pageTitleSourceId=sourceId;
-    }
+    state.pageTitleSourceId=sourceId;
   },
   //强制设置页面标题
   setPageTitleCoercively(state,title){

@@ -32,9 +32,9 @@ export default {
         this.$store.commit('core/setPageTitleCoercively','');
         var sourceId=this.title&&this.title.source;
         //如果定义了title是来源于某个组件，则注册这个组件id到全局
-        if(sourceId){
-            this.$store.commit('core/setPageTitleSourceId',sourceId)
-        }else if(this.title&&_.isString(this.title)){//如果自定义了title，强制设置进去
+        //如果sourceId为空，也要清除
+        this.$store.commit('core/setPageTitleSourceId',sourceId)
+        if(this.title&&_.isString(this.title)){//如果自定义了title，强制设置进去
             this.$store.commit('core/setPageTitleCoercively',this.title);
         }
     },

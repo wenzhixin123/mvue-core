@@ -58,8 +58,9 @@
 <script>
 import controlBase from '../js/control_base';
 import uploadBase from '../js/upload_base';
+import multiUpload from '../js/multi-upload';
 export default {
-    mixins: [controlBase,uploadBase],
+    mixins: [controlBase,multiUpload,uploadBase],
     data:function(){
         return {
             previewImgSrc:null,

@@ -1,6 +1,6 @@
 <template>
     <div class="grid-col-pictures">
-        <img v-for="f in item[params.metaField.name]" :key="f.url" :src="fileRealUrl(f.url)" @click="handleView(f.url)">
+        <img v-for="f in files()" :key="f.url" :src="fileRealUrl(f.url)" @click="handleView(f.url)">
         <Modal title="查看图片" v-model="visible">
             <img class="preview-img" :src="previewImgSrc" v-if="visible">
         </Modal>
@@ -25,6 +25,13 @@ export default {
         };
     },
     methods:{
+        files(){
+            var files=this.item[this.params.metaField.name];
+            if(_.isPlainObject(files)){
+                return [files];
+            }
+            return files;
+        },
         fileRealUrl:function(url){
             return `${this.params.uploadUrl}?filePath=${url}`;
         },

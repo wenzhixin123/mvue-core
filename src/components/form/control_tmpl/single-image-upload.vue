@@ -48,7 +48,7 @@
                         </div>
                     </div>
                     <div v-else :style="{width:uploadIconWidth,height:uploadIconHeight,'padding-top':uploadIconPaddingTop}">
-                        <Icon type="ios-person-add-outline" :size="uploadIconSize" color="#becbd9"/>
+                        <Icon type="ios-image-outline" :size="uploadIconSize" color="#becbd9"/>
                     </div>
                 </Upload>
                 <Modal title="查看图片" v-model="visible">

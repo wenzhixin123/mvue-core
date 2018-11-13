@@ -40,9 +40,9 @@
 <script>
 import controlBase from '../js/control_base';
 import uploadBase from '../js/upload_base';
-import multiUpload from '../js/multi-upload';
+import singleUpload from '../js/single-upload';
 export default {
-    mixins: [controlBase,multiUpload,uploadBase]
+    mixins: [controlBase,singleUpload,uploadBase]
 }
 </script>
 <style lang="scss">

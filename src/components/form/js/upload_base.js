@@ -2,14 +2,6 @@ import uploadType from './upload_type';
 import contextHelper from "../../../libs/context"
 var filesize = require('file-size');
 export default {
-    props: {
-        "value":{
-            type:Array,
-            default:function(){
-                return [];
-            }
-        }
-    },
     data:function(){
         return {
             uploadAction:"",
@@ -49,30 +41,6 @@ export default {
                     max=this.formItem.componentParams.limitSize.max;
             }
             return max;
-        }
-    },
-    watch:{
-        "value":function(newV,oldV){
-            var _oldValidPart=[];
-            if(oldV&&oldV.length){
-                _.each(oldV,function(oldFile){
-                    _oldValidPart.push({name:oldFile.name,url:oldFile.url});
-                });
-            }
-            if(!newV||newV.length===0){
-                this.defaultList=[];
-            }
-            if(this.uploaded){
-                return;
-            }
-            if(!_.isEqual(newV,_oldValidPart)){
-                this.defaultList=_.cloneDeep(newV)||[];
-            }
-        }
-    },
-    mounted () {
-        if(!_.isEmpty(this.value)){
-            this.defaultList=_.cloneDeep(this.value);
         }
     },
     methods:{
@@ -130,7 +98,8 @@ export default {
                     size:uploadFile.size
                 });
             });
-            this.$emit("input",_uploadList);
+            //分别调用single-upload或者multi-upload的emitByType
+            this.emitByType(_uploadList);
             this.dispatch('FormItem', 'on-form-blur', _uploadList);
         },
         minusCurrentFileSum:function(){

@@ -45,6 +45,8 @@ import NumberInput from './components/form/control_tmpl/number_input';
 import FileUpload from './components/form/control_tmpl/file_upload';
 import PictureUpload from './components/form/control_tmpl/picture_upload';
 import Portrait from './components/form/control_tmpl/portrait';
+import SingleFileUpload from './components/form/control_tmpl/single-file-upload';
+import SingleImageUpload from './components/form/control_tmpl/single-image-upload';
 import SingleUserSelect from './components/form/control_tmpl/single_user_select';
 import SingleOrgSelect from './components/form/control_tmpl/single_org_select';
 import MultiUserSelect from './components/form/control_tmpl/multi_user_select';
@@ -84,9 +86,11 @@ const formComponents={
 
     FileUpload,
     MultiFileUpload:FileUpload,
+    SingleFileUpload,
 
     PictureUpload,
     MultiImageUpload:PictureUpload,
+    SingleImageUpload,
 
     Portrait,
     Avatar:Portrait,

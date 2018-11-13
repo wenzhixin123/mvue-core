@@ -1,6 +1,6 @@
 <template>
     <div class="grid-col-pictures">
-        <div v-for="f in item[params.metaField.name]" :key="f.url" :src="fileRealUrl(f.url)" @click="handlePreview(f)"><a><i class="ivu-icon ivu-icon-document"></i> {{f.name}}</a></div>
+        <div v-for="f in files()" :key="f.url" :src="fileRealUrl(f.url)" @click="handlePreview(f)"><a><i class="ivu-icon ivu-icon-document"></i> {{f.name}}</a></div>
     </div>
 </template>
 <script>
@@ -16,6 +16,13 @@ export default {
         }
     },
     methods:{
+        files(){
+            var files=this.item[this.params.metaField.name];
+            if(_.isPlainObject(files)){
+                return [files];
+            }
+            return files;
+        },
         fileRealUrl:function(url){
             return `${this.params.uploadUrl}?filePath=${url}`;
         },

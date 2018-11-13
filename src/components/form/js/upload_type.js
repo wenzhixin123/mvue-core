@@ -19,14 +19,24 @@ var uploadTypes={
         icon:"ios-person-add-outline",
         hidden:true 
     },
+    SingleFileUpload:{ 
+        id: "SingleFileUpload", 
+        title: "单文件上传", 
+        icon:"ivu-icon ivu-icon-ios-upload-outline"
+    },
+    SingleImageUpload:{ 
+        id: "SingleImageUpload", 
+        title: "单图片上传", 
+        icon:"ivu-icon ivu-icon-image"
+    },
     MultiFileUpload:{ 
         id: "MultiFileUpload", 
-        title: "文件上传", 
+        title: "多文件上传", 
         icon:"ivu-icon ivu-icon-ios-upload-outline"
     },
     MultiImageUpload:{ 
         id: "MultiImageUpload", 
-        title: "图片上传", 
+        title: "多图片上传", 
         icon:"ivu-icon ivu-icon-image"
     },
     Avatar:{ 
@@ -102,6 +112,34 @@ var componentParams={
         width:130,//头像宽度px
         height:150//头像高度px
     },
+    SingleFileUpload:{
+        multiple:{
+            isAllowed:false,//是否允许上传多个文件
+            max:1//最大文件个数，为空不限制
+        },
+        limitFileType:{
+            limit:false,
+            documentsIds:[],//文档类型允许的文件后缀列表id，为空表示不限制
+            zipsIds:[],//压缩类型类型允许的文件后缀列表id，为空表示不限制
+            fileTypes:[],//允许的文件后缀列表，由documentsIds和zipsIds定义的类型id转换而来
+        },
+        limitSize:{
+            limit:true,
+            max:maxSize.file
+        }
+    },
+    SingleImageUpload:{
+        multiple:{
+            isAllowed:false,//是否允许上传多个文件
+            max:1//最大文件个数，为空不限制
+        },
+        limitSize:{
+            limit:true,
+            max:maxSize.picture
+        },
+        width:130,//头像宽度px
+        height:150//头像高度px
+    },
     MultiFileUpload:{
         multiple:{
             isAllowed:true,//是否允许上传多个文件
@@ -146,10 +184,11 @@ function accept(componentType){
     return !!uploadTypes[componentType];
 }
 function isFileUpload(componentType){
-    return componentType===uploadTypes.FileUpload.id||componentType===uploadTypes.MultiFileUpload.id;
+    return componentType===uploadTypes.FileUpload.id||componentType===uploadTypes.MultiFileUpload.id||componentType===uploadTypes.SingleFileUpload.id;
 }
 function isPictureUpload(componentType){
     return componentType===uploadTypes.PictureUpload.id||componentType===uploadTypes.Portrait.id
+            ||componentType===uploadTypes.SingleImageUpload.id
             ||componentType===uploadTypes.MultiImageUpload.id||componentType===uploadTypes.Avatar.id;
 }
 export default {

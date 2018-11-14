@@ -9,7 +9,8 @@ function parseProps(layout,curInst){
             }
         });
         //新建操作会清掉recordId
-        if(curInst&&curInst.operation&&curInst.operation.name=="create"&&lyt.ctype=="meta-form"){
+        let isMForm=lyt.ctype=="meta-form"||lyt.ctype=="m-form";
+        if(curInst&&curInst.operation&&curInst.operation.name=="create"&&isMForm){
             lyt.recordId=null;
         }
     });

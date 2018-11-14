@@ -1,7 +1,8 @@
 function forMetaForm(layout,options){
     let isPopup=options&&options.isPopup;
     _.forEach(layout,lyt=>{
-        if(lyt.ctype=="meta-form"&&(!_.has(lyt,"recordId"))){
+        let isMForm=lyt.ctype=="meta-form"||lyt.ctype=="m-form";
+        if(isMForm&&(!_.has(lyt,"recordId"))){
             if(isPopup){
                 lyt.recordId={
                     type:"text",
@@ -15,7 +16,7 @@ function forMetaForm(layout,options){
                 };
             }
         }
-        if(lyt.ctype=="meta-form"&&(!_.has(lyt,"completedAction"))){
+        if(isMForm&&(!_.has(lyt,"completedAction"))){
             if(isPopup){
                 lyt.completedAction="close";
             }

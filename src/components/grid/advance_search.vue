@@ -11,8 +11,8 @@
                 <FormItem label="关键字" v-if="quicksearch&&quicksearch.fields">
                     <Input v-model="innerQuicksearchKeyword" :placeholder="quicksearch.placeholder"></Input>
                 </FormItem>
-                <meta-field v-for="key in advanceSearchFields" :model="model" :key="key" :name="key" :entity-name="entityName" :input-type="inputType(key)">
-                </meta-field>
+                <m-field v-for="key in advanceSearchFields" :model="model" :key="key" :name="key" :entity-name="entityName" :input-type="inputType(key)">
+                </m-field>
             </Form>
         </Modal>
     </div>

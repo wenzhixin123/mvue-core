@@ -102,7 +102,7 @@ export default {
             if(!form){
                 context.error({
                     title:"错误",
-                    content:`必须定义父组件meta-form`
+                    content:`必须定义父组件m-form`
                 });
                 return {};
             }

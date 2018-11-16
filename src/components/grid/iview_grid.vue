@@ -73,9 +73,10 @@
                     <Input class="quicksearch-input" search  v-if="toolbar.quicksearch&&toolbar.quicksearch.fields"
                            v-model="quicksearchKeyword" @on-search="reload"
                            :placeholder="toolbar.quicksearch.placeholder"  />
-                    <advance-search
+                    <advance-search ref="advanceSearchRef"
                             :quicksearch-keyword="quicksearchKeyword"
                             :quicksearch="toolbar.quicksearch"
+                            :init-model="advanceSearchInitModel"
                             v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0"
                             :entity-name="entityName"
                             :advance-search-fields="innerToolbar.advanceSearchFields"
@@ -137,12 +138,18 @@ export default {
             innerColumns:_.cloneDeep(this.columns),
             curPage:ctx.currentPage||1,
             quicksearchKeyword:ctx.quicksearchKeyword||'',
-            saveStatusKey:saveStatusKey
+            saveStatusKey:saveStatusKey,
+            advanceSearchInitModel:ctx.advModel||null,
+            advanceSearchFilters:ctx.advanceSearchFilters||[]
         };
     },
     //保存一下当前grid的状态到vuex，页码、快捷查询条件、排序等
     beforeDestroy(){
         var currentQueryCtx=_.cloneDeep(this.currentQueryCtx);
+        if(this.$refs.advanceSearchRef){
+            currentQueryCtx.advModel=this.$refs.advanceSearchRef.model;
+            currentQueryCtx.advanceSearchFilters=this.advanceSearchFilters;
+        }
         this.$store.commit('core/keepGridStatus',{key:this.saveStatusKey,ctx:currentQueryCtx});
     },
     mounted:function(){

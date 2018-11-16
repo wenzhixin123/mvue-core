@@ -38,18 +38,25 @@ export default {
         "toolbarType": {//'compact':紧凑型toolbar布局；不设置用默认toolbar布局
             type: String,
             required: false
+        },
+        initModel:{//初始查询条件
+            type:Object
         }
     },
     data:function(){
         var metaEntity=this.$metaBase.findMetaEntity(this.entityName);
         var _model={};
-        _.each(this.advanceSearchFields,f=>{
-            _model[f]=null;
-        });
+        //如果外部传入了vuex存入的初始查询model，替换之
+        if(this.initModel){
+            _model=_.cloneDeep(this.initModel);
+        }else{
+            _.each(this.advanceSearchFields,f=>{
+                _model[f]=null;
+            });
+        }
         return {
             searchModal:false,
             model:_model,
-            innerAdvanceSearchFilters:_.cloneDeep(this.value),
             metaEntity:metaEntity,
             innerQuicksearchKeyword:this.quicksearchKeyword
         }

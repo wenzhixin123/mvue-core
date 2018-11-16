@@ -28,7 +28,8 @@ export default{
             selectedItems:[],//已经选择的数据
             quicksearchKeyword:"",//内部高级查询提供的快捷搜索词
             advanceSearchFilters:[],//内部高级查询设置的查询条件
-            changedQueue:[]
+            changedQueue:[],
+            currentQueryCtx:{}//当前查询的所有上下文参数对象
         }
     },
     computed:{
@@ -79,6 +80,8 @@ export default{
             if(ctx.filters&&ctx.filters.rules){
                 ctx.filters.rules=Object.assign(ctx.filters.rules,this.filtersFromQuery,this.filtersFromColumnHeader);
             }
+            //保存当前查询的上下文参数对象
+            this.currentQueryCtx=ctx;
             if(this.query){//外部指定了query，用外部的
                 return this.query(ctx,this.queryResource);
             }else{

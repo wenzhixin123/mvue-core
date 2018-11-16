@@ -2,7 +2,8 @@ const state = {
   currentRouteData:{},//当前路由的公共数据
   autoPageConfs:{},//当前系统所有动态页面组件的配置集合
   pageTitle:'',//当前页面的标题
-  pageTitleSourceId:''//当前页面的title来自哪个id的组件
+  pageTitleSourceId:'',//当前页面的title来自哪个id的组件
+  gridStatus:{}//存储m-grid组件的查询参数对象
 }
 //公共的计算属性
 const getters = {
@@ -13,6 +14,9 @@ const getters = {
   },
   autoPageConfs:(state)=>{
     return state.autoPageConfs;
+  },
+  gridStatus:(state)=>{
+    return state.gridStatus;
   }
 }
 //通过dispatch调用，与mutations不同的是：可以执行任意异步操作
@@ -50,6 +54,13 @@ const mutations = {
     }else if(sourceId&&(state.pageTitleSourceId===sourceId)){//如果页面指定的source和设置来源一致，则设置生效
       state.pageTitle=title;
     }
+  },
+  //保存指定key的grid的查询上下文参数对象
+  keepGridStatus(state,{key,ctx}){
+    state.gridStatus[key]=ctx;
+  },
+  clearGridStatus(state){
+    state.gridStatus={};
   }
 }
 

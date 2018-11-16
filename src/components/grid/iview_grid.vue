@@ -1,11 +1,11 @@
 <template>
     <b-list  v-if="canRender()" ref="listInst"
-            :columns="innerColumns"
-            :query="innerQuery"
-            :toolbar="toolbar"
-            :filters="filters"
-            :default-sort="innerSort"
-
+             :columns="innerColumns"
+             :query="innerQuery"
+             :toolbar="toolbar"
+             :filters="filters"
+             :default-sort="innerSort"
+             :cur-page="curPage"
              :pager="pager"
              :page-size="pageSize"
              :page-size-opts="pageSizeOpts"
@@ -128,12 +128,22 @@ export default {
     data:function(){
         var metaEntity = metabase.findMetaEntity(this.entityName);
         var qr=this.ifOneToManyGrid()?this.buildOneToManyGridQueryResource():metaEntity.dataResource();
+        var saveStatusKey=this.id||`${this.$route.matched[this.$route.matched.length-1].path}-${this.entityName}`;
+        var ctx=this.$store.getters['core/gridStatus'][saveStatusKey]||{};
         return {
             metaEntity:metaEntity,
             queryResource:qr,
-            innerSort:_.cloneDeep(this.defaultSort),
+            innerSort:ctx.sort||_.cloneDeep(this.defaultSort),
             innerColumns:_.cloneDeep(this.columns),
+            curPage:ctx.currentPage||1,
+            quicksearchKeyword:ctx.quicksearchKeyword||'',
+            saveStatusKey:saveStatusKey
         };
+    },
+    //保存一下当前grid的状态到vuex，页码、快捷查询条件、排序等
+    beforeDestroy(){
+        var currentQueryCtx=_.cloneDeep(this.currentQueryCtx);
+        this.$store.commit('core/keepGridStatus',{key:this.saveStatusKey,ctx:currentQueryCtx});
     },
     mounted:function(){
         this.initByMetadata();

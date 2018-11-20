@@ -24,7 +24,7 @@
 </template>
 
 <script>
-    import { leapQueryConvertor } from "mvue-components";
+    import globalContext from '../../libs/context';
     import gridProps from "../grid/js/grid-props";
     import gridEvents from "../grid/js/grid-events";
     import treeService from "../../services/tool/tree-service";
@@ -91,7 +91,7 @@
                 this.$refs["gridList"].reload();
             },
             innerQuery(ctx,queryResource){
-                return leapQueryConvertor.exec(queryResource,ctx,(queryParams)=>{
+                return globalContext.getMvueComponents().leapQueryConvertor.exec(queryResource,ctx,(queryParams)=>{
                     if(this.selectedTreeNode==null){
                         return ;
                     }

@@ -3,6 +3,7 @@
  */
 import coreStore from '../store/core';
 var cachedContext={
+  mvueComponents:null,  
   Vue:null,
   eventBus:null,
   router:null,
@@ -203,5 +204,19 @@ export default {
     },
     getStore(){
         return cachedContext.store;
+    },
+    setMvueComponents(mvueComponents){
+        cachedContext.mvueComponents=mvueComponents;
+    },
+    getMvueComponents(){
+        return cachedContext.mvueComponents;
+    },
+    initByCtx(externalCtx){
+        if(externalCtx.getStore){
+            this.setStore(externalCtx.getStore());
+        }
+        if(externalCtx.getMvueComponents){
+            this.setMvueComponents(externalCtx.getMvueComponents());
+        }
     }
 }

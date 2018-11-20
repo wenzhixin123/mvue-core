@@ -1,5 +1,4 @@
 import globalContext from '../../../libs/context';
-import { leapQueryConvertor } from "mvue-components";
 import operationManager from "../../../libs/operation/operations";
 import  gridProps from "./grid-props";
 export default{
@@ -86,7 +85,7 @@ export default{
                 return this.query(ctx,this.queryResource);
             }else{
                 //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
-                return leapQueryConvertor.exec(this.queryResource,ctx,(params)=>{
+                return globalContext.getMvueComponents().leapQueryConvertor.exec(this.queryResource,ctx,(params)=>{
                     this.beforeQuery&&this.beforeQuery(params);
                 });
             }

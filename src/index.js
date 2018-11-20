@@ -175,9 +175,6 @@ import  context from "./libs/context";
 import getParent from './components/mixins/get-parent';
 import operationManager from "./libs/operation/operations";
 
-//TODO delete just for test
-//import mvueComponents from 'mvue-components';
-
 let MvueCore={
     install:install,
     metaBase:metabase,
@@ -198,10 +195,6 @@ function install(Vue, opts = {}) {
     if (install.installed) return;
     context.init(Vue,opts);
     
-    //TODO delete just for test
-    //debugger
-    //mvueComponents.context.init(Vue,{mvueToolkit:context.getMvueToolkit()});
-
     //注册组件到vue
     Object.keys(allComponents).forEach(key => {
         Vue.component(key, allComponents[key]);

@@ -1,7 +1,8 @@
 import controlTypeService from './control_type_service';
 import constants from './constants';
 import widgetMode from './widget-mode';
-import {emitter}  from 'mvue-components';
+import emitter from '../../mixins/emitter';
+import globalContext from '../../../libs/context';
 import optionsUtils from '../../../libs/metadata/options-utils';
 export default {
     mixins:[emitter],

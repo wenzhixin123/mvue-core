@@ -28,6 +28,7 @@
     </div>
 </template>
 <script>
+import context from '../../libs/context';
 export default {
     props:{
         params:{
@@ -69,13 +70,13 @@ export default {
             var btn=_.find(this.btns, function(o) { 
                 return o.id ==='view'; 
             });
-            if(btn&&Utils.hasDataPerm(this.item,btn)){
+            if(btn&&context.getMvueToolkit().utils.hasDataPerm(this.item,btn)){
                 this.handleBtnClick(btn);
             }
         },
         permedBtns(){
             //判断是否是旧的grid操作，新的操作来源都是通过部件的操作配置，没有权限字段
-            var isOldOperation=this.btns&&this.btns[0]&&this.btns[0][Utils.dataPermField];
+            var isOldOperation=this.btns&&this.btns[0]&&this.btns[0][context.getMvueToolkit().utils.dataPermField];
             if(!isOldOperation){
                 return this.btns;
             }
@@ -85,7 +86,7 @@ export default {
                 if(o.id ==='view'){
                     return false;
                 }
-                let has=Utils.hasDataPerm(_this.item,o);
+                let has=context.getMvueToolkit().utils.hasDataPerm(_this.item,o);
                 return has;
             });
             return _btns;

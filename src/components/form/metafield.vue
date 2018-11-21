@@ -173,9 +173,9 @@ export default {
             var status=this.action;
             if(_.isNil(status)){
                 if(this.form&&this.form.isView){
-                    status=Utils.formActions.view;
+                    status=context.getMvueToolkit().utils.formActions.view;
                 }else{
-                    status=Utils.formActions.edit;
+                    status=context.getMvueToolkit().utils.formActions.edit;
                 }
             }
             return status;

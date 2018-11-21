@@ -15,6 +15,7 @@
 var dayjs = require("dayjs");
 import controlBase from '../js/control_base';
 import dateType from '../js/date_type';
+import context from '../../../libs/context';
 export default {
     mixins: [controlBase],
     props: {
@@ -58,7 +59,7 @@ export default {
                 if(!data){
                     return;
                 }
-                let dv=dayjs(data).format(Utils.getMomentFormat(_this.dateTimeFormat));
+                let dv=dayjs(data).format(context.getMvueToolkit().utils.getMomentFormat(_this.dateTimeFormat));
                 _this.handleChange(dv);
             });
         },

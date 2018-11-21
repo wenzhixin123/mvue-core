@@ -1,3 +1,4 @@
+import context from '../../../libs/context';
 export default{
     data(){
         return {
@@ -162,7 +163,7 @@ export default{
             //如果是关键字查询，附加查询条件查询
             this.buildQueryOptions(params,"");
             if(this.entityResource){
-                Utils.smartSearch(_this,function(){
+                context.getMvueToolkit().utils.smartSearch(_this,function(){
                     _this.entityResource.query(params)
                     .then(function({data}){
                         _this.cachedDataItems=data;
@@ -186,7 +187,7 @@ export default{
                 this.buildQueryOptions(params,keyword);
             }
             if(this.entityResource){
-                Utils.smartSearch(_this,function(){
+                context.getMvueToolkit().utils.smartSearch(_this,function(){
                     _this.entityResource.query(params)
                     .then(function({data}){
                         _this.ensureHistoryItems(data);

@@ -30,14 +30,15 @@ function impl(context,$optInst){
 
     //检查当前用户对每一行数据是否有删除权限
     let opt={},unpermedItems=[],permedItems=[],unpermedInfo='';
-    opt[Utils.dataPermField]=Utils.permValues.del;
+    let _utils=contextHelper.getMvueToolkit().utils;
+    opt[_utils.dataPermField]=_utils.permValues.del;
     var checkedRows=context.selectedItems;
     if(_.isEmpty(checkedRows)){
         contextHelper.error({content:`必须传入选中的所有行数据`});
         return;
     }
     _.each(checkedRows,function(item){
-        let has=Utils.hasDataPerm(item,opt);
+        let has=_utils.hasDataPerm(item,opt);
         if(!has){
             unpermedItems.push(item);
         }else{

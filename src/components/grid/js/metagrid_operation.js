@@ -82,7 +82,8 @@ function operationForCreate(){
       }
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.create;
+  let _utils=contextHelper.getMvueToolkit().utils;
+  operation[_utils.dataPermField]=_utils.permValues.create;
   return operation;
 }
 /**
@@ -131,7 +132,8 @@ function operationForEdit(){
       }
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.edit;;
+  let _utils=contextHelper.getMvueToolkit().utils;
+  operation[_utils.dataPermField]=_utils.permValues.edit;;
   return operation;
 }
 /**
@@ -180,7 +182,8 @@ function operationForView(){
       }
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.view;
+  let _utils=contextHelper.getMvueToolkit().utils;
+  operation[_utils.dataPermField]=_utils.permValues.view;
   return operation;
 }
 /**
@@ -226,7 +229,8 @@ function operationForDel() {
       });
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.del;
+  let _utils=contextHelper.getMvueToolkit().utils;
+  operation[_utils.dataPermField]=_utils.permValues.del;
   return operation;
 }
 
@@ -255,14 +259,15 @@ function operationForBatchDelete() {
       }
       //检查当前用户对每一行数据是否有删除权限
       let opt={},unpermedItems=[],permedItems=[],unpermedInfo='';
-      opt[Utils.dataPermField]=Utils.permValues.del;
+      let _utils=contextHelper.getMvueToolkit().utils;
+      opt[_utils.dataPermField]=_utils.permValues.del;
       var checkedRows=context.selectedItems;
       if(_.isEmpty(checkedRows)){
         contextHelper.error({content:`必须传入选中的所有行数据`});
         return;
       }
       _.each(checkedRows,function(item){
-        let has=Utils.hasDataPerm(item,opt); 
+        let has=_utils.hasDataPerm(item,opt); 
         if(!has){
           unpermedItems.push(item);
         }else{
@@ -295,7 +300,8 @@ function operationForBatchDelete() {
       });
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.del;
+  let _utils=contextHelper.getMvueToolkit().utils;
+  operation[_utils.dataPermField]=_utils.permValues.del;
   return operation;
 }
 
@@ -309,7 +315,8 @@ function operationForImport(){
     icon:"ios-upload-outline",
     renderComponent:"m-grid-import-data"
   };
-  operation[Utils.dataPermField]=Utils.permValues.create;
+  let _utils=contextHelper.getMvueToolkit().utils;
+  operation[_utils.dataPermField]=_utils.permValues.create;
   return operation;
 }
 /**
@@ -364,7 +371,8 @@ function operationForExport() {
       });
     }
   };
-  operation[Utils.dataPermField]=Utils.permValues.view;
+  let _utils=contextHelper.getMvueToolkit().utils;
+  operation[_utils.dataPermField]=_utils.permValues.view;
   return operation;
 }
 

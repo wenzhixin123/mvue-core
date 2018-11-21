@@ -179,7 +179,8 @@ function operationForBatchDelete() {
       }
       //检查当前用户对每一行数据是否有删除权限
       let opt = {}, unpermedItems = [], permedItems = [], unpermedInfo = '';
-      opt[Utils.dataPermField] = Utils.permValues.del;
+      let _utils=contextHelper.getMvueToolkit().utils;
+      opt[_utils.dataPermField] = _utils.permValues.del;
       var checkedRows = context.selectedItems;
       if (_.isEmpty(checkedRows)) {
         $optInst.mustStopRepeatedClick = false;
@@ -187,7 +188,7 @@ function operationForBatchDelete() {
         return;
       }
       _.each(checkedRows, function (item) {
-        let has = Utils.hasDataPerm(item, opt);
+        let has = _utils.hasDataPerm(item, opt);
         if (!has) {
           unpermedItems.push(item);
         } else {

@@ -11,6 +11,7 @@ import OperationUtils from './operations/utils';
 import operations from "./operations/register";
 import  operationManager from "../../libs/operation/operations";
 import getParent from '../mixins/get-parent';
+import context from '../../libs/context';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
 var permParser={
@@ -29,13 +30,16 @@ var permParser={
     },
     //来自当前数据的查看、编辑、删除权限
     "selectedItemView":function(widgetContext){
-        return widgetContext.selectedItem&&Utils.hasPerm(widgetContext.selectedItem[Utils.dataPermField],Utils.permValues.view);
+        let _utils=context.getMvueToolkit().utils;
+        return widgetContext.selectedItem&&_utils.hasPerm(widgetContext.selectedItem[_utils.dataPermField],_utils.permValues.view);
     },
     "selectedItemEdit":function(widgetContext){
-        return widgetContext.selectedItem&&Utils.hasPerm(widgetContext.selectedItem[Utils.dataPermField],Utils.permValues.edit);
+        let _utils=context.getMvueToolkit().utils;
+        return widgetContext.selectedItem&&_utils.hasPerm(widgetContext.selectedItem[_utils.dataPermField],_utils.permValues.edit);
     },
     "selectedItemDel":function(widgetContext){
-        return widgetContext.selectedItem&&Utils.hasPerm(widgetContext.selectedItem[Utils.dataPermField],Utils.permValues.del);
+        let _utils=context.getMvueToolkit().utils;
+        return widgetContext.selectedItem&&_utils.hasPerm(widgetContext.selectedItem[_utils.dataPermField],_utils.permValues.del);
     }
 };
 //将不同的部件操作类型转成实际的操作

@@ -12,6 +12,7 @@
 </div>
 </template>
 <script>
+import context from '../../libs/context';
 export default {
   props:{
     btns:{
@@ -32,7 +33,7 @@ export default {
         permedBtns(){
             var _this=this;
             let _btns= _.filter(this.btns, function(o) { 
-                let has=Utils.hasDataPerm(_this.item,o); 
+                let has=context.getMvueToolkit().utils.hasDataPerm(_this.item,o); 
                 return has;
             });
             return _btns;

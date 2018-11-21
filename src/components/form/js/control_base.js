@@ -145,7 +145,7 @@ export default {
         isCreate(){//判断当前表单是否为新建模式
             if(this.context
                 &&this.context.formStatus
-                &&this.context.formStatus!==Utils.formActions.create){
+                &&this.context.formStatus!==globalContext.getMvueToolkit().utils.formActions.create){
                 return false;
             }
             let id=this.$route.params.id;

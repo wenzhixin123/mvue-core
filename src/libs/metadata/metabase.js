@@ -78,7 +78,7 @@ function  initMetabase(projectId,forceReload) {
     currentProjectId = projectId;
     var _metabase = getMetabase(projectId);
     if (_metabase && !forceReload) {//已经在缓存里边存在，不加载
-        return;
+        return Promise.resolve();
     }
     //先通过项目id，查询项目的swagger服务地址，在通过swagger地址获取元数据信息
     return currentSwagger(projectId).then((swagger) => {

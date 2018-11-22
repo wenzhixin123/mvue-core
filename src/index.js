@@ -187,7 +187,13 @@ let MvueCore={
     context,
     metaLayoutConvertor,
     getParent,
-    treeService
+    treeService,
+    initAfterAppCtxCreated:(appCtx)=>{
+        context.initAfterAppCtxCreated(appCtx);
+    },
+    initAfterAppStarted:(appCtx)=>{
+        context.initAfterAppStarted(appCtx);
+    }
 };
 
 //Vue插件安装入口函数

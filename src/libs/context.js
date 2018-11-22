@@ -2,6 +2,7 @@
  * 运行的vue上下文参数
  */
 import coreStore from '../store/core';
+import mvueCore from '../index';
 var cachedContext={
   mvueComponents:null,  
   Vue:null,
@@ -52,7 +53,9 @@ export default {
     init: function (Vue, opts) {
         cachedContext.Vue = Vue;
         cachedContext.eventBus = new Vue();
-        cachedContext.mvueToolkit = opts && opts.mvueToolkit;
+        if(opts && opts.mvueToolkit){
+            cachedContext.mvueToolkit = opts && opts.mvueToolkit;
+        }
         initWebContext(window.location);
     },
     setRouter(router) {
@@ -198,8 +201,11 @@ export default {
     getConsts(){
         return cachedContext.consts;
     },
-    setStore(store){
+    setStore(store,appCtx){
         store.registerModule('core',coreStore);
+        if(appCtx&&appCtx.getAutoPageConfs){
+            store.commit("core/setAutoPageConfs",appCtx.getAutoPageConfs());
+        }
         cachedContext.store=store;
     },
     getStore(){
@@ -211,12 +217,28 @@ export default {
     getMvueComponents(){
         return cachedContext.mvueComponents;
     },
-    initByCtx(externalCtx){
-        if(externalCtx.getStore){
-            this.setStore(externalCtx.getStore());
+    initAfterAppCtxCreated(appCtx){
+        if(appCtx.getMvueToolkit){
+            cachedContext.mvueToolkit=appCtx.getMvueToolkit();
         }
-        if(externalCtx.getMvueComponents){
-            this.setMvueComponents(externalCtx.getMvueComponents());
+        if(appCtx.getStore){
+            this.setStore(appCtx.getStore(),appCtx);
+        }
+        if(appCtx.getMvueComponents){
+            this.setMvueComponents(appCtx.getMvueComponents());
+        }
+        if(appCtx.getVue){
+            let VueDef=appCtx.getVue();
+            VueDef.use(mvueCore,{mvueToolkit:appCtx.getMvueToolkit()});
+            this.setVue(VueDef);
+        }
+        if(appCtx.setMvueCore){
+            appCtx.setMvueCore(mvueCore);
+        }
+    },
+    initAfterAppStarted(appCtx){
+        if(appCtx.getRouter){
+            this.setRouter(appCtx.getRouter());
         }
     }
 }

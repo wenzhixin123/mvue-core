@@ -46,7 +46,7 @@ export default{
     },
     methods:{
         innerQuery(ctx){
-                ctx.quicksearchKeyword=this.quicksearchKeyword;
+            ctx.quicksearchKeyword=this.quicksearchKeyword;
             //外部高级查询和内部高级查询只能二选一，如果同时出现，这里不会合并
             //外部高级查询:可通过设置组件的top slot区模板和属性filters
             //内部高级查询:如果组件属性toolbar.advanceSearchFields的有值，则内部默认的高级查询条件需要合并到ctx的filters和quicksearchKeyword中
@@ -101,17 +101,17 @@ export default{
             }
             //智能搜索，快速连续调用多次只会执行一次
             globalContext.getMvueToolkit().utils.smartSearch(this, () =>{
-                this.reload();
+                this.reload(true);
             },"changedQueue",delay);
         },
-        reload:function () {
-            this.$refs.listInst.doReload();
+        reload:function (resetPage) {
+            this.$refs.listInst.doReload(resetPage);
         },
         //高级查询
         doAdvanceSearch(advanceSearchFilters,quicksearchKeyword){
             this.quicksearchKeyword=quicksearchKeyword||"";
             this.advanceSearchFilters=advanceSearchFilters;
-            this.reload();
+            this.reload(true);
         },
         //end 单击行
         getWidgetContext(){

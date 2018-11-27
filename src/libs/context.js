@@ -5,6 +5,7 @@ import coreStore from '../store/core';
 import mvueCore from '../index';
 var cachedContext={
   mvueComponents:null,  
+  currentVue:null,
   Vue:null,
   eventBus:null,
   router:null,
@@ -80,8 +81,11 @@ export default {
     getWebContext: function () {
         return cachedContext.webContext;
     },
+    setCurrentVue: function (currentVue) {
+        cachedContext.currentVue=currentVue;
+    },
     getCurrentVue: function () {
-        return cachedContext.Vue;
+        return cachedContext.currentVue;
     },
     getMvueToolkit: function () {
         return cachedContext.mvueToolkit;
@@ -239,6 +243,9 @@ export default {
     initAfterAppStarted(appCtx){
         if(appCtx.getRouter){
             this.setRouter(appCtx.getRouter());
+        }
+        if(appCtx.getCurrentVue){
+            this.setCurrentVue(appCtx.getCurrentVue());
         }
     }
 }

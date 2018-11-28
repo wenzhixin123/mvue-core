@@ -26,6 +26,9 @@
                     <template slot="noResult">
                         根据关键字，搜索不到任何部门
                     </template>
+                    <template slot="noOptions">
+                        无部门数据
+                    </template>
                 </Multiselect>
                 <div class="ivu-btn ivu-btn-primary bvue-select-group-append" @click="toggleModal">
                     <Icon :type="btnIcon"></Icon>

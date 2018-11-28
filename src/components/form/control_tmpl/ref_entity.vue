@@ -18,13 +18,16 @@
                             :label="getTitleField()"
                             @search-change="searchChange"
                             :track-by="getIdField()">
-                                <template slot="option" slot-scope="props">
-                                    <div class="option__desc">
-                                        <span class="option__title">{{ props.option[formItem.componentParams.titleField] }}</span>
-                                    </div>
+                    <template slot="option" slot-scope="props">
+                        <div class="option__desc">
+                            <span class="option__title">{{ props.option[formItem.componentParams.titleField] }}</span>
+                        </div>
                     </template>
                     <template slot="noResult">
                         根据关键字，搜索不到任何数据
+                    </template>
+                    <template slot="noOptions">
+                        无数据
                     </template>
                 </Multiselect>
                 <div class="ivu-btn ivu-btn-primary bvue-select-group-append" @click="toggleModal">
@@ -36,16 +39,16 @@
                         :scrollable="true"
                         :mask-closable="false"
                         >
-                        <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">
-                            <ref-entity-select ref="selectRef" v-if="popupWidgetModal"
-                                :form-item="formItem"
-                                :value="selectedItem"
-                            ></ref-entity-select>
-                        </div>
-                        <div slot="footer">
-                            <Button type="default" @click="close">取消</Button>
-                            <Button type="primary" @click="confirmSelect">确定</Button>
-                        </div>
+                    <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">
+                        <ref-entity-select ref="selectRef" v-if="popupWidgetModal"
+                            :form-item="formItem"
+                            :value="selectedItem"
+                        ></ref-entity-select>
+                    </div>
+                    <div slot="footer">
+                        <Button type="default" @click="close">取消</Button>
+                        <Button type="primary" @click="confirmSelect">确定</Button>
+                    </div>
                 </Modal>
             </div>
         </template>
@@ -59,7 +62,7 @@ import selectModel from '../mixins/select-modal';
 export default {
     mixins: [controlBase,entitySelect,selectModel],
     props: {
-        "value":{type:String,default:null}
+        "value":{type:[String,Number],default:null}
     },
     data: function(){
         var entityResource=null;

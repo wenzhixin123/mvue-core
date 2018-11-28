@@ -18,16 +18,19 @@
                             :label="getTitleField()"
                             @search-change="searchChange"
                             :track-by="getIdField()">
-                            <template slot="option" slot-scope="props">
-                                <div class="option__desc">
-                                    <span class="option__title">{{ props.option[getTitleField()] }}</span>
-                                    <span>-</span>
-                                    <span class="option__small">{{ props.option.email||props.option[getLoginField()] }}</span>
-                                </div>
-                            </template>
-                            <template slot="noResult">
-                                根据关键字，搜索不到任何用户
-                            </template>
+                    <template slot="option" slot-scope="props">
+                        <div class="option__desc">
+                            <span class="option__title">{{ props.option[getTitleField()] }}</span>
+                            <span>-</span>
+                            <span class="option__small">{{ props.option.email||props.option[getLoginField()] }}</span>
+                        </div>
+                    </template>
+                    <template slot="noResult">
+                        根据关键字，搜索不到任何用户
+                    </template>
+                    <template slot="noOptions">
+                        无用户数据
+                    </template>
                 </Multiselect>
                 <div class="ivu-btn ivu-btn-primary bvue-select-group-append" @click="toggleModal">
                     <Icon :type="btnIcon"></Icon>

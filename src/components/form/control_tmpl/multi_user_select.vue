@@ -28,6 +28,9 @@
                     <template slot="noResult">
                         根据关键字，搜索不到任何用户
                     </template>
+                    <template slot="noOptions">
+                        无用户数据
+                    </template>
                 </Multiselect>
                 <div class="ivu-btn ivu-btn-primary bvue-select-group-append" @click="toggleModal">
                     <Icon :type="btnIcon"></Icon>

@@ -257,10 +257,11 @@
                         _this.dataResource.save(_model).then(function({data}){
                             _this.isSavingToServer=false;
                             _this.entityId=data[_this.metaEntity.getIdField().name];
-                            let afterSavePromise=_this.afterSave("on-created",data,'保存成功');
+                            resolve(data);
+/*                            let afterSavePromise=_this.afterSave("on-created",data,'保存成功');
                             afterSavePromise.then(()=>{
                                 resolve(data);
-                            },()=>{reject();});
+                            },()=>{reject();});*/
                         },function(){
                             _this.isSavingToServer=false;
                             reject();

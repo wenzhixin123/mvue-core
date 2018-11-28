@@ -549,7 +549,13 @@ export default {
             }
             //处理由部件配置传入的列表操作的第一个操作/*单击行操作*/
             var _rowSingleClick=this.innerToolbar.rowSingleClick;
-            if(_rowSingleClick){
+            OperationUtils.operationClick(_rowSingleClick,{
+                grid:this,
+                metaEntity:this.metaEntity,
+                selectedId: row.id,
+                selectedItem: row
+            },this);
+            /*if(_rowSingleClick){
                 var _widgetCtx={
                     grid:this,
                     metaEntity:this.metaEntity,
@@ -596,7 +602,7 @@ export default {
                         cellExecScript();
                     }else{
                         //获取执行代码
-                        mvueCore.resource(`meta_operation/${operation.operationId}`, null, {root: _.trimEnd(/*Config.getMetadApiEndpoint()*/Config.getMetaserviceUrl(), '/')}).get({}).then(({ data }) => {
+                        mvueCore.resource(`meta_operation/${operation.operationId}`, null, {root: _.trimEnd(/!*Config.getMetadApiEndpoint()*!/Config.getMetaserviceUrl(), '/')}).get({}).then(({ data }) => {
                             _t.implCode=data.implCode;
                             cellExecScript();
                         });
@@ -627,7 +633,7 @@ export default {
                                 id = selectedItem[idField];
                             }
                         }//获取传入的对象id和实体信息
-                        return {dataId:id,entity:metaEntity.metaEntityId};
+                        return {dataId:id,entityId:metaEntity.metaEntityId};
                     }
 
                     this.close = function(){//关闭对话框
@@ -662,7 +668,7 @@ export default {
                 };
                 //btn.onclick&&btn.onclick.call(context,{row:row});
                 btn.onclick&&btn.onclick(context,{operation:btn});
-            }
+            }*/
         },
         //end 单击行
         getWidgetContext(){

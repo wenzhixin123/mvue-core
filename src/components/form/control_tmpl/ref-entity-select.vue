@@ -35,7 +35,7 @@ export default {
             required:true
         },
         value:{
-            type:Object
+            type:[Array,Object]
         },
         multiple:{
             type:Boolean,

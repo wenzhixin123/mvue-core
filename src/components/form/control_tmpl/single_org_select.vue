@@ -68,7 +68,7 @@ import selectOrgBase from './org-select/select-org-base';
 export default {
     mixins: [controlBase,entitySelect,selectModal,selectOrgBase],
     props: {
-        "value":{type:String,default:null}
+        "value":{type:[String,Number],default:null}
     },
     data: function(){
         let entityResource=null;

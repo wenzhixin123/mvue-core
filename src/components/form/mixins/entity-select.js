@@ -86,7 +86,7 @@ export default{
         },
         //查询指定ids的数据并初始化选中值
         initSelectedItemByFirstValue:function (val) {
-            if(_.isEmpty(val)){
+            if(_.isEmpty(val)&&(!_.isNumber(val))){
                 return;
             }
             var _this=this;

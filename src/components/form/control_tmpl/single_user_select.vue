@@ -73,7 +73,7 @@ import selectUserBase from './user-select/select-user-base';
 export default {
     mixins: [controlBase,entitySelect,selectModal,selectUserBase],
     props: {
-        "value":{type:String,default:null}
+        "value":{type:[String,Number],default:null}
     },
     data: function(){
         let entityResource=null;

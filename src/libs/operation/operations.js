@@ -4,6 +4,9 @@ var operations={
 
 };
 function register(operations) {
+    if(!operations){
+        return;
+    }
     if(_.isArray(operations)){
         _.forEach(operations,(op)=>{
             registerSingle(op);

@@ -63,6 +63,8 @@ import PclinkSingleUserSelect from './components/form/pclink/single_user_select'
 import PclinkSingleOrgSelect from './components/form/pclink/single_org_select';
 import PclinkMultiUserSelect from './components/form/pclink/multi_user_select';
 import PclinkMultiOrgSelect from './components/form/pclink/multi_org_select';
+import simpleTree from './components/simple-tree/tree';
+
 const formComponents={
     Description,
     DivisionLine,
@@ -152,7 +154,8 @@ const mComponents={
     'm-v-grid':vgrid,
     'm-v-form':vform,
     'm-layout':layout,
-    'm-page':page
+    'm-page':page,
+    'm-simple-tree':simpleTree
 };
 const allComponents=_.extend({},gridInnerComponents,oldFasionComponents,mComponents);
 //全局组件样式在这里引入，避免在内部重复引用

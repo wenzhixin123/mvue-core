@@ -221,6 +221,10 @@ export default {
                     //需要通过viewId--获取配置,不需要预定义
                     _this.viewDef = data;//存入视图配置
                     _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
+                    if(!_this.metaEntity){
+                        metabase.initMetabase(data.projectId,true);
+                        _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
+                    }
                     _this.metaEntity.metaEntityId = data.metaEntityId;//存在实体id
                     _this.entityName = data.metaEntityName;
                     //存在自定义视图，由视图构造grid

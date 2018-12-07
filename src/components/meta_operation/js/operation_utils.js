@@ -36,19 +36,43 @@ var utils={
         let returnVal = "";
         if(!widgetCode){
             _.each(_childWidgets,(cw)=>{
-                if(_.isFunction(cw.exportParams)){
-                    let _data = cw.exportParams();//部件自身暴露的参数
+                if(_.isFunction(cw.getWidgetContext)){
+                    let _data = cw.getWidgetContext();//部件自身暴露的参数
                     if((widgetCode&&widgetCode==_data.widgetCode)||widgetCode==""){
-                        returnVal = _data[key]
+                        if(_data.widgetParams&&_data.widgetParams[key]){
+                            //存了部件参数,从部件参数去取
+                            returnVal = _data.widgetParams[key]
+                        }else if(_data.selectedItem&&_data.selectedItem[key]){
+                            //存在暴露selectedItem对象,
+                            returnVal = _data.selectedItem[key]
+                        }else{
+                            returnVal = _data[key]
+                        }
                     }
                 }
             })
         }else{
             //需要传入自身部件模型上暴露函数
-            let _exportParams = _t.exportParams||_t.$parent.exportParams
+            function upward(_this){
+                if(_this.getWidgetContext){
+                    return _this.getWidgetContext;
+                }else if(_this.widgetContainer){
+                    //已经置顶不需要再循环了
+                    return ""
+                }else if(_this.$parent){
+                    return upward(_this.$parent);
+                }
+            }
+            let _exportParams = upward(_t);
             if(_.isFunction(_exportParams)){
                 let _data = _exportParams()
-                if (_data[key]) {
+                if(_data.widgetParams&&_data.widgetParams[key]){
+                    //存了部件参数,从部件参数去取
+                    returnVal = _data.widgetParams[key]
+                }else if(_data.selectedItem&&_data.selectedItem[key]){
+                    //存在暴露selectedItem对象,
+                    returnVal = _data.selectedItem[key]
+                }else{
                     returnVal = _data[key]
                 }
             }

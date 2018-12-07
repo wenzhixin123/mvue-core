@@ -145,6 +145,10 @@ var utils={
     },
     operationClick(_rowSingleData,_widgetCtx,_t){
         //部件按钮的对象,部件需要暴露给按钮操作的对象,_t自身模型
+        if(_.isFunction(_rowSingleData)){
+            _rowSingleData(_widgetCtx);
+            return false;
+        }
         //模拟按钮组件的方法执行--适用于列表部件单击
         _widgetCtx.buttonInfo = _rowSingleData//按钮信息
         var operation=utils.expandOperation(_rowSingleData,{
@@ -153,10 +157,6 @@ var utils={
         });
         //目前支持通用操作和脚本操作
         let commonOptName=operation.name;
-        if(_.isFunction(_rowSingleData)){
-            _rowSingleData(_widgetCtx);
-            return false;
-        }
         if(operation.onclick){
             operation.onClick = operation.onclick;
         };

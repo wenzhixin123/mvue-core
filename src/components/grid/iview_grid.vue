@@ -553,7 +553,8 @@ export default {
                 grid:this,
                 metaEntity:this.metaEntity,
                 selectedId: row.id,
-                selectedItem: row
+                selectedItem: row,
+                widgetParams:_t.widgetParams
             },this);
             /*if(_rowSingleClick){
                 var _widgetCtx={
@@ -684,7 +685,8 @@ export default {
                     selectedIds: _self.checked.map(function (obj) {
                         return obj.id
                     }),
-                    selectedItems: _self.checked
+                    selectedItems: _self.checked,
+                    widgetParams:_self.widgetParams
                 };
             }
             return context;

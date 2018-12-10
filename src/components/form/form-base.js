@@ -452,6 +452,7 @@ export default {
                 return true;
             }else if(_.isFunction(btn.disabled)){
                 var ctx={
+                    isForm:true,
                     entity:this.entity
                 };
                 return btn.disabled(ctx);
@@ -465,6 +466,7 @@ export default {
                 return true;
             }else if(_.isFunction(btn.hidden)){
                 var ctx={
+                    isForm:true,
                     entity:this.entity
                 };
                 return btn.hidden(ctx);

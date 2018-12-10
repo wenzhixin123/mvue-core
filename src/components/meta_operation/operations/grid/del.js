@@ -12,7 +12,10 @@ var operation= {
     operationType:"common",
     handler:null,
     disabled:function (ctx) {
-        return !(ctx.selectedItems && ctx.selectedItems.length === 1);
+        if(ctx.isGrid){
+            return !(ctx.selectedItems && ctx.selectedItems.length === 1);
+        }
+        return false;
     },
     onclick:function(context,$optInst) {
         return impl(context,$optInst);

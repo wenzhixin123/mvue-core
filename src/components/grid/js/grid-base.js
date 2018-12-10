@@ -147,6 +147,7 @@ export default{
                 return true;
             }else if(_.isFunction(btn.disabled)){
                 var ctx={
+                    isGrid:true,
                     selectedItems:this.selectedItems
                 };
                 return btn.disabled(ctx);

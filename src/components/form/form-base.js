@@ -444,6 +444,32 @@ export default {
                 _obj.mode = mode;
             }
             return _obj;
+        },
+        //判断按钮是否禁用
+        btnIsDisabled(btn){
+            //btn 写了disabled:true
+            if(btn.disabled===true){
+                return true;
+            }else if(_.isFunction(btn.disabled)){
+                var ctx={
+                    entity:this.entity
+                };
+                return btn.disabled(ctx);
+            }
+            return false;
+        },
+        //判断按钮是否显示
+        btnIsHidden(btn){
+            //btn 写了hidden:true
+            if(btn.hidden===true){
+                return true;
+            }else if(_.isFunction(btn.hidden)){
+                var ctx={
+                    entity:this.entity
+                };
+                return btn.hidden(ctx);
+            }
+            return false;
         }
     }
 }

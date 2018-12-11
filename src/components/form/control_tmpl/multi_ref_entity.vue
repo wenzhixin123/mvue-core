@@ -65,7 +65,12 @@ import selectModel from '../mixins/select-modal';
 export default {
     mixins: [controlBase,entitySelect,selectModel],
     props: {
-        "value":{type:Array,default:[]}
+        "value":{
+            type:Array,
+            default(){
+                return [];
+            }
+        }
     },
     data: function(){
         var entityResource=null;

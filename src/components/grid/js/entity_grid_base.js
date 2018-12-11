@@ -54,11 +54,11 @@ export default {
             var _this=this;
             let visibleFields = [];
             let dataMap = _.keyBy(metaEntity.fields, "name");
-            let columnsMap = _.keyBy(metaView.config.columns, "name");
+            let columnsMap = _.keyBy(metaView.viewFields/*config.columns*/, "fieldName");
             let filters = metaView.config.filters||'';
             let _metaFields = [], _searchFields = [], _advanceSearchFields=[];
-            _.each(metaView.config.columns, function (column) {
-                let metaField = dataMap[column.name];
+            _.each(metaView.viewFields/*metaView.config.columns*/, function (column) {
+                let metaField = dataMap[column.fieldName/*name*/];
                 if(metaField){
                     _metaFields.push(metaField);
                     //快捷查询字段
@@ -229,7 +229,7 @@ export default {
                     _this.entityName = data.metaEntityName;
                     //存在自定义视图，由视图构造grid
                     _this.formShortId = data.metaFormShortId
-                    if (data.config && data.config.columns) {
+                    if (/*data.config && data.config.columns*/data.viewFields) {
                         _this.metaViewToGrid(_this.metaEntity, data);
                     } else {//虽然存在视图，但是没有任何配置，依然用默认
                         _this.setDefaultQueryOptions();

@@ -12,6 +12,10 @@ module.exports=function (options) {
         relations: {},
         engineUrl: "",
         ui:null,
+        creatable:true,
+        editable:true,
+        deletable:true,
+        listable:true,
         _model: null
     },options);
 
@@ -235,40 +239,35 @@ module.exports=function (options) {
     }
 
     metaEntity.getUISettings=function() {
-        if (this.ui == "none") {
+        if (this.ui=="none" ) {
             throw `ui for entity(${this.name}) is disabled`;
         }
         var promise = Promise.resolve();
         if (_.isString(this.ui)) {
-            if(this.ui=="gen"){
-                return promise.then(() =>{
-                    this.ui=defaultUI(this);
-                    this.getRaw().ui=this.ui;
-                    return this.ui;
+            var resource = this.dataResource();
+            return resource.ui().then(({data}) => {
+                configUI(data,this);
+                var merged = defaultUI(this);
+                _.forIn(data, (val, key) => {
+                    if (_.isPlainObject(val)) {
+                        merged[key] = mergeUISettings(merged[key], val);
+                    } else {
+                        merged[key] = val;
+                    }
                 });
-            }else if(this.ui=="conf"){
-                var resource = this.dataResource();
-                return resource.ui().then(({data}) => {
-                    var merged=defaultUI(this);
-                    _.forIn(data,(val,key)=>{
-                        if(_.isPlainObject(val)){
-                            merged[key]=mergeUISettings(merged[key],val);
-                        }else{
-                            merged[key]=val;
-                        }
-                    });
-                    this.ui = merged;
-                    this.getRaw().ui=this.ui;
-                    return this.ui;
-                });
-            }
+                this.ui = merged;
+                this.getRaw().ui = this.ui;
+                return this.ui;
+            })
         }
         return promise.then(() => this.ui);
     }
 
     metaEntity.getFormSettings=function (formType) {
         return this.getUISettings().then(ui=>{
-          if(ui==null){
+          if(ui==null
+              || (formType="create" && !this.creatable)
+             || (formType=="edit" && !this.editable)){
             return null;
           }
           var st={};
@@ -328,27 +327,58 @@ module.exports=function (options) {
         return to;
     }
 
+    function configUI(data,mEntity) {
+        if(!_.has(data,"list")){
+            mEntity.listable=false;
+        }
+        if(!_.has(data,"create")){
+            mEntity.creatable=false;
+        }
+        if(!_.has(data,"edit")){
+            mEntity.editable=false;
+        }
+        if(!_.has(data,"delete")){
+            mEntity.deletable=false;
+        }
+    }
+
   function defaultUI(mEntity) {
-      var titleField=mEntity.firstTitleField();
-      var list={
-          entityName:mEntity.name,
-          toolbar:{
-              btns:["create"],
-              singleBtns:["edit","del"],
-              quicksearch:{
-                  fields:[(titleField&&titleField.name)],
-                  placeholder:`根据${titleField && titleField.title}搜索`
+      var titleField = mEntity.firstTitleField();
+      var list=null;
+      if(mEntity.listable) {
+          list = {
+              entityName: mEntity.name,
+              toolbar: {
+                  btns: [],
+                  singleBtns: [],
+                  quicksearch: {
+                      fields: [(titleField && titleField.name)],
+                      placeholder: `根据${titleField && titleField.title}搜索`
+                  }
               }
+          };
+          if (mEntity.creatable) {
+              list.toolbar.btns.push("create");
           }
-      };
+          if (mEntity.editable) {
+              list.toolbar.singleBtns.push("edit");
+          }
+          if (mEntity.deletable) {
+              list.toolbar.singleBtns.push("del");
+          }
+      }
+
       var form= {
           entityName:mEntity.name,
           layout: mEntity.getDefaultFormFields(),
           labelWidth:120,
           toolbar:{
-              "editBtns": ["cancel","save"]
+              "editBtns": ["cancel"]
           }
       };
+      if(mEntity.editable){
+          form.toolbar.editBtns.push("save");
+      }
       return {
           list:list,
           form:form

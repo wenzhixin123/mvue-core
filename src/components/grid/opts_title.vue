@@ -129,7 +129,7 @@ export default {
     .opts-con{
         display:none;
         .opt-btn{
-            font-size: 20px;
+            font-size: 17px;
             color:#949494;
             padding:0px;
             border:0px;

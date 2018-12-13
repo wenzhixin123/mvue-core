@@ -134,11 +134,9 @@ export default {
             padding:0px;
             border:0px;
             margin-right:15px;
-            /*float:left;*/
             display: inline-block;
         }
         .opts-dropdown{
-            /*float:left;*/
             a{
                 color:#949494;
             }

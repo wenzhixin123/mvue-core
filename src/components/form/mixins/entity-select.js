@@ -33,19 +33,33 @@ export default{
                 }
             },
             immediate:true
+        },
+        value(newV,oldV){
+            //特殊处理：外部v-model设置值回传进来
+            if(_.isEmpty(newV)&&(!_.isEmpty(oldV))){
+                if(_.isArray(oldV)){
+                    this.selectedItem=[];
+                }else{
+                    this.selectedItem=null;
+                }
+            }else if((!_.isEmpty(newV))&&(!_.isEqual(newV,oldV))){
+                this.firstInit();
+            }
         }
     },
     mounted:function(){
-        var _this=this;
-        this.firstSearch();
-        this.doSearchForCache(function(items)  {
-            _this.ensureHistoryItems(items);
-        });
-        if(this.viewMode){
-            this.getViewModeValue()
-        }
+        this.firstInit();
     },
     methods:{
+        firstInit(){
+            this.firstSearch();
+            this.doSearchForCache((items) => {
+                this.ensureHistoryItems(items);
+            });
+            if(this.viewMode){
+                this.getViewModeValue()
+            }
+        },
         //第一次进入页面时执行初始化
         firstSearch(){
             let _this=this;

@@ -1,5 +1,5 @@
 <template>
-    <FormItem  :prop="name"  :label-for="labelFor" v-show="!innerContext.hidden"
+    <FormItem  :prop="innerPropName"  :label-for="labelFor" v-show="!innerContext.hidden"
         :rules="rules" :show-message="showMessage">
         <template v-if="showLabel" slot="label">
             <slot name="label">{{ metaField.title}}<info-tip v-if="description" :content="description"></info-tip></slot>
@@ -7,7 +7,7 @@
         <slot v-if="formItem"
             :model="entity" :metaField="metaField"  :formItem="formItem">
             <component
-                v-model="entity[name]"
+                v-model="entity[innerPropName]"
                 :is="componentName(formItem)"
                 :paths="paths"
                 :model="entity"
@@ -93,6 +93,13 @@ export default {
             default:function () {
                 return {};
             }
+        },
+        propName:{
+            type:String
+        },
+        batchField:{
+            type:Boolean,
+            default:false
         }
     },
     data:function(){
@@ -153,6 +160,21 @@ export default {
             //初始化来自entity的初始值
             _innerVal=entity[metaField.name];
         }
+        //批量数据表单，会增加一个非属性字段，propName用来指定这个非属性字段，
+        //除了名字不一样和原始字段的渲染方式需要转换为批量组件渲染
+        let innerPropName=this.propName||this.name;
+        if(this.batchField){
+            //转换逻辑：单选到多选；单引用实体到多引用实体
+            let mapping={
+                SingleSelect:controlTypeService.componentTypes.MultiSelect.id,
+                SingleUserSelect:controlTypeService.componentTypes.MultiUserSelect.id,
+                SingleOrgSelect:controlTypeService.componentTypes.MultiOrgSelect.id,
+                RefEntity:controlTypeService.componentTypes.MultiRefEntity.id
+            };
+            if(mapping[formItem.componentType]){
+                formItem.componentType=mapping[formItem.componentType];
+            }
+        }
         return {
             //innerVal:_innerVal,
             formItem:formItem,
@@ -161,7 +183,8 @@ export default {
             metaField:metaField,
             entity:entity,
             paths:constants.paths(),
-            description:description
+            description:description,
+            innerPropName:innerPropName
         }
     },
     computed: {

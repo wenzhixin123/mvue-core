@@ -173,7 +173,8 @@ function loadMetaEntityFromMode(context,modelName,model){
         relationField.isRelationField=true;
         relationField.relations.push(metaRelation);
         if(metaRelation.type=="many-to-one"){
-          relationField.manyToOneRelation=metaRelation;
+               relationField.manyToOneRelation=metaRelation;
+          relationField.title=_.isUndefined(metaRelation["title"])?relationField.title:metaRelation["title"];
           //多对一关系的字段修正为引用实体控件类型
           if(((!relationField.inputType)||
             (relationField.inputType==controlTypeService.componentTypes.RefEntity.id)||
@@ -311,6 +312,7 @@ function fillInputTypeParams(metaField,property) {
 function loadMetaRelationFromProperty(context,propertyName,property){
   var metaRelation= {
       name: propertyName,
+      title: property["title"],
       type: firstNotNaN(property["x-relation-type"], "many-to-one"),
       sourceEntity: context.metaEntity.name,
       targetEntity: property["x-target-entity"],

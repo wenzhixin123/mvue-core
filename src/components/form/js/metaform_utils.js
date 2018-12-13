@@ -144,6 +144,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
     var fieldName = formItem.dataField;
     var params = formItem.componentParams;
     var fieldTitle=formItem.componentParams.title;
+    var metaField=formItem.isDataField && metaEntity.findField(formItem.dataField);
 
     var rules = [];
     //必填必须放在第一个，否则label前的红色星号不生效，应该是iview的bug
@@ -153,7 +154,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
         });
     }
     //唯一性校验
-    if (params.unique) {
+    if (params.unique && metaField && metaField.filterable) {
         var uniqueRule = {
             validator(rule, value, callback) {
                 if(!value){
@@ -163,24 +164,26 @@ function initValidation(formItem,metaEntity,dataId,entity) {
                 var params = {};
                 params[fieldName] = value;
                 var resource=metaEntity.dataResource();
-                resource.query(params)
-                    .then(function ({data}) {
-                        //创建模式dataId为空，如果有数据返回则表示重复了
-                        if((!dataId)&&data.length>0){
-                            callback(rule.message);
-                            return;
-                        }
-                        //编辑模式，当且仅当返回的数据条数为一，且id和dataId相同才合法
-                        var idField=metaEntity.getIdField();
-                        if(dataId&&data.length===1&&dataId===data[0][idField.name]){
+                contextHelper.getMvueToolkit().utils.smartAction(contextHelper.getCurrentVue(),"_unique_validate",function() {
+                    resource.query(params)
+                        .then(function ({data}) {
+                            //创建模式dataId为空，如果有数据返回则表示重复了
+                            if ((!dataId) && data.length > 0) {
+                                callback(rule.message);
+                                return;
+                            }
+                            //编辑模式，当且仅当返回的数据条数为一，且id和dataId相同才合法
+                            var idField = metaEntity.getIdField();
+                            if (dataId && data.length === 1 && dataId === data[0][idField.name]) {
+                                callback();
+                                return;
+                            } else if (dataId && data.length) {//编辑模式，有返回数据并且不满足第一条if的合法性，则重复
+                                callback(rule.message);
+                                return;
+                            }
                             callback();
-                            return;
-                        }else if(dataId&&data.length){//编辑模式，有返回数据并且不满足第一条if的合法性，则重复
-                            callback(rule.message);
-                            return;
-                        }
-                        callback();
-                    });
+                        });
+                },1000);
             },
             message: `${fieldTitle}值重复`
         };

@@ -84,8 +84,13 @@ export default{
             if(this.query){//外部指定了query，用外部的
                 return this.query(ctx,this.queryResource);
             }else{
+                //外部指定了查询地址，由此地址构造查询resource
+                let _resource=this.queryResource;
+                if(this.queryUrl){
+                    _resource=globalContext.buildResource(this.queryUrl);
+                }
                 //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
-                return globalContext.getMvueComponents().leapQueryConvertor.exec(this.queryResource,ctx,(params)=>{
+                return globalContext.getMvueComponents().leapQueryConvertor.exec(_resource,ctx,(params)=>{
                     this.beforeQuery&&this.beforeQuery(params);
                 });
             }

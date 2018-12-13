@@ -26,7 +26,7 @@ function impl(context,$optInst){
     //判断是否是弹出的表单
     var isInPopup=!!form.getParentPopup();
     form.doSaveModel().then((res)=>{
-        if(form.completedAction=="close"){
+        if(form.completedAction=="close"&&(!res.createAnother)){
             if(isInPopup){
                 form.$emit("popup-close");
             }else{
@@ -34,14 +34,14 @@ function impl(context,$optInst){
             }
         }else{
             //创建模式，未设置completedAction
-            if(res&&res.isCreate){
+            if(res&&res.isCreate&&(!res.createAnother)){
                 contextHelper.getRouter().go(-1);
             }
         }
         if(_.isFunction(operation.onSuccess)){
             operation.onSuccess(res,form);
         }
-    });
+    },(err)=>{});
 }
 export default  operation
 

@@ -76,7 +76,6 @@ export default {
     },
     methods: {
         buildQueryOptions(params,keyword){
-            debugger;
             var encodeKeyword=context.getMvueToolkit().utils.leapQueryValueEncode(keyword);
             var filters=`${this.getTitleField()} like '%${encodeKeyword}%'`;
             params.filters=filters;
@@ -86,7 +85,6 @@ export default {
             }
         },
         searchChange:function(keyword){
-            debugger;
             this.doSearch(keyword);
         },
         getIdField:function(){

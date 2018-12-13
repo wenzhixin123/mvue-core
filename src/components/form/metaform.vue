@@ -23,6 +23,7 @@
                             {{operation.title}}
                         </Button>
                     </meta-operation>
+                    <Checkbox v-if="showCreateAnother()" v-model="createAnother">继续创建</Checkbox>
                 </template>
             </slot>
         </FormItem>
@@ -59,6 +60,8 @@
             //构造实体数据操作的基本数据模型，会包含需要提交到后台的所有字段：会过滤掉主键、创建时间等维护字段
             //这里提前初始化entity数据，保证字段的存在性，对于双向绑定和表单验证是必须的
             var entity=metaEntity.getDefaultModel();
+            //初始化自动生成的批量字段
+            this.initBatchFields(entity);
             if(this.layout.length==0){
                 _.forEach(metaEntity.getDefaultFormFields(),(metaFieldName)=>{
                     this.layout.push({
@@ -92,6 +95,14 @@
             }
         },
         methods:{
+            initBatchFields(entity){
+                if(this.isBatchMode()){
+                    _.each(this.batchForm.fields,f=>{
+                        var batchFieldName=this.getBatchFieldProp(f);
+                        entity[batchFieldName]=[];
+                    });
+                }
+            },
             commitPageTitle(){
                 var title='';
                 if(this.pageTitleTmpl){
@@ -148,29 +159,33 @@
             },
             layoutProcessor:function(item){
                 //处理["name","title"]写法的字段布局
+                let _item=null;
                 if(_.isString(item)){
-                    return {
+                    _item = {
                         ctype:"m-field",
                         name:item,
                         context:this.fieldContext(item)
                     }
-                }
-                //已经由命令行解析程序处理后的对象：参数解析完毕，--width 100
-                if(_.has(item,"value") &&(item.ctype=="m-field"||item.ctype=="meta-field"|| item.ctype=="metaField")){
-                    item["name"]=item["value"];
-                    delete item["value"];
-                }
-                var ignores=["value","icon","ctype","name","title","input-type","span","inputType","action","entityName","preprocessor",
-                    "context","model","showLabel","label","rules","required","error","showMessage",
-                    "labelFor","labelWidth","initWhenCreate","params"];
-                var params=item.params||{};
-                _.forIn(item,(v,k)=>{
-                    if(!_.includes(ignores,k)){
-                        params[k]=v;
+                }else{
+                    //已经由命令行解析程序处理后的对象：参数解析完毕，--width 100
+                    if(_.has(item,"value") &&(item.ctype=="m-field"||item.ctype=="meta-field"|| item.ctype=="metaField")){
+                        item["name"]=item["value"];
+                        delete item["value"];
                     }
-                });
-                item.params=params;
-                return item;
+                    var ignores=["value","icon","ctype","name","title","input-type","span","inputType","action","entityName","preprocessor",
+                        "context","model","showLabel","label","rules","required","error","showMessage",
+                        "labelFor","labelWidth","initWhenCreate","params"];
+                    var params=item.params||{};
+                    _.forIn(item,(v,k)=>{
+                        if(!_.includes(ignores,k)){
+                            params[k]=v;
+                        }
+                    });
+                    item.params=params;
+                    _item=item;
+                }
+                this.batchFieldConvert(_item);
+                return _item;
             }
         }
     }

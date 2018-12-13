@@ -129,14 +129,16 @@ export default {
     .opts-con{
         display:none;
         .opt-btn{
+            font-size: 20px;
             color:#949494;
             padding:0px;
             border:0px;
-            margin-right:8px;
-            float:left;
+            margin-right:15px;
+            /*float:left;*/
+            display: inline-block;
         }
         .opts-dropdown{
-            float:left;
+            /*float:left;*/
             a{
                 color:#949494;
             }

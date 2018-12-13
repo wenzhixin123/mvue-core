@@ -13,7 +13,9 @@
                 :model="entity"
                 :context="innerContext"
                 :form-item="formItem"
-                :init-when-create="initWhenCreate" >
+                :init-when-create="initWhenCreate"
+                v-bind="params"
+            >
             </component>
         </slot>
     </FormItem>

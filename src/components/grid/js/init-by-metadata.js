@@ -20,7 +20,7 @@ function buildDefaultOrderby(gridInst) {
     var metaEntity=gridInst.metaEntity;
     let updatedAtField = metaEntity.firstSemanticsField("updatedAt");
     let orderby = null;
-    if (updatedAtField) {//实体有更新时间字段，则按照更新时间降序排列
+    if (updatedAtField && updatedAtField.sortable) {//实体有更新时间字段，则按照更新时间降序排列
         orderby ={
             key:updatedAtField.name,order:'desc'
         };
@@ -30,7 +30,7 @@ function buildDefaultOrderby(gridInst) {
 function buildDefaultQuickSearchFields(gridInst){
     var metaEntity=gridInst.metaEntity;
     let titleField=metaEntity.firstSemanticsField("title");
-    if(titleField){
+    if(titleField && titleField.filterable){
         return [titleField.name];
     }
     return null;

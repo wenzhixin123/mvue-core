@@ -132,8 +132,8 @@ function loadMetaEntityFromMode(context,modelName,model){
   var opt= {
       name: modelName,
       title: model.title,
-      entityPath: _.trim(firstNotNaN(model["x-entity-path"], _.snakeCase(modelName))),
-      ui: firstNotNaN(model["x-entity-ui"], "gen"),
+      entityPath: _.trim(firstNotNaN(model["x-entity-path"], ("/"+_.snakeCase(modelName)))),
+      ui: (firstNotNaN(model["x-entity-ui"], false)?"conf":"none"),
       description: model.description,
       _model: model,
       engineUrl: _.trim(currentEngineUrl, '/'),

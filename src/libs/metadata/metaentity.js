@@ -208,7 +208,7 @@ module.exports=function (options) {
     return fields;
   }
   metaEntity.dataResourceUrl=function() {
-      var resourceName = `${this.engineUrl}/${this.entityPath}{/id}`;
+      var resourceName = `${this.engineUrl}${this.entityPath}{/id}`;
       return resourceName;
   }
   /**
@@ -266,7 +266,7 @@ module.exports=function (options) {
     metaEntity.getFormSettings=function (formType) {
         return this.getUISettings().then(ui=>{
           if(ui==null
-              || (formType="create" && !this.creatable)
+              || (formType=="create" && !this.creatable)
              || (formType=="edit" && !this.editable)){
             return null;
           }
@@ -276,7 +276,7 @@ module.exports=function (options) {
           }
           if(formType!="form"){
               var formSt=ui["form"]||{};
-              st=mergeUISettings(st,formSt);
+              st=mergeUISettings(_.cloneDeep(formSt),st);
           }
           return st;
         });
@@ -317,12 +317,12 @@ module.exports=function (options) {
             to={};
         }
         _.forIn(from, (val, key) => {
-            if (!_.includes(childMerge, key)) {
-                to[key] = val;
+            if (_.includes(childMerge, key)) {
+                var merged = _.extend({}, to[key] || {}, val);
+                to[key] = merged;
                 return;
             }
-            var merged = _.extend({}, to[key] || {}, val);
-            to[key] = merged;
+            to[key] = val;
         });
         return to;
     }

@@ -131,6 +131,7 @@ export default {
         var qr=this.ifOneToManyGrid()?this.buildOneToManyGridQueryResource():metaEntity.dataResource();
         var saveStatusKey=this.id||`${this.$route.matched[this.$route.matched.length-1].path}-${this.entityName}`;
         var ctx=this.$store.getters['core/gridStatus'][saveStatusKey]||{};
+        debugger;
         return {
             metaEntity:metaEntity,
             queryResource:qr,

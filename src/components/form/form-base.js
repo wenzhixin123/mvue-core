@@ -1,6 +1,8 @@
 import TransferDom from './js/transfer_dom';
 import constants from './js/constants';
-import  contextHelper from "../../libs/context";
+import contextHelper from "../../libs/context";
+import globalConsts from "../../libs/consts";
+import cartesian from "../../libs/cartesian";
 import metaformUtils from './js/metaform_utils';
 import operationManager from "../../libs/operation/operations";
 import getParent from '../mixins/get-parent';
@@ -86,6 +88,18 @@ export default {
         completedAction:{//可选值：closePopup（关闭对话框）、editToView(编辑完跳转到查看页)和自定义函数(与onSaved属性作用相同)
             type:[String,Function],
             required:false
+        },
+        batchForm:{//{fields:["orgId"]}，如果指定fields，将根据这个字段将原字段对应的引用实体组件变成多选引用实体组件，并生成多条数据保存
+            type:Object,
+            default(){
+                return {fields:[]};
+            }
+        },
+        saveOpts:{//{url:"xxx/{:id}",batchUrl:"user/batch",createAnother:true}
+            type:Object,
+            default(){
+                return {createAnother:false};
+            }
         }
     },
     data(){
@@ -114,7 +128,8 @@ export default {
             innerToolbar:{
                 editBtns:operationManager.batchCreate(this.toolbar&&this.toolbar.editBtns),
                 viewBtns:operationManager.batchCreate(this.toolbar&&this.toolbar.viewBtns)
-            }
+            },
+            createAnother:false//是否继续创建模式
         };
     },
     computed:{
@@ -217,7 +232,12 @@ export default {
             return new Promise((resolve,reject)=>{
                 if(this.isEdit){//更新
                     let _model=this.ignoreReadonlyFields();
-                    _this.dataResource.update({id:this.entityId},_model).then(function({data}){
+                    let _resource=_this.dataResource;
+                    if(this.saveOpts.url){
+                        const baseServiceRoot=contextHelper.getConfig(globalConsts.base_service);
+                        _resource=contextHelper.buildResource(this.saveOpts.url,null,{root:baseServiceRoot});
+                    }
+                    _resource.update({id:this.entityId},_model).then(function({data}){
                         _this.isSavingToServer=false;
                         let afterSavePromise=_this.afterSave("on-edited",data,'编辑成功');
                         afterSavePromise.then(()=>{resolve({data:_this.entity});},()=>{reject();});
@@ -227,21 +247,89 @@ export default {
                     });
                 }else{//新建
                     let _model=this.ignoreReadonlyFields();
-                    _this.dataResource.save(_model).then(function({data}){
-                        _this.entityId=data[_this.metaEntity.getIdField().name];
-                        //创建完数据后，立即为编辑模式否则可能产生多保存数据
-                        _this.formStatus=contextHelper.getMvueToolkit().utils.formActions.edit;
-                        _this.isSavingToServer=false;
-                        let afterSavePromise=_this.afterSave("on-created",data,'保存成功');
-                        afterSavePromise.then(()=>{
-                            resolve({data:data,isCreate:true});
-                        },()=>{reject();});
-                    },function(){
-                        _this.isSavingToServer=false;
-                        reject();
-                    });
+                    if(this.isBatchMode()){
+                        let _batchModel=this.buildBatchModel(_model);
+                        if(_.isEmpty(_batchModel)){
+                            reject();
+                            return;
+                        }
+                        this.batchSave(_batchModel)
+                        .then((data)=>{
+                            this.isSavingToServer=false;
+                            //如果需要继续创建数据，则根据设置的resetFields作清理（恢复默认值）
+                            if(this.createAnother){
+                                if(!_.isEmpty(this.saveOpts.resetFields)){
+                                    var entity=this.metaEntity.getDefaultModel();
+                                    _.each(this.saveOpts.resetFields,f=>{
+                                        if(_.includes(this.batchForm.fields,f)){
+                                            this.entity[this.getBatchFieldProp(f)]=[];
+                                        }else{
+                                            this.entity[f]=entity[f];
+                                        }
+                                    });
+                                }
+                                this.$Modal.success({title:"创建数据提示",content:`已批量创建[${data.length}]条新数据，可继续创建`});
+                            }
+                            let _data=[];
+                            _.each(data,d=>{
+                                _data.push(d.data);
+                            });
+                            let afterSavePromise=_this.afterSave("on-created",_data,this.createAnother?'':'保存成功');
+                            afterSavePromise.then(()=>{
+                                resolve({data:_data,isCreate:true,createAnother:this.createAnother});
+                            },()=>{reject();});
+                        })
+                        .catch(()=>{
+                            this.isSavingToServer=false;
+                            reject();
+                        });
+                    }else{
+                        this.singleSave(_model).then(({data})=>{
+                            //如果需要继续创建数据，则根据设置的resetFields作清理（恢复默认值）
+                            if(this.createAnother){
+                                if(!_.isEmpty(this.saveOpts.resetFields)){
+                                    var entity=this.metaEntity.getDefaultModel();
+                                    _.each(this.saveOpts.resetFields,f=>{
+                                        this.entity[f]=entity[f];
+                                    });
+                                }
+                                this.$Modal.success({title:"创建数据提示",content:`已创建一条新数据，可继续创建`});
+                            }else{
+                                _this.entityId=data[_this.metaEntity.getIdField().name];
+                                //创建完数据后，立即为编辑模式否则可能产生多保存数据
+                                _this.formStatus=contextHelper.getMvueToolkit().utils.formActions.edit;
+                            }
+                            let afterSavePromise=_this.afterSave("on-created",data,this.createAnother?'':'保存成功');
+                            afterSavePromise.then(()=>{
+                                resolve({data:data,isCreate:true,createAnother:this.createAnother});
+                            },()=>{reject();});
+                        },()=>{
+                            _this.isSavingToServer=false;
+                            reject();
+                        });
+                    }
                 }
             });
+        },
+        batchSave(_batchModel){
+            const baseServiceRoot=contextHelper.getConfig(globalConsts.base_service);
+            if(this.saveOpts.batchUrl){
+                return this.$http.post(this.saveOpts.batchUrl,_batchModel,{baseURL:baseServiceRoot});
+            }else{
+                let batchAllPromises=[];
+                _.each(_batchModel,m=>{
+                    batchAllPromises.push(this.singleSave(m));
+                });
+                return Promise.all(batchAllPromises);
+            }
+        },
+        singleSave(_model){
+            const baseServiceRoot=contextHelper.getConfig(globalConsts.base_service);
+            if(this.saveOpts.url){
+                return this.$http.post(this.saveOpts.url,_model,{baseURL:baseServiceRoot});
+            }else{
+                return this.dataResource.save(_model);
+            }
         },
         //表单数据提交完成后调用：如果与表单关联的组件也需要作一些事情在这里处理
         afterSave(evtName,data,msg){
@@ -472,6 +560,53 @@ export default {
                 return btn.hidden(ctx);
             }
             return false;
+        },
+        batchFieldConvert(item){
+            //只有创建模式才支持multiDataField属性，做转换
+            if(this.isBatchMode()&&_.includes(this.batchForm.fields,item.name)){
+                item.propName=this.getBatchFieldProp(item.name);
+                item.batchField=true;
+            }
+        },
+        isBatchMode(){
+            if(!this.batchForm.fields){
+                return false;
+            }
+            return this.isCreate&&(!_.isEmpty(this.batchForm.fields));
+        },
+        getBatchFieldProp(fieldName){
+            return `${fieldName}_multidata`;
+        },
+        buildBatchModel(_initialModel){
+            var initialModel=_.cloneDeep(_initialModel);
+            var obj={};
+            _.each(this.batchForm.fields,f=>{
+                var batchFieldName=this.getBatchFieldProp(f);
+                obj[f]=cartesian.alt.apply(null,initialModel[batchFieldName]);
+                delete initialModel[batchFieldName];
+                delete initialModel[f];
+            });
+            var batchModel=cartesian.expand(obj);
+            _.each(batchModel,bm=>{
+                bm=_.extend(bm,initialModel);
+            });
+            return batchModel;
+        },
+        showCreateAnother(){
+            if(!this.innerToolbar){
+                return false;
+            }
+            if(!this.innerToolbar.editBtns){
+                return false;
+            }
+            var has=false;
+            _.each(this.innerToolbar.editBtns,btn=>{
+                if(btn.name=="save"){
+                    has=true;
+                    return false;
+                }
+            });
+            return this.isCreate&&has&&this.saveOpts.createAnother;
         }
     }
 }

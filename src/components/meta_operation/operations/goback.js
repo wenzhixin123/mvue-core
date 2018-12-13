@@ -16,6 +16,14 @@ var operation= {
 };
 
 function impl(context,$optInst){
+    //如果在弹出框里边，关闭弹出框
+    if($optInst.$parent&&$optInst.$parent.getParentPopup){
+        let popup=$optInst.$parent.getParentPopup();
+        if(popup){
+            popup.close();
+            return;
+        }
+    }
     contextHelper.getRouter().go(-1);
 }
 export default  operation

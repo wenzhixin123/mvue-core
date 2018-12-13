@@ -1,5 +1,9 @@
 export default{
     props: {
+        queryUrl:{//外部指定的查询地址，必须是兼容leap查询协议的
+            type:String,
+            required:false
+        },
         query:{//数据加载方法，可以由外边重写掉
             type:Function,
             required:false

@@ -60,21 +60,21 @@
     </div>
     </slot>
     <!--批量操作的工具栏-->
-    <div v-if="!innerToolbar.hide && toolbarType=='compact' && innerToolbar.batchBtns" class="toolbar-batch-operations" style="display:table;" v-show="checked&&checked.length>0">
+<!--    <div v-if="!innerToolbar.hide && toolbarType=='compact' && innerToolbar.batchBtns" class="toolbar-batch-operations" style="display:table;" v-show="checked&&checked.length>0">
         <div style="display:table-cell;vertical-align:middle;">
         <span class="checked-info-span tools-color">已选中{{checked.length}}项目</span>
-<!--        <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.batchBtns">
+&lt;!&ndash;        <template v-if="innerToolbar.btns" v-for="(toolbarBtn,index) in innerToolbar.batchBtns">
             <meta-operation :key="index" :operation="toolbarBtn" :widget-context="getWidgetContext()">
                 <Button v-if="!toolbarBtn.render" size="small"
                         type="text"  :icon="toolbarBtn.icon"
                 >{{toolbarBtn.title}}</Button>
             </meta-operation>
-        </template>-->
+        </template>&ndash;&gt;
         </div>
-<!--        <div style="width:77px;display:table-cell;vertical-align:middle;background-color:#fff;">
+&lt;!&ndash;        <div style="width:77px;display:table-cell;vertical-align:middle;background-color:#fff;">
 
-        </div>-->
-    </div>
+        </div>&ndash;&gt;
+    </div>-->
     <div class="data-table-list">
         <Table :loading="loadingData" 
             :columns="innerColumns" 

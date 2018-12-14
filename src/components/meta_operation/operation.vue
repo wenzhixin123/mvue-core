@@ -63,7 +63,7 @@ export default {
                     _this.$forceUpdate();
                 }
             });
-        },,
+        },
         operationComponent:function(){
             if(!this.operation.operationType){
                 return;

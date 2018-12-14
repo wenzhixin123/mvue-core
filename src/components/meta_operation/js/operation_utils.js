@@ -14,7 +14,9 @@ var utils={
     execution(operation,_widgetCtx,before_after,_this){
         //操作执行前后逻辑
         //operation.widgetContext = _widgetCtx;
-        factoryApi.init(_this)
+        if(window.factoryApi&&window.factoryApi.init){
+            window.factoryApi.init(_this);
+        }
         return new Promise(function(resolve, reject) {
             let value=true;
             if(operation[before_after]) {

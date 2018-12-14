@@ -74,16 +74,18 @@ function initGridProperties(grid) {
 function buildInnerColumns(columns,metaEntityObj,context){
   var _cols=[];
   _.each(columns,function(col){
-    var metaParams=col.metaParams ||{};
-    var _col=_.omit(col,["metaParams"]);
-    var metaField={name:_col.key};
-    if(metaEntityObj!=null){
-      metaField=metaEntityObj.findField(_col.key) || {};
+    if(col) {
+      var metaParams = col.metaParams || {};
+      var _col = _.omit(col, ["metaParams"]);
+      var metaField = {name: _col.key};
+      if (metaEntityObj != null) {
+        metaField = metaEntityObj.findField(_col.key) || {};
+      }
+      metaField = _.extend(metaField, metaParams);
+      var defaultCol = metaFieldToCol(context, metaField);
+      _col = _.extend(defaultCol, _col);
+      _cols.push(_col);
     }
-    metaField=_.extend(metaField,metaParams);
-    var defaultCol=metaFieldToCol(context,metaField);
-    _col=_.extend(defaultCol,_col);
-    _cols.push(_col);
   });
   return _cols;
 }

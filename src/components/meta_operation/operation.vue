@@ -55,15 +55,6 @@ export default {
         _t.showOperation();
     },
     computed:{
-        showOperation() {
-            let _this = this;
-            OperationUtils.showOperation(_this.operation,_this).then(res => {
-                if (typeof res == "boolean") {
-                    _this.operation.show = res;
-                    _this.$forceUpdate();
-                }
-            });
-        },
         operationComponent:function(){
             if(!this.operation.operationType){
                 return;
@@ -125,6 +116,15 @@ export default {
         },
         successed(optType){
             this.$emit("successed",optType);
+        },
+        showOperation() {
+            let _this = this;
+            OperationUtils.showOperation(_this.operation,_this).then(res => {
+                if (typeof res == "boolean") {
+                _this.operation.show = res;
+                _this.$forceUpdate();
+                }
+            });
         }
     },
     components:{

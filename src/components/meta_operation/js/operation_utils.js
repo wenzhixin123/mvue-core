@@ -12,9 +12,10 @@ var utils={
         });
         return _.extend(operation,params);
     },
-    execution(operation,_widgetCtx,before_after){
+    execution(operation,_widgetCtx,before_after,_this){
         //操作执行前后逻辑
         //operation.widgetContext = _widgetCtx;
+        factoryApi.init(_this)
         return new Promise(function(resolve, reject) {
             let value=true;
             if(operation[before_after]) {
@@ -118,7 +119,8 @@ var utils={
             window.sessionStorage.setItem("urlParam", JSON.stringify(urlParam));//存储起来需要传递的参数
         }
     },
-    showOperation(operation){
+    showOperation(operation,_this){
+        factoryApi.init(_this);
         //具备校验函数--需要对按钮进行显隐控制
         /*        if(operation.checkFunc){
          if (_.isFunction(operation.checkFunc)) {
@@ -167,25 +169,25 @@ var utils={
                 operation.onclick(_widgetCtx,window.factoryApi);
             }
         }else if(operation.onClick){//脚本操作
-            utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+            utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
                 if(_.isFunction(operation.onclick)){
                     operation.onClick(_widgetCtx,window.factoryApi);
                 }else{
                     var onclick=Function('"use strict";return ' + operation.onClick  )();
                     onclick(_widgetCtx,window.factoryApi);
                 }
-                utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                utils.execution(operation,_widgetCtx,"afterExecCode",_t)//执行后
             });
         }else if(operation.operationType=="execOperation"){//脚本操作
             function cellExecScript() {
-                utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
                     if (_.isFunction(_t.implCode)) {
                         _t.implCode(_widgetCtx,window.factoryApi);
                     } else {
                         var onclick = Function('"use strict";return ' + _t.implCode)();
                         onclick(_widgetCtx,window.factoryApi);
                     }
-                    utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+                    utils.execution(operation,_widgetCtx,"afterExecCode",_t)//执行后
                 });
             }
             if(_t.implCode){
@@ -213,8 +215,8 @@ var utils={
             if(operation.operationType=="toOperation"){
                 byOperation = true;
             }
-            utils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
-                utils.execution(operation,_widgetCtx,"afterExecCode")//执行后
+            utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
+                utils.execution(operation,_widgetCtx,"afterExecCode",_t)//执行后
                 if(operation.operationType=="toDynamicPage"){
                     var pageParams={};
                     if(operation.dynamicPageFunc){

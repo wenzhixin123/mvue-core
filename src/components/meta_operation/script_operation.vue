@@ -68,7 +68,7 @@ export default {
         },
         cellExecScript(){
             var _widgetCtx = Object.assign(this.widgetContext,{"buttonInfo":this.operation});
-            OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
+            OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode",this).then((res)=>{
                 //所有跳转都带入dataId数据id,entity实体id
                 if(_.isFunction(this.implCode)){
                     this.mustStopRepeatedClick=true;
@@ -80,7 +80,7 @@ export default {
                 }
                 this.mustStopRepeatedClick=false;
                 this.$emit("triggered","script");
-                OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
+                OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode",this)//执行后
             });
         }
     }

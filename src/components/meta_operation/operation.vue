@@ -1,5 +1,6 @@
 <template>
-    <div class="widget-operation div-inline-block">
+    <div class="widget-operation div-inline-block"
+         v-if="operation.show&&!operation.hide">
         <component @triggered="triggered" @successed="successed" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot :operation="extendedOperation"></slot>
         </component>
@@ -47,7 +48,22 @@ export default {
             required:true
         }
     },
+    created() {
+        let _t = this;
+        _t.operation.show = false;
+        _t.operation.widgetContext = this.extendedWidgetContext; //暴露部件参数出去提供更多的校验手段
+        _t.showOperation();
+    },
     computed:{
+        showOperation() {
+            let _this = this;
+            OperationUtils.showOperation(_this.operation,_this).then(res => {
+                if (typeof res == "boolean") {
+                    _this.operation.show = res;
+                    _this.$forceUpdate();
+                }
+            });
+        },,
         operationComponent:function(){
             if(!this.operation.operationType){
                 return;
@@ -69,7 +85,7 @@ export default {
             });
             return _.extend(this.widgetContext,params);
         },
-        showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
+        /*showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
             var operation=OperationUtils.expandOperation(this.operation,this);
             var optPermValue=operation[Utils.operationDisplayField];
             if(!_.isPlainObject(optPermValue)){
@@ -98,7 +114,7 @@ export default {
                 }
             }
             return false;
-        }
+        }*/
     },
     data(){
         return {};

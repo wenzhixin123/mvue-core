@@ -64,13 +64,13 @@
             gotoPage(){
                 let _t = this;
                 var _widgetCtx = Object.assign(this.widgetContext, {"buttonInfo":this.operation});
-                OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode").then((res)=>{
+                OperationUtils.execution(this.operation,_widgetCtx,"beforeExecCode",this).then((res)=>{
                     //所有跳转都带入dataId数据id,entity实体id
                     var _query=_.extend({byOperation:true}/*,_t.getIdFromContext(),_t.operation.queryParams*/);
                     var pageId=_t.operation.operationId;
                     var _params=_.extend({pageId:pageId,byOperation:true},_t.operation.pathParams);
                     OperationUtils.setUrlParam(this.operation,this);//按钮输入参数处理
-                    OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode")//执行后
+                    OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode",this)//执行后
                     router.push({name:"defaultPageIndex",query:_query,params:_params});
                     _t.$emit("triggered","toPage");
                 });

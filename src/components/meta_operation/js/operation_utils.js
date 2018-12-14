@@ -34,7 +34,22 @@ var utils={
     },
     getWidgetExportParams(_t,key,widgetCode){
         //读取对应部件暴露参数
-        let _childWidgets = _t.$root.$children[0].$refs.childWidgets;//遍历下所有引入的部件
+
+        function rootPage(_this){
+            //追溯到部件page部件
+            if(_this.isWidgetPage){
+                return _this;
+            }else if(_this.$parent){
+                return rootPage(_this.$parent);
+            }else {
+                return null;
+            }
+        }
+        let _rooPage = rootPage(_t)/*_t.$root.$children[0].$refs.childWidgets*/;//遍历下所有引入的部件
+        let _childWidgets = [];
+        if(_rooPage){
+            _childWidgets = _rooPage.$refs.childWidgets;//遍历下所有引入的部件
+        }
         let returnVal = "";
         if(!widgetCode){
             _.each(_childWidgets,(cw)=>{
@@ -56,7 +71,9 @@ var utils={
         }else{
             //需要传入自身部件模型上暴露函数
             function upward(_this){
-                if(_this.getWidgetContext){
+                if(_.isFunction(_this.getWidgetContext)){
+                    return _this.getWidgetContext();
+                }else if(_this.getWidgetContext){
                     return _this.getWidgetContext;
                 }else if(_this.widgetContainer){
                     //已经置顶不需要再循环了
@@ -117,7 +134,7 @@ var utils={
                     });
                 }
             });
-            window.sessionStorage.setItem("urlParam", JSON.stringify(urlParam));//存储起来需要传递的参数
+            window.localStorage.setItem("urlParam", JSON.stringify(urlParam));//存储起来需要传递的参数
         }
     },
     showOperation(operation,_this){

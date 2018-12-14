@@ -288,6 +288,7 @@ export default {
             modalTitle:"",
             popupWidgetModal:false,
             pageParams:{},
+            selectedItem:{},//记录选择对象--合并暴露对象
         };
     },
     computed:{
@@ -549,6 +550,7 @@ export default {
             }
             //处理由部件配置传入的列表操作的第一个操作/*单击行操作*/
             var _rowSingleClick=this.innerToolbar.rowSingleClick;
+            this.selectedItem = row;//记录点击单行
             OperationUtils.operationClick(_rowSingleClick,{
                 grid:this,
                 metaEntity:this.metaEntity,
@@ -689,6 +691,12 @@ export default {
                     widgetParams:_self.widgetParams
                 };
             }
+            if(!_self.checked.length){
+                //单击的时候
+                context.selectedItem = _self.selectedItem;
+                context.selectedId = _self.selectedItem.id;
+            }
+
             return context;
         }
     },

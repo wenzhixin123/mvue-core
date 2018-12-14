@@ -1,6 +1,5 @@
 import propParser from '../../../services/tool/prop_parser';
 import commonOperation from './common_operation.js';
-
 var utils={
     expandOperation:function(operation,ctx){
         var params={};
@@ -120,7 +119,9 @@ var utils={
         }
     },
     showOperation(operation,_this){
-        factoryApi.init(_this);
+        if(factoryApi&&factoryApi.init) {
+            factoryApi.init(_this);
+        }
         //具备校验函数--需要对按钮进行显隐控制
         /*        if(operation.checkFunc){
          if (_.isFunction(operation.checkFunc)) {

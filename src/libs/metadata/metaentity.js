@@ -208,7 +208,7 @@ module.exports=function (options) {
     return fields;
   }
   metaEntity.dataResourceUrl=function() {
-      var resourceName = `${this.engineUrl}${this.entityPath}{/id}`;
+      var resourceName = `${this.entityPath}{/id}`;
       return resourceName;
   }
   /**

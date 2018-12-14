@@ -223,7 +223,7 @@ function loadMetaFieldFromProperty(context,propertyName,property){
       filterable: firstNotNaN(property["x-filterable"], false),
       selectable: firstNotNaN(property["x-selectable"], true),
       inputType: property["x-input"],
-      inputTypeParams: {},
+      inputTypeParams: firstNotNaN(property["x-input-params"], {}),
       semantics: property["x-meaning"],
       isTitleField: "title" === property["x-meaning"],
       maxLength: property["maxLength"],

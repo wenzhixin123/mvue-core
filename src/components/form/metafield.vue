@@ -14,7 +14,7 @@
                 :context="innerContext"
                 :form-item="formItem"
                 :init-when-create="initWhenCreate"
-                v-bind="params"
+                v-bind="formItem.componentParams"
             >
             </component>
         </slot>

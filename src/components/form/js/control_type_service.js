@@ -242,6 +242,7 @@ function buildFormItemByMetaField(metaField){
     var formItem=buildFormItemByComponentType(componentType);
     formItem.id=metaField.id;
     formItem.dataField=metaField.name;
+    formItem.componentParams=_.extend(formItem.componentParams,metaField.inputTypeParams);
     formItem.componentParams.title=metaField.title||metaField.name;
     //是否必填
     formItem.componentParams.required=metaField.required;

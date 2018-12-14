@@ -119,8 +119,8 @@ var utils={
         }
     },
     showOperation(operation,_this){
-        if(factoryApi&&factoryApi.init) {
-            factoryApi.init(_this);
+        if(window.factoryApi&&window.factoryApi.init) {
+            window.factoryApi.init(_this);
         }
         //具备校验函数--需要对按钮进行显隐控制
         /*        if(operation.checkFunc){

@@ -156,6 +156,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
     //唯一性校验
     if (params.unique && metaField && metaField.filterable) {
         var uniqueRule = {
+
             validator(rule, value, callback) {
                 if(!value){
                     callback();
@@ -164,7 +165,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
                 var params = {};
                 params[fieldName] = value;
                 var resource=metaEntity.dataResource();
-                contextHelper.getMvueToolkit().utils.smartAction(contextHelper.getCurrentVue(),"_unique_validate",function() {
+                contextHelper.getMvueToolkit().utils.smartAction(contextHelper.getCurrentVue(),"__"+metaField.name,function() {
                     resource.query(params)
                         .then(function ({data}) {
                             //创建模式dataId为空，如果有数据返回则表示重复了
@@ -183,7 +184,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
                             }
                             callback();
                         });
-                },1000);
+                },500);
             },
             message: `${fieldTitle}值重复`
         };

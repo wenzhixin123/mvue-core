@@ -107,6 +107,9 @@ function loadMetabase(swagger,projectId){
   var context={
     swagger:swagger
   };
+  var options=loadMetaOptions(context,firstNotNaN(swagger["x-option-sets"],{}));
+    context["options"]=options;
+
   var entities={};
   _.forIn(swagger.definitions,function(val,key){
     var isEntity=firstNotNaN(val["x-entity"],true);
@@ -118,9 +121,19 @@ function loadMetabase(swagger,projectId){
   });
   var metabase={};
   metabase.entities=entities;
+  metabase.options=options;
   var cachedKey=mbCacheKey(projectId);
   metabases[cachedKey]=metabase;
   store.set(cachedKey,metabase);
+}
+
+function loadMetaOptions(context,optionsModel) {
+    var options={};
+    _.forIn(optionsModel,function(opItem,key){
+       var option= optionsConvert(opItem.items,{});
+        options[key.toLowerCase()]=option;
+    });
+    return options;
 }
 
 /**
@@ -175,6 +188,7 @@ function loadMetaEntityFromMode(context,modelName,model){
         if(metaRelation.type=="many-to-one"){
                relationField.manyToOneRelation=metaRelation;
           relationField.title=_.isUndefined(metaRelation["title"])?relationField.title:metaRelation["title"];
+          relationField.description=relationField.title;
           //多对一关系的字段修正为引用实体控件类型
           if(((!relationField.inputType)||
             (relationField.inputType==controlTypeService.componentTypes.RefEntity.id)||
@@ -240,7 +254,7 @@ function loadMetaFieldFromProperty(context,propertyName,property){
       xAttrs: property["x-attrs"] || {}//扩展属性
   };
   //设置inputTypeParams
-  fillInputTypeParams(metaField,property);
+  fillInputTypeParams(context,metaField,property);
   return metaField;
 }
 //转换选项集
@@ -250,7 +264,7 @@ function optionsConvert(options,metaField){
     _options.push({
       id:item.value,
       text:item.title,
-      checked:metaField.default==item.value?true:false
+      checked:false
     });
   });
   if(options.children){
@@ -263,7 +277,7 @@ function optionsConvert(options,metaField){
  * @param metaField
  * @param property
  */
-function fillInputTypeParams(metaField,property) {
+function fillInputTypeParams(context,metaField,property) {
   //如果metaField的inputType为空，设置默认
   if(!metaField.inputType){
     let inputType=controlTypeService.getMetaFieldComponentType(metaField);
@@ -298,9 +312,21 @@ function fillInputTypeParams(metaField,property) {
   if(!_.isNaN(property["format"])){
     metaField.inputTypeParams["format"]=property["format"];
   }
-  if(property["x-options"]&&property["x-options"].items){
-    let options=optionsConvert(property["x-options"].items,metaField);
-    metaField.inputTypeParams["options"]=options;
+  if(property["x-options"]){
+      var fieldOption=context.options[property["x-options"].toLowerCase()];
+      if(fieldOption){
+          fieldOption=_.cloneDeep(fieldOption);
+      }else{
+          if(property["x-options"].items){
+              fieldOption=optionsConvert(property["x-options"].items);
+          }
+      }
+      if(fieldOption){
+          if(metaField.default==fieldOption.value){
+              fieldOption.checked=true;
+          }
+          metaField.inputTypeParams["options"]=fieldOption;
+      }
   }
 }
 /**

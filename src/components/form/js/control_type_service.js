@@ -255,7 +255,7 @@ function buildFormItemByMetaField(metaField){
     }
     //验证规则
     if(metaField.inputTypeParams["pattern"]){
-        formItem.validation={
+        formItem.componentParams.validation={
             validate:true,
             rule:{
                 pattern:metaField.inputTypeParams["pattern"]

@@ -135,7 +135,7 @@ function compareRuleMessage(op,fieldName,metaEntity){
     }``
     return `必须${opDesc}${title}的值`;
 }
-//初始化字段组件的验证规则
+//初始化字段组件的验证规则，async-validator验证时，按rules顺序进行验证
 function initValidation(formItem,metaEntity,dataId,entity) {
     if (!formItem.isDataField) {
         return null;
@@ -153,41 +153,23 @@ function initValidation(formItem,metaEntity,dataId,entity) {
             required: true,message:`${fieldTitle}不能为空`
         });
     }
-    //唯一性校验
-    if (params.unique && metaField && metaField.filterable) {
-        var uniqueRule = {
-            validator(rule, value, callback) {
-                if(!value){
-                    callback();
-                    return;
-                }
-                var params = {};
-                params[fieldName] = value;
-                var resource=metaEntity.dataResource();
-                contextHelper.getMvueToolkit().utils.smartAction(contextHelper.getCurrentVue(),"__"+metaField.name,function() {
-                    resource.query(params)
-                        .then(function ({data}) {
-                            //创建模式dataId为空，如果有数据返回则表示重复了
-                            if ((!dataId) && data.length > 0) {
-                                callback(rule.message);
-                                return;
-                            }
-                            //编辑模式，当且仅当返回的数据条数为一，且id和dataId相同才合法
-                            var idField = metaEntity.getIdField();
-                            if (dataId && data.length === 1 && dataId === data[0][idField.name]) {
-                                callback();
-                                return;
-                            } else if (dataId && data.length) {//编辑模式，有返回数据并且不满足第一条if的合法性，则重复
-                                callback(rule.message);
-                                return;
-                            }
-                            callback();
-                        });
-                },500);
-            },
-            message: `${fieldTitle}值重复`
+    //长度验证
+    if (params.limitLength && params.limitLength.limit) {
+        var lenRule = {
+            type: "string",
         };
-        rules.push(uniqueRule);
+        rules.push(lenRule);
+        if (params.limitLength.max > 0) {
+            lenRule.max = params.limitLength.max;
+            lenRule["message"]=`${fieldTitle}长度不能超过${params.limitLength.max}`
+        }
+        if (params.limitLength.min > 0) {
+            lenRule.min = params.limitLength.min;
+            lenRule["message"]=`${fieldTitle}长度不少于${params.limitLength.min}`
+        }
+        if(params.limitLength.max > 0 && params.limitLength.min > 0){
+            lenRule["message"]=`${fieldTitle}长度介于${params.limitLength.min}--${params.limitLength.max}`
+        }
     }
     //验证规则
     if ((params.validation   && params.validation.validate && params.validation.rule && params.validation.rule.pattern)
@@ -195,7 +177,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
         ||  (params.validation && params.validation.rules)) {
             if(params.validation.pattern){
                 rules.push({
-                    type: "regexp",
+                    type: "string",
                     pattern: params.validation.pattern,
                     message: `${fieldTitle}格式不符合`
                 });
@@ -203,7 +185,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
                 rules=rules.concat(_.cloneDeep(params.validation.rules));
             }else{
                 rules.push({
-                    type: "regexp",
+                    type: "string",
                     pattern: params.validation.rule.pattern,
                     message: `${fieldTitle}格式不符合`
                 });
@@ -236,25 +218,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
         };
         rules.push(_compareRule);
     }
-    //长度验证
-    if (params.limitLength && params.limitLength.limit) {
-        var lenRule = {
-            type: "string",
-        };
-        rules.push(lenRule);
-        if (params.limitLength.max > 0) {
-            lenRule.max = params.limitLength.max;
-            lenRule["message"]=`${fieldTitle}长度不能超过${params.limitLength.max}`
-        }
-        if (params.limitLength.min > 0) {
-            lenRule.min = params.limitLength.min;
-            lenRule["message"]=`${fieldTitle}长度不少于${params.limitLength.min}`
-        }
-        if(params.limitLength.max > 0 && params.limitLength.min > 0){
-            lenRule["message"]=`${fieldTitle}长度介于${params.limitLength.min}--${params.limitLength.max}`
-        }
 
-    }
     //数值范围
     if (params.limitRange && params.limitRange.limit) {
         var rangeRule = {
@@ -293,6 +257,42 @@ function initValidation(formItem,metaEntity,dataId,entity) {
              rule.min_value=["0"];
          }*/
         //TODO:
+    }
+    //唯一性校验
+    if (params.unique && metaField && metaField.filterable) {
+        var uniqueRule = {
+            validator(rule, value, callback) {
+                if(!value){
+                    callback();
+                    return;
+                }
+                var params = {};
+                params[fieldName] = value;
+                var resource=metaEntity.dataResource();
+                contextHelper.getMvueToolkit().utils.smartAction(contextHelper.getCurrentVue(),"__"+metaField.name,function() {
+                    resource.query(params)
+                        .then(function ({data}) {
+                            //创建模式dataId为空，如果有数据返回则表示重复了
+                            if ((!dataId) && data.length > 0) {
+                                callback(rule.message);
+                                return;
+                            }
+                            //编辑模式，当且仅当返回的数据条数为一，且id和dataId相同才合法
+                            var idField = metaEntity.getIdField();
+                            if (dataId && data.length === 1 && dataId === data[0][idField.name]) {
+                                callback();
+                                return;
+                            } else if (dataId && data.length) {//编辑模式，有返回数据并且不满足第一条if的合法性，则重复
+                                callback(rule.message);
+                                return;
+                            }
+                            callback();
+                        });
+                },500);
+            },
+            message: `${fieldTitle}值重复`
+        };
+        rules.push(uniqueRule);
     }
     return rules;
 }

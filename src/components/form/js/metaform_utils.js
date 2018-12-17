@@ -132,7 +132,7 @@ function compareRuleMessage(op,fieldName,metaEntity){
         opDesc="大于";
     }else if(op==="equals"){
         opDesc="等于";
-    }
+    }``
     return `必须${opDesc}${title}的值`;
 }
 //初始化字段组件的验证规则
@@ -156,7 +156,6 @@ function initValidation(formItem,metaEntity,dataId,entity) {
     //唯一性校验
     if (params.unique && metaField && metaField.filterable) {
         var uniqueRule = {
-
             validator(rule, value, callback) {
                 if(!value){
                     callback();
@@ -191,19 +190,14 @@ function initValidation(formItem,metaEntity,dataId,entity) {
         rules.push(uniqueRule);
     }
     //验证规则
-    if ((params.validation
-        && params.validation.validate
-        && params.validation.rule
-        && params.validation.rule.pattern)||
-        (params.validation
-        && params.validation.pattern)||
-        (params.validation
-        && params.validation.rules)) {
+    if ((params.validation   && params.validation.validate && params.validation.rule && params.validation.rule.pattern)
+        ||  (params.validation && params.validation.pattern)
+        ||  (params.validation && params.validation.rules)) {
             if(params.validation.pattern){
                 rules.push({
                     type: "regexp",
                     pattern: params.validation.pattern,
-                    message: `${fieldTitle}验证失败`
+                    message: `${fieldTitle}格式不符合`
                 });
             }else if(params.validation.rules){
                 rules=rules.concat(_.cloneDeep(params.validation.rules));
@@ -211,13 +205,11 @@ function initValidation(formItem,metaEntity,dataId,entity) {
                 rules.push({
                     type: "regexp",
                     pattern: params.validation.rule.pattern,
-                    message: `${fieldTitle}验证失败`
+                    message: `${fieldTitle}格式不符合`
                 });
             }
     }
-    if (params.validation
-        && params.validation.validate
-        && params.validation.rule
+    if (params.validation  && params.validation.validate  && params.validation.rule
         && params.validation.rule.type === 'compare'
         && _.includes(["lessThan", "biggerThan", "equals"], params.validation.rule.operator)
         && params.validation.rule.fieldName

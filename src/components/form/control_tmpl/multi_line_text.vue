@@ -4,7 +4,7 @@
                 <div v-html="convertedValue()" class="view-textarea"></div>
         </template>
         <template v-else>
-            <Input v-model="valueObj" @on-change="updateValue"  :disabled="disabled" type="textarea"  :rows="rows"  :autosize="autosize"
+            <Input v-model="valueObj" @on-change="updateValue"  :disabled="disabled" type="textarea"  :rows="formItem.componentParams.rows||3"  :autosize="formItem.componentParams.autosize||{minRows: 3, maxRows: 10 }"
                    :placeholder="formItem.componentParams.placeholder"></Input>
         </template>
     </div>
@@ -16,16 +16,6 @@ export default {
     props: {
         "value":{
             type:String
-        },
-        "rows":{
-            type:Number,
-            default:3
-        },
-        "autosize":{
-            type:[Boolean ,Object],
-            default:function () {
-                return {minRows: this.rows, maxRows: 10 };
-            }
         }
     },
     data: function(){

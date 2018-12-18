@@ -38,6 +38,8 @@ function textBaseInputRules(componentType){
     };
     if(componentType===textTypes.MultiLineText.id){
         base.limitLength.max=2000;
+        base.rows=3;//默认三行
+        base.autosize={minRows: 3, maxRows: 10 };
     }
     if(componentType===textTypes.Password.id){
         base.limitLength.max=20;

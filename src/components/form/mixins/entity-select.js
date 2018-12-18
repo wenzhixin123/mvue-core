@@ -68,7 +68,7 @@ export default{
                 return;
             }
              //默认值填充
-            if(this.shouldInitDefault()){
+            if(this.shouldInitDefault&&this.shouldInitDefault()){
                 this.calcField().then((data)=>{
                     if(!data){
                         return;
@@ -85,7 +85,7 @@ export default{
                 sid=this.selectedItem[idField];
             }
             this.$emit('input',sid);
-            this.dispatch('FormItem', 'on-form-change', sid);
+            this.dispatch&&this.dispatch('FormItem', 'on-form-change', sid);
         },
         //多选
         notifyMultipleSelect(){
@@ -96,7 +96,7 @@ export default{
                 sIds.push(sid);
             });
             this.$emit('input',sIds);
-            this.dispatch('FormItem', 'on-form-change', sIds);
+            this.dispatch&&this.dispatch('FormItem', 'on-form-change', sIds);
         },
         //查询指定ids的数据并初始化选中值
         initSelectedItemByFirstValue:function (val) {
@@ -222,6 +222,9 @@ export default{
                     this.viewModeValue=text;
                 });
             }
+        },
+        searchChange:function(keyword){
+            this.doSearch(keyword);
         }
     }
 }

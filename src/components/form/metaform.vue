@@ -163,8 +163,7 @@
                 if(_.isString(item)){
                     _item = {
                         ctype:"m-field",
-                        name:item,
-                        context:this.fieldContext(item)
+                        name:item
                     }
                 }else{
                     //已经由命令行解析程序处理后的对象：参数解析完毕，--width 100
@@ -184,6 +183,8 @@
                     item.params=params;
                     _item=item;
                 }
+                //表单上下文都要附加到m-field组件上去
+                _item.context=_.extend({},this.fieldContext(),_item.context);
                 this.batchFieldConvert(_item);
                 return _item;
             }

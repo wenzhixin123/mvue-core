@@ -1,7 +1,33 @@
 <template>
     <Layout v-if="processed" class="com-wrapper" >
         <Sider hide-trigger class="tree-list-sidebar">
-            <meta-entity-tree v-if="realTreeSettings" v-bind="realTreeSettings" @on-select-change="onTreeSelectChange"></meta-entity-tree>
+            <Multiselect v-if="entityResource" style="margin-top:16px;"
+                :multiple="false" v-model="selectedItem"
+                :options="dataItems"
+                :placeholder="category.placeholder"
+                :loading="isLoading"
+                select-label="按enter键选择"
+                selected-label="已选"
+                deselect-label="按enter键取消选择"
+                :show-no-results="true"
+                :internal-search="false"
+                :label="getTitleField()"
+                @search-change="searchChange"
+                @input="onCategoryChange"
+                :track-by="getIdField()">
+                <template slot="option" slot-scope="props">
+                    <div class="option__desc">
+                        <span class="option__title">{{ props.option[getTitleField()] }}</span>
+                    </div>
+                </template>
+                <template slot="noResult">
+                    根据关键字，搜索不到任何数据
+                </template>
+                <template slot="noOptions">
+                    无数据
+                </template>
+            </Multiselect>
+            <meta-entity-tree ref="categoryTree" v-if="realTreeSettings" v-bind="realTreeSettings" @on-select-change="onTreeSelectChange"></meta-entity-tree>
         </Sider>
         <Content>
             <meta-grid ref="gridList"
@@ -28,8 +54,9 @@
     import gridProps from "../grid/js/grid-props";
     import gridEvents from "../grid/js/grid-events";
     import treeService from "../../services/tool/tree-service";
+    import entitySelect from '../form/mixins/entity-select';
     export default {
-        mixins:[gridProps, gridEvents],
+        mixins:[gridProps, gridEvents, entitySelect],
         props: {
             "defaultSort": {//默认排序设置{key:'',order:'desc'}
                 type: Object
@@ -63,13 +90,29 @@
                             options:{}
                         }
                 }
+            },
+            category:{
+                type:Object,
+                default(){
+                    return {
+                        entityName:'',//定义分类的数据来源实体名
+                        url:'',//和entityName二选一
+                        fieldName:'',//用来过滤树数据的字段，来源于treeSettings定义的entityName实体的字段，用于树数据的分类过滤
+                        idField:'',//可指定树分类的key字段
+                        titleField:'',//可指定树分类的显示字段
+                        placeholder:'请输入关键字搜索'
+                    };
+                }
             }
         },
         data(){
+            this.preInitCategory();
             return {
                 processed:false,
                 selectedTreeNode:null,
-                realTreeSettings:null
+                realTreeSettings:null,
+                entityResource:this.category&&this.category.entityResource,
+                oldTreeFilters:(this.treeSettings.options&&this.treeSettings.options.queryOptions)?_.cloneDeep(this.treeSettings.options.queryOptions.filters):''
             }
         },
         mounted:function () {
@@ -102,6 +145,62 @@
                         queryParams.filters=`(${queryParams.filters}) and (${treeFilter})`;
                     }
                 });
+            },
+            preInitCategory(){
+                if(this.category){
+                    if(this.category.entityName){//通过实体名构造数据源
+                        let metaEntity=this.$metaBase.findMetaEntity(this.category.entityName);
+                        if(metaEntity){
+                            this.category.idField=metaEntity.getIdField().name;
+                            let tf=metaEntity.firstTitleField();
+                            if(tf){
+                                this.category.titleField=tf.name;
+                            }
+                            this.category.entityResource=metaEntity.dataResource();
+                        }else{
+                            this.$Modal.error({content:`实体[${this.category.entityName}]不存在`});
+                            return;
+                        }
+                    }else if(this.category.url){//通过url地址构造数据源
+                        this.category.entityResource=globalContext.buildResource(this.category.url);
+                    }
+                }
+            },
+            getIdField(){
+                if(this.category){
+                    if(this.category.idField){
+                        return this.category.idField;
+                    }
+                }
+                return "id";
+            },
+            getTitleField(){
+                if(this.category){
+                    if(this.category.titleField){
+                        return this.category.titleField;
+                    }
+                }
+                return "name";
+            },
+            onCategoryChange(){
+                if(!this.treeSettings.options.queryOptions){
+                    this.treeSettings.options.queryOptions={};
+                }
+                //附加分类的条件
+                if(this.selectedItem&&this.category.fieldName){
+                    let id=this.selectedItem[this.getIdField()];
+                    let categoryFilter=`${this.category.fieldName} eq '${id}'`;
+                    if(this.oldTreeFilters){
+                        this.treeSettings.options.queryOptions.filters=`${this.oldTreeFilters} and ${categoryFilter}`;
+                    }else{
+                        this.treeSettings.options.queryOptions.filters=categoryFilter;
+                    }
+                }else{
+                    this.treeSettings.options.queryOptions.filters=this.oldTreeFilters;
+                }
+                var defaultTreeSetting=treeService.build(this.treeSettings.entityName,this.treeSettings.options);
+                this.realTreeSettings=defaultTreeSetting;
+                this.$refs.categoryTree.buildRoot();
             }
         },
         components:{

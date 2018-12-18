@@ -110,9 +110,6 @@ export default {
             var filters= `status eq 1 and (${this.getTitleField()} like '%${encodeKeyword}%' or ${this.getLoginField()}  like '%${encodeKeyword}%')`;
             params.filters=filters;
         },
-        searchChange:function(keyword){
-            this.doSearch(keyword);
-        },
         buildSelectFields(){
             return `${this.getIdField()},${this.getTitleField()},${this.getLoginField()},${context.getConsts().user.detailFields}`;
         },

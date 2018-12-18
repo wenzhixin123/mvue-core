@@ -15,7 +15,7 @@ export default {
             type:Boolean,
             default:false
         },
-        mode:{//组件输入状态控制widgetMode定义：可编辑、不可见、只读、查看
+        mode:{//组件输入状态控制widgetMode定义：readonly(只读)/invisible(不可见)/forceView(查看)
             type:String
         },
         validator:{
@@ -30,7 +30,7 @@ export default {
         model:{//表单的模型数据
             type:Object
         },
-        context:{//与上下文相关的对象，{metaEntity:"元数据实体对象",mode:"字段显示模式：readonly/invisible/editable",formStatus:"create/edit"}
+        context:{//与上下文相关的对象，{metaEntity:"元数据实体对象",isCreate:true}
             type:Object
         },
         initWhenCreate:{//表单创建时，自动从服务器初始化默认值
@@ -144,15 +144,12 @@ export default {
         },
         isCreate(){//判断当前表单是否为新建模式
             if(this.context
-                &&this.context.formStatus
-                &&this.context.formStatus!==globalContext.getMvueToolkit().utils.formActions.create){
-                return false;
+                &&this.context.isCreate){
+                return true;
+            }else if(!this.context){
+                return true;
             }
-            let id=this.$route.params.id;
-            if(id){
-                return false;
-            }
-            return true;
+            return false;
         },
         shouldInitDefault(){//判断新建模式，并且需要设置默认值
             return this.isCreate()&&

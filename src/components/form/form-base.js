@@ -516,13 +516,13 @@ export default {
             let _obj = {
                 metaEntity:this.metaEntity,
                 mode:null,
-                formStatus:this.formStatus
+                isCreate:this.isCreate
             };
             //外部指定强制查看模式或者已归档
             if(this.isView){
                 //目前强制查看模式和readonly都统一
                 _obj.mode=widgetMode.forceView;
-            }else if(this.fieldSettings&&this.fieldSettings[item.dataField]){
+            }else if(item&&this.fieldSettings&&this.fieldSettings[item.dataField]){
                 //存在对字段的状态设置
                 let mode=this.fieldSettings[item.dataField].mode;
                 //隐藏字段在这里做，进入组件里边隐藏可能不起作用

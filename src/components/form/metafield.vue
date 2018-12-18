@@ -12,7 +12,7 @@
                 :paths="paths"
                 :model="entity"
                 :mode="mode"
-                :context="innerContext"
+                :context="context"
                 :form-item="formItem"
                 :init-when-create="initWhenCreate"
                 v-bind="formItem.componentParams"
@@ -41,9 +41,6 @@ export default {
         inputType:{
             type:String
         },
-        action:{//表示是否查看模式的表单
-            type:String
-        },
         entityName:{//在高级查询的时候，会指定entityName参数获取元数据信息，因为此时没有meta-form包裹
             type:String
         },
@@ -53,7 +50,9 @@ export default {
         },
         context:{//context的附加数据:{mode:"字段显示模式：readonly/invisible/editable"}
             type:Object,
-            require:false
+            default(){
+                return {};
+            }
         },
         mode:{//组件输入状态控制widgetMode定义：可编辑、不可见、只读、查看
             type:String
@@ -166,6 +165,11 @@ export default {
             entity=form.entity;
             //初始化来自entity的初始值
             _innerVal=entity[metaField.name];
+            //如果在表单内部使用m-field组件，大部分都是如此，isCreate继承自表单
+            this.context.isCreate=form.isCreate;
+        }else{
+            //非表单组件内部，高级查询独立使用必定为创建模式
+            this.context.isCreate=true;
         }
         //批量数据表单，会增加一个非属性字段，propName用来指定这个非属性字段，
         //除了名字不一样和原始字段的渲染方式需要转换为批量组件渲染
@@ -192,23 +196,6 @@ export default {
             paths:constants.paths(),
             description:description,
             innerPropName:innerPropName
-        }
-    },
-    computed: {
-        innerContext:function(){
-            var baseCtx={metaEntity:this.metaEntity,action:this.fieldStatus};
-            return Object.assign(baseCtx,this.context);
-        },
-        fieldStatus:function () {
-            var status=this.action;
-            if(_.isNil(status)){
-                if(this.form&&this.form.isView){
-                    status=context.getMvueToolkit().utils.formActions.view;
-                }else{
-                    status=context.getMvueToolkit().utils.formActions.edit;
-                }
-            }
-            return status;
         }
     },
     methods:{

@@ -134,10 +134,11 @@ function  initColumns(grid) {
   _cols=__cols.concat(_cols);
   //如果操作列不和标题列合并，并且定义了单行操作，默认最后一列为操作列
   if(!grid.operationsWithTitleColumn&&!_.isEmpty(grid.innerToolbar.singleBtns)){
+    var colWidth=Math.max(grid.innerToolbar.singleBtns.length*45,95);
     _cols.push({
       title:"具体操作",
       key:"__operation_column__",
-      width:180,
+      width:colWidth,
       align:"center",
       metaParams:{
         type:"operation"

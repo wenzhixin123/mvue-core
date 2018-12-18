@@ -312,21 +312,23 @@ function fillInputTypeParams(context,metaField,property) {
   if(!_.isNaN(property["format"])){
     metaField.inputTypeParams["format"]=property["format"];
   }
-  if(property["x-options"]){
-      var fieldOption=context.options[property["x-options"].toLowerCase()];
-      if(fieldOption){
-          fieldOption=_.cloneDeep(fieldOption);
-      }else{
-          if(property["x-options"].items){
-              fieldOption=optionsConvert(property["x-options"].items);
-          }
-      }
-      if(fieldOption){
-          if(metaField.default==fieldOption.value){
-              fieldOption.checked=true;
-          }
-          metaField.inputTypeParams["options"]=fieldOption;
-      }
+  let xOptions=property["x-options"];
+  if(xOptions){
+    let fieldOption=null;
+    if(_.isString(xOptions)){
+        let _fieldOption=context.options[xOptions.toLowerCase()];
+        fieldOption=_.cloneDeep(_fieldOption);
+    }else{
+        if(xOptions.items){
+            fieldOption=optionsConvert(xOptions.items);
+        }
+    }
+    if(fieldOption){
+        if(metaField.default==fieldOption.value){
+            fieldOption.checked=true;
+        }
+        metaField.inputTypeParams["options"]=fieldOption;
+    }
   }
 }
 /**

@@ -92,9 +92,6 @@ export default {
                 params.orderby=`${this.formItem.componentParams.orderbyField} ${orderbyType}`;
             }
         },
-        searchChange:function(keyword){
-            this.doSearch(keyword);
-        },
         getIdField:function(){
             return this.formItem.componentParams.idField;
         },

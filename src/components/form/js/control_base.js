@@ -11,9 +11,12 @@ export default {
             type:Object,
             required:true
         },
-        mode:{//表单是否是设计模式或者正常的模式
-            type:String,
-            default:controlTypeService.controlMode.normal
+        design:{//表示组件是否是设计状态的组件，界面设计时有用
+            type:Boolean,
+            default:false
+        },
+        mode:{//组件输入状态控制widgetMode定义：可编辑、不可见、只读、查看
+            type:String
         },
         validator:{
             type:Object
@@ -43,7 +46,7 @@ export default {
     },
     mounted:function(){
         //设计模式不作处理
-        if(this.designMode){
+        if(this.design){
             return;
         }
         //创建模式时，组件默认值初始化：如果组件定义了默认值，调用具体组件的默认值初始化函数
@@ -72,14 +75,11 @@ export default {
             return this.isReadonly();
         },
         viewMode(){//强制查看模式
-            let mode= this.context&&this.context.mode;
+            let mode= this.getMode();
             if(widgetMode.forceView===mode){
                 return true;
             }
             return false;
-        },
-        designMode(){//设计模式
-            return this.mode===controlTypeService.controlMode.design;
         }
     },
     methods:{
@@ -209,13 +209,16 @@ export default {
         calc(_model){
             return this.context.metaEntity.fillDefault(_model);
         },
+        getMode(){
+            return this.mode||(this.context&&this.context.mode);
+        },
         isReadonly(){//字段是否只读
             //设计模式返回
-            if(this.designMode){
+            if(this.design){
                 return true;
             }
             //来自部件字段权限的控制
-            let mode= this.context&&this.context.mode;
+            let mode= this.getMode();
             if(widgetMode.readonly===mode){
                 return true;
             }

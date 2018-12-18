@@ -1,5 +1,5 @@
 <template>
-    <FormItem  :prop="innerPropName"  :label-for="labelFor" v-show="!innerContext.hidden"
+    <FormItem  :prop="innerPropName"  :label-for="labelFor" v-if="!isHidden()"
         :rules="rules" :show-message="showMessage">
         <template v-if="showLabel" slot="label">
             <slot name="label">{{ metaField.title}}<info-tip v-if="description" :content="description"></info-tip></slot>
@@ -11,6 +11,7 @@
                 :is="componentName(formItem)"
                 :paths="paths"
                 :model="entity"
+                :mode="mode"
                 :context="innerContext"
                 :form-item="formItem"
                 :init-when-create="initWhenCreate"
@@ -26,6 +27,7 @@ import metaformUtils from './js/metaform_utils';
 import constants from './js/constants';
 import context from "../../libs/context";
 import getParent from '../mixins/get-parent';
+import widgetMode from './js/widget-mode';
 export default {
     mixins:[getParent],
     props:{
@@ -52,6 +54,9 @@ export default {
         context:{//context的附加数据:{mode:"字段显示模式：readonly/invisible/editable"}
             type:Object,
             require:false
+        },
+        mode:{//组件输入状态控制widgetMode定义：可编辑、不可见、只读、查看
+            type:String
         },
         model:{//高级查询model
             required: false
@@ -221,6 +226,16 @@ export default {
         },
         componentName(formItem){
             return metaformUtils.metaComponentType(formItem);
+        },
+        isHidden(){
+            if(this.context&&this.context.hidden){
+                return true;
+            }
+            var mode=this.mode||(this.context&&this.context.mode);
+            if(mode==widgetMode.invisible){
+                return true;
+            }
+            return false;
         }
     },
     components:{

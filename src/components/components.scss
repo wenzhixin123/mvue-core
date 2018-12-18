@@ -112,3 +112,32 @@
 .ivu-form-label-top .ivu-form-item-label{
     font-weight: bolder;
 }
+
+//树列表样式
+.tree-list-sidebar{
+    background-color: #ffffff;
+    box-shadow: 4px 0 10px rgba(163, 163, 163, 0.2);
+
+    .menu-title{
+        padding: 16px;
+
+        h2{
+            font-size: 14px;
+            color: #444;
+            line-height: 22px;
+        }
+    }
+
+    .ivu-menu{
+        background: none;
+
+        .ivu-menu-item-active{
+            background-color: #e6f7ff;
+        }
+
+        &:after{
+            display: none;
+        }
+    }
+}
+

@@ -99,7 +99,8 @@
                         url:'',//和entityName二选一
                         fieldName:'',//用来过滤树数据的字段，来源于treeSettings定义的entityName实体的字段，用于树数据的分类过滤
                         idField:'',//可指定树分类的key字段
-                        titleField:'',//可指定树分类的显示字段
+                        titleField:'',//可指定树分类的显示字段,
+                        searchFields:[], //树分类的搜索字段
                         placeholder:'请输入关键字搜索'
                     };
                 }
@@ -156,6 +157,9 @@
             },
             preInitCategory(){
                 if(this.category){
+                    if(_.isUndefined(this.category.searchFields) || this.category.searchFields==null){
+                        this.category.searchFields=[];
+                    }
                     if(this.category.entityName){//通过实体名构造数据源
                         let metaEntity=this.$metaBase.findMetaEntity(this.category.entityName);
                         if(metaEntity){
@@ -163,6 +167,9 @@
                             let tf=metaEntity.firstTitleField();
                             if(tf){
                                 this.category.titleField=tf.name;
+                                if(this.category.searchFields.length==0 && tf.filterable){
+                                    this.category.searchFields.push(tf.name);
+                                }
                             }
                             this.category.entityResource=metaEntity.dataResource();
                             if(_.isEmpty(this.category.placeholder)){
@@ -176,6 +183,17 @@
                         this.category.entityResource=globalContext.buildResource(this.category.url);
                     }
                 }
+            },
+            buildQueryOptions(params,keyword){
+                if(_.isEmpty(this.category.searchFields) || _.isEmpty(keyword)){
+                    return;
+                }
+                var filters=[];
+                var encodeKeyword=globalContext.getMvueToolkit().utils.leapQueryValueEncode(keyword);
+                _.each(this.category.searchFields,(val,index)=>{
+                    filters.push(`(${val} like '%${encodeKeyword}%')`);
+                });
+                 params.filters=filters.join(" or ");
             },
             getIdField(){
                 if(this.category){

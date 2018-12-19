@@ -28,30 +28,62 @@
 .form-toolbar .widget-operation{
     margin-right: 16px;
 }
+
+.multiselect__spinner {
+    height: 30px;
+}
+.multiselect__spinner:after,.multiselect__spinner:before {
+    border-color: #cccccc transparent transparent;
+}
+.multiselect,.multiselect__input,.multiselect__single {
+    font-size: 13px;
+}
+.multiselect {
+    min-height: 34px;
+}
+.multiselect__single {
+    margin-bottom: 4px;
+    font-size:13px;
+}
+.multiselect__tags{
+    padding: 6px 30px 0 7px;
+    font-size:13px;
+    line-height: 1;
+    min-height: 34px;
+    border: 1px solid #D9D9D9;
+    transition: border 0.2s ease-in-out, background 0.2s ease-in-out, box-shadow 0.2s ease-in-out
+}
+
+.multiselect__tag{
+    font-size:13px;
+    margin-bottom: 2px;
+    background: #cccccc;
+}
+.multiselect__tags:hover{
+    border-color: #5490ff;
+}
+.multiselect__tag-icon:after {
+    font-size: 13px
+}
+.multiselect__current {
+    min-height: 34px;
+}
 .multiselect__placeholder{
     padding:4px 0px 0px 0px;
     margin-bottom:0px;
 }
 .multiselect__select{
     width:32px;
-    height:34px;
+    height:32px;
 }
-.multiselect__tag{
-    font-size:13px;
-    margin-bottom: 2px;
-}
-.multiselect__tags{
-    padding-top:6px;
-    font-size:13px;
-    padding-left:7px;
-    line-height: 1;
+.multiselect__option {
     min-height: 34px;
-    border: 1px solid #D9D9D9;
-    transition: border 0.2s ease-in-out, background 0.2s ease-in-out, box-shadow 0.2s ease-in-out
 }
-.multiselect__tags:hover{
-    border-color: #5490ff;
+
+.multiselect__option:after {
+    line-height: 34px;
 }
+
 .multiselect--active .multiselect__tags, .multiselect--active .multiselect__content-wrapper {
     border-color: #5490ff;
     outline: 0;
@@ -60,18 +92,36 @@
 .multiselect__tags>span>span.multiselect__single{
     color:#bcbfc5;
 }
-.multiselect__single{
-    padding-left:0px;
-    font-size: 13px;
-}
+
 .multiselect, .multiselect__input{
     font-size: 13px;
+    line-height: 1.5;
+    margin-bottom: 4px;
     color:rgba(0, 0, 0, 0.85);
 }
 .multiselect__option--highlight{
     background: #f3f3f3;
     color:rgba(0, 0, 0, 0.85); ;
 }
+
+.multiselect__option--highlight:after {
+    content: attr(data-select);
+    background: #f3f3f3;
+    color: rgba(0, 0, 0, 0.85);
+}
+
+.multiselect__option--selected.multiselect__option--highlight {
+    background: #f3f3f3;
+    color: rgba(0, 0, 0, 0.85)
+}
+
+.multiselect__option--selected.multiselect__option--highlight:after {
+    background: #f3f3f3;
+    content: attr(data-deselect);
+    color: rgba(0, 0, 0, 0.85)
+}
+
+
 //这里控制引用组件右边有搜索按钮弹出框的样式
 .bvue-select-group .multiselect,.bvue-select-group .ivu-input-wrapper{
     display: table-cell;

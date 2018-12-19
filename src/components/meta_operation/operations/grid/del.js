@@ -3,6 +3,7 @@
  */
 import contextHelper from "../../../../libs/context";
 import  gridUtils from "../utils";
+import metabase from "../../../../libs/metadata/metabase";
 
 var operation= {
     name:"del",
@@ -37,7 +38,9 @@ function impl(context,$optInst){
         content: '确定删除吗?',
         onOk: () => {
             //,cascade_delete:true
-            handler({id:id}).then(function (re) {
+            handler({id:id},null,{onError:function (error) {
+                    return onFailed(error,{id:id,metaEntity:metaEntity});
+                }}).then(function (re) {
                 //如果是grid列表的操作，刷新列表
                 context.grid&&context.grid.reload();
                 //如果是表单的删除操作，执行表单的删除后回调
@@ -46,6 +49,39 @@ function impl(context,$optInst){
         }
     });
 }
+
+function onFailed(error,context) {
+    var response=error.response;
+    if(!isRefViolation(response)){
+        return false;
+    }
+
+    var sourceEntities=metabase.findSourceEntities(context.metaEntity.name);
+    var entityNames=[];
+    _.each(sourceEntities,metaEntity=>{
+        entityNames.push(`【${metaEntity.title}】`);
+    });
+    var msg=`删除失败，该记录可能被以下对象引用：${entityNames.join('、')}`;
+    contextHelper.error({
+       title:"删除失败",
+        content:msg
+    });
+    return true;
+}
+
+/**
+ * 外键引用删除异常
+ * @param response
+ * @returns {boolean}
+ */
+function isRefViolation(response) {
+    var match=false;
+    if(response && response.status==400 && response.data && response.data.code=="db_ref_integrity_violation"){
+        match=true;
+    }
+    return match;
+}
+
 
 
 export default  operation

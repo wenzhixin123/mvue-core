@@ -4,10 +4,12 @@
  */
 import controlTypeService from '../../components/form/js/control_type_service';
 import context from "../context";
+import consts from "../consts";
+import MetaEntityCls from "./metaentity";
 
 var store=require("store2");
 
-var MetaEntityCls=require("./metaentity");
+
 //当前项目的id
 var currentProjectId=null;
 //当前项目的engine地址
@@ -185,7 +187,7 @@ function loadMetaEntityFromMode(context,modelName,model){
       if(relationField!=null){
         relationField.isRelationField=true;
         relationField.relations.push(metaRelation);
-        if(metaRelation.type=="many-to-one"){
+        if(metaRelation.type==consts.manyToOne){
                relationField.manyToOneRelation=metaRelation;
           relationField.title=_.isUndefined(metaRelation["title"])?relationField.title:metaRelation["title"];
           relationField.description=relationField.title;
@@ -195,7 +197,7 @@ function loadMetaEntityFromMode(context,modelName,model){
             (relationField.inputType==controlTypeService.componentTypes.SingleLineText.id))){
             relationField.inputType=controlTypeService.componentTypes.RefEntity.id;
           }
-        }else if(metaRelation.type=="many-to-many" && metaRelation.embedded){
+        }else if(metaRelation.type==consts.manyToMany && metaRelation.embedded){
             relationField.embeddedRelation=metaRelation;
         }
       }
@@ -341,7 +343,7 @@ function loadMetaRelationFromProperty(context,propertyName,property){
   var metaRelation= {
       name: propertyName,
       title: property["title"],
-      type: firstNotNaN(property["x-relation-type"], "many-to-one"),
+      type: firstNotNaN(property["x-relation-type"], consts.manyToOne),
       sourceEntity: context.metaEntity.name,
       targetEntity: property["x-target-entity"],
       joinEntity: property["x-join-entity"],
@@ -371,65 +373,88 @@ function firstNotNaN(){
   return reval;
 }
 
-export default{
-  /**
-   * 根据实体名，查询实体
-   * @param metaEntityName
-   * @returns {*}
-   */
-  findMetaEntity:function (metaEntityName) {
-      if (!metaEntityName) {
-          return null;
-      }
-      var metabase = getMetabase(currentProjectId);
-      var metaEntity = metabase.entities[metaEntityName.toLowerCase()];
-      if (_.isEmpty(metaEntity)) {
-          return null;
-      }
-      var metaEntityCloned = MetaEntityCls(metaEntity);
-      metaEntityCloned.getMetabase = function () {
-          return metabase;
-      };
-      metaEntityCloned.getRaw = function () {
-          return metaEntity;
-      };
-      return metaEntityCloned;
-  },
-  /**
-   * 获取所有实体
-   * @returns {null}
-   */
-  entities:function () {
-    var metabase=getMetabase(currentProjectId);
-    return metabase.entities;
-  },
-  initMetabase:initMetabase,
-  currentSwagger:currentSwagger,
-  routeForEntityList(entityName,params){
-    var router= {name: 'defaultEntityList', params: {entityName:entityName}};
-    if(!_.isEmpty(params)){
-      router.params= _.extend(router.params,params);
-    }
-    return router;
-  },
-  routeForEntityCreateForm(entityName,params){
-    var router= {name: 'defaultCreateForm', params: {entityName:entityName}};
-    if(!_.isEmpty(params)){
-      router.params= _.extend(router.params,params);
-    }
-    return router;
-  },
-  routeForEntityUpdateForm(entityName,id,params){
-    var router= {name: 'defaultEditForm', params: {entityName:entityName,id:id}};
-    if(!_.isEmpty(params)){
-      router.params= _.extend(router.params,params);
-    }
-    return router;
-  },
-    setEntityNameForRoute(router,entityName){
-      if(_.isEmpty(router)){
-          return;
-      }
-      router.params["entityName"]=entityName;
+export default {
+    /**
+     * 根据实体名，查询实体
+     * @param metaEntityName
+     * @returns {*}
+     */
+    findMetaEntity: function (metaEntityName) {
+        if (!metaEntityName) {
+            return null;
+        }
+        var metabase = getMetabase(currentProjectId);
+        var metaEntity = metabase.entities[metaEntityName.toLowerCase()];
+        if (_.isEmpty(metaEntity)) {
+            return null;
+        }
+        var metaEntityCloned = MetaEntityCls(metaEntity);
+        metaEntityCloned.getMetabase = function () {
+            return metabase;
+        };
+        metaEntityCloned.getRaw = function () {
+            return metaEntity;
+        };
+        return metaEntityCloned;
+    },
+    /**
+     * 找到所有对metaEntityName有引用的实体
+     * @param metaEntityName
+     */
+    findSourceEntities: function (target) {
+        var metabase = getMetabase(currentProjectId);
+        var sourceEntities = [];
+        _.forIn(metabase.entities, (metaEntity,key) => {
+            var existedRelations = metaEntity.existRelation(target, [consts.manyToOne]);
+            if (existedRelations.length == 0) {
+                return;
+            }
+            var metaEntityCloned = MetaEntityCls(metaEntity);
+            metaEntityCloned.getMetabase = function () {
+                return metabase;
+            };
+            metaEntityCloned.getRaw = function () {
+                return metaEntity;
+            };
+            sourceEntities.push(metaEntityCloned);
+        });
+        return sourceEntities;
+    },
+    /**
+     * 获取所有实体
+     * @returns {null}
+     */
+    entities: function () {
+        var metabase = getMetabase(currentProjectId);
+        return metabase.entities;
+    },
+    initMetabase: initMetabase,
+    currentSwagger: currentSwagger,
+    routeForEntityList(entityName, params) {
+        var router = {name: 'defaultEntityList', params: {entityName: entityName}};
+        if (!_.isEmpty(params)) {
+            router.params = _.extend(router.params, params);
+        }
+        return router;
+    },
+    routeForEntityCreateForm(entityName, params) {
+        var router = {name: 'defaultCreateForm', params: {entityName: entityName}};
+        if (!_.isEmpty(params)) {
+            router.params = _.extend(router.params, params);
+        }
+        return router;
+    },
+    routeForEntityUpdateForm(entityName, id, params) {
+        var router = {name: 'defaultEditForm', params: {entityName: entityName, id: id}};
+        if (!_.isEmpty(params)) {
+            router.params = _.extend(router.params, params);
+        }
+        return router;
+    },
+    setEntityNameForRoute(router, entityName) {
+        if (_.isEmpty(router)) {
+            return;
+        }
+        router.params["entityName"] = entityName;
     }
 }

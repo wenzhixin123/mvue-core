@@ -1,5 +1,7 @@
-var context = require("../context").default;
-module.exports=function (options) {
+import context from "../context";
+import consts from "../consts";
+
+export default function (options) {
     var metaEntity=_.extend({
         name: "",
         title: "",
@@ -76,38 +78,70 @@ module.exports=function (options) {
    * @param sourceField
    * @param targetEntity
    */
-  metaEntity.findRelation=function(sourceField,targetEntity){
-    var relation=null;
-    var self=this;
-    _.forIn(self.relations,function(metaRelation,key){
-      var eqTargetEntity=true;
-      if(!_.isEmpty(targetEntity)){
-        eqTargetEntity=(metaRelation.targetEntity.toLowerCase()==targetEntity.toLowerCase());
-      }
-      if(!eqTargetEntity){
-        return;
-      }
-      var eqField=false;
-      _.forEach(metaRelation.joinFields,function(joinField,index){
-        if(eqField){
-          return false;
-        }
-        if(_.isString(joinField)){
-          eqField=(sourceField.toLowerCase()== joinField.toLowerCase());
-          return;
-        }
-        if(_.isPlainObject(joinField) && !_.isEmpty(joinField["local"])){
-          eqField=(sourceField.toLowerCase()==joinField["local"].toLowerCase());
-          return;
-        }
+  metaEntity.findRelation=function(sourceField,targetEntity) {
+      var relation = null;
+      var self = this;
+      _.forIn(self.relations, function (metaRelation, key) {
+          var eqTargetEntity = true;
+          if (!_.isEmpty(targetEntity)) {
+              eqTargetEntity = (metaRelation.targetEntity.toLowerCase() == targetEntity.toLowerCase());
+          }
+          if (!eqTargetEntity) {
+              return;
+          }
+          var eqField = false;
+          _.forEach(metaRelation.joinFields, function (joinField, index) {
+              if (eqField) {
+                  return false;
+              }
+              if (_.isString(joinField)) {
+                  eqField = (sourceField.toLowerCase() == joinField.toLowerCase());
+                  return;
+              }
+              if (_.isPlainObject(joinField) && !_.isEmpty(joinField["local"])) {
+                  eqField = (sourceField.toLowerCase() == joinField["local"].toLowerCase());
+                  return;
+              }
+          });
+          if (eqField) {
+              relation = metaRelation;
+              return false;
+          }
       });
-      if(eqField){
-        relation=metaRelation;
-        return false;
-      }
-    });
-    return relation;
+      return relation;
   }
+    /**
+     * 与targetEntity是否存在指定类型的关系
+     * @param targetEntity
+     * @param relationTypes
+     * @returns {Array}
+     */
+  metaEntity.existRelation=function(targetEntity,relationTypes) {
+      var relations = [];
+      _.forIn(this.relations, (metaRelation, key) => {
+          if (metaRelation.targetEntity.toLowerCase() == targetEntity.toLowerCase()) {
+              var matched = false;
+              if (_.isArray(relationTypes)) {
+                  _.each(relationTypes, (val) => {
+                      if (val == metaRelation.type) {
+                          matched = true;
+                          return false;
+                      }
+                  });
+              } else {
+                  if (relationTypes == metaRelation.type) {
+                      matched = true;
+                  }
+              }
+              if (matched) {
+                  relations.push(metaRelation);
+              }
+          }
+      });
+      return relations;
+  }
+
+
   /** 
    * 构造实体数据操作的基本数据模型，会包含需要提交到后台的所有字段
   */

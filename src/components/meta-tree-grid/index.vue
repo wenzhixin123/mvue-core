@@ -105,6 +105,14 @@
                 }
             }
         },
+        computed:{
+            categoryPlaceHolder(){
+                if(this.category.placeholder){
+                    return this.category.placeholder;
+                }
+                return "请输入关键字搜索";
+            }
+        },
         data(){
             this.preInitCategory();
             return {
@@ -157,6 +165,9 @@
                                 this.category.titleField=tf.name;
                             }
                             this.category.entityResource=metaEntity.dataResource();
+                            if(_.isEmpty(this.category.placeholder)){
+                                this.category.placeholder=`按${metaEntity.title}过滤`;
+                            }
                         }else{
                             this.$Modal.error({content:`实体[${this.category.entityName}]不存在`});
                             return;

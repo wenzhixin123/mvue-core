@@ -49,12 +49,12 @@ export default {
         }
     },
     data(){
-        if(!this.operation.pageId){
+        /*if(!this.operation.pageId){
             this.$Modal.error({
                 title:"错误",
                 content:"page参数缺失"
             });
-        }
+        }*/
         return {
             modalWidth:this.operation.modalWidth||500,
             modalHeight:this.operation.modalHeight||340,

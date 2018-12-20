@@ -26,12 +26,12 @@
             }
         },
         data(){
-            if(!this.operation.operationId){
+            /*if(!this.operation.operationId){
                 this.$Modal.error({
                     title:"错误",
                     content:"page参数缺失"
                 });
-            }
+            }*/
             return {
                 pageParams:{}
             };

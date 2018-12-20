@@ -684,7 +684,7 @@ export default {
                 context = {
                     grid: $.extend(_self, {checked: _self.checked}),
                     metaEntity: _self.metaEntity,
-                    metaEntityId:_self.metaEntity.metaEntityId,
+                    metaEntityId:(_self.metaEntity&&_self.metaEntity.metaEntityId)?_self.metaEntity.metaEntityId:"",
                     selectedIds: _self.checked.map(function (obj) {
                         return obj.id
                     }),

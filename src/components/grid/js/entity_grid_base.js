@@ -224,15 +224,16 @@ export default {
                     if(!_this.metaEntity){
                         metabase.initMetabase(data.projectId,true);
                         _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
-                    }
-                    _this.metaEntity.metaEntityId = data.metaEntityId;//存在实体id
-                    _this.entityName = data.metaEntityName;
-                    //存在自定义视图，由视图构造grid
-                    _this.formShortId = data.metaFormShortId
-                    if (/*data.config && data.config.columns*/data.viewFields) {
-                        _this.metaViewToGrid(_this.metaEntity, data);
-                    } else {//虽然存在视图，但是没有任何配置，依然用默认
-                        _this.setDefaultQueryOptions();
+                    }else{
+                        _this.metaEntity.metaEntityId = data.metaEntityId;//存在实体id
+                        _this.entityName = data.metaEntityName;
+                        //存在自定义视图，由视图构造grid
+                        _this.formShortId = data.metaFormShortId
+                        if (/*data.config && data.config.columns*/data.viewFields) {
+                            _this.metaViewToGrid(_this.metaEntity, data);
+                        } else {//虽然存在视图，但是没有任何配置，依然用默认
+                            _this.setDefaultQueryOptions();
+                        }
                     }
                 }, (resp)=> {
                     _this.setDefaultQueryOptions();

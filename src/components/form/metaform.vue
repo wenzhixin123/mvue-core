@@ -205,6 +205,7 @@
                     selectedId: _self.entityId,
                     selectedItem: _self.entity,
                     metaEntity: _self.metaEntity,
+                    metaEntityId:_self.metaEntity.metaEntityId,
                     form : _self
                 };
                 return context;

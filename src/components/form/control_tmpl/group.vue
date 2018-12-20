@@ -25,7 +25,7 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped="true">
+<style lang="less" scoped="true">
 .form-group-con{
     border:1px solid #eee;
     margin-bottom:5px;

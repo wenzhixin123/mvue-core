@@ -68,10 +68,5 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
-    .form-control.form-control-inline{
-        display: inline-block;
-    }
-</style>
 
 

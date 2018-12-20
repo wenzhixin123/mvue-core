@@ -44,7 +44,7 @@ export default {
     }
 }
 </script>
-<style lang="scss">
+<style lang="less">
 .ref-entity-list-header{
     padding: 8px 16px;
     background: #f9fafc;

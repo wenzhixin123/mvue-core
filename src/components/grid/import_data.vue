@@ -480,7 +480,7 @@ export default {
     }
 }
 </script>
-<style lang="scss">
+<style lang="less">
 .grid-import-data-con{
     display:inline-block;
     width:100%;

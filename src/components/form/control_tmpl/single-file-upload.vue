@@ -45,7 +45,7 @@ export default {
     mixins: [controlBase,singleUpload,uploadBase]
 }
 </script>
-<style lang="scss">
+<style lang="less">
     .ivu-upload-list-file{
         .del-btn{
             display: none;

@@ -15,7 +15,7 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped="true">
+<style lang="less" scoped="true">
 .division-line{
     .title{
         font-weight: bold;

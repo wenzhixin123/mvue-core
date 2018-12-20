@@ -59,7 +59,7 @@ export default {
     }
 }
 </script>
-<style lang="scss">
+<style lang="less">
 .ivu-table-cell .link-title-opt.div-inline-block{
     display: block;
 }

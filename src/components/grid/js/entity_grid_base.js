@@ -222,22 +222,28 @@ export default {
                     _this.viewDef = data;//存入视图配置
                     _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
                     if(!_this.metaEntity){
-                        metabase.initMetabase(data.projectId,true);
+                        metabase.initMetabase(data.projectId,true).then(()=>{
+                            _this.getMetaViewToGrid(data);
+                        })
                         _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
                     }else{
-                        _this.metaEntity.metaEntityId = data.metaEntityId;//存在实体id
-                        _this.entityName = data.metaEntityName;
-                        //存在自定义视图，由视图构造grid
-                        _this.formShortId = data.metaFormShortId
-                        if (/*data.config && data.config.columns*/data.viewFields) {
-                            _this.metaViewToGrid(_this.metaEntity, data);
-                        } else {//虽然存在视图，但是没有任何配置，依然用默认
-                            _this.setDefaultQueryOptions();
-                        }
+                        _this.getMetaViewToGrid(data)
                     }
                 }, (resp)=> {
                     _this.setDefaultQueryOptions();
                 });
+        },
+        getMetaViewToGrid(data){
+            let _this = this;
+            _this.metaEntity.metaEntityId = data.metaEntityId;//存在实体id
+            _this.entityName = data.metaEntityName;
+            //存在自定义视图，由视图构造grid
+            _this.formShortId = data.metaFormShortId
+            if (/*data.config && data.config.columns*/data.viewFields) {
+                _this.metaViewToGrid(_this.metaEntity, data);
+            } else {//虽然存在视图，但是没有任何配置，依然用默认
+                _this.setDefaultQueryOptions();
+            }
         }
     }
 }

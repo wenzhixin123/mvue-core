@@ -42,7 +42,7 @@ var utils={
 
         function rootPage(_this){
             //追溯到部件page部件
-            if(_this.isWidgetPage){
+            if(_this.widgetContainer){
                 return _this;
             }else if(_this.$parent){
                 return rootPage(_this.$parent);

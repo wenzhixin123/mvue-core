@@ -20,7 +20,7 @@ function textBaseInputRules(componentType){
         unique:false,
         limitLength:{
             limit:false,
-            max:200,
+            max:190,
             min:0
         },
         validation:{

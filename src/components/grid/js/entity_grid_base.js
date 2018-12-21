@@ -225,7 +225,6 @@ export default {
                         metabase.initMetabase(data.projectId,true).then(()=>{
                             _this.getMetaViewToGrid(data);
                         })
-                        _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
                     }else{
                         _this.getMetaViewToGrid(data)
                     }
@@ -235,6 +234,7 @@ export default {
         },
         getMetaViewToGrid(data){
             let _this = this;
+            _this.metaEntity = metabase.findMetaEntity(data.metaEntityName);
             _this.metaEntity.metaEntityId = data.metaEntityId;//存在实体id
             _this.entityName = data.metaEntityName;
             //存在自定义视图，由视图构造grid

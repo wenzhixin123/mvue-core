@@ -159,7 +159,7 @@ const mComponents={
 };
 const allComponents=_.extend({},gridInnerComponents,oldFasionComponents,mComponents);
 //全局组件样式在这里引入，避免在内部重复引用
-require('./components/components.scss');
+require('./components/components.less');
 import metabase from './libs/metadata/metabase';
 
 import propParser from './services/tool/prop_parser';
@@ -177,6 +177,7 @@ import commonOperation from './components/meta_operation/js/common_operation';
 import  context from "./libs/context";
 import getParent from './components/mixins/get-parent';
 import operationManager from "./libs/operation/operations";
+import formControlManager from './components/form/control-manager';
 
 let MvueCore={
     install:install,
@@ -191,6 +192,7 @@ let MvueCore={
     metaLayoutConvertor,
     getParent,
     treeService,
+    formControlManager,
     initAfterAppCtxCreated:(appCtx)=>{
         context.initAfterAppCtxCreated(appCtx);
     },

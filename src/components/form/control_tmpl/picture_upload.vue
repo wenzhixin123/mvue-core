@@ -75,7 +75,7 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
     .demo-upload-list{
         display: inline-block;
         width: 120px;

@@ -103,13 +103,13 @@ export default {
     }
 }
 </script>
-<style lang="scss">
+<style lang="less">
 .potrait-upload.has-file .ivu-upload-drag{
     border:none;
 }
 </style>
 
-<style lang="scss" scoped>
+<style lang="less" scoped>
     .demo-upload-list{
         display: inline-block;
         text-align: center;

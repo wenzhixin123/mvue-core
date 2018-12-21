@@ -72,6 +72,9 @@ export default {
     setVue(vue){
         cachedContext.Vue=vue;
     },
+    getVue(){
+        return cachedContext.Vue;
+    },
     getRouter() {
         return cachedContext.router;
     },

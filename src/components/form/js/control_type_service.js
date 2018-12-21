@@ -65,12 +65,21 @@ _.each(entityControlsType,function(type){
         }
     });
 });
-//合并所有非辅助组件，包括基础组件类型、实体组件
-var allType=[].concat(fieldControlsType,entityControlsType);
+var allType=[];
 var componentTypes={};
-_.each(allType,function(type){
-    componentTypes=_.extend(componentTypes,type.types);
-});
+function initAllType(){
+    //合并所有非辅助组件，包括基础组件类型、实体组件
+    allType=[].concat(fieldControlsType,entityControlsType);
+    _.each(allType,function(type){
+        componentTypes=_.extend(componentTypes,type.types);
+    });
+}
+initAllType();
+//注册新的字段组件
+function registerFieldControls(controlDef){
+    fieldControlsType.push(controlDef);
+    initAllType();
+}
 //所有支持的辅助组件
 var auxiliaryControls=[
     auxiliaryTypes.Description,
@@ -331,6 +340,7 @@ var valueTypes={
     fixedValue:{id:"fixedValue",title:"固定值"},
 };
 export default{
+    registerFieldControls:registerFieldControls,
     componentTypes:componentTypes,
     switchableComponents:switchableComponents,
     toggleComponent:toggleComponent,

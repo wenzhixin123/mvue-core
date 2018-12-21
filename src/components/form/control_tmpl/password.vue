@@ -73,7 +73,7 @@ export default {
     }
 }
 </script>
-<style lang="scss" scoped>
+<style lang="less" scoped>
 .password-con .ivu-input-wrapper .ivu-icon:hover{
     cursor: pointer;
 }

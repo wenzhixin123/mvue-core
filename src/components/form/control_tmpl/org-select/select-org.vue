@@ -137,7 +137,7 @@
     };
 </script>
 
-<style lang="scss">
+<style lang="less">
     .hover-show-item-con .hover-show-item {
         display: none;
     }

@@ -22,13 +22,15 @@
   };
 </script>
 
-<style lang="sass" scoped>
-  .info-tip
-    text-align: left
-    display: inline-block
-    position: relative
-    .info-icon
-      font-size: 15px
-      cursor: pointer
-      color: grey
+<style lang="less" scoped>
+  .info-tip{
+    text-align: left;
+    display: inline-block;
+    position: relative;
+    .info-icon{
+      font-size: 15px;
+      cursor: pointer;
+      color: grey;
+    }
+  }
 </style>

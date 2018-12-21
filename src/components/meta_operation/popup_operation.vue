@@ -78,7 +78,7 @@ export default {
     }
 }
 </script>
-<style lang="scss">
+<style lang="less">
 .popup-widget-con{
     .modal-inner-widget{
         overflow:auto;

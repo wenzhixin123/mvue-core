@@ -2,7 +2,7 @@ import propParser from '../../services/tool/prop_parser';
 function parseProps(layout,curInst){
     _.forEach(layout,lyt=>{
         _.forIn(lyt,(value,key)=>{
-            if(value.value&&value.value.from){
+            if(value&&value.value&&value.value.from){
                 value.type=value.type||"text";
                 let _v=propParser.parse(value,curInst);
                 lyt[key]=_v;

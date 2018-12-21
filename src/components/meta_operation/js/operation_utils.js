@@ -1,5 +1,7 @@
 import propParser from '../../../services/tool/prop_parser';
 import commonOperation from './common_operation.js';
+var Config=require("../../../config/config.js");
+
 var utils={
     expandOperation:function(operation,ctx){
         var params={};
@@ -224,12 +226,12 @@ var utils={
                 cellExecScript();
             }else {
                 //获取执行代码
-                config.readRuntimeConfig().then(runtimeConfig => {
-                    ajax.get(runtimeConfig["service.metabase.endpoint"]+`/meta_operation/${operation.operationId}`).then(({data})=>{
-                        _t.implCode=data.implCode;
-                        cellExecScript();
-                    });
+                //获取执行代码
+                mvueCore.resource(`meta_operation/${operation.operationId}`, null, {root: _.trimEnd(Config.getMetaserviceUrl(), '/')}).get({}).then(({data}) => {
+                    _t.implCode = data.implCode;
+                    cellExecScript();
                 });
+
             }
         }else if(operation.operationType=="toPage"||operation.operationType=="toOperation"||operation.operationType=="toDynamicPage"){
             //赋予选择值

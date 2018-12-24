@@ -122,7 +122,7 @@ function loadMetabase(swagger,projectId){
  * @param model
  */
 function loadMetaEntityFromMode(context,modelName,model){
-  var entityPath=modelName.toLowerCase()//_.snakeCase(modelName)
+  var entityPath=lowerUnderscore(modelName)//.toLowerCase()//_.snakeCase(modelName)
   var opt={
     name:modelName,
     title:model.title,
@@ -308,6 +308,28 @@ function firstNotNaN(){
   });
   return reval;
 }
+
+//转换实体名称规则
+function lowerUnderscore(str){
+  if(str == null || str === '')
+    return str;
+  var strArray = str.split("");
+  var result = [];
+
+  for(var i = 1; i < strArray.length - 1; i++){
+    var previous = strArray[i-1];
+    result.push(previous);
+    if ((!/[A-Z]/.test(previous) || !isNaN(previous)) &&
+        /[A-Z]/.test(strArray[i]) &&
+        !/[A-Z]/.test(strArray[i+1])) {
+      result.push("_");
+    }
+  }
+  result.push(strArray[strArray.length - 2]);
+  result.push(strArray[strArray.length - 1]);
+  return result.join("").toLocaleLowerCase();
+}
+
 
 export default{
   /**

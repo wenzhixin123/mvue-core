@@ -316,6 +316,8 @@ var utils={
                    }
                });
            }else{
+               //没有使用,
+               button[name] = str;
                promises.push(new Promise(function(resolve,reject){resolve(true)}));
            }
        });

@@ -108,6 +108,10 @@ ax.callAjax = function (type, url, data, success, error, _options) {
       "version": "3.6.0"
     }
   }
+  if(options&&options.headers){
+    Object.assign(params["header"],options.headers)
+    delete options.headers;
+  }
   $.extend(params, options || {});
   ax.ajax(params);
 }

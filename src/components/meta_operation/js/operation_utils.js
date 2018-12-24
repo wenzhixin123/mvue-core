@@ -19,11 +19,13 @@ var utils={
         if(window.factoryApi&&window.factoryApi.init){
             window.factoryApi.init(_this);
         }
+        //执行操作的时候调用函数解析
         return new Promise(function(resolve, reject) {
             if(!operation.hasPermission&&operation.securityControllTypes&&operation.securityControllTypes==2){
                 //无权时-不可点击
                 resolve(false)
             }else {
+              utils.fnAnalysis(operation).then((res)=>{
                 let value = true;
                 if (operation[before_after]) {
                     if (_.isFunction(operation[before_after])) {
@@ -36,6 +38,7 @@ var utils={
                 } else {
                     resolve(value);
                 }
+              });
             }
         });
     },
@@ -280,6 +283,43 @@ var utils={
             });
         }
 
+    },
+    fnAnalysis(button,resolve){
+      //函数解析
+      //beforeExecCode,afterExecCode,dynamicPageFunc,checkFunc,onClick--需要解析的函数
+      var promises = [];
+       _.each(["beforeExecCode","afterExecCode","dynamicPageFunc","checkFunc","onClick"],(name)=>{
+           var str = button[name].replace("function()","function(context,app,resolve)");//函数插入参数
+           //读取系统变量-解析实体操作的方法
+           let res = new RegExp(/sys.+.\(\)/,'g');
+           let _match = str.match(res);
+           if(_match&&_match.length){
+               str.replace(res,function(a,b){
+                   //提取的格式可能是 sys.实体.操作code;
+                   let strArrys = a.split(".");//截取格式数据
+                   if(strArrys.length>=3){
+                       let metaEntityName = strArrys[1],
+                           operationCode = strArrys[2].replace("()","");
+                       promises.push(new Promise(function(resolve, reject) {
+                           mvueCore.resource(`meta_operation`, null, {root: _.trimEnd(Config.getMetaserviceUrl(), '/')}).get({
+                               filters:`projectId eq ${button.projectId} and code eq ${operationCode} and metaEntityName eq ${metaEntityName}`
+                           }).then(({data}) => {
+                               var _code = data[0].implCode;//执行代码
+                               _code = _code.replace("function(){","");
+                               _code = _code.substring(0,_code.lastIndexOf("}"));//提除外层的function;
+                               button[name] = str.replace(a,_code);//提取到的系统调用格式替换为操作的执行脚本
+                               resolve(true);
+                           }).catch(()=>{
+                               resolve(true);
+                           });
+                       }));
+                   }
+               });
+           }else{
+               promises.push(new Promise(function(resolve,reject){resolve(true)}));
+           }
+       });
+       return Promise.all(promises);
     }
 };
 export default utils;

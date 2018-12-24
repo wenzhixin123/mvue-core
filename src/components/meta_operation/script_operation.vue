@@ -28,7 +28,6 @@
     data () {
       return {
         mustStopRepeatedClick: false,//阻止点击操作重复触发
-        implCode: ''//存入执行代码
       }
     },
     methods: {
@@ -47,8 +46,7 @@
             this.operation.onclick(_widgetCtx, window.factoryApi)
           } else {
             this.mustStopRepeatedClick = true
-            var onclick = Function('"use strict";return ' + this.operation.onclick)()
-            onclick(_widgetCtx, window.factoryApi)
+            _t.cellExecScript()
           }
           this.mustStopRepeatedClick = false
           this.$emit('triggered', 'script')
@@ -56,28 +54,36 @@
           if (this.mustStopRepeatedClick) {
             return
           }
-          if (_t.implCode) {
+          if (this.operation.onClick) {
             _t.cellExecScript()
           } else {
             //获取执行代码
             mvueCore.resource(`meta_operation/${_t.operation.operationId}`, null, {root: _.trimEnd(Config.getMetaserviceUrl(), '/')}).get({}).then(({data}) => {
-              _t.implCode = data.implCode
+              _t.operation.onClick=data.implCode;
               _t.cellExecScript()
             })
           }
         }
       },
       cellExecScript () {
-        var _widgetCtx = Object.assign(this.widgetContext, {'buttonInfo': this.operation})
+        var _widgetCtx = Object.assign(this.widgetContext, {'buttonInfo': this.operation}),_this = this;
         OperationUtils.execution(this.operation, _widgetCtx, 'beforeExecCode', this).then((res) => {
           //所有跳转都带入dataId数据id,entity实体id
-          if (_.isFunction(this.implCode)) {
-            this.mustStopRepeatedClick = true
-            this.implCode(_widgetCtx, window.factoryApi)
-          } else {
-            this.mustStopRepeatedClick = true
-            var onclick = Function('"use strict";return ' + this.implCode)()
-            onclick(_widgetCtx, window.factoryApi)
+          var fun = _this.operation.onClick;
+          try{
+            if (_.isFunction(fun)) {
+              this.mustStopRepeatedClick = true
+              fun(_widgetCtx, window.factoryApi);
+            } else {
+              this.mustStopRepeatedClick = true
+              var onclick = Function('"use strict";return ' + fun)()
+              onclick(_widgetCtx, window.factoryApi);
+            }
+          }catch(e){
+            this.$Modal.error({
+              title:"错误",
+              content:"脚本语法有误"
+            });
           }
           this.mustStopRepeatedClick = false
           this.$emit('triggered', 'script')

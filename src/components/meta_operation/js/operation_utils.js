@@ -61,7 +61,7 @@ var utils={
             _childWidgets = _rooPage.$refs.childWidgets;//遍历下所有引入的部件
         }
         let returnVal = "";
-        if(!widgetCode){
+        if(widgetCode){
             _.each(_childWidgets,(cw)=>{
                 if(_.isFunction(cw.getWidgetContext)){
                     let _data = cw.getWidgetContext();//部件自身暴露的参数

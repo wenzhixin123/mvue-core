@@ -353,6 +353,12 @@ export default {
             if(this.preprocessed){
                 this.reload();
             }
+        },
+        checked(val){
+            //监听多选的时候数据变化
+            if(val.length){
+                this.selectedItem = val[0];
+            }
         }
     },
     mounted:function(){
@@ -696,8 +702,10 @@ export default {
                 //单击的时候
                 context.selectedItem = _self.selectedItem;
                 context.selectedId = _self.selectedItem.id;
+            }else{
+                context.selectedItem = _self.checked[0];
+                context.selectedId = _self.checked[0].id;
             }
-
             return context;
         }
     },

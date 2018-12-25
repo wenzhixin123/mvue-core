@@ -19,7 +19,10 @@ export default {
         },
         dataResource:{//必须提供这三个方法queryRoot queryByKeyword queryByParent
             type:Object,
-            required:true
+            required:true,
+            validator(value){
+                return value&&value.queryRoot&&value.queryByKeyword&&value.queryByParent;
+            }
         }
     },
     data(){

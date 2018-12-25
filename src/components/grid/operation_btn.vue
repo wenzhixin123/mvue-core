@@ -39,12 +39,18 @@ export default {
             return _btns;
         },
         getWidgetContext(){
+            var idField="id";
+            var metaEntity=null;
+            if(this.context&&this.context.grid&&this.context.grid.metaEntity){
+                metaEntity=this.context.grid.metaEntity;
+                idField=metaEntity.getIdField();
+            }
             return {
                 grid:this.context&&this.context.grid,
-                selectedId:this.item.id,
+                selectedId:this.item[idField],
                 selectedItem:this.item,
-                metaEntity:this.context&&this.context.grid&&this.context.grid.metaEntity
-            }
+                metaEntity:metaEntity
+            };
         }
     }
 }

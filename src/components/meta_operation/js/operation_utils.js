@@ -291,7 +291,7 @@ var utils={
        _.each(["beforeExecCode","afterExecCode","dynamicPageFunc","checkFunc","onClick"],(name)=>{
            var str = button[name]?`function(context,app,resolve){${button[name]}}`:""//button[name].replace("function()","function(context,app,resolve)");//函数插入参数
            //读取系统变量-解析实体操作的方法
-           let res = new RegExp(/sys.+.\(\)/,'g');
+           let res = new RegExp(/sys.\w*.\w*\(\)/,'g');
            let _match = str.match(res);
            if(_match&&_match.length){
                str.replace(res,function(a,b){
@@ -310,6 +310,7 @@ var utils={
                                    _code = _code.substring(0,_code.lastIndexOf("}"));//提除外层的function;
                                }
                                button[name] = str.replace(a,_code);//提取到的系统调用格式替换为操作的执行脚本
+                               debugger
                                resolve(true);
                            }).catch(()=>{
                                resolve(true);

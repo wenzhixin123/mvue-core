@@ -111,6 +111,7 @@ export default{
         },
         reload:function (resetPage) {
             this.$refs.listInst.doReload(resetPage);
+            this.selectedItems=[];
         },
         //高级查询
         doAdvanceSearch(advanceSearchFilters,quicksearchKeyword){

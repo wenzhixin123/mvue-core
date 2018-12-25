@@ -310,7 +310,6 @@ var utils={
                                    _code = _code.substring(0,_code.lastIndexOf("}"));//提除外层的function;
                                }
                                button[name] = str.replace(a,_code);//提取到的系统调用格式替换为操作的执行脚本
-                               debugger
                                resolve(true);
                            }).catch(()=>{
                                resolve(true);

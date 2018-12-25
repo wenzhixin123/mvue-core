@@ -289,7 +289,7 @@ var utils={
       //beforeExecCode,afterExecCode,dynamicPageFunc,checkFunc,onClick--需要解析的函数
       var promises = [];
        _.each(["beforeExecCode","afterExecCode","dynamicPageFunc","checkFunc","onClick"],(name)=>{
-           var str = button[name].replace("function()","function(context,app,resolve)");//函数插入参数
+           var str = button[name]?`function(context,app,resolve){${button[name]}}`:""//button[name].replace("function()","function(context,app,resolve)");//函数插入参数
            //读取系统变量-解析实体操作的方法
            let res = new RegExp(/sys.+.\(\)/,'g');
            let _match = str.match(res);
@@ -304,9 +304,11 @@ var utils={
                            mvueCore.resource(`meta_operation`, null, {root: _.trimEnd(Config.getMetaserviceUrl(), '/')}).get({
                                filters:`projectId eq ${button.projectId} and code eq ${operationCode} and metaEntityName eq ${metaEntityName}`
                            }).then(({data}) => {
-                               var _code = data[0].implCode;//执行代码
-                               _code = _code.replace("function(){","");
-                               _code = _code.substring(0,_code.lastIndexOf("}"));//提除外层的function;
+                               var _code = data[0].implCode.replace(/\s+/g,""); ;//提除空格的
+                               if(_code.indexOf("function(){")===0){
+                                   _code = _code.replace("function(){","");
+                                   _code = _code.substring(0,_code.lastIndexOf("}"));//提除外层的function;
+                               }
                                button[name] = str.replace(a,_code);//提取到的系统调用格式替换为操作的执行脚本
                                resolve(true);
                            }).catch(()=>{

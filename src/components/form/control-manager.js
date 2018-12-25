@@ -9,7 +9,7 @@ function registerSingle(controlDef){
     Object.keys(types).forEach(key => {
         let name=`m-${_.kebabCase(key)}`;
         let VueDef=context.getVue();
-        if(types[key].component instanceof Function){
+        if(types[key].component){
             VueDef.component(name,types[key].component);
         }
     });

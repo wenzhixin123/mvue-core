@@ -144,6 +144,7 @@
             },
             innerQuery(ctx,queryResource){
                 return globalContext.getMvueComponents().leapQueryConvertor.exec(queryResource,ctx,(queryParams)=>{
+                    this.$refs.gridList.beforeQuery&&this.$refs.gridList.beforeQuery(queryParams);
                     if(this.selectedTreeNode==null){
                         return ;
                     }

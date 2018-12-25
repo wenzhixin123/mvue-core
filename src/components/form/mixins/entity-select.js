@@ -173,13 +173,21 @@ export default{
             }
             var _this=this;
             var params={select:_this.queryFields};
-            params.limit=this.queryLimit;
+            params.limit=this.queryLimit+1;
             //如果是关键字查询，附加查询条件查询
             this.buildQueryOptions(params,"");
             if(this.entityResource){
                 context.getMvueToolkit().utils.smartSearch(_this,function(){
                     _this.entityResource.query(params)
                     .then(function({data}){
+                        var valData=data;
+                        if(valData.length>_this.queryLimit){
+                            var lastItem=valData[valData.length-1];
+                            _.forIn(lastItem,(val,key)=>{
+                                lastItem[key]="...";
+                            });
+                            lastItem["$isDisabled"]=true;
+                        }
                         _this.cachedDataItems=data;
                         callback&&callback(data);
                     });

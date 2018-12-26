@@ -70,7 +70,7 @@
         OperationUtils.execution(this.operation, _widgetCtx, 'beforeExecCode', this).then((res) => {
           //所有跳转都带入dataId数据id,entity实体id
           var fun = _this.operation.onClick;
-          try{
+        try{
             if (_.isFunction(fun)) {
               this.mustStopRepeatedClick = true
               fun(_widgetCtx, window.factoryApi);
@@ -82,7 +82,7 @@
           }catch(e){
             this.$Modal.error({
               title:"错误",
-              content:"脚本语法有误"
+              content:`脚本语法有误:${e}`
             });
           }
           this.mustStopRepeatedClick = false

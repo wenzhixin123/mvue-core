@@ -289,7 +289,10 @@ var utils={
       //beforeExecCode,afterExecCode,dynamicPageFunc,checkFunc,onClick--需要解析的函数
       var promises = [];
        _.each(["beforeExecCode","afterExecCode","dynamicPageFunc","checkFunc","onClick"],(name)=>{
-           var str = button[name]?`function(context,app,resolve){${button[name]}}`:""//button[name].replace("function()","function(context,app,resolve)");//函数插入参数
+           var str = button[name];
+           if(button[name]&&button[name].indexOf("function(context,app,resolve){")!=0){
+               str = `function(context,app,resolve){${button[name]}}`;
+           }//button[name].replace("function()","function(context,app,resolve)");//函数插入参数
            //读取系统变量-解析实体操作的方法
            let res = new RegExp(/sys.\w*.\w*\(\)/,'g');
            let _match = str.match(res);

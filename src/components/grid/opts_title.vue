@@ -97,10 +97,15 @@ export default {
                 //是否-传入了上下文内容
                 context = this.grid.context
             }else {
+                var metaEntity=_self&&_self.metaEntity;
+                var idFieldName="id";
+                if(metaEntity){
+                    idFieldName=metaEntity.getIdField().name;
+                }
                 context = {
                     grid: _self,
-                    metaEntity: _self.metaEntity,
-                    selectedId: this.item.id,
+                    metaEntity: metaEntity,
+                    selectedId: this.item[idFieldName],
                     selectedItem: this.item
                 };
             }

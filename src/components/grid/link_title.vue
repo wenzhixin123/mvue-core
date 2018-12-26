@@ -42,9 +42,14 @@ export default {
     },
     methods:{
         getWidgetContext(){
+            var metaEntity=this.context&&this.context.grid&&this.context.grid.metaEntity;
+            var idFieldName="id";
+            if(metaEntity){
+                idFieldName=metaEntity.getIdField().name;
+            }
             return {
                 grid:this.context&&this.context.grid,
-                selectedId:this.item.id,
+                selectedId:this.item[idFieldName],
                 selectedItem:this.item,
                 metaEntity:this.context&&this.context.grid&&this.context.grid.metaEntity
             }

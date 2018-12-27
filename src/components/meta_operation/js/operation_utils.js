@@ -304,14 +304,14 @@ var utils={
            }//button[name].replace("function()","function(context,app,resolve)");//函数插入参数
            //读取系统变量-解析实体操作的方法
            let res = new RegExp(/sys.\w*.\w*\(\)/,'g');
-           let _res_com = str.match(/com.\w*.\w*/g);
+           let _res_com = new RegExp(/com.\w*.\w*/g);
            let _match = str.match(res);
            let _match_com = str.match(_res_com);
            if((_match&&_match.length)||(_match_com&&_match_com.length)){
                //引用了sys或者com的关键字
                //com方法
                str.replace(_res_com,function(_prop,b){
-                   let __props = _prop.split(".");;
+                   let __props = _prop.split(".");
                    let _widgetCode = "",_key = ""
                    if(__props.length){
                        _widgetCode = __props[1];

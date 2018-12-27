@@ -25,7 +25,7 @@ var utils={
                 //无权时-不可点击
                 resolve(false)
             }else {
-              utils.fnAnalysis(operation).then((res)=>{
+              utils.fnAnalysis(operation,null,_this).then((res)=>{
                 let value = true;
                 if (operation[before_after]) {
                     if (_.isFunction(operation[before_after])) {
@@ -126,18 +126,27 @@ var utils={
                     urlParam[key] = utils.getWidgetExportParams(_t,_key,_widgetCode)
                 }else if(prop.type=="script"){
                     let _script = prop.script;//执行的代码
-                    let _props = _script.match(/\{\{(.+?)\}\}/g);//解析需要提取的参数
+                    //let _props = _script.match(/\{\{(.+?)\}\}/g);//解析需要提取的参数
+                    let _props = _script.match(/com.\w*.\w*/g)
                     let _vals = [];
                     _.each(_props,(_prop)=>{
-                        _prop = _prop.replace("{{","").replace("}}","");
+                        let __props = _prop.split(".");;
+                        //_prop = _prop.replace("{{","").replace("}}","");
                         let _widgetCode = "",_key = ""
-                        if(_prop.indexOf(".")!=-1){
-                            _widgetCode = _prop.slice(0,(_prop.indexOf(".")));
-                            _key = _prop.slice((_prop.indexOf("."))+1);
+                        if(__props.length){
+                            _widgetCode = __props[1];
+                            _key = __props[2];
                         }
-                        _vals.push(utils.getWidgetExportParams(_t,_key,_widgetCode));//添加匹配到的值
+                        let _prop_val = (utils.getWidgetExportParams(_t,_key,_widgetCode));
+                        //获取到的参数处理
+                        if(_.isObject(_prop_val)){
+                            _prop_val = JSON.stringify(_prop_val)
+                        }else if(typeof _prop_val=="string"){
+                            _prop_val = `"${_prop_val}"`;
+                        }
+                        _vals.push(_prop_val);//添加匹配到的值
                     });
-                    var test = /\{\{(.+?)\}\}/g,_vals_index = -1;
+                    var test = /com.\w*.\w*/g/*/\{\{(.+?)\}\}/g*/,_vals_index = -1;
                     urlParam[key] = _script.replace(test,function($0,$1,$2,$3) {
                         _vals_index+=1;
                         return _vals[_vals_index];
@@ -205,7 +214,7 @@ var utils={
             }
         }else if(operation.onClick&&operation.operationType=="script"){//脚本操作
             utils.execution(operation,_widgetCtx,"beforeExecCode",_t).then((res)=>{
-                if(_.isFunction(operation.onclick)){
+                if(_.isFunction(operation.onClick)){
                     operation.onClick(_widgetCtx,window.factoryApi);
                 }else{
                     var onclick=Function('"use strict";return ' + operation.onClick  )();
@@ -284,19 +293,40 @@ var utils={
         }
 
     },
-    fnAnalysis(button,resolve){
+    fnAnalysis(button,resolve,_t){
       //函数解析
       //beforeExecCode,afterExecCode,dynamicPageFunc,checkFunc,onClick--需要解析的函数
       var promises = [];
-       _.each(["beforeExecCode","afterExecCode","dynamicPageFunc","checkFunc","onClick"],(name)=>{
-           var str = button[name];
+       _.each(["beforeExecCode","afterExecCode","dynamicPageFunc","checkFunc","onClick","onclick"],(name)=>{
+           var str = button[name]||"";
            if(button[name]&&button[name].indexOf("function(context,app,resolve){")!=0){
                str = `function(context,app,resolve){${button[name]}}`;
            }//button[name].replace("function()","function(context,app,resolve)");//函数插入参数
            //读取系统变量-解析实体操作的方法
            let res = new RegExp(/sys.\w*.\w*\(\)/,'g');
+           let _res_com = str.match(/com.\w*.\w*/g);
            let _match = str.match(res);
-           if(_match&&_match.length){
+           let _match_com = str.match(_res_com);
+           if((_match&&_match.length)||(_match_com&&_match_com.length)){
+               //引用了sys或者com的关键字
+               //com方法
+               str.replace(_res_com,function(_prop,b){
+                   let __props = _prop.split(".");;
+                   let _widgetCode = "",_key = ""
+                   if(__props.length){
+                       _widgetCode = __props[1];
+                       _key = __props[2];
+                   }
+                   let _prop_val = (utils.getWidgetExportParams(_t,_key,_widgetCode));
+                   //获取到的参数处理
+                   if(_.isObject(_prop_val)){
+                       _prop_val = JSON.stringify(_prop_val)
+                   }else if(typeof _prop_val=="string"){
+                       _prop_val = `"${_prop_val}"`;
+                   }
+                   str = str.replace(_prop,_prop_val);//添加匹配到的值
+               });
+               //sys方法
                str.replace(res,function(a,b){
                    //提取的格式可能是 sys.实体.操作code;
                    let strArrys = a.split(".");//截取格式数据
@@ -320,6 +350,12 @@ var utils={
                        }));
                    }
                });
+
+               if(!(_match&&_match.length)){
+                   //不存在调用sys方法,直接输出
+                   button[name] = str;
+                   promises.push(new Promise(function(resolve,reject){resolve(true)}));
+               }
            }else{
                //没有使用,
                button[name] = str;

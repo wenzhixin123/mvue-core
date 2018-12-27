@@ -3,7 +3,9 @@ const state = {
   autoPageConfs:{},//当前系统所有动态页面组件的配置集合
   pageTitle:'',//当前页面的标题
   pageTitleSourceId:'',//当前页面的title来自哪个id的组件
-  gridStatus:{}//存储m-grid组件的查询参数对象
+  gridStatus:{},//存储m-grid组件的查询参数对象
+  defaultFormId:'default-form-id',
+  formStatus:{refEntities:{}}//存储表单的状态数据，key为表单id
 }
 //公共的计算属性
 const getters = {
@@ -61,6 +63,14 @@ const mutations = {
   },
   clearGridStatus(state){
     state.gridStatus={};
+  },
+  setFormRefEntities(state,{formId,name,refEntity}){
+    let key=formId||state.defaultFormId;//如果只有一个表单，不需要设置m-form的id属性，过个需要设置
+    let refEntities=state.formStatus.refEntities;
+    refEntities[key]=refEntities[key]||{};
+    let curFormRefEntities=refEntities[key];
+    curFormRefEntities[name]=refEntity;
+    state.formStatus.refEntities=_.cloneDeep(state.formStatus.refEntities);
   }
 }
 

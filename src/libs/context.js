@@ -27,6 +27,7 @@ var cachedContext={
   },
   consts:{
       user:{
+          entityName:"user",
           idField:"id",
           nameField:"name",
           loginField:"userName",
@@ -34,6 +35,7 @@ var cachedContext={
           orgField:"orgId"
       },
       org:{
+          entityName:"organization",
           idField:"id",
           nameField:"name",
           parentField:"parentId"

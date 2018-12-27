@@ -2,10 +2,11 @@ import controlTypeService from './control_type_service';
 import constants from './constants';
 import widgetMode from './widget-mode';
 import emitter from '../../mixins/emitter';
+import getParent from '../../mixins/get-parent';
 import globalContext from '../../../libs/context';
 import optionsUtils from '../../../libs/metadata/options-utils';
 export default {
-    mixins:[emitter],
+    mixins:[emitter,getParent],
     props:{
         formItem:{
             type:Object,

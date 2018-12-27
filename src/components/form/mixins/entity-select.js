@@ -30,6 +30,15 @@ export default{
                     this.notifyMultipleSelect();
                 }else{
                     this.notifySingleSelect();
+                    //向metaForm的refEntities写入引用数据
+                    var metaForm=this.getParentForm&&this.getParentForm();
+                    if(metaForm&&this.formItem){
+                        this.$store.commit("core/setFormRefEntities",{
+                            id:metaForm.id,
+                            name:this.formItem.dataField,
+                            refEntity:this.selectedItem
+                        });
+                    }
                 }
             },
             immediate:true
@@ -149,6 +158,7 @@ export default{
         buildQueryOptions(params,keyword){
             
         },
+
         //根据已选ids查询数据
         searchByIds(ids,callback){
             let idField=this.getIdField();
@@ -158,6 +168,9 @@ export default{
             }
             var queryOptions={
                 filters:`${idField} in ${filters}`
+            }
+            if(!this.multiple){
+                queryOptions.expand=this.buildQueryExpand();
             }
             if(this.entityResource){
                 this.entityResource.query(queryOptions).then(function({data}){
@@ -173,6 +186,9 @@ export default{
             }
             var _this=this;
             var params={select:_this.queryFields};
+            if(!this.multiple){
+                params.expand=this.buildQueryExpand();
+            }
             params.limit=this.queryLimit+1;
             //如果是关键字查询，附加查询条件查询
             this.buildQueryOptions(params,"");
@@ -198,6 +214,9 @@ export default{
         doSearch:function(keyword,callback){
             var _this=this;
             var params={select:_this.queryFields};
+            if(!this.multiple){
+                params.expand=this.buildQueryExpand();
+            }
             if(!keyword){
                 _this.doSearchForCache(items=>{
                     this.ensureHistoryItems(items);
@@ -233,6 +252,20 @@ export default{
         },
         searchChange:function(keyword){
             this.doSearch(keyword);
+        },
+        buildQueryExpand(){//构建查询时，所有引用字段展开条件，m-expand表单控件需要使用
+            let entityName=this.formItem&&this.formItem.componentParams.entityId;
+            //特殊处理单选用户和单选部门组件
+            if(!entityName){
+                entityName=this.getEntityName&&this.getEntityName();
+            }
+            if(entityName){
+                let metaEntity =this.$metaBase.findMetaEntity(entityName);
+                let _fields=metaEntity.getDefaultViewFields();
+                let _expand=metaEntity.getExpand(_fields);
+                return _expand;
+            }
+            return '';
         }
     }
 }

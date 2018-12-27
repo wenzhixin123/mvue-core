@@ -109,6 +109,9 @@ export default {
         buildSelectFields(){
             return `${this.getIdField()},${this.getTitleField()},${this.getLoginField()},${context.getConsts().user.detailFields}`;
         },
+        getEntityName(){
+            return context.getConsts().user.entityName;
+        },
         getIdField:function(){
             return context.getConsts().user.idField;
         },

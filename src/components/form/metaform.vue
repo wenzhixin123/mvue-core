@@ -116,6 +116,10 @@
             checkArchived:{//表示是否开启表单的归档检测，默认不开启
                 type:Boolean,
                 default:false
+            },
+            formDefaultValues:{//表单默认值
+                type: Object,
+                require: false
             }
         },
         computed:{
@@ -657,6 +661,12 @@
                     }
                     _obj.mode = mode;
                 }
+
+                if(this.formDefaultValues&&this.formDefaultValues[item.dataField]&&!this.isEdit){
+                    this.entity[item.dataField] = this.formDefaultValues[item.dataField]
+                }
+
+
                 return _obj
             }
         }

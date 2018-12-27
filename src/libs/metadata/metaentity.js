@@ -362,16 +362,16 @@ export default function (options) {
     }
 
     function configUI(data,mEntity) {
-        if(!_.has(data,"list")){
+        if((!_.has(data,"list"))||_.isNull(data.list)){
             mEntity.listable=false;
         }
-        if(!_.has(data,"create")){
+        if((!_.has(data,"create"))||_.isNull(data.create)){
             mEntity.creatable=false;
         }
-        if(!_.has(data,"edit")){
+        if((!_.has(data,"edit"))||_.isNull(data.edit)){
             mEntity.editable=false;
         }
-        if(!_.has(data,"delete")){
+        if((!_.has(data,"delete"))||_.isNull(data.delete)){
             mEntity.deletable=false;
         }
     }

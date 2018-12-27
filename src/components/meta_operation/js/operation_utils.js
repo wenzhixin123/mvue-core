@@ -304,7 +304,7 @@ var utils={
            }//button[name].replace("function()","function(context,app,resolve)");//函数插入参数
            //读取系统变量-解析实体操作的方法
            let res = new RegExp(/sys.\w*.\w*\(\)/,'g');
-           let _res_com = new RegExp(/com.\w*.\w*/g);
+           let _res_com = new RegExp(/com.\w*.\w*/,'g');
            let _match = str.match(res);
            let _match_com = str.match(_res_com);
            if((_match&&_match.length)||(_match_com&&_match_com.length)){

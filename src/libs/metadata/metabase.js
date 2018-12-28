@@ -100,6 +100,9 @@ function loadMetabase(swagger,projectId){
   var context={
     swagger:swagger
   };
+  var options=loadMetaOptions(context,firstNotNaN(swagger["x-option-sets"],{}));
+  context["options"]=options;
+
   var entities={};
   _.forEach(swagger.definitions,function(val,key){
     var isEntity=firstNotNaN(val["x-entity"],true);
@@ -114,6 +117,15 @@ function loadMetabase(swagger,projectId){
   var cachedKey=mbCacheKey(projectId);
   metabases[cachedKey]=metabase;
   store.set(cachedKey,metabase);
+}
+
+function loadMetaOptions(context,optionsModel) {
+    var options={};
+    _.forIn(optionsModel,function(opItem,key){
+        var option= optionsConvert(opItem.items,{});
+        options[key.toLowerCase()]=option;
+    });
+    return options;
 }
 
 /**
@@ -225,8 +237,24 @@ function loadMetaFieldFromProperty(context,propertyName,property){
     _property:property
   };
   //设置inputTypeParams
-  fillInputTypeParams(metaField,property);
+  fillInputTypeParams(context,metaField,property);
   return metaField;
+}
+
+//转换选项集
+function optionsConvert(options,metaField){
+    let _options=[];
+    _.each(options,function (item,index) {
+        _options.push({
+            id:item.value,
+            text:item.title,
+            checked:false
+        });
+    });
+    if(options.children){
+        _options.children=optionsConvert(options.children,metaField);
+    }
+    return _options;
 }
 
 /**
@@ -234,44 +262,51 @@ function loadMetaFieldFromProperty(context,propertyName,property){
  * @param metaField
  * @param property
  */
-function fillInputTypeParams(metaField,property) {
-  //如果metaField的inputType为空，设置默认
-  if(!metaField.inputType){
-    let inputType=controlTypeService.getMetaFieldComponentType(metaField);
-    metaField.inputType=inputType;
-  }
-  if(_.isNaN(property["maxLength"])){
-    metaField.inputTypeParams["maxLength"]=property["maxLength"];
-  }
-  if(_.isNaN(property["minLength"])){
-    metaField.inputTypeParams["minLength"]=property["minLength"];
-  }
-  if(_.isNaN(property["pattern"])){
-    metaField.inputTypeParams["pattern"]=property["pattern"];
-  }
-  if(_.isNaN(property["maximum"])){
-    metaField.inputTypeParams["max"]=property["maximum"];
-  }
-  if(_.isNaN(property["minimum"])){
-    metaField.inputTypeParams["min"]=property["minimum"];
-  }
-  if(_.isNaN(property["enum"])){
-    metaField.inputTypeParams["enums"]=property["enum"];
-  }
-  if(_.isNaN(property["format"])){
-    metaField.inputTypeParams["format"]=property["format"];
-  }
-  if(property["x-options"]&&property["x-options"].items){
-    let options=[];
-    _.each(property["x-options"].items,function (item,index) {
-      options.push({
-        id:item.value,
-        text:item.title,
-        checked:metaField.default==item.value?true:false
-      });
-    });
-    metaField.inputTypeParams["options"]=options;
-  }
+function fillInputTypeParams(context,metaField,property) {
+    //如果metaField的inputType为空，设置默认
+    if (!metaField.inputType) {
+        let inputType = controlTypeService.getMetaFieldComponentType(metaField);
+        metaField.inputType = inputType;
+    }
+    if (_.isNaN(property["maxLength"])) {
+        metaField.inputTypeParams["maxLength"] = property["maxLength"];
+    }
+    if (_.isNaN(property["minLength"])) {
+        metaField.inputTypeParams["minLength"] = property["minLength"];
+    }
+    if (_.isNaN(property["pattern"])) {
+        metaField.inputTypeParams["pattern"] = property["pattern"];
+    }
+    if (_.isNaN(property["maximum"])) {
+        metaField.inputTypeParams["max"] = property["maximum"];
+    }
+    if (_.isNaN(property["minimum"])) {
+        metaField.inputTypeParams["min"] = property["minimum"];
+    }
+    if (_.isNaN(property["enum"])) {
+        metaField.inputTypeParams["enums"] = property["enum"];
+    }
+    if (_.isNaN(property["format"])) {
+        metaField.inputTypeParams["format"] = property["format"];
+    }
+    let xOptions = property["x-options"];
+    if (xOptions) {
+        let fieldOption = null;
+        if (_.isString(xOptions)) {
+            let _fieldOption = context.options[xOptions.toLowerCase()];
+            fieldOption = _.cloneDeep(_fieldOption);
+        } else {
+            if (xOptions.items) {
+                fieldOption = optionsConvert(xOptions.items);
+            }
+        }
+        if (fieldOption) {
+            if (metaField.default == fieldOption.value) {
+                fieldOption.checked = true;
+            }
+            metaField.inputTypeParams["options"] = fieldOption;
+        }
+    }
 }
 
 /**

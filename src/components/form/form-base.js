@@ -452,7 +452,7 @@ export default {
         ignoreReadonlyFields(){
             let _model={};
             let _this=this;
-            _.forIn(_this.entity,function(v,k){
+            _.forIn(_this.entity,(v,k)=>{
                 let metaField=_this.metaEntity.findField(k);
                 if(metaField&&metaField.readonly){
                     //readonly字段不提交

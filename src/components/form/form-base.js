@@ -458,6 +458,14 @@ export default {
                     //readonly字段不提交
                     return;
                 }
+                //创建模式，如果字段creatable为false，不提交此字段
+                if(this.isCreate&&(!metaField.creatable)){
+                    return;
+                }
+                //编辑模式，如果字段updatable为false，不提交此字段
+                if(this.isEdit&&(!metaField.updatable)){
+                    return;
+                }
                 if(_.isNil(v) && metaField&&metaField.required){
                     //未赋值的必填字段，不提交
                     return ;

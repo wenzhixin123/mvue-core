@@ -152,6 +152,13 @@ export default {
             }
             return false;
         },
+        isEdit(){//判断当前表单是否为新建模式
+            if(this.context
+                &&this.context.isEdit){
+                return true;
+            }
+            return false;
+        },
         shouldInitDefault(){//判断新建模式，并且需要设置默认值
             return this.isCreate()&&
                 (this.initWhenCreate || this.formItem.componentParams.valueType===controlTypeService.valueTypes.defaultValue.id);
@@ -224,6 +231,14 @@ export default {
             if(metaEntity){
                 let metaField=metaEntity.findField(this.formItem.dataField);
                 if (metaField) {
+                    //创建模式，如果字段creatable为false，字段不可编辑
+                    if(this.isCreate()&&(!metaField.creatable)){
+                        return true;
+                    }
+                    //编辑模式，如果字段updatable为false，字段不可编辑
+                    if(this.isEdit()&&(!metaField.updatable)){
+                        return true;
+                    }
                     return metaField.readonly;
                 } else {
                     this.formItem.hidden = true;

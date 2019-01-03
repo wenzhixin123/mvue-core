@@ -167,6 +167,7 @@ export default {
             _innerVal=entity[metaField.name];
             //如果在表单内部使用m-field组件，大部分都是如此，isCreate继承自表单
             this.context.isCreate=form.isCreate;
+            this.context.isEdit=form.isEdit;
         }else{
             //非表单组件内部，高级查询独立使用必定为创建模式
             this.context.isCreate=true;

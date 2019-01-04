@@ -85,7 +85,7 @@ export default {
                     id = selectedItem[idField];
                 }
             }//获取传入的对象id和实体信息
-            return {dataId:id,entityId:((metaEntityz&&metaEntity.metaEntityId)?metaEntity.metaEntityId:"")};
+            return {dataId:id,entityId:((metaEntity&&metaEntity.metaEntityId)?metaEntity.metaEntityId:"")};
 
         },
         gotoPage(){

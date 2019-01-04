@@ -9,14 +9,20 @@
             </i-col>
             <i-col span="20" style="text-align:right;">
                 <div class="grid-toolbar-common-btns">
-                    <div v-if="innerToolbar.quicksearch&&innerToolbar.quicksearch.fields" style="display:inline-block;">
+                    <div v-if="innerToolbar.quicksearch&&innerToolbar.quicksearch.fields&&!(innerToolbar.quickSearchFields&&innerToolbar.quickSearchFields.length>0)" style="display:inline-block;">
                         <Input v-if="showQuickSearchInput" v-model="quicksearchKeyword" :placeholder="innerToolbar.quicksearch.placeholder"
                             icon="ios-search" @on-click="showQuickSearchInput=false" style="width: 150px;margin-right:10px;" :autofocus="true"/>
                         <div class="concat-toolbar-btn" v-if="!showQuickSearchInput" @click="showQuickSearchInput=true"><Icon type="search"></Icon>搜索</div>
                     </div>
+                    <!--快捷操作-->
+                    <div class="concat-toolbar-btn" v-if="innerToolbar.quickSearchFields&&innerToolbar.quickSearchFields.length>0" @click="showQuickSearchModel=!showQuickSearchModel"><Icon type="search"></Icon>搜索</div>
+
                     <advance-search :quicksearch-keyword="quicksearchKeyword" :toolbar-type="toolbarType" v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" :entity-name="entityName" :advance-search-fields="innerToolbar.advanceSearchFields" @do-advance-search="doAdvanceSearch"></advance-search>
                     <div class="concat-toolbar-btn" @click="refresh()"><Icon type="refresh"></Icon>刷新</div>
                 </div>
+
+
+
                 <div v-if="innerToolbar.btns" class="innerToolbar">
                     <meta-operation v-for="(toolbarBtn,index) in innerToolbar.btns" :key="index" v-if="index<1" :operation="toolbarBtn" :widget-context="getWidgetContext()">
                         <Button style="margin-right:-8px;" type="primary" size="small" :title="toolbarBtn.title" class="default-color-btn">
@@ -75,6 +81,11 @@
 
         </div>&ndash;&gt;
     </div>-->
+
+    <!--快捷搜索条-->
+    <quick-search :quicksearch-keyword="quicksearchKeyword" :isKey="(innerToolbar.quicksearch&&innerToolbar.quicksearch.fields?true:false)" :toolbar-type="toolbarType" v-if="showQuickSearchModel" :entity-name="entityName" :advance-search-fields="innerToolbar.quickSearchFields" @do-quick-search="doQuickSearch"></quick-search>
+
+
     <div class="data-table-list">
         <Table :loading="loadingData" 
             :columns="innerColumns" 
@@ -264,8 +275,9 @@ export default {
                         fields: null,
                         placeholder: ""
                     },
-                    advanceSearchFields:(this.toolbar&&this.toolbar.advanceSearchFields)||[]
-                },
+                    advanceSearchFields:(this.toolbar&&this.toolbar.advanceSearchFields)||[],
+                    quickSearchFields:(this.toolbar&&this.toolbar.quickSearchFields)||[]
+            },
             data:[],//原始数据
             checked:[],//已经选择的数据
             quicksearchKeyword:"",//快捷查询输入的值
@@ -278,6 +290,7 @@ export default {
             //end 分页相关参数
             orderby:"",//只支持一个orderby，用户点击排序后将覆盖默认的排序规则
             advanceSearchFilters:[],//高级查询设置的查询条件
+            quickSearchFilters:[],//快捷查询搜索
             multipleFiltersValueId:"",//用户选择的默认条件id
             multipleFiltersValue:"",//用户选择的默认条件值
             showQuickSearchInput:false,//toolbar concat模式时显示和隐藏快捷搜索框
@@ -287,6 +300,7 @@ export default {
             modalHeight:340,
             modalTitle:"",
             popupWidgetModal:false,
+            showQuickSearchModel:false,
             pageParams:{},
             selectedItem:{},//记录选择对象--合并暴露对象
         };
@@ -474,6 +488,22 @@ export default {
               _queryOptions.filters=qsFilters;
             }
           }
+
+          //如果启用了快捷搜索
+          if(this.quickSearchFilters&&this.quickSearchFilters.length>0){
+            let qsFilters = [];
+            _.each(this.quickSearchFilters,function(asField){
+                qsFilters.push(`${asField.key} ${asField.op} ${asField.value}`);
+            });
+            qsFilters=qsFilters.join(" and ");
+            if(_queryOptions.filters){
+                _queryOptions.filters=`${_queryOptions.filters} and (${qsFilters})`;
+            }else{
+                _queryOptions.filters=qsFilters;
+            }
+          }
+
+
           //如果用户点击了排序，覆盖默认排序
           if(this.orderby){
             _queryOptions.orderby=this.orderby;
@@ -538,6 +568,12 @@ export default {
         doAdvanceSearch(advanceSearchFilters,quicksearchKeyword){
             this.quicksearchKeyword=quicksearchKeyword||"";
             this.advanceSearchFilters=advanceSearchFilters;
+            this.reload();
+        },
+        //快捷查询
+        doQuickSearch(quickSearchFilters,quicksearchKeyword){
+            this.quicksearchKeyword=quicksearchKeyword||"";
+            this.quickSearchFilters=quickSearchFilters;
             this.reload();
         },
         //选择单行
@@ -710,7 +746,8 @@ export default {
         }
     },
     components:{
-        advanceSearch:require("./advance_search")
+        advanceSearch:require("./advance_search"),
+        quickSearch:require('./quick_search')
     }
 }
 </script>

@@ -56,18 +56,22 @@ export default {
             let dataMap = _.keyBy(metaEntity.fields, "name");
             let columnsMap = _.keyBy(metaView.viewFields/*config.columns*/, "fieldName");
             let filters = metaView.config.filters||'';
-            let _metaFields = [], _searchFields = [], _advanceSearchFields=[];
+            let _metaFields = [], _searchFields = [], _advanceSearchFields=[],_quickSearchFields=[];
             _.each(metaView.viewFields/*metaView.config.columns*/, function (column) {
                 let metaField = dataMap[column.fieldName/*name*/];
                 if(metaField){
                     _metaFields.push(metaField);
-                    //快捷查询字段
-                    if (column.quicksearchable) {
+                    //关键字字段
+                    if (column.key) {
                         _searchFields.push(metaField.name);
                     }
                     //高级查询字段
                     if(column.searchable){
                         _advanceSearchFields.push(metaField.name);
+                    }
+                    //快捷查询字段
+                    if(column.quicksearchable){
+                        _quickSearchFields.push(metaField.name);
                     }
                     //列宽度
                     if(_.isInteger(column.width)){
@@ -85,21 +89,34 @@ export default {
             });
             //在外部设置好操作后，查询字段还需要附加上去
             if(this.innerToolbar){
-                this.innerToolbar.advanceSearchFields=_advanceSearchFields;
-                let quickSearchPlacehoder="请输入关键字搜索";
-                if (_searchFields.length) {
-                    this.innerToolbar.quicksearch = {
-                        fields: _searchFields,
-                        placeholder: quickSearchPlacehoder
-                    }
+                if(_.isArray(this.innerToolbar.advanceSearchFields)){
+                    this.innerToolbar.advanceSearchFields=_advanceSearchFields;
                 }else{
-                    let titleField=metaEntity.firstSemanticsField("title");
-                    if(titleField){
+                    this.innerToolbar.advanceSearchFields=[]
+                }
+                if(_.isArray(this.innerToolbar.quickSearchFields)){
+                    this.innerToolbar.quickSearchFields=_quickSearchFields;
+                }else{
+                    this.innerToolbar.quickSearchFields=[]
+                }
+                if(_.isObject(this.innerToolbar.quicksearch)){
+                    let quickSearchPlacehoder="请输入关键字搜索";
+                    if (_searchFields.length) {
                         this.innerToolbar.quicksearch = {
-                            fields: [titleField.name],
+                            fields: _searchFields,
                             placeholder: quickSearchPlacehoder
                         }
+                    }else{
+                        let titleField=metaEntity.firstSemanticsField("title");
+                        if(titleField){
+                            this.innerToolbar.quicksearch = {
+                                fields: [titleField.name],
+                                placeholder: quickSearchPlacehoder
+                            }
+                        }
                     }
+                }else{
+                    this.innerToolbar.quicksearch = {}
                 }
             }
             //end 构造工具栏

@@ -124,6 +124,7 @@ import ExportCsv from './js/export_csv';
 
 var dayjs = require("dayjs");
 import context from "../../libs/context";
+import files from "../form/control_tmpl/upload/files";
 export default {
     props:{
         operation:{
@@ -269,25 +270,26 @@ export default {
             this.report=null;
             this.hasReport=false;
             this.doValidation(function(){
-                var fileRelativePath="";
+                var _file=null;
                 if(_this.model.file&&_this.model.file.length==1){
-                    fileRelativePath=_this.model.file[0].url;
+                    _file=_this.model.file[0];
                 }
-                var fileUrl=`${_this.paths.uploadUrl}?filePath=${fileRelativePath}`;
-                _this.modelForMapping.excelUrl=fileUrl;
-                _this.modelForImport.file=fileUrl;
-                toolService().getImportMapping(_this.modelForMapping).then(({data})=>{
-                    //构造新的映射关系
-                    var _mappings=[];
-                    _.each(data.cols,function(col){
-                        _mappings.push({
-                            headerText:col.headerText,
-                            fieldName: col.fieldName,
-                            columnIndex: col.index,
-                            nameToId: col.nameToId
+                files.fileRealUrl(_file,_this.paths.uploadUrl).then(fileUrl=>{
+                    _this.modelForMapping.excelUrl=fileUrl;
+                    _this.modelForImport.file=fileUrl;
+                    toolService().getImportMapping(_this.modelForMapping).then(({data})=>{
+                        //构造新的映射关系
+                        var _mappings=[];
+                        _.each(data.cols,function(col){
+                            _mappings.push({
+                                headerText:col.headerText,
+                                fieldName: col.fieldName,
+                                columnIndex: col.index,
+                                nameToId: col.nameToId
+                            });
                         });
+                        _this.modelForImport.mappings=_mappings;
                     });
-                    _this.modelForImport.mappings=_mappings;
                 });
             });
         },

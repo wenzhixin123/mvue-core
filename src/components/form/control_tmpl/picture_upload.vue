@@ -2,11 +2,11 @@
     <div>
         <template v-if="viewMode">
                 <div v-if="isNotEmpty(defaultList)">
-                    <div class="demo-upload-list" v-for="item in defaultList" :key="item.url">
+                    <div class="demo-upload-list" v-for="item in defaultList" :key="item.id||item.url">
                         <div>
-                            <img :src="fileRealUrl(item.url)">
+                            <ufs-image :item='item' :paths='paths'></ufs-image>
                             <div class="demo-upload-list-cover">
-                                <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item.url)"></i> 
+                                <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item)"></i> 
                             </div>
                         </div>
                     </div>
@@ -17,11 +17,11 @@
         </template>
         <template v-else>
             <div>
-                <div class="demo-upload-list" v-for="item in fileList()" :key="item.url">
+                <div class="demo-upload-list" v-for="item in fileList()" :key="item.id||item.url">
                     <div v-if="item.status === 'finished'">
-                        <img :src="fileRealUrl(item.url)">
+                        <ufs-image :item='item' :paths='paths'></ufs-image>
                         <div class="demo-upload-list-cover">
-                            <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item.url)"></i> 
+                            <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item)"></i> 
                             <i class="ivu-icon ivu-icon-ios-trash-outline" @click="handleRemove(item)"></i>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                     </div>
                 </Upload>
                 <Modal title="查看图片" v-model="visible">
-                    <img class="preview-img" :src="previewImgSrc" v-if="visible">
+                    <ufs-image class="preview-img" v-if="visible" :item='previewItem' :paths='paths'></ufs-image>
                 </Modal>
             </div>
         </template>
@@ -63,15 +63,9 @@ export default {
     mixins: [controlBase,multiUpload,uploadBase],
     data:function(){
         return {
-            previewImgSrc:null,
+            previewItem:null,
             visible:false
         };
-    },
-    methods:{
-        handleView (previewImgSrc) {
-            this.previewImgSrc = this.fileRealUrl(previewImgSrc);
-            this.visible = true;
-        }
     }
 }
 </script>

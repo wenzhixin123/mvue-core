@@ -2,16 +2,16 @@
     <div>
         <template v-if="viewMode">
             <div v-if="isNotEmpty(defaultList)">
-                <div class="demo-upload-list" v-for="item in defaultList" :key="item.url">
+                <div class="demo-upload-list" v-for="item in defaultList" :key="item.id||item.url">
                     <div>
-                        <img :style="{width:uploadIconWidth,height:uploadIconHeight}" :src="fileRealUrl(item.url)">
+                        <ufs-image :width='uploadIconWidth' :height='uploadIconHeight' :item='item' :paths='paths'></ufs-image>
                         <div class="demo-upload-list-cover">
-                            <Icon type="ios-eye-outline" @click="handleView(item.url)"></Icon> 
+                            <Icon type="ios-eye-outline" @click="handleView(item)"></Icon> 
                         </div>
                     </div>
                 </div>
                 <Modal title="查看图片" v-model="visible">
-                    <img class="preview-img" :src="previewImgSrc" v-if="visible">
+                    <ufs-image class="preview-img" v-if="visible" :item='previewItem' :paths='paths'></ufs-image>
                 </Modal>
             </div>
         </template>
@@ -34,11 +34,11 @@
                     :class="{'has-file':hasFile(),'potrait-upload':true}"
                     style="display: inline-block;">
                     <div v-if="hasFile()" style="line-height:normal;">
-                        <div class="demo-upload-list" v-for="item in fileList()" :key="item.url">
+                        <div class="demo-upload-list" v-for="item in fileList()" :key="item.id||item.url">
                             <div v-if="item.status === 'finished'">
-                                <img :style="{width:uploadIconWidth,height:uploadIconHeight}" :src="fileRealUrl(item.url)">
+                                <ufs-image :width='uploadIconWidth' :height='uploadIconHeight' :item='item' :paths='paths'></ufs-image>
                                 <div class="demo-upload-list-cover">
-                                    <Icon type="ios-eye-outline" @click.stop="handleView(item.url)" title="预览"></Icon> 
+                                    <Icon type="ios-eye-outline" @click.stop="handleView(item)" title="预览"></Icon> 
                                     <Icon type="ios-trash-outline" @click.stop="handleRemove(item)" title="删除"></Icon>
                                 </div>
                             </div>
@@ -52,7 +52,7 @@
                     </div>
                 </Upload>
                 <Modal title="查看图片" v-model="visible">
-                    <img class="preview-img" :src="previewImgSrc" v-if="visible">
+                    <ufs-image class="preview-img" v-if="visible" :item='previewItem' :paths='paths'></ufs-image>
                 </Modal>
             </div>
         </template>
@@ -66,7 +66,7 @@ export default {
     mixins: [controlBase,singleUpload,uploadBase],
     data:function(){
         return {
-            previewImgSrc:null,
+            previewItem:null,
             visible:false
         };
     },
@@ -90,15 +90,6 @@ export default {
             var h=(this.formItem.componentParams&&this.formItem.componentParams.height)||150;
             var s=w<h?w:h;
             return s*3/4;
-        }
-    },
-    methods:{
-        hasFile(){
-            return this.fileList()&&this.fileList().length>0;
-        },
-        handleView (previewImgSrc) {
-            this.previewImgSrc = this.fileRealUrl(previewImgSrc);
-            this.visible = true;
         }
     }
 }

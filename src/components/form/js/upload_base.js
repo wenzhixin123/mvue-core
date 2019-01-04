@@ -1,5 +1,8 @@
 import uploadType from './upload_type';
-import contextHelper from "../../../libs/context"
+import contextHelper from "../../../libs/context";
+import ufs from "../../../libs/ufs";
+import files from "../../../components/form/control_tmpl/upload/files";
+
 var filesize = require('file-size');
 export default {
     data:function(){
@@ -82,19 +85,13 @@ export default {
                 return [];
             }
         },
-        fileRealUrl:function(url){
-            if(_.startsWith(url,"http://")||_.startsWith(url,"https://")){
-                return url;
-            }
-            return `${this.paths.uploadUrl}?filePath=${url}`;
-        },
         emitValue:function(){
             this.uploaded=true;
             let _uploadList=[];
             _.each(this.$refs.upload.fileList,function(uploadFile){
                 _uploadList.push({
                     name:uploadFile.name,
-                    url:uploadFile.url,
+                    id:uploadFile.id,
                     size:uploadFile.size
                 });
             });
@@ -109,7 +106,7 @@ export default {
             }
         },
         handleSuccess (res, file) {
-            file.url =  res.file.relativePath;
+            file.id =  res.id;
             //单文件上传，直接覆盖旧的文件
             if(!this.formItem.componentParams.multiple.isAllowed){
                 this.$refs.upload.fileList=[file];
@@ -135,10 +132,11 @@ export default {
             this.minusCurrentFileSum();
             contextHelper.info("上传失败，请联系管理员");
         },
-        handleBeforeUpload () {
+        handleBeforeUpload (file) {
             this.currentUploadFileSum=this.currentUploadFileSum+1;
             var _this=this;
-            this.uploadAction=this.paths.uploadUrl;
+            //这里故意写死为ufs，iview upload组件action必填，所以附一个值但是不用，我们自定义ufs上传
+            this.uploadAction='ufs';
             var ok=true;
             this.oldFileList=_.cloneDeep(this.$refs.upload.fileList);
             //单文件上传，直接覆盖旧的图片
@@ -157,15 +155,40 @@ export default {
                     ok=check;
                 }
             }
-            return new Promise(function (resolve, reject) {
-                if(ok){
-                    _this.$nextTick(function(){
-                        resolve();
-                    });
-                }else{
-                    reject();
+            if(ok){
+                this.overridePost(file);
+            }
+            return false;
+        },
+        //间接重写iview上传控件upload.vue的post
+        overridePost (file) {
+            let uploadRef=this.$refs.upload;
+            // check format
+            if (uploadRef.format.length) {
+                const _file_format = file.name.split('.').pop().toLocaleLowerCase();
+                const checked = uploadRef.format.some(item => item.toLocaleLowerCase() === _file_format);
+                if (!checked) {
+                    uploadRef.onFormatError(file, uploadRef.fileList);
+                    return false;
                 }
+            }
+
+            // check maxSize
+            if (uploadRef.maxSize) {
+                if (file.size > uploadRef.maxSize * 1024) {
+                    uploadRef.onExceededSize(file, uploadRef.fileList);
+                    return false;
+                }
+            }
+            uploadRef.handleStart(file);
+            //TODO 进度需要ufs客户端改造
+            ufs.upload(file).then((res)=>{
+                uploadRef.handleSuccess(res, file);
+            },(err)=>{
+                debugger
+                uploadRef.handleError(err, null, file);
             });
+            //uploadRef.handleProgress(e, file);
         },
         handleRemove (file) {
             //TODO 真实的删除
@@ -174,9 +197,20 @@ export default {
             this.$refs.upload.fileList.splice(fileList.indexOf(file), 1);
             this.emitValue();
         },
+        //图片类型预览
+        handleView (item) {
+            this.previewItem = item;
+            this.visible = true;
+        },
+        //文件类型预览就是下载
         handlePreview(file){
-            let previewUrl = this.fileRealUrl(file.url);
-            window.open(previewUrl,"_blank");
+            files.download(file,this.paths.uploadUrl);
+        },
+        hasFile(){
+            return this.fileList()&&this.fileList().length>0;
         }
+    },
+    components:{
+        ufsImage:require('../control_tmpl/upload/ufs-image')
     }
 }

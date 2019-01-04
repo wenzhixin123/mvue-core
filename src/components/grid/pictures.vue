@@ -1,13 +1,18 @@
 <template>
     <div class="grid-col-pictures">
-        <img v-for="f in files()" :key="f.url" :src="fileRealUrl(f.url)" @click="handleView(f.url)">
+        <ufs-image v-for="f in files()" :key="f.id||f.url" @click="handleView(f)" :item='f' :paths='params'></ufs-image>
         <Modal title="查看图片" v-model="visible">
-            <img class="preview-img" :src="previewImgSrc" v-if="visible">
+            <div style="overflow:auto;">
+                <ufs-image class="preview-img" v-if="visible" :item='previewItem' :paths='params'></ufs-image>
+            </div>
         </Modal>
     </div>
 </template>
 <script>
 export default {
+    components:{
+        ufsImage:require('../form/control_tmpl/upload/ufs-image')
+    },
     props:{
         params:{
             type:Object,
@@ -21,7 +26,7 @@ export default {
     data:function(){
         return {
             visible:false,
-            previewImgSrc:null
+            previewItem:null
         };
     },
     methods:{
@@ -32,11 +37,8 @@ export default {
             }
             return files;
         },
-        fileRealUrl:function(url){
-            return `${this.params.uploadUrl}?filePath=${url}`;
-        },
-        handleView (previewImgSrc) {
-            this.previewImgSrc = this.fileRealUrl(previewImgSrc);
+        handleView (item) {
+            this.previewItem = item;
             this.visible = true;
         }
     }
@@ -50,6 +52,7 @@ export default {
         height:32px;
         margin-right:5px;
         margin-bottom:5px;
+        margin-top: 10px;
     }
     img:hover{
         cursor: pointer;

@@ -143,8 +143,12 @@ export default{
             }
             return context;
         },
-        wrapBtns(btns){
-          return operationManager.batchCreate(btns);
+        wrapBtns(btns) {
+            var ops = {}
+            if (this["entityName"]) {
+                ops["entityName"] = this["entityName"]
+            }
+            return operationManager.batchCreate(btns, ops);
         },
         //判断按钮是否禁用
         btnIsDisabled(btn){

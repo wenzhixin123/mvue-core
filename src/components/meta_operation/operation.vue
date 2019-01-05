@@ -12,6 +12,7 @@ import operations from "./operations/register";
 import  operationManager from "../../libs/operation/operations";
 import getParent from '../mixins/get-parent';
 import context from '../../libs/context';
+import sc from '../../libs/security/permission';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
 var permParser={
@@ -84,21 +85,25 @@ export default {
         showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
             var operation=OperationUtils.expandOperation(this.operation,this);
             var optPermValue=operation[OperationUtils.operationDisplayField];
-            if(!_.isPlainObject(optPermValue)){
-                optPermValue=_.trim(optPermValue);
-                if(_.isNil(optPermValue)||optPermValue===''){
-                    return true;
-                }
+            if(_.isEmpty(optPermValue)){
+                optPermValue=operation.security;
+            }
+            if(_.isEmpty(optPermValue)){
+                return true;
             }
             var ctx={
                 ctx: this.widgetContext,
                 opt:operation
             }
-            if(_.startsWith(optPermValue,'${')){
-                var compiled = _.template(optPermValue);
-                var hasPerm=compiled(ctx);
-                if(hasPerm==="true"){
-                    return true;
+            if(_.isArray(optPermValue)){
+                return sc.hasPerm(optPermValue);
+            }else if(_.isString(optPermValue)){
+                if(_.startsWith(optPermValue,'${')){
+                    var compiled = _.template(optPermValue);
+                    var hasPerm = compiled(ctx);
+                    if (hasPerm === "true") {
+                        return true;
+                    }
                 }
             }else if(_.isPlainObject(optPermValue)){
                 var from=optPermValue.from;

@@ -17,7 +17,6 @@ function upload(file){
         }).then((data) => {
             resolve(data);
         }).catch((err) => {
-            debugger
             reject(err);
         });
     });
@@ -34,7 +33,6 @@ function getDownloadUrl(fileId,fileName){
         storageClient.urlFor(params).then(urlInfo => {
             resolve(urlInfo);
         },(err)=>{
-            debugger
             reject(err);
         });
     });

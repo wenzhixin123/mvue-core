@@ -3,6 +3,7 @@
  */
 import coreStore from '../store/core';
 import mvueCore from '../index';
+import userEx from './security/user-ex';
 var cachedContext={
   mvueComponents:null,  
   currentVue:null,
@@ -244,6 +245,7 @@ export default {
         if(appCtx.setMvueCore){
             appCtx.setMvueCore(mvueCore);
         }
+        userEx.install();
     },
     initAfterAppStarted(appCtx){
         if(appCtx.getRouter){

@@ -11,6 +11,8 @@ var operation= {
     btnType:"warning",
     operationType:"common",
     handler:null,
+    security:["delete"],
+    entitySecurity:true,
     disabled:function (ctx) {
         return !(ctx.selectedItems && ctx.selectedItems.length > 0);
     },

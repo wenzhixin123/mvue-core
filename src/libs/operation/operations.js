@@ -43,12 +43,26 @@ function create(opts) {
         return opts;
     }
     var created=_.assign({},template,opts);
+    if(template.security===true){
+        created.security=[created.name];
+    }
+    if(created["entitySecurity"]===true && !_.isEmpty(opts["entityName"])){
+        buildEntitySecurity(created,opts["entityName"]);
+    }
 
     //根据type重写operationType
     if(_.has(created,"type")){
         created["operationType"]=created["type"];
     }
     return created;
+}
+
+function buildEntitySecurity(op,entityName){
+    var security=[];
+    _.forEach(op.security,(sec)=>{
+        security.push(`${entityName}:${sec}`);
+    });
+    op.security=security;
 }
 
 export  default {
@@ -66,17 +80,38 @@ export  default {
     create(opts){
         return create(opts);
     },
-    batchCreate(btns){
+    batchCreate(btns,ops){
         let _btns=[];
         if(!btns){
             return _btns;
+        }
+        var beforeCreate=null;
+        var onCreated=null;
+        if(ops){
+            if(ops.onCreated){
+                onCreated=ops.onCreated;
+                delete ops.onCreated;
+            }
+            if(ops.beforeCreate){
+                beforeCreate=ops.beforeCreate;
+                delete ops.beforeCreate;
+            }
         }
         _.each(btns,(btn)=>{
             var opts=btn;
             if(_.isString(btn)){
                 opts={name:btn}
             }
+            if(ops){
+                opts=_.assign(opts,ops);
+            }
+            if(beforeCreate){
+                beforeCreate(opts);
+            }
             var created=create(opts);
+            if(onCreated){
+                onCreated(created);
+            }
             _btns.push(created);
         });
         return _btns;

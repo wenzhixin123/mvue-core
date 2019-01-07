@@ -648,7 +648,6 @@ export default {
                 ops["entityName"] = this["entityName"]
             }
             var wrapped= operationManager.batchCreate(btns, ops);
-            debugger;
             return wrapped;
         }
     }

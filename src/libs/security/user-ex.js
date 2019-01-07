@@ -27,15 +27,18 @@ function initUserPerm() {
     });
 }
 
-
 function getUserInfoUrl() {
-    var url="/me";
-    return context.getMvueToolkit().config.getApiBaseUrl()+url;
+    var url=context.getMvueToolkit().config.getLocalUserInfoUrl();
+    if(_.isEmpty(url)){
+        return null;
+    }
+    return url;
 }
 
 function checkBySession() {
     return Promise.resolve().then(()=>{
-        if(context.getMvueToolkit().session.isLogin()){
+        var userInfoUrl=getUserInfoUrl();
+        if(userInfoUrl==null || context.getMvueToolkit().session.isLogin()){
             return context.getMvueToolkit().session.getCurrentUser();
         }
         return context.getMvueToolkit().http.get(getUserInfoUrl()).then(({data})=>{

@@ -181,14 +181,11 @@ export default {
                 }
             }
             uploadRef.handleStart(file);
-            //TODO 进度需要ufs客户端改造
             ufs.upload(file).then((res)=>{
                 uploadRef.handleSuccess(res, file);
             },(err)=>{
-                debugger
                 uploadRef.handleError(err, null, file);
             });
-            //uploadRef.handleProgress(e, file);
         },
         handleRemove (file) {
             //TODO 真实的删除

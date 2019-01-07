@@ -12,6 +12,8 @@ var operation= {
     btnType:"warning",
     operationType:"common",
     handler:null,
+    security:["delete"],
+    entitySecurity:true,
     disabled:function (ctx) {
         if(ctx.isGrid){
             return !(ctx.selectedItems && ctx.selectedItems.length === 1);

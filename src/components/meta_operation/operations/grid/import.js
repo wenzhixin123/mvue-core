@@ -8,6 +8,8 @@ var operation= {
     icon:"ios-upload-outline",
     operationType:"common",
     btnType:"primary",
+    security:["create"],
+    entitySecurity:true,
     renderComponent:"m-grid-import-data"
 };
 export default  operation

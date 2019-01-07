@@ -11,6 +11,8 @@ var operation= {
     operationType:"common",
     btnType:"primary",
     onSuccess:null,
+    security:["create"],
+    entitySecurity:true,
     onclick:function(context,$optInst) {
         return impl(context,$optInst);
     }

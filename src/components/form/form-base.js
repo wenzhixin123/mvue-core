@@ -126,8 +126,8 @@ export default {
             subcomponentAfterSaveChain:[],//所有需要在表单保存后做继续操作的子组件集合
             innerRules:_.cloneDeep(this.rules),
             innerToolbar:{
-                editBtns:operationManager.batchCreate(this.toolbar&&this.toolbar.editBtns),
-                viewBtns:operationManager.batchCreate(this.toolbar&&this.toolbar.viewBtns)
+                editBtns:this.wrapBtns(this.toolbar&&this.toolbar.editBtns,formStatus),
+                viewBtns:this.wrapBtns(this.toolbar&&this.toolbar.viewBtns,formStatus)
             },
             createAnother:false//是否继续创建模式
         };
@@ -172,305 +172,322 @@ export default {
             deep:true
         }
     },
-    methods:{
+    methods: {
         //表单操作需要的上下文数据
-        getWidgetContext(){
+        getWidgetContext() {
             return {
                 selectedId: this.entityId,
                 selectedItem: this.entity,
                 metaEntity: this.metaEntity,
-                form : this
+                form: this
             };
         },
         //表单的默认保存操作为调用表单示例的doSaveModel保存实体数据
-        doSaveModel:function(){
-            var _this=this;
-            return new Promise((resolve,reject)=>{
-                this.$refs["formRef"].validate(valid=>{
-                    if(valid){
-                        let before=_this.beforeSave();
-                        if (before && before.then){//返回的Promise对象
-                            before.then(function(valid){
-                                if(false!==valid){//true 表示可继续保存
-                                    let doSavePromise=_this.doSave();
-                                    doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
-                                }else{
+        doSaveModel: function () {
+            var _this = this;
+            return new Promise((resolve, reject) => {
+                this.$refs["formRef"].validate(valid => {
+                    if (valid) {
+                        let before = _this.beforeSave();
+                        if (before && before.then) {//返回的Promise对象
+                            before.then(function (valid) {
+                                if (false !== valid) {//true 表示可继续保存
+                                    let doSavePromise = _this.doSave();
+                                    doSavePromise.then((data) => {
+                                        resolve(data);
+                                    }, () => {
+                                        reject();
+                                    });
+                                } else {
                                     reject();
                                 }
                             });
-                        }else if(before!==false){//普通true or false
-                            let doSavePromise=_this.doSave();
-                            doSavePromise.then((data)=>{resolve(data);},()=>{reject();});
-                        }else{
+                        } else if (before !== false) {//普通true or false
+                            let doSavePromise = _this.doSave();
+                            doSavePromise.then((data) => {
+                                resolve(data);
+                            }, () => {
+                                reject();
+                            });
+                        } else {
                             reject();
                         }
-                    }else{
-                        contextHelper.warning({title:"表单验证失败",content:"表单内部分字段验证未通过，请修复后再重新提交"});
+                    } else {
+                        contextHelper.warning({title: "表单验证失败", content: "表单内部分字段验证未通过，请修复后再重新提交"});
                         reject();
                     }
                 });
             });
         },
         //表单提交前预处理，如果外部定义了onSubmit，执行onSubmit
-        beforeSave(){
-            var isContinue=true;
-            if(this.onSubmit){
-                isContinue=_.defaultTo(this.onSubmit(this),true);
+        beforeSave() {
+            var isContinue = true;
+            if (this.onSubmit) {
+                isContinue = _.defaultTo(this.onSubmit(this), true);
             }
-            if(!isContinue){
+            if (!isContinue) {
                 return false;
             }
             return true;
         },
         //doSaveModel调用时，会先校验表单，然后执行外部定义的onSubmit如果成功再继续执行这里的doSave
-        doSave(){
-            var _this=this;
-            if(_this.isSavingToServer){
+        doSave() {
+            var _this = this;
+            if (_this.isSavingToServer) {
                 return;
             }
-            _this.isSavingToServer=true;
-            return new Promise((resolve,reject)=>{
-                if(this.isEdit){//更新
-                    let _model=this.ignoreReadonlyFields();
-                    let _resource=_this.dataResource;
-                    if(this.saveOpts.url){
-                        const baseServiceRoot=contextHelper.getConfig(globalConsts.base_service);
-                        _resource=contextHelper.buildResource(this.saveOpts.url,null,{root:baseServiceRoot});
+            _this.isSavingToServer = true;
+            return new Promise((resolve, reject) => {
+                if (this.isEdit) {//更新
+                    let _model = this.ignoreReadonlyFields();
+                    let _resource = _this.dataResource;
+                    if (this.saveOpts.url) {
+                        const baseServiceRoot = contextHelper.getConfig(globalConsts.base_service);
+                        _resource = contextHelper.buildResource(this.saveOpts.url, null, {root: baseServiceRoot});
                     }
-                    _resource.update({id:this.entityId},_model).then(function({data}){
-                        _this.isSavingToServer=false;
-                        let afterSavePromise=_this.afterSave("on-edited",data,'编辑成功');
-                        afterSavePromise.then(()=>{resolve({data:_this.entity});},()=>{reject();});
-                    },function(){
-                        _this.isSavingToServer=false;
+                    _resource.update({id: this.entityId}, _model).then(function ({data}) {
+                        _this.isSavingToServer = false;
+                        let afterSavePromise = _this.afterSave("on-edited", data, '编辑成功');
+                        afterSavePromise.then(() => {
+                            resolve({data: _this.entity});
+                        }, () => {
+                            reject();
+                        });
+                    }, function () {
+                        _this.isSavingToServer = false;
                         reject();
                     });
-                }else{//新建
-                    let _model=this.ignoreReadonlyFields();
-                    if(this.isBatchMode()){
-                        let _batchModel=this.buildBatchModel(_model);
-                        if(_.isEmpty(_batchModel)){
+                } else {//新建
+                    let _model = this.ignoreReadonlyFields();
+                    if (this.isBatchMode()) {
+                        let _batchModel = this.buildBatchModel(_model);
+                        if (_.isEmpty(_batchModel)) {
                             reject();
                             return;
                         }
                         this.batchSave(_batchModel)
-                        .then((data)=>{
-                            this.isSavingToServer=false;
-                            //如果需要继续创建数据，则根据设置的resetFields作清理（恢复默认值）
-                            if(this.createAnother){
-                                if(!_.isEmpty(this.saveOpts.resetFields)){
-                                    var entity=this.metaEntity.getDefaultModel();
-                                    _.each(this.saveOpts.resetFields,f=>{
-                                        if(_.includes(this.batchForm.fields,f)){
-                                            this.entity[this.getBatchFieldProp(f)]=[];
-                                        }else{
-                                            this.entity[f]=entity[f];
-                                        }
-                                    });
+                            .then((data) => {
+                                this.isSavingToServer = false;
+                                //如果需要继续创建数据，则根据设置的resetFields作清理（恢复默认值）
+                                if (this.createAnother) {
+                                    if (!_.isEmpty(this.saveOpts.resetFields)) {
+                                        var entity = this.metaEntity.getDefaultModel();
+                                        _.each(this.saveOpts.resetFields, f => {
+                                            if (_.includes(this.batchForm.fields, f)) {
+                                                this.entity[this.getBatchFieldProp(f)] = [];
+                                            } else {
+                                                this.entity[f] = entity[f];
+                                            }
+                                        });
+                                    }
+                                    this.$Modal.success({title: "创建数据提示", content: `已批量创建[${data.length}]条新数据，可继续创建`});
                                 }
-                                this.$Modal.success({title:"创建数据提示",content:`已批量创建[${data.length}]条新数据，可继续创建`});
-                            }
-                            let _data=[];
-                            _.each(data,d=>{
-                                _data.push(d.data);
+                                let _data = [];
+                                _.each(data, d => {
+                                    _data.push(d.data);
+                                });
+                                let afterSavePromise = _this.afterSave("on-created", _data, this.createAnother ? '' : '保存成功');
+                                afterSavePromise.then(() => {
+                                    resolve({data: _data, isCreate: true, createAnother: this.createAnother});
+                                }, () => {
+                                    reject();
+                                });
+                            })
+                            .catch(() => {
+                                this.isSavingToServer = false;
+                                reject();
                             });
-                            let afterSavePromise=_this.afterSave("on-created",_data,this.createAnother?'':'保存成功');
-                            afterSavePromise.then(()=>{
-                                resolve({data:_data,isCreate:true,createAnother:this.createAnother});
-                            },()=>{reject();});
-                        })
-                        .catch(()=>{
-                            this.isSavingToServer=false;
-                            reject();
-                        });
-                    }else{
-                        this.singleSave(_model).then(({data})=>{
+                    } else {
+                        this.singleSave(_model).then(({data}) => {
                             //如果需要继续创建数据，则根据设置的resetFields作清理（恢复默认值）
-                            if(this.createAnother){
-                                if(!_.isEmpty(this.saveOpts.resetFields)){
-                                    var entity=this.metaEntity.getDefaultModel();
-                                    _.each(this.saveOpts.resetFields,f=>{
-                                        this.entity[f]=entity[f];
+                            if (this.createAnother) {
+                                if (!_.isEmpty(this.saveOpts.resetFields)) {
+                                    var entity = this.metaEntity.getDefaultModel();
+                                    _.each(this.saveOpts.resetFields, f => {
+                                        this.entity[f] = entity[f];
                                     });
                                 }
-                                this.$Modal.success({title:"创建数据提示",content:`已创建一条新数据，可继续创建`});
-                            }else{
-                                _this.entityId=data[_this.metaEntity.getIdField().name];
+                                this.$Modal.success({title: "创建数据提示", content: `已创建一条新数据，可继续创建`});
+                            } else {
+                                _this.entityId = data[_this.metaEntity.getIdField().name];
                                 //创建完数据后，立即为编辑模式否则可能产生多保存数据
-                                _this.formStatus=contextHelper.getMvueToolkit().utils.formActions.edit;
+                                _this.formStatus = contextHelper.getMvueToolkit().utils.formActions.edit;
                             }
-                            let afterSavePromise=_this.afterSave("on-created",data,this.createAnother?'':'保存成功');
-                            afterSavePromise.then(()=>{
-                                resolve({data:data,isCreate:true,createAnother:this.createAnother});
-                            },()=>{reject();});
-                        },()=>{
-                            _this.isSavingToServer=false;
+                            let afterSavePromise = _this.afterSave("on-created", data, this.createAnother ? '' : '保存成功');
+                            afterSavePromise.then(() => {
+                                resolve({data: data, isCreate: true, createAnother: this.createAnother});
+                            }, () => {
+                                reject();
+                            });
+                        }, () => {
+                            _this.isSavingToServer = false;
                             reject();
                         });
                     }
                 }
             });
         },
-        batchSave(_batchModel){
-            const baseServiceRoot=contextHelper.getConfig(globalConsts.base_service);
-            if(this.saveOpts.batchUrl){
-                return this.$http.post(this.saveOpts.batchUrl,_batchModel,{baseURL:baseServiceRoot});
-            }else{
-                let batchAllPromises=[];
-                _.each(_batchModel,m=>{
+        batchSave(_batchModel) {
+            const baseServiceRoot = contextHelper.getConfig(globalConsts.base_service);
+            if (this.saveOpts.batchUrl) {
+                return this.$http.post(this.saveOpts.batchUrl, _batchModel, {baseURL: baseServiceRoot});
+            } else {
+                let batchAllPromises = [];
+                _.each(_batchModel, m => {
                     batchAllPromises.push(this.singleSave(m));
                 });
                 return Promise.all(batchAllPromises);
             }
         },
-        singleSave(_model){
-            const baseServiceRoot=contextHelper.getConfig(globalConsts.base_service);
-            if(this.saveOpts.url){
-                return this.$http.post(this.saveOpts.url,_model,{baseURL:baseServiceRoot});
-            }else{
+        singleSave(_model) {
+            const baseServiceRoot = contextHelper.getConfig(globalConsts.base_service);
+            if (this.saveOpts.url) {
+                return this.$http.post(this.saveOpts.url, _model, {baseURL: baseServiceRoot});
+            } else {
                 return this.dataResource.save(_model);
             }
         },
         //表单数据提交完成后调用：如果与表单关联的组件也需要作一些事情在这里处理
-        afterSave(evtName,data,msg){
-            let _this=this;
+        afterSave(evtName, data, msg) {
+            let _this = this;
             //调用内部组件保存事件
-            let after=_this.afterSaveChain(data);
-            return new Promise((resolve,reject)=>{
+            let after = _this.afterSaveChain(data);
+            return new Promise((resolve, reject) => {
                 //抛出保存事件
-                if (after && after.then){//返回的Promise对象
-                    after.then(function(valid){
-                        if(false!==valid){//true 表示可继续保存
-                            _this.$emit(evtName,data);
+                if (after && after.then) {//返回的Promise对象
+                    after.then(function (valid) {
+                        if (false !== valid) {//true 表示可继续保存
+                            _this.$emit(evtName, data);
                             _this.onCompleted(msg);
                             resolve();
-                        }else{
+                        } else {
                             reject();
                         }
                     });
-                }else if(after!==false){
-                    _this.$emit(evtName,data);
+                } else if (after !== false) {
+                    _this.$emit(evtName, data);
                     _this.onCompleted(msg);
                     resolve();
-                }else{
+                } else {
                     reject();
                 }
             });
         },
         //串行执行与表单关联的组件的后处理逻辑
-        afterSaveChain(data){
-            let result=true;
+        afterSaveChain(data) {
+            let result = true;
             //如果子组件在保存后需要做自己的保存操作，在这里进行
             //注意这里使用了generator函数(function*)和co库，保证子组件afterSave一个一个串行执行，如果出错不会往下执行，直接返回结果
-            let subcomponentAfterSaveChain=this.subcomponentAfterSaveChain;
-            if(!_.isEmpty(subcomponentAfterSaveChain)){
-                function* nextAfterSave(){
-                    for(let i=0;i<subcomponentAfterSaveChain.length;++i){
-                        let subcomponent=subcomponentAfterSaveChain[i];
-                        if(subcomponent&&_.isFunction(subcomponent.afterSave)){
-                            yield new Promise(function (resolve, reject){
-                                let res=subcomponent.afterSave(data);
-                                if(res&&res.then){
-                                    res.then(function(valid){
-                                        if(false!==valid){
+            let subcomponentAfterSaveChain = this.subcomponentAfterSaveChain;
+            if (!_.isEmpty(subcomponentAfterSaveChain)) {
+                function* nextAfterSave() {
+                    for (let i = 0; i < subcomponentAfterSaveChain.length; ++i) {
+                        let subcomponent = subcomponentAfterSaveChain[i];
+                        if (subcomponent && _.isFunction(subcomponent.afterSave)) {
+                            yield new Promise(function (resolve, reject) {
+                                let res = subcomponent.afterSave(data);
+                                if (res && res.then) {
+                                    res.then(function (valid) {
+                                        if (false !== valid) {
                                             resolve();
-                                        }else{
+                                        } else {
                                             reject();
                                         }
                                     });
-                                }else if(false!==res){
+                                } else if (false !== res) {
                                     resolve();
-                                }else{
+                                } else {
                                     reject();
                                 }
                             });
                         }
                     }
                 }
+
                 result = co(nextAfterSave);
             }
             return result;
         },
         //注册与表单关联的组件的后处理逻辑
-        registerAfterSaveChain(subcomponent){
+        registerAfterSaveChain(subcomponent) {
             this.subcomponentAfterSaveChain.push(subcomponent);
         },
         //表单数据提交完，并且关联子组件的数据处理逻辑也完成后执行
         //1 执行外部定义的onSaved回调，后续步骤可以在onSaved中返回false阻止继续执行
         //2 根据msg参数弹出成功提示
         //3 editToView为true：表示需要从编辑页保存数据后，跳转回查看页，否则返回上一页
-        onCompleted(msg){
-            var isContinue=true;
-            if(this.onSaved){
-                isContinue=_.defaultTo(this.onSaved(this),true);
+        onCompleted(msg) {
+            var isContinue = true;
+            if (this.onSaved) {
+                isContinue = _.defaultTo(this.onSaved(this), true);
             }
-            if(_.isFunction(this.completedAction)){
-                isContinue=_.defaultTo(this.completedAction(this),true);
+            if (_.isFunction(this.completedAction)) {
+                isContinue = _.defaultTo(this.completedAction(this), true);
             }
-            if(!isContinue){
+            if (!isContinue) {
                 return false;
             }
-            if(msg){
+            if (msg) {
                 contextHelper.success(msg);
             }
-            if(this.editToView||this.completedAction=="editToView"){//如果需要从编辑页保存数据后，跳转回查看页
-                let _query=_.extend({},this.$route.query);
-                _query[contextHelper.getMvueToolkit().utils.queryKeys.action]=contextHelper.getMvueToolkit().utils.formActions.view;
+            if (this.editToView || this.completedAction == "editToView") {//如果需要从编辑页保存数据后，跳转回查看页
+                let _query = _.extend({}, this.$route.query);
+                _query[contextHelper.getMvueToolkit().utils.queryKeys.action] = contextHelper.getMvueToolkit().utils.formActions.view;
                 contextHelper.getRouter().push({
-                    name:this.$route.name,
-                    params:this.$route.params,
-                    query:_query
+                    name: this.$route.name,
+                    params: this.$route.params,
+                    query: _query
                 });
             }
         },
         //工具栏是否有按钮存在，没有按钮的话，工具栏隐藏
-        hasButtons(){
-            if(!this.toolbar){
+        hasButtons() {
+            if (!this.toolbar) {
                 return false;
             }
-            if(this.toolbar&&_.isEmpty(this.toolbar.viewBtns)&&this.isView){
+            if (this.toolbar && _.isEmpty(this.toolbar.viewBtns) && this.isView) {
                 return false;
             }
-            if(this.toolbar&&_.isEmpty(this.toolbar.editBtns)&&!this.isView){
+            if (this.toolbar && _.isEmpty(this.toolbar.editBtns) && !this.isView) {
                 return false;
             }
-            if(this.innerPermissions.cancel){
+            if (this.innerPermissions.cancel) {
                 return true;
             }
-            if(this.innerPermissions.openEdit&&this.isView){
+            if (this.innerPermissions.openEdit && this.isView) {
                 return true;
             }
-            if(!this.entityId||(this.innerPermissions.edit&&!this.isView)){
+            if (!this.entityId || (this.innerPermissions.edit && !this.isView)) {
                 return true;
             }
-            if(this.entityId&&this.innerPermissions.del&&!this.isView){
+            if (this.entityId && this.innerPermissions.del && !this.isView) {
                 return true;
             }
             return false;
         },
         //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据
-        ignoreReadonlyFields(){
-            let _model={};
-            let _this=this;
-            _.forIn(_this.entity,(v,k)=>{
-                let metaField=_this.metaEntity.findField(k);
-                if(metaField&&metaField.readonly){
+        ignoreReadonlyFields() {
+            let _model = {};
+            let _this = this;
+            _.forIn(_this.entity, (v, k) => {
+                let metaField = _this.metaEntity.findField(k);
+                if (metaField && metaField.readonly) {
                     //readonly字段不提交
                     return;
                 }
                 //创建模式，如果字段creatable为false，不提交此字段
-                if(this.isCreate&&(!metaField.creatable)){
+                if (this.isCreate && (!metaField.creatable)) {
                     return;
                 }
                 //编辑模式，如果字段updatable为false，不提交此字段
-                if(this.isEdit&&(!metaField.updatable)){
+                if (this.isEdit && (!metaField.updatable)) {
                     return;
                 }
-                if(_.isNil(v) && metaField&&metaField.required){
+                if (_.isNil(v) && metaField && metaField.required) {
                     //未赋值的必填字段，不提交
-                    return ;
+                    return;
                 }
-                _model[k]=v;
+                _model[k] = v;
             });
             return _model;
         },
@@ -478,143 +495,160 @@ export default {
         checkIsArchived() {
             var _self = this;
             metaservice().getSuiteDataSetting({id: _self.entityId}).then(({data}) => {
-                _self.isArchived=true;
-                if(eventBus&&eventBus.record){
+                _self.isArchived = true;
+                if (eventBus && eventBus.record) {
                     eventBus.record.isArchived = true;
                 }
-                _self.innerPermissions={
-                    openEdit:false,
-                    edit:false,
-                    del:false,
-                    cancel:false
+                _self.innerPermissions = {
+                    openEdit: false,
+                    edit: false,
+                    del: false,
+                    cancel: false
                 }
-            }).catch(()=> {
-                _self.isArchived=false;
-                if(eventBus&&eventBus.record){
+            }).catch(() => {
+                _self.isArchived = false;
+                if (eventBus && eventBus.record) {
                     eventBus.record.isArchived = false;
                 }
             });
         },
         //初始化表单数据操作权限
-        initPerm(data){
-            this.innerPermissions={
-                "openEdit":contextHelper.getMvueToolkit().utils.hasPerm(data[contextHelper.getMvueToolkit().utils.dataPermField],contextHelper.getMvueToolkit().utils.permValues.edit),
-                "edit":contextHelper.getMvueToolkit().utils.hasPerm(data[contextHelper.getMvueToolkit().utils.dataPermField],contextHelper.getMvueToolkit().utils.permValues.edit),
-                "del":contextHelper.getMvueToolkit().utils.hasPerm(data[contextHelper.getMvueToolkit().utils.dataPermField],contextHelper.getMvueToolkit().utils.permValues.del),
-                "cancel":true
+        initPerm(data) {
+            this.innerPermissions = {
+                "openEdit": contextHelper.getMvueToolkit().utils.hasPerm(data[contextHelper.getMvueToolkit().utils.dataPermField], contextHelper.getMvueToolkit().utils.permValues.edit),
+                "edit": contextHelper.getMvueToolkit().utils.hasPerm(data[contextHelper.getMvueToolkit().utils.dataPermField], contextHelper.getMvueToolkit().utils.permValues.edit),
+                "del": contextHelper.getMvueToolkit().utils.hasPerm(data[contextHelper.getMvueToolkit().utils.dataPermField], contextHelper.getMvueToolkit().utils.permValues.del),
+                "cancel": true
             };
-            if(this.checkArchived){
+            if (this.checkArchived) {
                 this.checkIsArchived();
             }
         },
         //通用操作删除按钮执行删除后的回调，在metagrid_operation.js中会调用
-        onDeleted(){
+        onDeleted() {
             this.gotoViewList();
         },
         //返回到实体数据列表
-        gotoViewList(){
-            var path=this.metaEntity.viewPath();
+        gotoViewList() {
+            var path = this.metaEntity.viewPath();
             contextHelper.getRouter().push({
-                path:path
+                path: path
             });
         },
         //传递给表单组件的context，可以控制表单组件的显示状态
-        fieldContext(item){
+        fieldContext(item) {
             //字段视图
             let _obj = {
-                metaEntity:this.metaEntity,
-                mode:null,
-                isCreate:this.isCreate
+                metaEntity: this.metaEntity,
+                mode: null,
+                isCreate: this.isCreate
             };
             //外部指定强制查看模式或者已归档
-            if(this.isView){
+            if (this.isView) {
                 //目前强制查看模式和readonly都统一
-                _obj.mode=widgetMode.forceView;
-            }else if(item&&this.fieldSettings&&this.fieldSettings[item.dataField]){
+                _obj.mode = widgetMode.forceView;
+            } else if (item && this.fieldSettings && this.fieldSettings[item.dataField]) {
                 //存在对字段的状态设置
-                let mode=this.fieldSettings[item.dataField].mode;
+                let mode = this.fieldSettings[item.dataField].mode;
                 //隐藏字段在这里做，进入组件里边隐藏可能不起作用
-                if(widgetMode.invisible===mode){
-                    item.hidden=true;
+                if (widgetMode.invisible === mode) {
+                    item.hidden = true;
                 }
                 _obj.mode = mode;
             }
             return _obj;
         },
         //判断按钮是否禁用
-        btnIsDisabled(btn){
+        btnIsDisabled(btn) {
             //btn 写了disabled:true
-            if(btn.disabled===true){
+            if (btn.disabled === true) {
                 return true;
-            }else if(_.isFunction(btn.disabled)){
-                var ctx={
-                    isForm:true,
-                    entity:this.entity
+            } else if (_.isFunction(btn.disabled)) {
+                var ctx = {
+                    isForm: true,
+                    entity: this.entity
                 };
                 return btn.disabled(ctx);
             }
             return false;
         },
         //判断按钮是否显示
-        btnIsHidden(btn){
+        btnIsHidden(btn) {
             //btn 写了hidden:true
-            if(btn.hidden===true){
+            if (btn.hidden === true) {
                 return true;
-            }else if(_.isFunction(btn.hidden)){
-                var ctx={
-                    isForm:true,
-                    entity:this.entity
+            } else if (_.isFunction(btn.hidden)) {
+                var ctx = {
+                    isForm: true,
+                    entity: this.entity
                 };
                 return btn.hidden(ctx);
             }
             return false;
         },
-        batchFieldConvert(item){
+        batchFieldConvert(item) {
             //只有创建模式才支持multiDataField属性，做转换
-            if(this.isBatchMode()&&_.includes(this.batchForm.fields,item.name)){
-                item.propName=this.getBatchFieldProp(item.name);
-                item.batchField=true;
+            if (this.isBatchMode() && _.includes(this.batchForm.fields, item.name)) {
+                item.propName = this.getBatchFieldProp(item.name);
+                item.batchField = true;
             }
         },
-        isBatchMode(){
-            if(!this.batchForm.fields){
+        isBatchMode() {
+            if (!this.batchForm.fields) {
                 return false;
             }
-            return this.isCreate&&(!_.isEmpty(this.batchForm.fields));
+            return this.isCreate && (!_.isEmpty(this.batchForm.fields));
         },
-        getBatchFieldProp(fieldName){
+        getBatchFieldProp(fieldName) {
             return `${fieldName}_multidata`;
         },
-        buildBatchModel(_initialModel){
-            var initialModel=_.cloneDeep(_initialModel);
-            var obj={};
-            _.each(this.batchForm.fields,f=>{
-                var batchFieldName=this.getBatchFieldProp(f);
-                obj[f]=cartesian.alt.apply(null,initialModel[batchFieldName]);
+        buildBatchModel(_initialModel) {
+            var initialModel = _.cloneDeep(_initialModel);
+            var obj = {};
+            _.each(this.batchForm.fields, f => {
+                var batchFieldName = this.getBatchFieldProp(f);
+                obj[f] = cartesian.alt.apply(null, initialModel[batchFieldName]);
                 delete initialModel[batchFieldName];
                 delete initialModel[f];
             });
-            var batchModel=cartesian.expand(obj);
-            _.each(batchModel,bm=>{
-                bm=_.extend(bm,initialModel);
+            var batchModel = cartesian.expand(obj);
+            _.each(batchModel, bm => {
+                bm = _.extend(bm, initialModel);
             });
             return batchModel;
         },
-        showCreateAnother(){
-            if(!this.innerToolbar){
+        showCreateAnother() {
+            if (!this.innerToolbar) {
                 return false;
             }
-            if(!this.innerToolbar.editBtns){
+            if (!this.innerToolbar.editBtns) {
                 return false;
             }
-            var has=false;
-            _.each(this.innerToolbar.editBtns,btn=>{
-                if(btn.name=="save"){
-                    has=true;
+            var has = false;
+            _.each(this.innerToolbar.editBtns, btn => {
+                if (btn.name == "save") {
+                    has = true;
                     return false;
                 }
             });
-            return this.isCreate&&has&&this.saveOpts.createAnother;
+            return this.isCreate && has && this.saveOpts.createAnother;
+        },
+        wrapBtns(btns,formStatus) {
+            var ops = {
+                beforeCreate: function (opt) {
+                    if (opt.name == "save"
+                        && formStatus == contextHelper.getMvueToolkit().utils.formActions.edit
+                        && _.isEmpty(opt.security)) {
+                        opt.security = ["edit"];
+                    }
+                    return opt;
+                }
+            }
+            if (this["entityName"]) {
+                ops["entityName"] = this["entityName"]
+            }
+            var wrapped= operationManager.batchCreate(btns, ops);
+            return wrapped;
         }
     }
 }

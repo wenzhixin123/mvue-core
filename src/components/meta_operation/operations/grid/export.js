@@ -13,6 +13,8 @@ var operation= {
     icon:"ios-download-outline",
     operationType:"common",
     btnType:"primary",
+    security:["query"],
+    entitySecurity:true,
     onclick:function(context,$optInst) {
         return impl(context,$optInst);
     }

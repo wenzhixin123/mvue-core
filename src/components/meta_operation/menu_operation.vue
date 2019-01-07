@@ -15,6 +15,7 @@
         <Card
                 dis-hover
                 v-if="show"
+                style="position: absolute; top: 40px"
         >
             <meta-operation
                     @triggered="close"
@@ -117,17 +118,18 @@
     mounted () {
       let operation = this.operation
       var _t = this //页面参
-
       mvueCore
         .resource(`mp_operation`, null, {
           root: _.trimEnd(Config.getApiBaseUrl(), '/')
         })
         .get({
           orderby: 'updatedAt desc',
+          filters: 'parentId eq ' + operation.id,
           page: 1,
           page_size: 10,
           total: true
         })
+        //parentId eq （按钮的id）
         .then(({data}) => {
           this.child_operations = data
         })

@@ -299,7 +299,7 @@ var utils={
       var promises = [];
        _.each(["beforeExecCode","afterExecCode","dynamicPageFunc","checkFunc","onClick","onclick"],(name)=>{
            var str = button[name]||"";
-           if(button[name]&&button[name].indexOf("function(context,app,resolve){")!=0){
+           if(button[name]&&button[name].indexOf("function(context,app,resolve){")!=0&&button[name].indexOf("function(context,api")!=0){
                str = `function(context,app,resolve){${button[name]}}`;
            }//button[name].replace("function()","function(context,app,resolve)");//函数插入参数
            //读取系统变量-解析实体操作的方法

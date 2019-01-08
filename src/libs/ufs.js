@@ -2,6 +2,10 @@ import ufsclient from 'ufs-client-js';
 import context from './context';
 function getStorageClient(){
     let apiServer=context.getMvueToolkit().config.getConfigVal('service.ufs.endpoint');
+    if(!_.startsWith(apiServer,'http')){
+        const baseServiceRoot=context.getMvueToolkit().config.getConfigVal('service.base.endpoint');
+        apiServer=`${baseServiceRoot}/${apiServer}`;
+    }
     let accessToken=context.getMvueToolkit().session.getToken();
     let storageClient = new ufs.StorageClient(apiServer, {
         accessToken: accessToken

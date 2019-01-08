@@ -17,14 +17,14 @@ var metabases={};
 
 /**
  * 根据项目id构建项目元数据访问的key
- * @param {*} projectId 
+ * @param {*} projectId
  */
 function mbCacheKey(projectId){
   return projectId?`${projectId}/_mb_`:`_mb_`;
 }
 /**
  * 根据传入的项目id获取项目元数据
- * @param {*} projectId 
+ * @param {*} projectId
  */
 function getMetabase(projectId){
   var cacheKey=mbCacheKey(projectId);
@@ -61,7 +61,7 @@ function currentSwagger(projectId){
 }
 /**
  * 根据项目id从远程加载项目的元数据信息
- * @param {*} projectId 
+ * @param {*} projectId
  * @param {*} forceReload 为true表示强制从远程更新元数据信息
  */
 function  initMetabase(projectId,forceReload){

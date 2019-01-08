@@ -15,6 +15,9 @@ function getStorageClient(){
 }
 function upload(file,options){
     let storageClient=getStorageClient();
+    const baseServiceRoot=context.getMvueToolkit().config.getConfigVal('service.base.endpoint');
+    options=options||{};
+    options.baseUrl=baseServiceRoot;
     return new Promise((resolve,reject)=>{
         //执行上传
         storageClient.upload({

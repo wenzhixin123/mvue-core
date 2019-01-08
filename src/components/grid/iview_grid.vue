@@ -127,6 +127,7 @@ export default {
         }
     },
     data:function(){
+        this.setXModeIfNecessary();
         var metaEntity = metabase.findMetaEntity(this.entityName);
         var qr=this.ifOneToManyGrid()?this.buildOneToManyGridQueryResource():metaEntity.dataResource();
         var saveStatusKey=this.id||`${this.$route.matched[this.$route.matched.length-1].path}-${this.entityName}`;
@@ -156,6 +157,11 @@ export default {
         this.initByMetadata();
     },
     methods:{
+        setXModeIfNecessary(){
+            if(this.xmode){
+                this.$store.commit('core/setXMode',this.xmode);
+            }
+        },
         buildOneToManyGridQueryResource(){
             let sourceMetaEntity=this.$metaBase.findMetaEntity(this.relation.sourceEntityName);
             //这里返回的是以关系命名的方法对象，而不是原始的查询对象

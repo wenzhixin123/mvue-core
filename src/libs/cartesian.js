@@ -97,5 +97,10 @@ function expand(expr) {
     return res
 }
 
-exports.alt = alt
-exports.expand = expand
+//exports.alt = alt
+//exports.expand = expand
+
+export default {
+    alt,
+    expand
+}

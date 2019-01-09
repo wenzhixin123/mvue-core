@@ -129,7 +129,7 @@ export default{
             }else {
                 let idField=_self.metaEntity.getIdField().name;
                 context = {
-                    grid: $.extend(_self, {checked: _self.selectedItems}),
+                    grid: _.extend(_self, {checked: _self.selectedItems}),
                     metaEntity: _self.metaEntity,
                     selectedIds: _self.selectedItems.map(function (obj) {
                         return obj[idField]

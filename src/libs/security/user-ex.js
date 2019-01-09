@@ -8,18 +8,20 @@ function init() {
     return checkBySession();
 }
 
-function addSignInEvent() {
+async function addSignInEvent() {
     if(context.getMvueToolkit().session.isLogin()){
         initUserPerm();
     }else{
-        context.getMvueToolkit().session.onSignIn(session => {
-            initUserPerm();
+        context.getMvueToolkit().session.onSignIn(async (session) => {
+            debugger;
+            var r= await initUserPerm();
+            console.log("1111");
         });
     }
 }
 
 function initUserPerm() {
-    sc.init().then((ops) => {
+    return sc.init().then((ops) => {
         var currentUser = context.getMvueToolkit().session.getCurrentUser();
         currentUser["hasPerm"] = function (op, metaEntity) {
             return sc.hasPerm(op, metaEntity);

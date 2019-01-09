@@ -1,12 +1,7 @@
 import ufsclient from 'ufs-client-js';
 import context from './context';
-import paths from './paths';
 function getStorageClient(){
     let apiServer=context.getMvueToolkit().config.getConfigVal('service.ufs.endpoint');
-    if(!_.startsWith(apiServer,'http')){
-        const baseServiceRoot=context.getMvueToolkit().config.getConfigVal('service.base.endpoint');
-        apiServer=paths.join(baseServiceRoot,apiServer);
-    }
     let accessToken=context.getMvueToolkit().session.getToken();
     let storageClient = new ufs.StorageClient(apiServer, {
         accessToken: accessToken
@@ -15,9 +10,7 @@ function getStorageClient(){
 }
 function upload(file,options){
     let storageClient=getStorageClient();
-    const baseServiceRoot=context.getMvueToolkit().config.getConfigVal('service.base.endpoint');
     options=options||{};
-    options.baseUrl=baseServiceRoot;
     return new Promise((resolve,reject)=>{
         //执行上传
         storageClient.upload({
@@ -39,10 +32,6 @@ function getDownloadUrl(fileId,fileName){
     }
     return new Promise((resolve,reject)=>{
         storageClient.urlFor(params).then(urlInfo => {
-            if(!_.startsWith(urlInfo.url,'http')){
-                const baseServiceRoot=context.getMvueToolkit().config.getConfigVal('service.base.endpoint');
-                urlInfo.url=paths.join(baseServiceRoot,urlInfo.url);
-            }
             resolve(urlInfo);
         },(err)=>{
             reject(err);

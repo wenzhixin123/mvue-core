@@ -102,6 +102,9 @@ export default {
             if(btnOpts==null){
                 btnOpts={name:"edit"};
             }
+            if(context.grid){
+              btnOpts.entityName=context.grid.metaEntity.name;
+            }
             var oper=gridOperations.create(btnOpts);
 
             return h("m-grid-link-title", {

@@ -283,4 +283,4 @@ var linkplugin = {
     //本地编辑文件
     localEditFile: localEditFile
 }
-module.exports = linkplugin;
+export default linkplugin;

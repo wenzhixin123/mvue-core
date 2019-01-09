@@ -43,7 +43,7 @@ function checkBySession() {
         }
         return context.getMvueToolkit().http.get(getUserInfoUrl()).then(({data})=>{
             if(data.id!="anonymous"){
-                context.getMvueToolkit().session.doSignIn({user:data});
+                context.getMvueToolkit().session.doSignIn({user:data,expiresIn:36000});
             }
             return data;
         });

@@ -8,14 +8,12 @@ function init() {
     return checkBySession();
 }
 
-async function addSignInEvent() {
+function addSignInEvent() {
     if(context.getMvueToolkit().session.isLogin()){
-        initUserPerm();
+        return initUserPerm();
     }else{
-        context.getMvueToolkit().session.onSignIn(async (session) => {
-            debugger;
-            var r= await initUserPerm();
-            console.log("1111");
+        context.getMvueToolkit().session.onSignIn((session) => {
+            return initUserPerm();
         });
     }
 }

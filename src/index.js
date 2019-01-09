@@ -10,6 +10,7 @@ function installGridAndForm(Vue){
     Vue.component('meta-grid',require("./components/grid/iview_grid.vue"));
     Vue.component('meta-operation',require("./components/meta_operation/operation"));
     Vue.component('meta-advance-search',require("./components/grid/advance_search"));
+    Vue.component('meta-quick-search',require("./components/grid/quick_search"));
 
     Vue.component('MetaSingleLineText',require('./components/form/control_tmpl/single_line_text')),
     Vue.component('MetaMultiLineText',require('./components/form/control_tmpl/multi_line_text')),

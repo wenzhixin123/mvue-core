@@ -8,13 +8,14 @@ function getStorageClient(){
     });
     return storageClient;
 }
-function upload(file){
+function upload(file,options){
     let storageClient=getStorageClient();
+    options=options||{};
     return new Promise((resolve,reject)=>{
         //执行上传
         storageClient.upload({
             file: file
-        }).then((data) => {
+        },options).then((data) => {
             resolve(data);
         }).catch((err) => {
             reject(err);

@@ -1,7 +1,7 @@
 <template>
     <div>
         <!--直接跳转-->
-        <div @click.stop.prevent="gotoPage" v-if="!operation.isPopup">
+        <div @click.stop.prevent="gotoPage" v-if="!operation.openType">
             <slot>
                 <Button type="primary" size="small"
                         :title="operation.title" >
@@ -12,8 +12,8 @@
         </div>
 
 
-        <!--打开新窗口模式-->
-        <div @click.stop.prevent="toggleModal" v-if="operation.isPopup">
+        <!--弹窗模式-->
+        <div @click.stop.prevent="toggleModal" v-if="operation.openType">
             <slot>
                 <Button type="primary" size="small"
                         :title="operation.title" >
@@ -22,7 +22,7 @@
                 </Button>
             </slot>
         </div>
-        <Modal v-if="operation.isPopup" class="popup-widget-con" v-model="popupWidgetModal"
+        <Modal v-if="operation.openType" class="popup-widget-con" v-model="popupWidgetModal"
                :width="modalWidth"
                :title="modalTitle"
                :scrollable="true"
@@ -55,6 +55,13 @@ export default {
                 content:"page参数缺失"
             });
         }*/
+        if(this.operation.displayRegion){
+            if(typeof this.operation.displayRegion=="string"){
+                this.operation.displayRegion = JSON.parse(this.operation.displayRegion)
+            }
+            this.operation.modalWidth = this.operation.displayRegion.width;
+            this.operation.modalHeight = this.operation.displayRegion.height;
+        }
         return {
             modalWidth:this.operation.modalWidth||500,
             modalHeight:this.operation.modalHeight||340,

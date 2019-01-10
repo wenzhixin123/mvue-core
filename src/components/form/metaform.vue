@@ -479,11 +479,13 @@
                 let _model={};
                 let _this=this;
                 _.each(_this.entity,function(v,k){
-                    let metaField=_this.metaEntity.findField(k);
-                    if(metaField&&metaField.readonly){
-                        //readonly字段不提交
-                    }else{
-                        _model[k]=v;
+                    if(v!==null){
+                        let metaField=_this.metaEntity.findField(k);
+                        if(metaField&&metaField.readonly){
+                            //readonly字段不提交
+                        }else{
+                            _model[k]=v;
+                        }
                     }
                 });
                 return _model;

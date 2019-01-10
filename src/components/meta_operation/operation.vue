@@ -101,6 +101,12 @@ export default {
       required: true
     }
   },
+  watch:{
+    "widgetContext"(val){
+      //处理弹窗类型的页面加载模式,按钮不会触发校验
+      this.showOperation();
+    }
+  },
   created() {
     let _t = this;
     _t.operation.show = false;

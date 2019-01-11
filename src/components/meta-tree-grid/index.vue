@@ -98,7 +98,7 @@
                         entityName:'',//定义分类的数据来源实体名
                         url:'',//和entityName二选一
                         fieldName:'',//用来过滤树数据的字段，来源于treeSettings定义的entityName实体的字段，用于树数据的分类过滤
-                        idField:'',//可指定树分类的key字段
+                        valField:'',//可指定树分类的key字段
                         titleField:'',//可指定树分类的显示字段,
                         searchFields:[], //树分类的搜索字段
                         placeholder:'请输入关键字搜索'
@@ -131,6 +131,9 @@
         methods:{
             processSettings:function () {
                 //对setting进行预处理
+                if(_.isUndefined(this.treeSettings.options)){
+                    this.treeSettings.options={};
+                }
                 var defaultTreeSetting=treeService.build(this.treeSettings.entityName,this.treeSettings.options);
                 this.realTreeSettings=defaultTreeSetting;
             },
@@ -164,10 +167,14 @@
                     if(this.category.entityName){//通过实体名构造数据源
                         let metaEntity=this.$metaBase.findMetaEntity(this.category.entityName);
                         if(metaEntity){
-                            this.category.idField=metaEntity.getIdField().name;
+                            if(_.isEmpty(this.category.valField)){
+                                this.category.valField=metaEntity.getIdField().name;
+                            }
                             let tf=metaEntity.firstTitleField();
                             if(tf){
-                                this.category.titleField=tf.name;
+                                if(_.isEmpty(this.category.titleField)){
+                                    this.category.titleField=tf.name;
+                                }
                                 if(this.category.searchFields.length==0 && tf.filterable){
                                     this.category.searchFields.push(tf.name);
                                 }
@@ -198,8 +205,8 @@
             },
             getIdField(){
                 if(this.category){
-                    if(this.category.idField){
-                        return this.category.idField;
+                    if(this.category.valField){
+                        return this.category.valField;
                     }
                 }
                 return "id";

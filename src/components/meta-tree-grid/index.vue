@@ -131,6 +131,9 @@
         methods:{
             processSettings:function () {
                 //对setting进行预处理
+                if(_.isUndefined(this.treeSettings.options)){
+                    this.treeSettings.options={};
+                }
                 var defaultTreeSetting=treeService.build(this.treeSettings.entityName,this.treeSettings.options);
                 this.realTreeSettings=defaultTreeSetting;
             },

@@ -37,7 +37,7 @@
                             <DropdownMenu slot="list">
                                 <DropdownItem v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index>=1" :name="index" :key="index">
                                     <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
-                                        <Button :key="index"
+                                        <Button style="min-width:100px" :key="index"
                                                 type="text"  :icon="toolbarBtn.icon"
                                         >{{toolbarBtn.title}}</Button>
                                     </meta-operation>
@@ -626,19 +626,19 @@ export default {
                     }
                 }else if(operation.onclick){//脚本操作
                     if(_.isFunction(operation.onclick)){
-                        operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApi);
+                        operation.onclick(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApp);
                     }else{
                         var onclick=Function('"use strict";return ' + operation.onclick  )();
-                        onclick(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApi);
+                        onclick(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApp);
                     }
                 }else if(operation.operationType=="execOperation"){//脚本操作
                     function cellExecScript(){
                         OperationUtils.execution(operation,_widgetCtx,"beforeExecCode").then((res)=>{
                             if(_.isFunction(_t.implCode)){
-                                _t.implCode(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApi);
+                                _t.implCode(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApp);
                             }else{
                                 var onclick=Function('"use strict";return ' + _t.implCode  )();
-                                onclick(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApi);
+                                onclick(Object.assign(_widgetCtx,operation),{operation:operation},window.factoryApp);
                             }
                             OperationUtils.execution(operation,_widgetCtx,"afterExecCode")//执行后
                         });

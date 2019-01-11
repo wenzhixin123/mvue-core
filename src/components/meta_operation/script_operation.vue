@@ -43,7 +43,7 @@
           var _widgetCtx = Object.assign(this.widgetContext, {'buttonInfo': this.operation})
           if (_.isFunction(this.operation.onclick)) {
             this.mustStopRepeatedClick = true
-            this.operation.onclick(_widgetCtx, window.factoryApi)
+            this.operation.onclick(_widgetCtx, window.factoryApp)
           } else {
             this.mustStopRepeatedClick = true
             _t.cellExecScript()
@@ -73,11 +73,11 @@
         try{
             if (_.isFunction(fun)) {
               this.mustStopRepeatedClick = true
-              fun(_widgetCtx, window.factoryApi);
+              fun(_widgetCtx, window.factoryApp);
             } else {
               this.mustStopRepeatedClick = true
               var onclick = Function('"use strict";return ' + fun)()
-              onclick(_widgetCtx, window.factoryApi);
+              onclick(_widgetCtx, window.factoryApp);
             }
           }catch(e){
             this.$Modal.error({

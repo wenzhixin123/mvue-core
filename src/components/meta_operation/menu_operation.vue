@@ -74,11 +74,11 @@
           var _widgetCtx = Object.assign(this.widgetContext, {'buttonInfo': this.operation})
           if (_.isFunction(this.operation.onclick)) {
             this.mustStopRepeatedClick = true
-            this.operation.onclick(_widgetCtx, window.factoryApi)
+            this.operation.onclick(_widgetCtx, window.factoryApp)
           } else {
             this.mustStopRepeatedClick = true
             var onclick = Function('"use strict";return ' + this.operation.onclick)()
-            onclick(_widgetCtx, window.factoryApi)
+            onclick(_widgetCtx, window.factoryApp)
           }
           this.mustStopRepeatedClick = false
           this.$emit('triggered', 'menu')
@@ -103,11 +103,11 @@
           //所有跳转都带入dataId数据id,entity实体id
           if (_.isFunction(this.implCode)) {
             this.mustStopRepeatedClick = true
-            this.implCode(_widgetCtx, window.factoryApi)
+            this.implCode(_widgetCtx, window.factoryApp)
           } else {
             this.mustStopRepeatedClick = true
             var onclick = Function('"use strict";return ' + this.implCode)()
-            onclick(_widgetCtx, window.factoryApi)
+            onclick(_widgetCtx, window.factoryApp)
           }
           this.mustStopRepeatedClick = false
           this.$emit('triggered', 'menu')

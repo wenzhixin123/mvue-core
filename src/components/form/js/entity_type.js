@@ -9,7 +9,12 @@ var types={
         id: "MultiRefEntity", 
         title: "多选引用实体", 
         icon:"ivu-icon ivu-icon-pound"
-    }
+    },
+    ParentSelect:{ 
+        id: "ParentSelect", 
+        title: "父选择器", 
+        icon:"ivu-icon ivu-icon-pound"
+    },
 };
 var componentParams={
     RefEntity:{
@@ -21,6 +26,14 @@ var componentParams={
         entityResourceUrl:""//后端自动生成
     },
     MultiRefEntity:{
+        entityId:"",//必填
+        idField:"",//必填
+        titleField:"",//必填
+        orderbyField:"",//排序字段
+        orderbyType:"asc",//排序规则
+        entityResourceUrl:""//后端自动生成
+    },
+    ParentSelect:{
         entityId:"",//必填
         idField:"",//必填
         titleField:"",//必填

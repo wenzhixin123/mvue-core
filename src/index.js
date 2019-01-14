@@ -53,8 +53,11 @@ import SingleOrgSelect from './components/form/control_tmpl/single_org_select';
 import MultiUserSelect from './components/form/control_tmpl/multi_user_select';
 import MultiOrgSelect from './components/form/control_tmpl/multi_org_select';
 import CascadeSelect from './components/form/control_tmpl/cascade_select';
+
 import RefEntity from './components/form/control_tmpl/ref_entity';
 import MultiRefEntity from './components/form/control_tmpl/multi_ref_entity';
+import ParentSelect from './components/form/control_tmpl/parent-select/index';
+
 import Boolean from './components/form/control_tmpl/boolean';
 import IssuedNumber from './components/form/control_tmpl/issued_number';
 import BitCode from './components/form/control_tmpl/bit-code';
@@ -105,6 +108,7 @@ const formComponents={
     CascadeSelect,
     RefEntity,
     MultiRefEntity,
+    ParentSelect,
     Boolean,
     IssuedNumber,
     BitCode,

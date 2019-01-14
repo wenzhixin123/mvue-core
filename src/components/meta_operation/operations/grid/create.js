@@ -6,7 +6,7 @@ import  gridUtils from "../utils";
 var operation= {
     name: "create",
     title: "添加",
-    icon: "plus",
+    icon: "md-add",
     to:null,
     operationType:"common",
     btnType:"primary",

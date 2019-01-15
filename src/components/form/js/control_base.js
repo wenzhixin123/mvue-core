@@ -46,6 +46,12 @@ export default {
         };
     },
     mounted:function(){
+        //如果控件指定需要focus的input，focus到ref=focusInput的输入框
+        if(this.formItem.componentParams.autofocus){
+            this.$nextTick(()=>{
+                this.$refs.focusInput&&this.$refs.focusInput.focus();
+            });
+        }
         //设计模式不作处理
         if(this.design){
             return;

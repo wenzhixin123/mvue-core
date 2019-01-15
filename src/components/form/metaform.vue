@@ -112,14 +112,15 @@
                 if(this.pageTitleTmpl){
                     let func= new Function('entity',`return \`${this.pageTitleTmpl}\``);
                     title=func(this.entity);
-                }else{
-                    let titleField=this.metaEntity.firstTitleField().name;
-                    if(this.isCreate){
-                        title=`新建${this.metaEntity.title}`;
-                    }else if(this.isEdit){
-                        title=`编辑${this.metaEntity.title}-${this.entity[titleField]}`;
-                    }else{
-                        title=`查看${this.metaEntity.title}-${this.entity[titleField]}`;
+                }else {
+                    let titleField = this.metaEntity.firstTitleField();
+                    let recordTitle=titleField==null?"":`-${this.entity[titleField.name]}`;
+                    if (this.isCreate) {
+                        title = `新建${this.metaEntity.title}`;
+                    } else if (this.isEdit) {
+                        title = `编辑${this.metaEntity.title}${recordTitle}`;
+                    } else {
+                        title = `查看${this.metaEntity.title}${recordTitle}`;
                     }
                 }
                 this.$store.commit('core/setPageTitle',{title:title,sourceId:this.id});

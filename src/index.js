@@ -23,6 +23,7 @@ import page from './components/meta-page/index';
 import mfield from './components/form/metafield';
 import mform from './components/form/metaform';
 import mExpand from './components/form/control_tmpl/expand/index';
+import detailView from "./components/detail-view/index";
 
 import Description from './components/form/control_tmpl/description';
 import DivisionLine from './components/form/control_tmpl/division_line';
@@ -161,7 +162,8 @@ const mComponents={
     'm-layout':layout,
     'm-page':page,
     'm-simple-tree':simpleTree,
-    'm-expand':mExpand
+    'm-expand':mExpand,
+    'm-detail-view':detailView
 };
 const allComponents=_.extend({},gridInnerComponents,oldFasionComponents,mComponents);
 //全局组件样式在这里引入，避免在内部重复引用

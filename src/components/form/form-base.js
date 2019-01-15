@@ -36,18 +36,6 @@ export default {
         onSaved:{
             type:Function
         },
-        permissions:{//控制按钮的权限
-            type:Object,
-            require:false,
-            default:function(){
-                return {
-                    openEdit:false,//开启编辑按钮权限
-                    edit:true,//修改或者保存按钮权限
-                    del:true,//删除按钮权限
-                    cancel:true//取消按钮
-                };
-            }
-        },
         transfer: {
             type: Boolean,
             default: false
@@ -118,7 +106,6 @@ export default {
             entityId:entityId,
             isMetaForm:true,
             openEditClicked:false,
-            innerPermissions:_.cloneDeep(this.permissions),
             isSavingToServer:false,//表示是否正在保存数据到服务器，用来处理保存时触发重复提交数据
             formActions:contextHelper.getMvueToolkit().utils.formActions,
             preprocessed: false,
@@ -162,14 +149,6 @@ export default {
                 return 80;
             }
             return this.labelWidth;
-        }
-    },
-    watch:{
-        permissions:{
-            handler:function(){
-                this.innerPermissions=_.cloneDeep(this.permissions);
-            },
-            deep:true
         }
     },
     methods: {
@@ -451,19 +430,7 @@ export default {
             if (this.toolbar && _.isEmpty(this.toolbar.editBtns) && !this.isView) {
                 return false;
             }
-            if (this.innerPermissions.cancel) {
-                return true;
-            }
-            if (this.innerPermissions.openEdit && this.isView) {
-                return true;
-            }
-            if (!this.entityId || (this.innerPermissions.edit && !this.isView)) {
-                return true;
-            }
-            if (this.entityId && this.innerPermissions.del && !this.isView) {
-                return true;
-            }
-            return false;
+            return true;
         },
         //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据
         ignoreReadonlyFields() {

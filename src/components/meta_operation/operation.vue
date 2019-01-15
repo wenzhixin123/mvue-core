@@ -1,8 +1,9 @@
 <template>
-    <div class="widget-operation div-inline-block" >
-        <component v-if="showOperation" @triggered="triggered" @successed="successed" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
+    <div class="widget-operation div-inline-block"  >
+        <component v-if="hasPermission"  @triggered="triggered" @successed="successed" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
             <slot :operation="extendedOperation"></slot>
         </component>
+        <slot v-else name="onDeny"></slot>
     </div>
 </template>
 <script>
@@ -15,34 +16,6 @@ import context from '../../libs/context';
 import sc from '../../libs/security/permission';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
-var permParser={
-    //来自表单的取消、开启编辑、编辑、删除权限
-    "formCancel":function(widgetContext){
-        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.cancel;
-    },
-    "formOpenEdit":function(widgetContext){
-        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.openEdit;
-    },
-    "formEdit":function(widgetContext){
-        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.edit;
-    },
-    "formDel":function(widgetContext){
-        return widgetContext.form&&widgetContext.form.innerPermissions&&widgetContext.form.innerPermissions.del&&widgetContext.form.entityId;
-    },
-    //来自当前数据的查看、编辑、删除权限
-    "selectedItemView":function(widgetContext){
-        let _utils=context.getMvueToolkit().utils;
-        return widgetContext.selectedItem&&_utils.hasPerm(widgetContext.selectedItem[_utils.dataPermField],_utils.permValues.view);
-    },
-    "selectedItemEdit":function(widgetContext){
-        let _utils=context.getMvueToolkit().utils;
-        return widgetContext.selectedItem&&_utils.hasPerm(widgetContext.selectedItem[_utils.dataPermField],_utils.permValues.edit);
-    },
-    "selectedItemDel":function(widgetContext){
-        let _utils=context.getMvueToolkit().utils;
-        return widgetContext.selectedItem&&_utils.hasPerm(widgetContext.selectedItem[_utils.dataPermField],_utils.permValues.del);
-    }
-};
 //将不同的部件操作类型转成实际的操作
 export default {
     mixins:[getParent],
@@ -82,39 +55,14 @@ export default {
             });
             return _.extend(this.widgetContext,params);
         },
-        showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
+        hasPermission:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
             var operation=OperationUtils.expandOperation(this.operation,this);
-            var optPermValue=operation[OperationUtils.operationDisplayField];
-            if(_.isEmpty(optPermValue)){
-                optPermValue=operation.security;
-            }
+            var optPermValue=operation.security;
             if(_.isEmpty(optPermValue)){
                 return true;
             }
-            var ctx={
-                ctx: this.widgetContext,
-                opt:operation
-            }
-            if(_.isArray(optPermValue)){
-                return sc.hasPerm(optPermValue);
-            }else if(_.isString(optPermValue)){
-                if(_.startsWith(optPermValue,'${')){
-                    var compiled = _.template(optPermValue);
-                    var hasPerm = compiled(ctx);
-                    if (hasPerm === "true") {
-                        return true;
-                    }
-                }
-            }else if(_.isPlainObject(optPermValue)){
-                var from=optPermValue.from;
-                if(from){
-                    var permParse=permParser[from];
-                    if(permParse){
-                        return !!permParse(this.widgetContext);
-                    }
-                }
-            }
-            return false;
+            var hasPermission=this.chkPermission(operation,this.widgetContext);
+            return hasPermission;
         }
     },
     data(){
@@ -126,6 +74,51 @@ export default {
         },
         successed(optType){
             this.$emit("successed",optType);
+        },
+        chkPermission(opt,ctx){
+            var hasPermission=false;
+            var optNeedPerm=opt.security;
+            if(_.isEmpty(optNeedPerm)){
+                hasPermission=true;
+                return hasPermission;
+            }
+            if(!_.isArray(optNeedPerm)){
+                optNeedPerm=[optNeedPerm];
+            }
+            //hasPermission
+            if(_.has(ctx,"hasPermission")){
+                var reVal=ctx.hasPermission(opt,ctx);
+                if(reVal!=null){
+                    return reVal;
+                }
+            }
+            var selectedItem=ctx.selectedItem;
+            if(selectedItem && selectedItem["__ops__"]){
+                //进行行级数据权限判断
+                var itemPermOps=selectedItem["__ops__"];
+                var matched=true;
+                _.forEach(optNeedPerm,(needPerm)=>{
+                    var opMatch=false;
+                    if(needPerm.indexOf(":")>0){
+                        needPerm=needPerm.substring(needPerm.indexOf(":")+1);
+                    }
+                    _.forEach(itemPermOps,(permOp)=>{
+                        if(needPerm.toLowerCase()==permOp.toLowerCase()){
+                            opMatch=true;
+                            return false;
+                        }
+                    });
+                    if(!opMatch){
+                        matched=false;
+                        return false;
+                    }
+                });
+                hasPermission=matched;
+            }else{
+                //功能级权限数据判断
+                hasPermission=sc.hasPerm(optNeedPerm);
+            }
+            return hasPermission;
         }
     },
     components:{

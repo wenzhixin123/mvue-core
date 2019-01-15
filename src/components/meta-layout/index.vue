@@ -24,7 +24,7 @@
 export default {
     name:"meta-layout",
     props:{
-        layout:{//settings的length代表行，每个元素的length待办列，和二维数组对应
+        layout:{//settings的length代表行，每个元素的length代表列，和二维数组对应
             type:[Array],
             required:true
         },

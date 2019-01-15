@@ -2,13 +2,14 @@ import tabs from './components/tabs/index';
 import section from './components/section/index';
 import text from './components/text/index';
 
-import gridRenderHtml from './components/grid/render_html';
-import gridOperationBtn from './components/grid/operation_btn';
-import gridImgTitle from './components/grid/img_title';
-import gridOptsTitle from './components/grid/opts_title';
-import gridLinkTitle from './components/grid/link_title';
-import gridPictures from './components/grid/pictures';
-import gridFiles from './components/grid/files';
+import gridRenderHtml from './components/grid/column-render/render_html';
+import gridOperationBtn from './components/grid/column-render/operation_btn';
+import gridImgTitle from './components/grid/column-render/img_title';
+import gridOptsTitle from './components/grid/column-render/opts_title';
+import gridLinkTitle from './components/grid/column-render/link_title';
+import gridPictures from './components/grid/column-render/pictures';
+import gridFiles from './components/grid/column-render/files';
+import gridPassword from './components/grid/column-render/password';
 import gridImportData from './components/grid/import_data.vue';
 
 import operation from './components/meta_operation/operation';
@@ -127,6 +128,7 @@ const gridInnerComponents={
     'm-grid-link-title':gridLinkTitle,
     'm-grid-pictures':gridPictures,
     'm-grid-files':gridFiles,
+    'm-grid-password':gridPassword,
     'm-grid-import-data':gridImportData,
     'meta-operation':operation,
     'm-operation':operation

@@ -16,6 +16,21 @@ function goto(router) {
 
 export default {
   /**
+   * 密文控件
+   * @param metaField
+   * @returns {Function}
+   */
+  renderForPassword: function (context, metaField) {
+    return function (h, params) {
+      var value = controlTypeService.formatData(params.row, metaField);
+      return h("m-grid-password", {
+        props: {
+          value:value
+        }
+      });
+    }
+  },
+  /**
    * 图片上传控件
    * @param metaField
    * @returns {Function}

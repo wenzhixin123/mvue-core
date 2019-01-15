@@ -12,7 +12,7 @@
 </div>
 </template>
 <script>
-import context from '../../libs/context';
+import context from '../../../libs/context';
 export default {
   props:{
     btns:{

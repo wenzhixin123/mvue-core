@@ -44,6 +44,7 @@ export default {
                     }
                     //如果初始值等于当前节点id，停止加载此节点下的所有数据
                     if(this.recordId&&item[this.valueKey]==this.recordId){
+                        treeItem.disabled=true;
                         delete treeItem.expand;
                         delete treeItem.loading;
                         delete treeItem.children;

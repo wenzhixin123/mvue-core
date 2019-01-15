@@ -219,7 +219,7 @@
                 }
                 return "name";
             },
-            onCategoryChange(){
+            onCategoryChange(value,id){
                 if(!this.treeSettings.options.queryOptions){
                     this.treeSettings.options.queryOptions={};
                 }
@@ -236,9 +236,11 @@
                 }else{
                     _treeSettings.options.queryOptions.filters=this.oldTreeFilters;
                 }
-                var defaultTreeSetting=treeService.build(this.treeSettings.entityName,_treeSettings);
+                var defaultTreeSetting=treeService.build(this.treeSettings.entityName,_treeSettings.options);
                 this.realTreeSettings=defaultTreeSetting;
-                this.$refs.categoryTree.buildRoot();
+                this.$nextTick(()=>{
+                    this.$refs.categoryTree.buildRoot();
+                });
             }
         },
         components:{

@@ -4,7 +4,7 @@
     </div>
 </template>
 <script>
-import fileUtils from '../form/control_tmpl/upload/files';
+import fileUtils from '../../form/control_tmpl/upload/files';
 export default {
     props:{
         params:{

@@ -219,25 +219,28 @@
                 }
                 return "name";
             },
-            onCategoryChange(){
+            onCategoryChange(value,id){
                 if(!this.treeSettings.options.queryOptions){
                     this.treeSettings.options.queryOptions={};
                 }
                 //附加分类的条件
+                let _treeSettings=_.cloneDeep(this.treeSettings);
                 if(this.selectedItem&&this.category.fieldName){
                     let id=this.selectedItem[this.getIdField()];
                     let categoryFilter=`${this.category.fieldName} eq '${id}'`;
                     if(this.oldTreeFilters){
-                        this.treeSettings.options.queryOptions.filters=`${this.oldTreeFilters} and ${categoryFilter}`;
+                        _treeSettings.options.queryOptions.filters=`${this.oldTreeFilters} and ${categoryFilter}`;
                     }else{
-                        this.treeSettings.options.queryOptions.filters=categoryFilter;
+                        _treeSettings.options.queryOptions.filters=categoryFilter;
                     }
                 }else{
-                    this.treeSettings.options.queryOptions.filters=this.oldTreeFilters;
+                    _treeSettings.options.queryOptions.filters=this.oldTreeFilters;
                 }
-                var defaultTreeSetting=treeService.build(this.treeSettings.entityName,this.treeSettings.options);
+                var defaultTreeSetting=treeService.build(this.treeSettings.entityName,_treeSettings.options);
                 this.realTreeSettings=defaultTreeSetting;
-                this.$refs.categoryTree.buildRoot();
+                this.$nextTick(()=>{
+                    this.$refs.categoryTree.buildRoot();
+                });
             }
         },
         components:{

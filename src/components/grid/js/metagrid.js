@@ -67,6 +67,8 @@ function metaFieldToCol(context,metaField,initialCol) {
       col.render = renderManager.renderForPictureUpload(context,metaField);
     } else if (controlTypeService.isFileUpload(metaField.inputType)) {
       col.render = renderManager.renderForFileUpload(context,metaField);
+    } else if(controlTypeService.isPassword(metaField.inputType)) {
+      col.render = renderManager.renderForPassword(context,metaField);
     } else {
       col.render = renderManager.renderForCommon(context,metaField,initialCol);
     }

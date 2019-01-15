@@ -10,7 +10,7 @@
     </meta-operation>
 </template>
 <script>
-import controlTypeService from '../form/js/control_type_service';
+import controlTypeService from '../../form/js/control_type_service';
 export default {
     props:{
         params:{

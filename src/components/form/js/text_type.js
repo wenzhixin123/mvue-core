@@ -59,10 +59,20 @@ function accept(componentType){
 function isSingleLineText(componentType){
     return textTypes.SingleLineText.id===componentType;
 }
+//判断是否多行文本
+function isMultiLineText(componentType){
+    return textTypes.MultiLineText.id===componentType;
+}
+//判断是否密文
+function isPassword(componentType){
+    return textTypes.Password.id===componentType;
+}
 
 export default{
     types:textTypes,
     componentParams:componentParams,
     accept:accept,
-    isSingleLineText:isSingleLineText
+    isSingleLineText:isSingleLineText,
+    isMultiLineText,
+    isPassword
 }

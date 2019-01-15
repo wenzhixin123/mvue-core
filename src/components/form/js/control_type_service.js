@@ -354,6 +354,7 @@ export default{
     cloneFormItem:cloneFormItem,
     isText:textType.accept,
     isSingleLineText:textType.isSingleLineText,
+    isPassword:textType.isPassword,
     isOptions:optionsType.accept,
     isSingleOption:optionsType.isSingleOption,
     isSingleSelect:optionsType.isSingleSelect,

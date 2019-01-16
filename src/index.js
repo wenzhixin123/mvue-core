@@ -208,6 +208,22 @@ let MvueCore={
     },
     initAfterAppStarted:(appCtx)=>{
         context.initAfterAppStarted(appCtx);
+    },
+    addRouterInterceptor:(router,{appCtx})=>{
+        if(router&&appCtx&&appCtx.getStore){
+            router.beforeEach(function(to, from, next) {
+                let store=appCtx.getStore();
+                if(store){
+                    //每次进到路由时先清空当前路由的状态数据
+                    store.commit('core/clearCurrentRouteData');
+                    //对url参数x_mode作处理
+                    if(to.query.x_access_mode){
+                        store.commit('core/setXAccessMode',to.query.x_access_mode);
+                    }
+                }
+                next();
+            });
+        }
     }
 };
 

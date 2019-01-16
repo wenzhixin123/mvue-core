@@ -63,13 +63,6 @@ export default {
         initWebContext(window.location);
     },
     setRouter(router) {
-        //每次进到路由时先清空当前路由的状态数据
-        router.beforeEach(function(to, from, next) {
-            if(cachedContext.store){
-                cachedContext.store.commit('core/clearCurrentRouteData');
-            }
-            next();
-        });
         cachedContext.router = router;
     },
     setVue(vue){

@@ -237,9 +237,13 @@ export default {
         if(appCtx.getMvueToolkit&&appCtx.getStore){
             //设置页面所有请求的权限模式header
             appCtx.getMvueToolkit().http.interceptors.request.use(config=>{
-                let xmode=appCtx.getStore().state.core.xmode;
-                if(xmode){
-                    config.headers['x-security-mode']=xmode;
+                let xAccessMode=appCtx.getStore().state.core.xAccessMode;
+                if(xAccessMode){
+                    config.headers['x-access-mode']=xAccessMode;
+                }
+                let xTopEntityRow=appCtx.getStore().state.core.xTopEntityRow;
+                if(xTopEntityRow){
+                    config.headers['x-top-entity-row']=xTopEntityRow;
                 }
                 return config;
             },error=>{

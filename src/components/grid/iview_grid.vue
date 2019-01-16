@@ -124,10 +124,14 @@ export default {
         maxColumnsSize:{//默认生成列时，列表最多显示的列数
             type:Number,
             required:false
+        },
+        createParams:{//grid创建操作可使用的外部指定的查询参数，由m-tree-grid传入，create操作使用
+            type:Object,
+            required:false
         }
     },
     data:function(){
-        this.setXModeIfNecessary();
+        this.setXAccessModeIfNecessary();
         var metaEntity = metabase.findMetaEntity(this.entityName);
         var qr=this.ifOneToManyGrid()?this.buildOneToManyGridQueryResource():metaEntity.dataResource();
         var saveStatusKey=this.id||`${this.$route.matched[this.$route.matched.length-1].path}-${this.entityName}`;
@@ -157,9 +161,9 @@ export default {
         this.initByMetadata();
     },
     methods:{
-        setXModeIfNecessary(){
-            if(this.xmode){
-                this.$store.commit('core/setXMode',this.xmode);
+        setXAccessModeIfNecessary(){
+            if(this.xAccessMode){
+                this.$store.commit('core/setXAccessMode',this.xAccessMode);
             }
         },
         buildOneToManyGridQueryResource(){

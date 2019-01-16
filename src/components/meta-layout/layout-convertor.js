@@ -13,6 +13,10 @@ function parseProps(layout,curInst){
         if(curInst&&curInst.operation&&curInst.operation.name=="create"&&isMForm){
             lyt.recordId=null;
         }
+        //m-tree-grid组件附加的表单参数
+        if(isMForm&&curInst.widgetContext.grid&&curInst.widgetContext.grid.createParams){
+            lyt.createParams=_.cloneDeep(curInst.widgetContext.grid.createParams);
+        }
     });
 }
 import attachPropsProcessor from './attach-props-processor';

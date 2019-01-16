@@ -56,6 +56,10 @@
             relationField:{//由关系列表关系设置的过滤字段名，如果有多个字段对同一个目标实体有多对一关系，需要设置这个字段明确是哪一个
                 type:String,
                 required:false
+            },
+            createParams:{//由弹出部件操作设置的创建时查询参数
+                type:Object,
+                required:false
             }
         },
         data:function(){

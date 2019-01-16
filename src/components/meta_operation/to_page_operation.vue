@@ -105,7 +105,10 @@ export default {
                 var _params=_.extend({pageId:pageId,byOperation:false}/*,_t.operation.pathParams*/);
                 OperationUtils.setUrlParam(this.operation,this);//按钮输入参数处理
                 OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode",this)//执行后
-                router.push({name:"defaultPageIndex"/*,query:_query*/,params:_params});
+
+                router.push({name:"defaultPageIndex"/*,query:_query*/,params:_params,query:{
+                    _t:(new Date().getTime())
+                }});
                 _t.$emit("triggered","toPage");
             })
         },

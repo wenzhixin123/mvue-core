@@ -287,7 +287,9 @@ var utils={
                     }
                 }else{
                     var queryParam=_.extend({pageId:pageId,byOperation:byOperation}/*,getIdFromContext()*/);
-                    router.push({name:"defaultPageIndex",query:this.pageParams,params:queryParam});
+                    router.push({name:"defaultPageIndex",query:this.pageParams,params:queryParam,query:{
+                        _t:(new Date().getTime())
+                    }});
                 }
             });
         }

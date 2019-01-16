@@ -1,19 +1,20 @@
 <template>
     <div>
-        <slot>
-            <Button
-                    @click.stop="changeWindowState"
-                    type="primary"
-                    size="small"
-                    :title="operation.title"
-            >
-                <Icon :type="operation.icon"></Icon>
-                {{operation.title}}
-            </Button>
-        </slot>
+        <div @click.stop="changeWindowState">
+            <slot>
+                <Button
+                        type="primary"
+                        size="small"
+                        :title="operation.title"
+                >
+                    <Icon :type="operation.icon"></Icon>
+                    {{operation.title}}
+                </Button>
+            </slot>
+        </div>
 
         <Card
-                dis-hover
+                dis-hoverf
                 v-if="show"
                 style="position: absolute; top: 40px"
         >
@@ -44,6 +45,11 @@
         //操作的定义，必传参数
         type: Object,
         required: true
+      },
+      operations: {
+        //操作的定义，必传参数
+        type: Object,
+        required: false
       }
     },
     data () {
@@ -116,43 +122,26 @@
       }
     },
     mounted () {
-      let operation = this.operation
-      var _t = this //页面参
-      mvueCore
-        .resource(`mp_operation`, null, {
-          root: _.trimEnd(Config.getApiBaseUrl(), '/')
-        })
-        .get({
-          orderby: 'updatedAt desc',
-          filters: 'parentId eq ' + operation.id,
-          page: 1,
-          page_size: 10,
-          total: true
-        })
-        //parentId eq （按钮的id）
-        .then(({data}) => {
-          this.child_operations = data
-        })
-      // mvueCore.resource(`meta_operation/abc`, null, null);
-
-      if (operation != null && !_.isEmpty(operation.id)) {
-        console.log('OK')
-        //this.$alert(Config.serverConfig)   hostServerUrl
-        //   service.init(Config.serverConfig.configServerUrl); //初始化请求到的地址
-        //   // filters: "parentId eq " + operation.id,
-        //   let params = {
-        //     orderby: "updatedAt desc",
-        //     page: 1,
-        //     page_size: 10,
-        //     total: true
-        //   };
-
-        //   service.getMenuItems(params).then(res => {
-        //     this.child_operations = res;
-        //   }); //获取引擎地址
+      if (this.operations) {
+        this.child_operations = this.operations
       } else {
-        console.log('参数未传递')
-        return
+        let operation = this.operation
+        var _t = this //页面参
+        mvueCore
+          .resource(`mp_operation`, null, {
+            root: _.trimEnd(Config.getApiBaseUrl(), '/')
+          })
+          .get({
+            orderby: 'updatedAt desc',
+            filters: 'parentId eq ' + operation.id,
+            page: 1,
+            page_size: 10,
+            total: true
+          })
+          //parentId eq （按钮的id）
+          .then(({data}) => {
+            this.child_operations = data
+          })
       }
     }
   }

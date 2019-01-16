@@ -282,22 +282,21 @@ export default function (options) {
             return resource.ui().then(({data}) => {
                 configUI(data, this);
                 var defaultSetting = defaultUI(this);
-                _.forIn(data, (val, key) => {
-                    var mergedVal=val;
-                    if (_.isPlainObject(val)) {
-                        if(isInnerCType(val.ctype)){
-                            mergedVal=mergeUISettings(defaultSetting[key], val);
-                        }else if(_.isArray(val.layout)){
-                            for(var i=0;i<val.layout;i++){
-                                var com=val.layout[i];
-                                if(_.isPlainObject(com) && isInnerCType(com.ctype)){
-                                    com=mergeUISettings(defaultSetting[key],com);
-                                    val.layout[i]=com;
-                                }
-                            }
-                        }
+                var formSt=data["form"];
+                if(formSt && "form"==typeMapping(formSt.ctype)){
+                    defaultSetting["form"]=mergeUISettings(defaultSetting["form"],formSt);
+                }
+
+                visitSettings(data,(widget,p,indexOrKey)=>{
+                    var entityName=widget["entityName"];
+                    var mapping=typeMapping(widget.ctype);
+                    if(_.isEmpty(entityName)
+                        ||!_.has(defaultSetting,mapping)
+                        ||entityName.toLowerCase()!=this.name.toLowerCase()){
+                        return;
                     }
-                    data[key] = mergedVal;
+                    var mergedVal=mergeUISettings(_.cloneDeep(defaultSetting[mapping]),widget);
+                    p[indexOrKey]=mergedVal;
                 });
                 this.ui = data;
                 this.getRaw().ui = this.ui;
@@ -329,6 +328,16 @@ export default function (options) {
             return st;
         });
     }
+
+    metaEntity.getPage = async function (pageKey) {
+        var ui = await this.getUISettings();
+        var page = ui[pageKey];
+        if (page == null && ui.pages != null) {
+            page = ui.pages[pageKey];
+        }
+        return page;
+    }
+
 
     /**
      * 构造默认的创建表单Path
@@ -375,19 +384,13 @@ export default function (options) {
         return to;
     }
 
-    function isInnerCType(ctype) {
-        var innertCType=["m-form","m-grid","m-tree-grid"];
-        var matched=false;
-        if(_.isEmpty(ctype)){
-            return false;
+    function typeMapping(ctype) {
+        var mapping={
+            "m-form":"form",
+            "m-grid":"list",
+            "m-tree-grid":"list"
         }
-        _.forEach(innertCType,(c)=>{
-            if(ctype.toLowerCase()==c) {
-                matched = true;
-                return false
-            }
-        });
-        return matched;
+        return mapping[ctype];
     }
 
     function configUI(data, mEntity) {
@@ -398,7 +401,7 @@ export default function (options) {
             mEntity.creatable = false;
         }
         if ((!_.has(data, "edit")) || _.isNull(data.edit)) {
-            mEntity.editable = true;
+            mEntity.editable = false;
         }
         if ((!_.has(data, "delete")) || _.isNull(data.delete)) {
             mEntity.deletable = false;
@@ -448,6 +451,26 @@ export default function (options) {
             list: list,
             form: form
         };
+    }
+
+    function visitSettings(st,process,parent,indexOrKey) {
+        if(_.isArray(st)){
+            _.forEach(st,(widget,index)=>{
+                if(_.isPlainObject(widget) || _.isArray(widget)){
+                    visitSettings(widget,process,st,index);
+                }
+            });
+        }
+        if(_.isPlainObject(st)){
+            if(_.has(st,"ctype")){
+                process(st,parent,indexOrKey);
+            }
+            _.forIn(st,(widget,key)=>{
+                if(_.isPlainObject(widget) || _.isArray(widget)){
+                    visitSettings(widget,process,st,key);
+                }
+            });
+        }
     }
 
     return metaEntity;

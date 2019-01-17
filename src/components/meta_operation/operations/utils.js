@@ -28,13 +28,6 @@ function buildQuery(context){
             }
             _query[refField]=context.grid.refEntityId();
         }
-        //tree过滤字段
-        if(context.grid.treeSettings && context.grid.getTreeFilterParam){
-            var treeFilterParam=context.grid.getTreeFilterParam();
-            if(treeFilterParam){
-                _query[treeFilterParam.key]=treeFilterParam.value;
-            }
-        }
         if(context.grid&&context.grid.createParams){
             _query= _.extend(_query,context.grid.createParams);
         }

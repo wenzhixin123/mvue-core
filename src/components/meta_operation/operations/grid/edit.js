@@ -32,9 +32,14 @@ function impl(context,$optInst){
     }
     var metaEntity=context.metaEntity;
     var _query=gridUtils.buildQuery(context);
+    if(context.grid&&context.grid.topEntityRowOn){
+        let topEntityRow=`${context.grid.metaEntity.name}/${id}`;
+        _query= _.extend(_query,{'x_top_entity_row':topEntityRow});
+    }
     var _params={entityName:metaEntity.name};
     var defaultRouter={
-        params:_.assign(_params,{id:id})
+        params:_.assign(_params,{id:id}),
+        query:_query
     }
     var router=null;
     if($optInst&&$optInst.operation){
@@ -44,7 +49,6 @@ function impl(context,$optInst){
         router=buildRouteToFromEntity(metaEntity,id);
     }
     router=_.merge(defaultRouter,router);
-    //router.query=_.assign(router.query,{"dataId":id});
     gridUtils.goto(router);
 }
 

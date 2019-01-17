@@ -265,9 +265,9 @@ export default {
                 var targetEntity = metabase.findMetaEntity(this.fromRelation.entityName);
                 var relation = targetEntity.relations[this.fromRelation.name];
                 if (relation) {
-                    refField = relation.joinFields[0];
+                    let jf=relation.joinFields;
+                    return jf[0];
                 }
-                return refField;
             }
             return null;
         },

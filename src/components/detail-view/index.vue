@@ -167,7 +167,7 @@
                     }
                     toPath=toPath+"/"+selectedMenu.url;
                     this.activeName = selectedMenu.id;
-                    this.$router.push({path: toPath});
+                    this.$router.push({path: toPath,query:this.$route.query});
                 }
             },
             prepare: function () {

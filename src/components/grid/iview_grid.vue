@@ -236,31 +236,36 @@ export default {
             return _filters;
         },
         refEntityId(){
-            if(this.refField){
-                let refField=this.refField;
-                let relationField=this.metaEntity.findField(refField);
-                if(relationField&&relationField.manyToOneRelation){
-                    let r=relationField.manyToOneRelation;
-                    let targetEntity=r.targetEntity.toLowerCase();
-                    let refEntity=this.$store.state.core.currentRouteData[targetEntity];
-                    if(refEntity){
-                        let idField=this.$metaBase.findMetaEntity(targetEntity).getIdField().name;
-                        return refEntity[idField];
-                    }
-                    return null;
+            let refField=this.getRefField();
+            if(!refField){
+                return null;
+            }
+            let relationField=this.metaEntity.findField(refField);
+            let targetEntity=null;
+            if(relationField&&relationField.manyToOneRelation){
+                let r=relationField.manyToOneRelation;
+                targetEntity=r.targetEntity.toLowerCase();
+            }else if(this.fromRelation){
+                targetEntity = this.fromRelation.entityName.toLowerCase(); 
+            }
+            if(targetEntity){
+                let refEntity=this.$store.state.core.currentRouteData[targetEntity];
+                if(refEntity){
+                    let idField=this.$metaBase.findMetaEntity(targetEntity).getIdField().name;
+                    return refEntity[idField];
                 }
             }
             return null;
         },
         getRefField(){
-            if(this.relation) {
-                var refField = this.relation.refField;
-                if (!refField && this.relation.sourceEntityName) {
-                    var targetEntity = metabase.findMetaEntity(this.relation.sourceEntityName);
-                    var relation = targetEntity.relations[this.relation.name];
-                    if (relation) {
-                        refField = relation.joinFields[0];
-                    }
+            if(this.refField){
+                return this.refField;
+            }
+            if(this.fromRelation) {
+                var targetEntity = metabase.findMetaEntity(this.fromRelation.entityName);
+                var relation = targetEntity.relations[this.fromRelation.name];
+                if (relation) {
+                    refField = relation.joinFields[0];
                 }
                 return refField;
             }

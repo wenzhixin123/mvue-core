@@ -21,12 +21,11 @@ function buildQuery(context){
             _query.viewShortId=viewShortId;
         }
         //关系字段过滤条件附加到url
-        if(context.grid.relation&&context.grid.refEntityId){
-            var refField=context.grid.relation.refField;
-            if(!refField && context.grid.getRefField){
-                refField=context.grid.getRefField();
+        if(context.grid&&context.grid.getRefField){
+            var refField=context.grid.getRefField();
+            if(refField){
+                _query[refField]=context.grid.refEntityId();
             }
-            _query[refField]=context.grid.refEntityId();
         }
         if(context.grid&&context.grid.createParams){
             _query= _.extend(_query,context.grid.createParams);

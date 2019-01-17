@@ -2,6 +2,11 @@
  * 操作注册
  */
 import  manager from "../../../libs/operation/operations"
+
+//模板操作
+import  routeTo from "./template/routeTo";
+manager.register(routeTo);
+
 //通用操作
 import goBackOp from "./goback";
 manager.register(goBackOp);
@@ -34,6 +39,8 @@ manager.register(cancel);
 
 import save from "./form/save";
 manager.register(save);
+
+
 
 export default manager;
 

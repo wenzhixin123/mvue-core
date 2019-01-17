@@ -220,21 +220,27 @@ export default {
                 if (this.isEdit) {//更新
                     let _model = this.ignoreReadonlyFields();
                     let _resource = _this.dataResource;
+                    let method="update";
                     if (this.saveOpts.url) {
                         const baseServiceRoot = contextHelper.getConfig(globalConsts.base_service);
                         _resource = contextHelper.buildResource(this.saveOpts.url, null, {root: baseServiceRoot});
+                        if("patch"==this.saveOpts.method){
+                            method="update";
+                        }else{
+                            method="save"
+                        }
                     }
-                    _resource.update({id: this.entityId}, _model).then(function ({data}) {
+                    _resource[method]({id: this.entityId}, _model).then(function ({data}) {
                         _this.isSavingToServer = false;
                         let afterSavePromise = _this.afterSave("on-edited", data, '编辑成功');
                         afterSavePromise.then(() => {
                             resolve({data: _this.entity});
-                        }, () => {
-                            reject();
+                        }, (err) => {
+                            reject(err);
                         });
-                    }, function () {
+                    }, function (err) {
                         _this.isSavingToServer = false;
-                        reject();
+                        reject(err);
                     });
                 } else {//新建
                     let _model = this.ignoreReadonlyFields();

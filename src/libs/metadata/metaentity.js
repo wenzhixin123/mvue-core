@@ -1,5 +1,6 @@
 import context from "../context";
 import consts from "../consts";
+import operationManager from "../operation/operations";
 
 export default function (options) {
     var metaEntity = _.extend({
@@ -286,7 +287,6 @@ export default function (options) {
                 if(formSt && "form"==typeMapping(formSt.ctype)){
                     defaultSetting["form"]=mergeUISettings(defaultSetting["form"],formSt);
                 }
-
                 visitSettings(data,(widget,p,indexOrKey)=>{
                     var entityName=widget["entityName"];
                     var mapping=typeMapping(widget.ctype);
@@ -300,6 +300,8 @@ export default function (options) {
                 });
                 this.ui = data;
                 this.getRaw().ui = this.ui;
+                //注册操作
+                registerEntityOps(data.operations);
                 return this.ui;
             })
         }
@@ -382,6 +384,16 @@ export default function (options) {
             to[key] = val;
         });
         return to;
+    }
+
+    function registerEntityOps(ops) {
+        if(_.isEmpty(ops)){
+            return;
+        }
+        _.forIn(ops,(opt,key)=>{
+            opt.name=key;
+            operationManager.registerByTpl(opt);
+        });
     }
 
     function typeMapping(ctype) {

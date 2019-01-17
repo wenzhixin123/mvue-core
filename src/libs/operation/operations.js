@@ -65,6 +65,20 @@ function buildEntitySecurity(op,entityName){
     op.security=security;
 }
 
+function buildByTemplate(opts) {
+    if(_.isEmpty(opts.name) || _.isEmpty(opts.type)){
+        var error="operation must has name and type property:"+JSON.stringify(opts);
+        throw error;
+    }
+    var name=opts.name;
+    opts.name=opts.type;
+    delete opts.type;
+    var created=create(opts);
+    created.name=name;
+    return created;
+}
+
+
 export  default {
     /**
      * 注册操作
@@ -72,6 +86,15 @@ export  default {
      */
     register(operation){
         register(operation);
+    },
+    /**
+     * 根据模板Operation生成新的Operation，并注册
+     * @param ops
+     */
+    registerByTpl(opts){
+        var created=buildByTemplate(opts);
+        register(created);
+        return created;
     },
     /**
      * 使用已注册的操作模板，根据操作参数，构造新的操作实例

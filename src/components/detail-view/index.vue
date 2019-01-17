@@ -82,7 +82,12 @@
                 default:true
             },
             backRoute:{
-                type:Object
+                type:Object,
+                default(){
+                    return {
+                        path:"../../list"
+                    }
+                }
             }
         },
         data: function () {

@@ -105,7 +105,7 @@ export default {
         }
     },
     data:function(){
-        this.setXAccessModeIfNecessary();
+        this.setAccessModeIfNecessary();
         var metaEntity = metabase.findMetaEntity(this.entityName);
         var qr=this.ifOneToManyGrid()?this.buildOneToManyGridQueryResource():metaEntity.dataResource();
         var saveStatusKey=this.id||`${this.$route.matched[this.$route.matched.length-1].path}-${this.entityName}`;
@@ -135,9 +135,9 @@ export default {
         this.initByMetadata();
     },
     methods:{
-        setXAccessModeIfNecessary(){
-            if(this.xAccessMode){
-                this.$store.commit('core/setXAccessMode',this.xAccessMode);
+        setAccessModeIfNecessary(){
+            if(this.accessMode){
+                this.$store.commit('core/setAccessMode',this.accessMode);
             }
         },
         buildOneToManyGridQueryResource(){
@@ -217,7 +217,7 @@ export default {
                 let sourceEntityName=this.fromRelation.entityName;
                 let sourceMetaEntity=this.$metaBase.findMetaEntity(sourceEntityName);
                 //父实体的数据
-                let refEntity=this.$store.state.core.currentRouteData[sourceEntityName];
+                let refEntity=this.$store.state.core.currentRouteData[sourceEntityName.toLowerCase()];
                 let idField=sourceMetaEntity.getIdField().name;
                 params['parentEntityId']=refEntity[idField];
             }else if(this.refField){//多对一关系，根据指定的字段找到关系过滤条件
@@ -249,6 +249,20 @@ export default {
                     }
                     return null;
                 }
+            }
+            return null;
+        },
+        getRefField(){
+            if(this.relation) {
+                var refField = this.relation.refField;
+                if (!refField && this.relation.sourceEntityName) {
+                    var targetEntity = metabase.findMetaEntity(this.relation.sourceEntityName);
+                    var relation = targetEntity.relations[this.relation.name];
+                    if (relation) {
+                        refField = relation.joinFields[0];
+                    }
+                }
+                return refField;
             }
             return null;
         },

@@ -144,6 +144,15 @@
                     }
                 });
             },
+            getTreeFilterParam(){
+                if(this.selectedTreeNode==null){
+                    return ;
+                }
+                return {
+                    key:this.treeSettings.refField,
+                    value:this.selectedTreeNode.id
+                }
+            },
             preInitCategory(){
                 if(this.category){
                     if(_.isUndefined(this.category.searchFields) || this.category.searchFields==null){

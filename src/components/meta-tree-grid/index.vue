@@ -53,43 +53,20 @@
 <script>
     import globalContext from '../../libs/context';
     import gridProps from "../grid/js/grid-props";
+    import mGridProps from '../grid/js/m-grid-props';
     import gridEvents from "../grid/js/grid-events";
     import treeService from "../../services/tool/tree-service";
     import entitySelect from '../form/mixins/entity-select';
     export default {
-        mixins:[gridProps, gridEvents, entitySelect],
+        mixins:[mGridProps,gridProps, gridEvents, entitySelect],
         props: {
-            "defaultSort": {//默认排序设置{key:'',order:'desc'}
-                type: Object
-            },
-            "columns": {
-                type: Array,
-                required: false,
-            },
-            "entityName": {//元数据实体名称，由外部传入
-                type: String,
-                required:true
-            },
-            queryOptions:{//leap的固定查询参数
+            treeSettings:{  //树列表设置，targetField树查询条件对应的字段名，entityName树数据查询的实体名称，options其他查询参数
                 type:Object,
-                required:false
-            },
-            handleOnTitleClick:{//点击标题列处理函数
-                type:[Function,Object,String],
-                required:false
-            },
-            relation:{//关联列表会提供关系配置{refField:''}
-                type:Object,
-                required:false
-            },
-            treeSettings:{  //树列表设置
-                type:Object,
-                default:function () {
-                        return {
-                            refField:"",//树查询条件对应的字段名
-                            entityName:"",//树数据查询的实体名称
-                            options:{}
-                        }
+                required:true,
+                validator(value){
+                    return value &&
+                           value.targetField &&
+                           value.entityName;
                 }
             },
             category:{
@@ -98,7 +75,7 @@
                     return {
                         entityName:'',//定义分类的数据来源实体名
                         url:'',//和entityName二选一
-                        fieldName:'',//用来过滤树数据的字段，来源于treeSettings定义的entityName实体的字段，用于树数据的分类过滤
+                        targetField:'',//用来过滤树数据的字段，来源于treeSettings定义的entityName实体的字段，用于树数据的分类过滤
                         valField:'',//可指定树分类的key字段
                         titleField:'',//可指定树分类的显示字段,
                         searchFields:[], //树分类的搜索字段
@@ -117,7 +94,7 @@
             createParams(){
                 let params={};
                 if(this.selectedTreeNode){
-                    params[this.treeSettings.refField]=this.selectedTreeNode.id;
+                    params[this.treeSettings.targetField]=this.selectedTreeNode.id;
                 }
                 return params;
             }
@@ -159,7 +136,7 @@
                     if(this.selectedTreeNode==null){
                         return ;
                     }
-                    var treeFilter=`${this.treeSettings.refField} eq '${this.selectedTreeNode.id}'`;
+                    var treeFilter=`${this.treeSettings.targetField} eq '${this.selectedTreeNode.id}'`;
                     if(_.isEmpty(queryParams.filters)){
                         queryParams.filters=treeFilter;
                     }else{
@@ -242,9 +219,9 @@
                 }
                 //附加分类的条件
                 let _treeSettings=_.cloneDeep(this.treeSettings);
-                if(this.selectedItem&&this.category.fieldName){
+                if(this.selectedItem&&this.category.targetField){
                     let id=this.selectedItem[this.getIdField()];
-                    let categoryFilter=`${this.category.fieldName} eq '${id}'`;
+                    let categoryFilter=`${this.category.targetField} eq '${id}'`;
                     if(this.oldTreeFilters){
                         _treeSettings.options.queryOptions.filters=`${this.oldTreeFilters} and ${categoryFilter}`;
                     }else{

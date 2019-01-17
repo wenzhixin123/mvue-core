@@ -1,6 +1,6 @@
 <template>
     <Layout>
-        <b-childheader v-if="showHeader" :title="header.title"></b-childheader>
+        <b-childheader v-if="showHeader" :title="header.title" :back-route="backRoute"></b-childheader>
         <Menu  ref="topMenus" v-if="mode=='horizontal'"
                :theme="theme" mode="horizontal"
                :active-name="activeName" @on-select="onMenuSelected">
@@ -80,6 +80,9 @@
             showHeader:{
                 type:Boolean,
                 default:true
+            },
+            backRoute:{
+                type:Object
             }
         },
         data: function () {
@@ -164,7 +167,7 @@
                     }
                     toPath=toPath+"/"+selectedMenu.url;
                     this.activeName = selectedMenu.id;
-                    this.$router.push({path: toPath});
+                    this.$router.push({path: toPath,query:this.$route.query});
                 }
             },
             prepare: function () {

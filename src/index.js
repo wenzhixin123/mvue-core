@@ -216,9 +216,13 @@ let MvueCore={
                 if(store){
                     //每次进到路由时先清空当前路由的状态数据
                     store.commit('core/clearCurrentRouteData');
-                    //对url参数x_mode作处理
+                    //访问模式参数附加
                     if(to.query["x_access_mode"]){
                         store.commit('core/setAccessMode',to.query["x_access_mode"]);
+                    }
+                    //多租户过滤参数附加
+                    if(to.query["x_top_entity_row"]){
+                        store.commit('core/setTopEntityRow',to.query["x_top_entity_row"]);
                     }
                 }
                 next();

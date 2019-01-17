@@ -1,6 +1,8 @@
 import contextHelper from "../../../libs/context";
 import propParser from "../../../services/tool/prop_parser";
 var pathToRegexp = require('path-to-regexp');
+import metabase from '../../../libs/metadata/metabase';
+
 
 /**
  * 将自定义视图和表单的shortId附加到query参数后
@@ -20,7 +22,15 @@ function buildQuery(context){
         }
         //关系字段过滤条件附加到url
         if(context.grid.relation&&context.grid.refEntityId){
-            _query[context.grid.relation.refField]=context.grid.refEntityId();
+            var refField=context.grid.relation.refField;
+            if(!refField && context.grid.relation.sourceEntityName){
+                var targetEntity=metabase.findMetaEntity(context.grid.relation.sourceEntityName);
+                var relation=targetEntity.relations[context.grid.relation.name];
+                if(relation){
+                    refField=relation.joinFields[0];
+                }
+            }
+            _query[refField]=context.grid.refEntityId();
         }
         if(context.grid&&context.grid.createParams){
             _query= _.extend(_query,context.grid.createParams);
@@ -87,9 +97,18 @@ function buildDeleteHandler(opInst,grid,metaEntity) {
     return func;
 }
 
-function goto(router) {
+function goto(router,ctx) {
     if(_.has(router,"path")){
-        var path= pathToRegexp.compile(router.path)(router.params);
+        if(ctx){
+            ctx=_.assign(ctx,router.params);
+        }else{
+            ctx=router.params;
+        }
+        var path=router.path;
+        if(ctx.basePath){
+
+        }
+        var path= pathToRegexp.compile(router.path)(ctx);
         router.path=path;
     }
     contextHelper.getRouter().push(router);

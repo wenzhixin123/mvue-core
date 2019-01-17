@@ -92,39 +92,13 @@
 <script>
 import metabase from '../../libs/metadata/metabase';
 import initByMetadata from './js/init-by-metadata';
+import mGridProps from './js/m-grid-props';
 import gridBase from './js/grid-base';
 import gridEvents from './js/grid-events';
 import getParent from '../mixins/get-parent';
 export default {
-    mixins: [gridBase, gridEvents, getParent],
-    props: {
-        "defaultSort": {//默认排序设置{key:'',order:'desc'}
-            type: Object
-        },
-        "columns": {
-            type: Array,
-            required: false,
-        },
-        "entityName": {//元数据实体名称，由外部传入
-            type: String,
-            required:true
-        },
-        queryOptions:{//leap的固定查询参数
-            type:Object,
-            required:false
-        },
-        handleOnTitleClick:{//点击标题列处理函数
-            type:[Function,Object,String],
-            required:false
-        },
-        relation:{//关联列表会提供关系配置，如多对一关系示例：{refField:'orgId'}或者{sourceEntityName:'organization',name:"users"}，多对多关系：{sourceEntityName:'organization',name:"users"}
-            type:Object,
-            required:false
-        },
-        maxColumnsSize:{//默认生成列时，列表最多显示的列数
-            type:Number,
-            required:false
-        },
+    mixins: [mGridProps, gridBase, gridEvents, getParent],
+    props:{
         createParams:{//grid创建操作可使用的外部指定的查询参数，由m-tree-grid传入，create操作使用
             type:Object,
             required:false
@@ -167,14 +141,14 @@ export default {
             }
         },
         buildOneToManyGridQueryResource(){
-            let sourceMetaEntity=this.$metaBase.findMetaEntity(this.relation.sourceEntityName);
+            let sourceMetaEntity=this.$metaBase.findMetaEntity(this.fromRelation.entityName);
             //这里返回的是以关系命名的方法对象，而不是原始的查询对象
-            return sourceMetaEntity.dataResource()[this.relation.name];
+            return sourceMetaEntity.dataResource()[this.fromRelation.name];
         },
         ifOneToManyGrid(){//是否一对多关系列表
-            var relationName=this.relation&&this.relation.name;
+            var relationName=this.fromRelation&&this.fromRelation.name;
             if(relationName){
-                let sourceEntityName=this.relation.sourceEntityName;
+                let sourceEntityName=this.fromRelation.entityName;
                 if(!sourceEntityName){
                     return false;
                 }
@@ -235,21 +209,18 @@ export default {
             if(_expand){
                 params.expand=_expand;
             }
-            if(this.relation){
-                this.fillParamsWithRelation(params);
-            }
+            this.fillParamsWithRelation(params);
         },
         //对于多对一关系和多对多关系，自动添加相关查询参数
         fillParamsWithRelation(params){
-            var relationName=this.relation.name;
             if(this.ifOneToManyGrid()){
-                let sourceEntityName=this.relation.sourceEntityName;
+                let sourceEntityName=this.fromRelation.entityName;
                 let sourceMetaEntity=this.$metaBase.findMetaEntity(sourceEntityName);
                 //父实体的数据
                 let refEntity=this.$store.state.core.currentRouteData[sourceEntityName];
                 let idField=sourceMetaEntity.getIdField().name;
                 params['parentEntityId']=refEntity[idField];
-            }else if(this.relation.refField){//多对一关系，根据指定的字段找到关系过滤条件
+            }else if(this.refField){//多对一关系，根据指定的字段找到关系过滤条件
                 let relationFilters=this.buildRelationFilters();
                 if(relationFilters){
                     params.filters=params.filters?`(${params.filters}) and ${relationFilters}`:`${relationFilters}`
@@ -260,13 +231,13 @@ export default {
         buildRelationFilters(){
             var _filters='';
             if(this.refEntityId()){
-                _filters=`${this.relation.refField} eq ${this.refEntityId()}`;
+                _filters=`${this.refField} eq ${this.refEntityId()}`;
             }
             return _filters;
         },
         refEntityId(){
-            if(this.relation){
-                let refField=this.relation.refField;
+            if(this.refField){
+                let refField=this.refField;
                 let relationField=this.metaEntity.findField(refField);
                 if(relationField&&relationField.manyToOneRelation){
                     let r=relationField.manyToOneRelation;
@@ -283,9 +254,9 @@ export default {
         },
         canRender(){
             //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
-            if(this.relation){
+            if(this.fromRelation||this.refField){
                 if(this.ifOneToManyGrid()){
-                    var entityName=this.relation.sourceEntityName.toLowerCase();
+                    var entityName=this.fromRelation.entityName.toLowerCase();
                     return this.$store.state.core.currentRouteData[entityName]&&this.preprocessed;
                 }else{
                     return this.refEntityId()&&this.preprocessed;

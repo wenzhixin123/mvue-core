@@ -111,7 +111,7 @@ export default{
         },
         xTopEntityRowOn:{//是否在选中操作后，后续查询自动附加x-top-entity-row头
             type:Boolean,
-            default:true
+            default:false
         }
     }
 }

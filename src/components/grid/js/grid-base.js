@@ -46,6 +46,7 @@ export default{
     },
     methods:{
         innerQuery(ctx){
+            debugger;
             ctx.quicksearchKeyword=this.quicksearchKeyword;
             //外部高级查询和内部高级查询只能二选一，如果同时出现，这里不会合并
             //外部高级查询:可通过设置组件的top slot区模板和属性filters

@@ -23,12 +23,8 @@ function buildQuery(context){
         //关系字段过滤条件附加到url
         if(context.grid.relation&&context.grid.refEntityId){
             var refField=context.grid.relation.refField;
-            if(!refField && context.grid.relation.sourceEntityName){
-                var targetEntity=metabase.findMetaEntity(context.grid.relation.sourceEntityName);
-                var relation=targetEntity.relations[context.grid.relation.name];
-                if(relation){
-                    refField=relation.joinFields[0];
-                }
+            if(!refField && context.grid.getRefField){
+                refField=context.grid.getRefField();
             }
             _query[refField]=context.grid.refEntityId();
         }

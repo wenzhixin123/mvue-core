@@ -246,7 +246,7 @@ export default {
                 let sourceEntityName=this.relation.sourceEntityName;
                 let sourceMetaEntity=this.$metaBase.findMetaEntity(sourceEntityName);
                 //父实体的数据
-                let refEntity=this.$store.state.core.currentRouteData[sourceEntityName];
+                let refEntity=this.$store.state.core.currentRouteData[sourceEntityName.toLowerCase()];
                 let idField=sourceMetaEntity.getIdField().name;
                 params['parentEntityId']=refEntity[idField];
             }else if(this.relation.refField){//多对一关系，根据指定的字段找到关系过滤条件
@@ -266,7 +266,7 @@ export default {
         },
         refEntityId(){
             if(this.relation){
-                let refField=this.relation.refField;
+                let refField=this.getRefField();
                 let relationField=this.metaEntity.findField(refField);
                 if(relationField&&relationField.manyToOneRelation){
                     let r=relationField.manyToOneRelation;
@@ -278,6 +278,20 @@ export default {
                     }
                     return null;
                 }
+            }
+            return null;
+        },
+        getRefField(){
+            if(this.relation) {
+                var refField = this.relation.refField;
+                if (!refField && this.relation.sourceEntityName) {
+                    var targetEntity = metabase.findMetaEntity(this.relation.sourceEntityName);
+                    var relation = targetEntity.relations[this.relation.name];
+                    if (relation) {
+                        refField = relation.joinFields[0];
+                    }
+                }
+                return refField;
             }
             return null;
         },

@@ -131,7 +131,7 @@ export default {
         }
     },
     data:function(){
-        this.setXAccessModeIfNecessary();
+        this.setAccessModeIfNecessary();
         var metaEntity = metabase.findMetaEntity(this.entityName);
         var qr=this.ifOneToManyGrid()?this.buildOneToManyGridQueryResource():metaEntity.dataResource();
         var saveStatusKey=this.id||`${this.$route.matched[this.$route.matched.length-1].path}-${this.entityName}`;
@@ -161,9 +161,9 @@ export default {
         this.initByMetadata();
     },
     methods:{
-        setXAccessModeIfNecessary(){
-            if(this.xAccessMode){
-                this.$store.commit('core/setXAccessMode',this.xAccessMode);
+        setAccessModeIfNecessary(){
+            if(this.accessMode){
+                this.$store.commit('core/setAccessMode',this.accessMode);
             }
         },
         buildOneToManyGridQueryResource(){

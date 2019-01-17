@@ -217,8 +217,8 @@ let MvueCore={
                     //每次进到路由时先清空当前路由的状态数据
                     store.commit('core/clearCurrentRouteData');
                     //对url参数x_mode作处理
-                    if(to.query.x_access_mode){
-                        store.commit('core/setXAccessMode',to.query.x_access_mode);
+                    if(to.query["x_access_mode"]){
+                        store.commit('core/setAccessMode',to.query["x_access_mode"]);
                     }
                 }
                 next();

@@ -98,7 +98,7 @@
             @on-sort-change="handleSortChange">
         </Table>
     </div>
-    <div class="tableBox-tool" v-if="pager">
+    <div class="tableBox-tool" v-if="pager&&pagerBar">
         <div class="pagination form-inline font12">
             <a class="btn btn-sm btn-default" :disabled="pageIndex<=1" @click="pageIndexOne">{{pageType=="compact"?"<<":"首页"}}</a>
             <a class="btn btn-sm btn-default" :disabled="pageIndex<=1" @click="pageIndexPrevious">{{pageType=="compact"?"<":"上一页"}}</a>
@@ -245,6 +245,11 @@ export default {
       "pageType": {//'compact':紧凑型分页部件布局；不设置用默认布局
         type: String,
         required: false
+      },
+      "pagerBar": {//是否显示搜索条
+          type: Boolean,
+          required: false,
+          default: true
       }
     },
     data:function(){

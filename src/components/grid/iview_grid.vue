@@ -281,7 +281,8 @@ export default {
             //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
             if(this.relation){
                 if(this.ifOneToManyGrid()){
-                    return this.$store.state.core.currentRouteData[this.relation.sourceEntityName]&&this.preprocessed;
+                    var entityName=this.relation.sourceEntityName.toLowerCase();
+                    return this.$store.state.core.currentRouteData[entityName]&&this.preprocessed;
                 }else{
                     return this.refEntityId()&&this.preprocessed;
                 }

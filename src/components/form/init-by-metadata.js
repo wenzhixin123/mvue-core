@@ -1,7 +1,8 @@
 //创建模式时，如果url参数是实体的字段则填充相应的模型数据
 function initModelByQueryParams(formInst,_model){
     var metaEntity=formInst.metaEntity;
-    var query=formInst.$route.query;
+    //合并真实的路由query和来自弹出部件设置的createParams
+    var query=_.extend(formInst.$route.query,formInst.createParams);
     _.forIn(query,function(value,key){
         let metaField=metaEntity.findField(key);
         if(metaField){

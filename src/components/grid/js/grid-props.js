@@ -106,8 +106,12 @@ export default{
         id:{//用来唯一标志一个列表，用于存储列表的配置数据key，如配置列数据本地存储的key
             type:String
         },
-        xmode:{//当前页面执行权限模式，此属性可改变
+        xAccessMode:{//当前页面执行权限模式，此属性可改变
             type:String
+        },
+        xTopEntityRowOn:{//是否在选中操作后，后续查询自动附加x-top-entity-row头
+            type:Boolean,
+            default:true
         }
     }
 }

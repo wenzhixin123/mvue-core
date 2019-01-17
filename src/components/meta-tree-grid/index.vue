@@ -33,6 +33,7 @@
             <meta-grid ref="gridList"
                        v-bind="$props"
                        :query="innerQuery"
+                       :create-params="createParams"
                        @on-current-change="handleOnCurrentChange"
                        @on-select="handleOnSelect"
                        @on-select-cancel="handleOnSelectCancel"
@@ -112,6 +113,13 @@
                     return this.category.placeholder;
                 }
                 return "请输入关键字搜索";
+            },
+            createParams(){
+                let params={};
+                if(this.selectedTreeNode){
+                    params[this.treeSettings.refField]=this.selectedTreeNode.id;
+                }
+                return params;
             }
         },
         data(){

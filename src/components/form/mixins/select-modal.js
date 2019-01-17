@@ -24,6 +24,9 @@ export default {
     },
     methods:{
         toggleModal(){
+            if(this.disabled){
+                return false;
+            }
             this.popupWidgetModal=!this.popupWidgetModal;
         },
         close(){//关闭对话框

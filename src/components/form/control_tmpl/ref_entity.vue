@@ -30,7 +30,7 @@
                         无数据
                     </template>
                 </Multiselect>
-                <div class="ivu-btn ivu-btn-primary bvue-select-group-append" @click="toggleModal">
+                <div class="ivu-btn ivu-btn-primary bvue-select-group-append" :disabled="disabled" @click="toggleModal">
                     <Icon :type="btnIcon"></Icon>
                 </div>
                 <Modal class="bvue-select-modal" v-model="popupWidgetModal"

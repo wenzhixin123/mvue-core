@@ -6,7 +6,8 @@ const state = {
   gridStatus:{},//存储m-grid组件的查询参数对象
   defaultFormId:'default-form-id',
   formStatus:{refEntities:{}},//存储表单的状态数据，key为表单id
-  xmode:''//当前页面执行权限模式：可由菜单的url参数指定、m-grid的属性控制
+  xAccessMode:'',//当前页面执行权限模式：可由菜单的url参数指定、m-grid的属性控制
+  xTopEntityRow:''//格式：{entityName}/{recordId}，当前页面开启上下文模式，后续所有实体如果和{entityName}实体有多对一关系，查询此实体则自动附加{recordId}过滤
 }
 //公共的计算属性
 const getters = {
@@ -73,8 +74,11 @@ const mutations = {
     curFormRefEntities[name]=refEntity;
     state.formStatus.refEntities=_.cloneDeep(state.formStatus.refEntities);
   },
-  setXMode(state,xmode){
-    state.xmode=xmode;
+  setXAccessMode(state,xAccessMode){
+    state.xAccessMode=xAccessMode;
+  },
+  setXTopEntityRow(state,xTopEntityRow){
+    state.xTopEntityRow=xTopEntityRow;
   }
 }
 

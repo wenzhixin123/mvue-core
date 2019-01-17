@@ -22,6 +22,9 @@ function buildQuery(context){
         if(context.grid.relation&&context.grid.refEntityId){
             _query[context.grid.relation.refField]=context.grid.refEntityId();
         }
+        if(context.grid&&context.grid.createParams){
+            _query= _.extend(_query,context.grid.createParams);
+        }
     }
     return _query;
 }

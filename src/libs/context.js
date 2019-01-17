@@ -63,13 +63,6 @@ export default {
         initWebContext(window.location);
     },
     setRouter(router) {
-        //每次进到路由时先清空当前路由的状态数据
-        router.beforeEach(function(to, from, next) {
-            if(cachedContext.store){
-                cachedContext.store.commit('core/clearCurrentRouteData');
-            }
-            next();
-        });
         cachedContext.router = router;
     },
     setVue(vue){
@@ -237,9 +230,13 @@ export default {
         if(appCtx.getMvueToolkit&&appCtx.getStore){
             //设置页面所有请求的权限模式header
             appCtx.getMvueToolkit().http.interceptors.request.use(config=>{
-                let xmode=appCtx.getStore().state.core.xmode;
-                if(xmode){
-                    config.headers['x-security-mode']=xmode;
+                let xAccessMode=appCtx.getStore().state.core.xAccessMode;
+                if(xAccessMode){
+                    config.headers['x-access-mode']=xAccessMode;
+                }
+                let xTopEntityRow=appCtx.getStore().state.core.xTopEntityRow;
+                if(xTopEntityRow){
+                    config.headers['x-top-entity-row']=xTopEntityRow;
                 }
                 return config;
             },error=>{

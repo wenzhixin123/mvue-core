@@ -6,7 +6,7 @@
         <template v-else>
             <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">
                 <div class='ivu-input m-parent-select-input'>{{selectedItem&&selectedItem[getTitleField()]}}</div>
-                <div class="ivu-btn ivu-btn-primary bvue-select-group-append" @click="toggleModal">
+                <div class="ivu-btn ivu-btn-primary bvue-select-group-append" :disabled="disabled" @click="toggleModal">
                     <Icon :type="btnIcon"></Icon>
                 </div>
                 <Modal class="bvue-select-modal" v-model="popupWidgetModal"

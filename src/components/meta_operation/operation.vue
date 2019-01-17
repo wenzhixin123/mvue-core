@@ -1,202 +1,208 @@
 <template>
-  <div
-    class="widget-operation div-inline-block"
-    v-if="operation.show&&!operation.hide"
-  >
-    <component
-      @triggered="triggered"
-      @successed="successed"
-      :is="operationComponent"
-      :operation="extendedOperation"
-      :widget-context="extendedWidgetContext"
+    <div
+            class="widget-operation div-inline-block"
+            v-if="operation.show&&!operation.hide"
     >
-      <slot :operation="extendedOperation"></slot>
-    </component>
-  </div>
+        <component
+                @triggered="triggered"
+                @successed="successed"
+                :is="operationComponent"
+                :operation="extendedOperation"
+                :operations="operations"
+                :widget-context="extendedWidgetContext"
+        >
+            <slot :operation="extendedOperation"></slot>
+        </component>
+    </div>
 </template>
 <script>
-import propParser from "../../services/tool/prop_parser";
-import OperationUtils from "./js/operation_utils";
-//操作类型定义
-var operationType = {
-  common: "common",
-  toPage: "toPage",
-  widget: "widget",
-  popup: "popup",
-  script: "script",
-  toOperation: "toOperation",
-  menu: "menu"
-};
-var permParser = {
-  //来自表单的取消、开启编辑、编辑、删除权限
-  formCancel: function(widgetContext) {
-    return (
-      widgetContext.form &&
-      widgetContext.form.innerPermissions &&
-      widgetContext.form.innerPermissions.cancel
-    );
-  },
-  formOpenEdit: function(widgetContext) {
-    return (
-      widgetContext.form &&
-      widgetContext.form.innerPermissions &&
-      widgetContext.form.innerPermissions.openEdit
-    );
-  },
-  formEdit: function(widgetContext) {
-    return (
-      widgetContext.form &&
-      widgetContext.form.innerPermissions &&
-      widgetContext.form.innerPermissions.edit
-    );
-  },
-  formDel: function(widgetContext) {
-    return (
-      widgetContext.form &&
-      widgetContext.form.innerPermissions &&
-      widgetContext.form.innerPermissions.del &&
-      widgetContext.form.entityId
-    );
-  },
-  //来自当前数据的查看、编辑、删除权限
-  selectedItemView: function(widgetContext) {
-    return (
-      widgetContext.selectedItem &&
-      Utils.hasPerm(
-        widgetContext.selectedItem[Utils.dataPermField],
-        Utils.permValues.view
-      )
-    );
-  },
-  selectedItemEdit: function(widgetContext) {
-    return (
-      widgetContext.selectedItem &&
-      Utils.hasPerm(
-        widgetContext.selectedItem[Utils.dataPermField],
-        Utils.permValues.edit
-      )
-    );
-  },
-  selectedItemDel: function(widgetContext) {
-    return (
-      widgetContext.selectedItem &&
-      Utils.hasPerm(
-        widgetContext.selectedItem[Utils.dataPermField],
-        Utils.permValues.del
-      )
-    );
+  import propParser from '../../services/tool/prop_parser'
+  import OperationUtils from './js/operation_utils'
+  //操作类型定义
+  var operationType = {
+    common: 'common',
+    toPage: 'toPage',
+    widget: 'widget',
+    popup: 'popup',
+    script: 'script',
+    toOperation: 'toOperation',
+    menu: 'menu'
   }
-};
-//将不同的部件操作类型转成实际的操作
-export default {
-  props: {
-    widgetContext: {
-      //由使用操作的部件传入的部件上下文
-      type: Object,
-      required: true
+  var permParser = {
+    //来自表单的取消、开启编辑、编辑、删除权限
+    formCancel: function (widgetContext) {
+      return (
+        widgetContext.form &&
+        widgetContext.form.innerPermissions &&
+        widgetContext.form.innerPermissions.cancel
+      )
     },
-    operation: {
-      //操作的定义，必传参数
-      type: Object,
-      required: true
+    formOpenEdit: function (widgetContext) {
+      return (
+        widgetContext.form &&
+        widgetContext.form.innerPermissions &&
+        widgetContext.form.innerPermissions.openEdit
+      )
+    },
+    formEdit: function (widgetContext) {
+      return (
+        widgetContext.form &&
+        widgetContext.form.innerPermissions &&
+        widgetContext.form.innerPermissions.edit
+      )
+    },
+    formDel: function (widgetContext) {
+      return (
+        widgetContext.form &&
+        widgetContext.form.innerPermissions &&
+        widgetContext.form.innerPermissions.del &&
+        widgetContext.form.entityId
+      )
+    },
+    //来自当前数据的查看、编辑、删除权限
+    selectedItemView: function (widgetContext) {
+      return (
+        widgetContext.selectedItem &&
+        Utils.hasPerm(
+          widgetContext.selectedItem[Utils.dataPermField],
+          Utils.permValues.view
+        )
+      )
+    },
+    selectedItemEdit: function (widgetContext) {
+      return (
+        widgetContext.selectedItem &&
+        Utils.hasPerm(
+          widgetContext.selectedItem[Utils.dataPermField],
+          Utils.permValues.edit
+        )
+      )
+    },
+    selectedItemDel: function (widgetContext) {
+      return (
+        widgetContext.selectedItem &&
+        Utils.hasPerm(
+          widgetContext.selectedItem[Utils.dataPermField],
+          Utils.permValues.del
+        )
+      )
     }
-  },
-  watch:{
-    "widgetContext"(val){
-      //处理弹窗类型的页面加载模式,按钮不会触发校验
-      this.showOperation();
-    }
-  },
-  created() {
-    let _t = this;
-    _t.operation.show = false;
-    _t.operation.widgetContext = this.extendedWidgetContext; //暴露部件参数出去提供更多的校验手段
-    _t.showOperation();
-  },
-  computed: {
-    operationComponent: function() {
-      if (!this.operation.operationType) {
-        return;
+  }
+  //将不同的部件操作类型转成实际的操作
+  export default {
+    props: {
+      widgetContext: {
+        //由使用操作的部件传入的部件上下文
+        type: Object,
+        required: true
+      },
+      operation: {
+        //操作的定义，必传参数
+        type: Object,
+        required: true
+      },
+      operations: {
+        //操作的定义，必传参数
+        type: Object,
+        required: false
       }
-      return `${this.operation.operationType}Operation`;
     },
-    extendedOperation: function() {
-      var operation = OperationUtils.expandOperation(this.operation, this);
-      return operation;
+    watch: {
+      'widgetContext' (val) {
+        //处理弹窗类型的页面加载模式,按钮不会触发校验
+        this.showOperation()
+      }
     },
-    extendedWidgetContext: function() {
-      var _this = this;
-      var params = {};
-      _.each(this.operation.props, function(propValue, propKey) {
-        if (propValue.internal) {
-          //来自于context的属性，合并到widgetContext中
-          var parsedValue = propParser.parse(propValue, _this);
-          params[propKey] = parsedValue;
+    created () {
+      let _t = this
+      _t.operation.show = false
+      _t.operation.widgetContext = this.extendedWidgetContext //暴露部件参数出去提供更多的校验手段
+      _t.showOperation()
+    },
+    computed: {
+      operationComponent: function () {
+        if (!this.operation.operationType) {
+          return
         }
-      });
-      return _.extend(this.widgetContext, params);
-    }
-    /*showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
-            var operation=OperationUtils.expandOperation(this.operation,this);
-            var optPermValue=operation[Utils.operationDisplayField];
-            if(!_.isPlainObject(optPermValue)){
-                optPermValue=_.trim(optPermValue);
-                if(_.isNil(optPermValue)||optPermValue===''){
-                    return true;
-                }
-            }
-            var ctx={
-                ctx: this.widgetContext,
-                opt:operation
-            }
-            if(_.startsWith(optPermValue,'${')){
-                var compiled = _.template(optPermValue);
-                var hasPerm=compiled(ctx);
-                if(hasPerm==="true"){
-                    return true;
-                }
-            }else if(_.isPlainObject(optPermValue)){
-                var from=optPermValue.from;
-                if(from){
-                    var permParse=permParser[from];
-                    if(permParse){
-                        return !!permParse(this.widgetContext);
-                    }
-                }
-            }
-            return false;
-        }*/
-  },
-  data() {
-    return {};
-  },
-  methods: {
-    triggered(optType) {
-      this.$emit("triggered", optType);
+        return `${this.operation.operationType}Operation`
+      },
+      extendedOperation: function () {
+        var operation = OperationUtils.expandOperation(this.operation, this)
+        return operation
+      },
+      extendedWidgetContext: function () {
+        var _this = this
+        var params = {}
+        _.each(this.operation.props, function (propValue, propKey) {
+          if (propValue.internal) {
+            //来自于context的属性，合并到widgetContext中
+            var parsedValue = propParser.parse(propValue, _this)
+            params[propKey] = parsedValue
+          }
+        })
+        return _.extend(this.widgetContext, params)
+      }
+      /*showOperation:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
+              var operation=OperationUtils.expandOperation(this.operation,this);
+              var optPermValue=operation[Utils.operationDisplayField];
+              if(!_.isPlainObject(optPermValue)){
+                  optPermValue=_.trim(optPermValue);
+                  if(_.isNil(optPermValue)||optPermValue===''){
+                      return true;
+                  }
+              }
+              var ctx={
+                  ctx: this.widgetContext,
+                  opt:operation
+              }
+              if(_.startsWith(optPermValue,'${')){
+                  var compiled = _.template(optPermValue);
+                  var hasPerm=compiled(ctx);
+                  if(hasPerm==="true"){
+                      return true;
+                  }
+              }else if(_.isPlainObject(optPermValue)){
+                  var from=optPermValue.from;
+                  if(from){
+                      var permParse=permParser[from];
+                      if(permParse){
+                          return !!permParse(this.widgetContext);
+                      }
+                  }
+              }
+              return false;
+          }*/
     },
-    successed(optType) {
-      this.$emit("successed", optType);
+    data () {
+      return {}
     },
-    showOperation() {
-      let _this = this;
-      OperationUtils.showOperation(_this.operation, _this).then(res => {
-        if (typeof res == "boolean") {
-          _this.operation.show = res;
-          _this.$forceUpdate();
-        }
-      });
+    methods: {
+      triggered (optType) {
+        this.$emit('triggered', optType)
+      },
+      successed (optType) {
+        this.$emit('successed', optType)
+      },
+      showOperation () {
+        let _this = this
+        OperationUtils.showOperation(_this.operation, _this).then(res => {
+          if (typeof res == 'boolean') {
+            _this.operation.show = res
+            _this.$forceUpdate()
+          }
+        })
+      }
+    },
+    components: {
+      commonOperation: require('./common_operation'),
+      widgetOperation: require('./widget_operation'),
+      toPageOperation: require('./to_page_operation'),
+      popupOperation: require('./popup_operation'),
+      scriptOperation: require('./script_operation'),
+      execOperationOperation: require('./script_operation'),
+      toOperationOperation: require('./to_operation_operation'),
+      menuOperation: require('./menu_operation')
     }
-  },
-  components: {
-    commonOperation: require("./common_operation"),
-    widgetOperation: require("./widget_operation"),
-    toPageOperation: require("./to_page_operation"),
-    popupOperation: require("./popup_operation"),
-    scriptOperation: require("./script_operation"),
-    execOperationOperation: require("./script_operation"),
-    toOperationOperation: require("./to_operation_operation"),
-    menuOperation: require("./menu_operation")
   }
-};
 </script>
 

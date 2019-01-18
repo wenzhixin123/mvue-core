@@ -113,8 +113,14 @@ export default{
             type:Boolean,
             default:false
         },
-        topEntitySelect:{//{entityName:'',searchFields:[],queryOptions:{}}
-            type:Object
+        topEntitySelect:{//{entityName:'',searchFields:[],queryOptions:{}}，topEntity查询框配置
+            type:Object,
+            validator(value){
+                if(!value){
+                    return true;
+                }
+                return value&&value.entityName;
+            }
         }
     }
 }

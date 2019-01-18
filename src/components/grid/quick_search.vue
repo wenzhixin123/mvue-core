@@ -4,7 +4,7 @@
                 <div class="field" v-if="isKey">
                     <div class="form-group">
                         <label class="ivu-form-item-label">关键字</label>
-                        <input type="text" class="form-control" v-model="innerQuicksearchKeyword">
+                        <input type="text" class="form-control" placeholder="请输入关键字搜索" v-model="innerQuicksearchKeyword">
                     </div>
                 </div>
                 <meta-field class="field" v-for="key in advanceSearchFields" :key="key" :name="key" v-model="model[key]" :entity-name="entityName" :input-type="inputType(key)">

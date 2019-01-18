@@ -11,7 +11,7 @@
         <i-col span="16">
             <div class="bvue-list-transfer" style="height:375px;">
                 <div class="bvue-list-transfer-header">
-                    <h4>已选部门</h4>
+                    <h4>已选</h4>
                 </div>
                 <div class="bvue-list-transfer-body">
                     <ul class="bvue-transfer-list-content" >

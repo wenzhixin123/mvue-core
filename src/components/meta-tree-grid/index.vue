@@ -120,6 +120,9 @@
             var entitySelectInited=false;
             if(this.isCategoryEnable()){
                 this.preInitCategory();
+                if(!this.category.topEntity){
+                    entitySelectInited=true;
+                }
             }else{
                 entitySelectInited=true;
             }

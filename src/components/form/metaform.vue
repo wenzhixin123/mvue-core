@@ -677,7 +677,7 @@
             },
             operationTriggered(val){
                 //按钮触发时--进行的动作
-                if(!this.formValidation){
+                if(!this.formValidation&&this.validated){
                     //不自动监听校验时触发
                     this.doValidation();
                 }

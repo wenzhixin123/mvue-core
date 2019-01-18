@@ -12,6 +12,8 @@
                 :show-no-results="true"
                 :internal-search="false"
                 :label="getTitleField()"
+                :allowEmpty="!category.mustSelect"
+                :deselectLabel="deselectLabel"
                 @search-change="searchChange"
                 @input="onCategoryChange"
                 :track-by="getIdField()">
@@ -60,13 +62,20 @@
     export default {
         mixins:[mGridProps,gridProps, gridEvents, entitySelect],
         props: {
-            treeSettings:{  //树列表设置，targetField树查询条件对应的字段名，entityName树数据查询的实体名称，options其他查询参数
+            treeSettings:{  //树列表设置，targetField树查询条件对应的字段名，entityName树数据查询的实体名称
                 type:Object,
                 required:true,
                 validator(value){
                     return value &&
                            value.targetField &&
                            value.entityName;
+                },
+                default(){
+                    return {
+                        entityName:"",
+                        mustSelect: false,
+                        topEntity: false    //支持将选中值设置成topEntity
+                    }
                 }
             },
             category:{
@@ -79,7 +88,9 @@
                         valField:'',//可指定树分类的key字段
                         titleField:'',//可指定树分类的显示字段,
                         searchFields:[], //树分类的搜索字段
-                        placeholder:'请输入关键字搜索'
+                        placeholder:'请输入关键字搜索',
+                        mustSelect:false,   //必须有选中值
+                        topEntity: false    //支持将选中值设置成topEntity
                     };
                 }
             }
@@ -97,6 +108,12 @@
                     params[this.treeSettings.targetField]=this.selectedTreeNode.id;
                 }
                 return params;
+            },
+            deselectLabel(){
+                if(this.category.mustSelect){
+                    return ""
+                }
+                return "按enter键取消选择"
             }
         },
         data(){
@@ -105,8 +122,9 @@
                 processed:false,
                 selectedTreeNode:null,
                 realTreeSettings:null,
+                preselectFirst:this.category&&this.category.mustSelect,
                 entityResource:this.category&&this.category.entityResource,
-                oldTreeFilters:(this.treeSettings.options&&this.treeSettings.options.queryOptions)?_.cloneDeep(this.treeSettings.options.queryOptions.filters):''
+                oldTreeFilters:(this.treeSettings.queryOptions)?_.cloneDeep(this.treeSettings.queryOptions.filters):''
             }
         },
         mounted:function () {
@@ -116,10 +134,7 @@
         methods:{
             processSettings:function () {
                 //对setting进行预处理
-                if(_.isUndefined(this.treeSettings.options)){
-                    this.treeSettings.options={};
-                }
-                var defaultTreeSetting=treeService.build(this.treeSettings.entityName,this.treeSettings.options);
+                var defaultTreeSetting=treeService.build(this.treeSettings.entityName,this.treeSettings);
                 this.realTreeSettings=defaultTreeSetting;
             },
             onTreeSelectChange:function (data) {
@@ -127,6 +142,16 @@
                     this.selectedTreeNode=data[0];
                 }else{
                     this.selectedTreeNode=null;
+                }
+
+                //设置topEntity
+                if(this.treeSettings.topEntity && this.treeSettings.entityName){
+                    if(data && data.length>0){
+                        let topEntityRow=`${this.treeSettings.entityName}/${this.selectedTreeNode.id}`;
+                        this.$store.commit('core/setTopEntityRow',topEntityRow);
+                    }else{
+                        this.$store.commit('core/setTopEntityRow','');
+                    }
                 }
                 this.$refs["gridList"].reload();
             },
@@ -149,7 +174,7 @@
                     return ;
                 }
                 return {
-                    key:this.treeSettings.refField,
+                    key:this.treeSettings.targetField,
                     value:this.selectedTreeNode.id
                 }
             },
@@ -213,9 +238,12 @@
                 }
                 return "name";
             },
+            selectedItemChanged(items){
+                this.onCategoryChange(items);
+            },
             onCategoryChange(value,id){
-                if(!this.treeSettings.options.queryOptions){
-                    this.treeSettings.options.queryOptions={};
+                if(!this.treeSettings.queryOptions){
+                    this.treeSettings.queryOptions={};
                 }
                 //附加分类的条件
                 let _treeSettings=_.cloneDeep(this.treeSettings);
@@ -223,17 +251,27 @@
                     let id=this.selectedItem[this.getIdField()];
                     let categoryFilter=`${this.category.targetField} eq '${id}'`;
                     if(this.oldTreeFilters){
-                        _treeSettings.options.queryOptions.filters=`${this.oldTreeFilters} and ${categoryFilter}`;
+                        _treeSettings.queryOptions.filters=`${this.oldTreeFilters} and ${categoryFilter}`;
                     }else{
-                        _treeSettings.options.queryOptions.filters=categoryFilter;
+                        _treeSettings.queryOptions.filters=categoryFilter;
                     }
                 }else{
-                    _treeSettings.options.queryOptions.filters=this.oldTreeFilters;
+                    _treeSettings.queryOptions.filters=this.oldTreeFilters;
                 }
-                var defaultTreeSetting=treeService.build(this.treeSettings.entityName,_treeSettings.options);
+                var defaultTreeSetting=treeService.build(this.treeSettings.entityName,_treeSettings);
                 this.realTreeSettings=defaultTreeSetting;
                 this.$nextTick(()=>{
                     this.$refs.categoryTree.buildRoot();
+                    if(this.category.topEntity){
+                        if(this.selectedItem){
+                            let id=this.selectedItem[this.getIdField()];
+                            let topEntityRow=`${this.category.entityName}/${id}`;
+                            this.$store.commit('core/setTopEntityRow',topEntityRow);
+                        }else{
+                            this.$store.commit('core/setTopEntityRow', '');
+                        }
+                        this.$refs["gridList"].reload();
+                    }
                 });
             }
         },

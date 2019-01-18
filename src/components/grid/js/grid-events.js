@@ -16,7 +16,7 @@ export default {
       this.$emit("on-select-all-cancel",selection);
     },
     handleOnSelectionChange(selection){
-      if(this.topEntityRowOn&&this.metaEntity){
+      if(this.topEntity&&this.metaEntity){
         if(selection.length==1){
           this.setTopEntityRowIfNecessary(selection[0]);
         }else if(selection.length==0){
@@ -33,7 +33,7 @@ export default {
       this.$emit("on-filter-change",row);
     },
     setTopEntityRowIfNecessary(row){
-      if(this.topEntityRowOn&&this.metaEntity){
+      if(this.topEntity&&this.metaEntity){
         let metaEntity = this.metaEntity;
         let idFieldName=metaEntity.getIdField().name;
         let topEntityRow=`${metaEntity.name}/${row[idFieldName]}`;

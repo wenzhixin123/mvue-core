@@ -86,6 +86,9 @@
             <template slot="header-right">
                 <slot name="header-right">
                 </slot>
+                <top-entity-select v-if="topEntitySelect&&topEntitySelect.entityName" 
+                    v-bind="topEntitySelect">
+                </top-entity-select>
             </template>
     </b-list>
 </template>
@@ -103,6 +106,9 @@ export default {
             type:Object,
             required:false
         }
+    },
+    components:{
+        topEntitySelect:require('./top-entity-select')
     },
     data:function(){
         this.setAccessModeIfNecessary();

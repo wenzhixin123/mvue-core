@@ -43,7 +43,9 @@
                 </div>
             </i-col>
             <i-col span="4" style="text-align:right;">
-                <slot name="viewSelect"></slot>
+                <span style="text-align: left;">
+                    <slot name="viewSelect"></slot>
+                </span>
             </i-col>
         </Row>
     </div>

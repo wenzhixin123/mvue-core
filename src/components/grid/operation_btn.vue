@@ -7,11 +7,13 @@
     <meta-operation v-for="(btn,index) in permedBtns()" :key="index" :operation="btn" :widget-context="getWidgetContext()">
         <a href="javascript:void(0)" class="btn" :title="operation.title"  slot-scope="{operation}">
             <Icon :type="operation.icon"></Icon>
+            <img width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon">
         </a>
     </meta-operation>
 </div>
 </template>
 <script>
+import mVueToolkit from "mvue-toolkit";
 export default {
   props:{
     btns:{
@@ -44,6 +46,11 @@ export default {
                 selectedItem:this.item,
                 metaEntity:this.context&&this.context.grid&&this.context.grid.metaEntity
             }
+        }
+    },
+    data(){
+        return {
+            mVueToolkit:mVueToolkit
         }
     }
 }

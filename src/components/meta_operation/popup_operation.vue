@@ -5,6 +5,7 @@
             <Button type="primary" size="small" 
                 :title="operation.title" >
                 <Icon :type="operation.icon"></Icon>
+                <img width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon">
                 {{operation.title}}
             </Button>
         </slot>
@@ -24,6 +25,7 @@
 </div>
 </template>
 <script>
+import mVueToolkit from "mvue-toolkit";
 export default {
     props:{
         widgetContext:{//由使用操作的部件传入的部件上下文
@@ -40,7 +42,8 @@ export default {
             modalWidth:this.operation.modalWidth||500,
             modalHeight:this.operation.modalHeight||340,
             modalTitle:this.operation.modalTitle,
-            popupWidgetModal:false
+            popupWidgetModal:false,
+            mVueToolkit:mVueToolkit
         };
     },
     methods:{

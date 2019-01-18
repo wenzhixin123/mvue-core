@@ -4,6 +4,7 @@
             <Button type="primary" size="small"
                     :title="operation.title">
                 <Icon :type="operation.icon"></Icon>
+                <img width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon">
                 {{operation.title}}
             </Button>
         </slot>
@@ -11,7 +12,7 @@
 </template>
 <script>
   import OperationUtils from './js/operation_utils'
-
+  import mVueToolkit from "mvue-toolkit";
   var Config = require('../../config/config.js')
 
   export default {
@@ -28,6 +29,7 @@
     data () {
       return {
         mustStopRepeatedClick: false,//阻止点击操作重复触发
+        mVueToolkit:mVueToolkit
       }
     },
     methods: {

@@ -149,7 +149,7 @@ export default function (options) {
     metaEntity.getDefaultModel = function () {
         var model = {};
         _.forIn(this.fields, function (metaField, key) {
-            if (!_.includes(["createdAt", "updatedAt", "createdBy", "updatedBy"], metaField.semantics)) {
+            if (!metaField.readonly) {
                 if (metaField.inputTypeParams["options"]) {//选项类型默认值由options的checked属性指定
                     model[key] = null;
                 } else {
@@ -183,12 +183,10 @@ export default function (options) {
             });
         } else {//默认所有普通字段
             _.forIn(this.fields, function (metaField, key) {
-                if (!_.includes(["redundant", "createdAt", "updatedAt", "createdBy", "updatedBy"], metaField.semantics)) {
-                    if (metaField.manyToOneRelation) {
-                        expand.push(metaField.manyToOneRelation.name);
-                    } else if (metaField.embeddedRelation) {
-                        expand.push(metaField.embeddedRelation.name);
-                    }
+                if (metaField.manyToOneRelation) {
+                    expand.push(metaField.manyToOneRelation.name);
+                } else if (metaField.embeddedRelation) {
+                    expand.push(metaField.embeddedRelation.name);
                 }
             });
         }

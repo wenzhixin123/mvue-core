@@ -87,7 +87,7 @@
                 <slot name="header-right">
                 </slot>
                 <top-entity-select v-if="topEntitySelect&&topEntitySelect.entityName" 
-                    v-bind="topEntitySelect">
+                    v-bind="topEntitySelect" @on-top-entity-change="handleTopEntityChange">
                 </top-entity-select>
             </template>
     </b-list>
@@ -289,6 +289,9 @@ export default {
             }else{
                 return this.preprocessed;
             }
+        },
+        handleTopEntityChange(){
+            this.reload();
         }
     }
 }

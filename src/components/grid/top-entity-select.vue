@@ -78,7 +78,7 @@ export default {
                 this.searchFields.forEach(sf => {
                     _f.push(`${sf} like '%${encodeKeyword}%'`);
                 });
-                filters=_f.join(' and ');
+                filters=_f.join(' or ');
             }
             if(this.queryOptions){
                 for (const key in this.queryOptions) {
@@ -102,6 +102,7 @@ export default {
                 topEntityRow=`${this.entityName}/${this.selectedItem[idFieldName]}`;
             }
             this.$store.commit('core/setTopEntityRow',topEntityRow);
+            this.$emit('on-top-entity-change');
         }
     }
 }

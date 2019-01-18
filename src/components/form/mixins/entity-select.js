@@ -10,7 +10,7 @@ export default{
             historyItems:[],//选中过的历史选项
             cachedDataItems:null,//默认提示的可选数据
             viewModeValue:"",
-            preselectFirst:false
+            preselectFirst:false,
         };
     },
     computed:{
@@ -69,6 +69,9 @@ export default{
                     && items && items.length>0){
                     this.selectedItem=items[0];
                 }
+                if(this.onEntitySelectInited){
+                    this.onEntitySelectInited();
+                }
             });
             if(this.viewMode){
                 this.getViewModeValue()
@@ -98,7 +101,7 @@ export default{
             if(this.selectedItem){
                 sid=this.selectedItem[idField];
             }
-            if(this.selectedItemChanged && this.selectedItemChanged){
+            if(this.selectedItemChanged){
                 this.selectedItemChanged(sid);
             }
             this.$emit('input',sid);
@@ -112,9 +115,6 @@ export default{
                 var sid=sitem[idField];
                 sIds.push(sid);
             });
-            if(this.selectedItemChanged && this.selectedItemChanged){
-                this.selectedItemChanged(sid);
-            }
             this.$emit('input',sIds);
             this.dispatch&&this.dispatch('FormItem', 'on-form-change', sIds);
         },

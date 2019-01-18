@@ -29,10 +29,10 @@
                     无数据
                 </template>
             </Multiselect>
-            <meta-entity-tree ref="categoryTree" v-if="realTreeSettings" v-bind="realTreeSettings" @on-select-change="onTreeSelectChange"></meta-entity-tree>
+            <meta-entity-tree ref="categoryTree" v-if="canTreeRender()" v-bind="realTreeSettings" @on-select-change="onTreeSelectChange"></meta-entity-tree>
         </Sider>
         <Content>
-            <meta-grid ref="gridList"
+            <meta-grid v-if="canGridRender()" ref="gridList"
                        v-bind="$props"
                        :query="innerQuery"
                        :create-params="createParams"
@@ -117,9 +117,15 @@
             }
         },
         data(){
-            this.preInitCategory();
+            var entitySelectInited=false;
+            if(this.isCategoryEnable()){
+                this.preInitCategory();
+            }else{
+                entitySelectInited=true;
+            }
             return {
                 processed:false,
+                entitySelectInited:entitySelectInited,
                 selectedTreeNode:null,
                 realTreeSettings:null,
                 preselectFirst:this.category&&this.category.mustSelect,
@@ -132,6 +138,18 @@
             this.processed=true;
         },
         methods:{
+            canTreeRender(){
+                if(this.entitySelectInited && this.realTreeSettings){
+                    return true;
+                }
+                return false;
+            },
+            canGridRender(){
+                return this.entitySelectInited;
+            },
+            onEntitySelectInited(){
+              this.entitySelectInited=true;
+            },
             processSettings:function () {
                 //对setting进行预处理
                 var defaultTreeSetting=treeService.build(this.treeSettings.entityName,this.treeSettings);
@@ -178,37 +196,41 @@
                     value:this.selectedTreeNode.id
                 }
             },
-            preInitCategory(){
-                if(this.category){
-                    if(_.isUndefined(this.category.searchFields) || this.category.searchFields==null){
-                        this.category.searchFields=[];
-                    }
-                    if(this.category.entityName){//通过实体名构造数据源
-                        let metaEntity=this.$metaBase.findMetaEntity(this.category.entityName);
-                        if(metaEntity){
-                            if(_.isEmpty(this.category.valField)){
-                                this.category.valField=metaEntity.getIdField().name;
-                            }
-                            let tf=metaEntity.firstTitleField();
-                            if(tf){
-                                if(_.isEmpty(this.category.titleField)){
-                                    this.category.titleField=tf.name;
-                                }
-                                if(this.category.searchFields.length==0 && tf.filterable){
-                                    this.category.searchFields.push(tf.name);
-                                }
-                            }
-                            this.category.entityResource=metaEntity.dataResource();
-                            if(_.isEmpty(this.category.placeholder)){
-                                this.category.placeholder=`按${metaEntity.title}过滤`;
-                            }
-                        }else{
-                            this.$Modal.error({content:`实体[${this.category.entityName}]不存在`});
-                            return;
+            isCategoryEnable(){
+              if(this.category && (this.category.entityName || this.category.url)){
+                  return true;
+              }
+              return false;
+            },
+            preInitCategory() {
+                if (_.isUndefined(this.category.searchFields) || this.category.searchFields == null) {
+                    this.category.searchFields = [];
+                }
+                if (this.category.entityName) {//通过实体名构造数据源
+                    let metaEntity = this.$metaBase.findMetaEntity(this.category.entityName);
+                    if (metaEntity) {
+                        if (_.isEmpty(this.category.valField)) {
+                            this.category.valField = metaEntity.getIdField().name;
                         }
-                    }else if(this.category.url){//通过url地址构造数据源
-                        this.category.entityResource=globalContext.buildResource(this.category.url);
+                        let tf = metaEntity.firstTitleField();
+                        if (tf) {
+                            if (_.isEmpty(this.category.titleField)) {
+                                this.category.titleField = tf.name;
+                            }
+                            if (this.category.searchFields.length == 0 && tf.filterable) {
+                                this.category.searchFields.push(tf.name);
+                            }
+                        }
+                        this.category.entityResource = metaEntity.dataResource();
+                        if (_.isEmpty(this.category.placeholder)) {
+                            this.category.placeholder = `按${metaEntity.title}过滤`;
+                        }
+                    } else {
+                        this.$Modal.error({content: `实体[${this.category.entityName}]不存在`});
+                        return;
                     }
+                } else if (this.category.url) {//通过url地址构造数据源
+                    this.category.entityResource = globalContext.buildResource(this.category.url);
                 }
             },
             buildQueryOptions(params,keyword){
@@ -239,7 +261,9 @@
                 return "name";
             },
             selectedItemChanged(items){
-                this.onCategoryChange(items);
+                if(this.canGridRender()){
+                    this.onCategoryChange(items);
+                }
             },
             onCategoryChange(value,id){
                 if(!this.treeSettings.queryOptions){

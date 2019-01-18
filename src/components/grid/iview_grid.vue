@@ -4,10 +4,31 @@
     <!--紧凑型toolbar布局-->
     <div class="toolBar compact" v-if="!innerToolbar.hide && toolbarType=='compact'">
         <Row type="flex" align="middle" style="padding-bottom:16px;">
-            <i-col span="4" style="text-align:left;">
-                <slot name="viewSelect"></slot>
-            </i-col>
-            <i-col span="20" style="text-align:right;">
+            <i-col span="20" style="text-align:left;">
+
+                <div v-if="innerToolbar.btns" class="innerToolbar">
+                    <meta-operation v-for="(toolbarBtn,index) in innerToolbar.btns" :key="index" v-if="index<1" :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                        <Button style="margin-right:-8px;" type="primary" size="small" :title="toolbarBtn.title" class="default-color-btn">
+                            <Icon :type="toolbarBtn.icon"></Icon>
+                            {{toolbarBtn.title}}
+                        </Button>
+                    </meta-operation>
+                    <Dropdown v-if="innerToolbar.btns.length>1" @on-click="handleDropdownMenuClick" placement="bottom-end" trigger="click">
+                        <Button type="primary" title="更多" size="small" class="default-color-btn">
+                            <Icon type="arrow-down-b"></Icon>
+                        </Button>
+                        <DropdownMenu slot="list">
+                            <DropdownItem v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index>=1" :name="index" :key="index">
+                                <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                                    <Button style="min-width:100px" :key="index"
+                                            type="text"  :icon="toolbarBtn.icon"
+                                    >{{toolbarBtn.title}}</Button>
+                                </meta-operation>
+                            </DropdownItem>
+                        </DropdownMenu>
+                    </Dropdown>
+                </div>
+
                 <div class="grid-toolbar-common-btns">
                     <div v-if="innerToolbar.quicksearch&&innerToolbar.quicksearch.fields&&!(innerToolbar.quickSearchFields&&innerToolbar.quickSearchFields.length>0)" style="display:inline-block;">
                         <Input v-if="showQuickSearchInput" v-model="quicksearchKeyword" :placeholder="innerToolbar.quicksearch.placeholder"
@@ -20,31 +41,9 @@
                     <advance-search :quicksearch-keyword="quicksearchKeyword" :toolbar-type="toolbarType" v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" :entity-name="entityName" :advance-search-fields="innerToolbar.advanceSearchFields" @do-advance-search="doAdvanceSearch"></advance-search>
                     <div class="concat-toolbar-btn" @click="refresh()"><Icon type="refresh"></Icon>刷新</div>
                 </div>
-
-
-
-                <div v-if="innerToolbar.btns" class="innerToolbar">
-                    <meta-operation v-for="(toolbarBtn,index) in innerToolbar.btns" :key="index" v-if="index<1" :operation="toolbarBtn" :widget-context="getWidgetContext()">
-                        <Button style="margin-right:-8px;" type="primary" size="small" :title="toolbarBtn.title" class="default-color-btn">
-                            <Icon :type="toolbarBtn.icon"></Icon>
-                            {{toolbarBtn.title}}
-                        </Button>
-                    </meta-operation>
-                    <Dropdown v-if="innerToolbar.btns.length>1" @on-click="handleDropdownMenuClick" placement="bottom-end" trigger="click">
-                            <Button type="primary" title="更多" size="small" class="default-color-btn">
-                                <Icon type="arrow-down-b"></Icon>
-                            </Button>
-                            <DropdownMenu slot="list">
-                                <DropdownItem v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index>=1" :name="index" :key="index">
-                                    <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
-                                        <Button style="min-width:100px" :key="index"
-                                                type="text"  :icon="toolbarBtn.icon"
-                                        >{{toolbarBtn.title}}</Button>
-                                    </meta-operation>
-                                </DropdownItem>
-                            </DropdownMenu>
-                    </Dropdown>
-                </div>
+            </i-col>
+            <i-col span="4" style="text-align:right;">
+                <slot name="viewSelect"></slot>
             </i-col>
         </Row>
     </div>
@@ -792,7 +791,7 @@ export default {
         } 
         .compact.toolBar{
             .innerToolbar{
-                display: inline-block;
+                display: inline-block; margin-right:20px;
                 button +.ivu-dropdown{
                     border-left: 1px rgba(255, 255, 255, .2) solid;
 

@@ -30,7 +30,7 @@
             <div v-if="hasButtons()" :class="{'onepx-stroke':hasButtons()}"></div>
             <template v-if="toolbar">
                 <template v-if="isView">
-                    <meta-operation v-for="btn in toolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                    <meta-operation v-for="btn in toolbar.viewBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()" @triggered="operationTriggered">
                         <Button :type="btn.btnType || 'primary'" size="small" :title="btn.title">
                             <Icon :type="btn.icon" v-if="btn.icon"></Icon>
                             {{btn.title}}
@@ -38,7 +38,7 @@
                     </meta-operation>
                 </template>
                 <template v-if="!isView">
-                    <meta-operation v-for="btn in toolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                    <meta-operation v-for="btn in toolbar.editBtns" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()" @triggered="operationTriggered">
                         <Button :type="btn.btnType || 'primary'" size="small" :title="btn.title">
                             <Icon :type="btn.icon" v-if="btn.icon"></Icon>
                             {{btn.title}}
@@ -120,6 +120,10 @@
             formDefaultValues:{//表单默认值
                 type: Object,
                 require: false
+            },
+            formValidation:{//表示是否开启监听表单检测,默认开启
+                type:Boolean,
+                default:true
             }
         },
         computed:{
@@ -184,7 +188,7 @@
             },
             entity:{
                 handler:function(){
-                    if(this.preprocessed){
+                    if(this.preprocessed&&this.formValidation){
                         this.doValidation();
                     }
                 },
@@ -670,6 +674,13 @@
 
 
                 return _obj
+            },
+            operationTriggered(val){
+                //按钮触发时--进行的动作
+                if(!this.formValidation){
+                    //不自动监听校验时触发
+                    this.doValidation();
+                }
             }
         }
     }

@@ -32,7 +32,7 @@ function impl(context,$optInst){
     }
     var metaEntity=context.metaEntity;
     var _query=gridUtils.buildQuery(context);
-    if(context.grid&&context.grid.topEntityRowOn){
+    if(context.grid&&context.grid.topEntity){
         let topEntityRow=`${context.grid.metaEntity.name}/${id}`;
         _query= _.extend(_query,{'x_top_entity_row':topEntityRow});
     }

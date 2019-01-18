@@ -109,9 +109,12 @@ export default{
         accessMode:{//当前页面执行权限模式，此属性可改变
             type:String
         },
-        topEntityRowOn:{//是否在选中操作后，后续查询自动附加x-top-entity-row头
+        topEntity:{//是否在选中操作后，后续查询自动附加x-top-entity-row头
             type:Boolean,
             default:false
+        },
+        topEntitySelect:{//{entityName:'',searchFields:[],queryOptions:{}}
+            type:Object
         }
     }
 }

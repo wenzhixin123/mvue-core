@@ -23,6 +23,18 @@ export default {
             validator(value){
                 return value&&value.queryRoot&&value.queryByKeyword&&value.queryByParent;
             }
+        },
+        maxLevel:{  //树最大展开级数
+            type:Number,
+            default:0
+        },
+        mustSelect:{
+            type:Boolean,
+            default:false
+        },
+        showCheckbox:{
+            type:Boolean,
+            default:false
         }
     },
     data(){
@@ -51,20 +63,21 @@ export default {
                 })
             }
         },
-        toTreeData(items,level=0){
+        toTreeData(items,level){
             var _data=[];
-            _.forEach(items,item=>{
+            _.forEach(items,(item,index)=>{
                 var treeItem=Object.assign({},item,{
                     id:item[this.valueField],
                     title:item[this.labelField],
-                    children: []
+                    children: [],
+                    _level:level
                 });
                 //如果指定展开到treeExpandLevel层，并且部门数据有children数据，则默认展开
-                if(level<this.treeExpandLevel&&item.children){
+                if(level<=this.treeExpandLevel&&item.children){
                     treeItem.expand=true;
                 }
                 //如果部门数据有children数据，则不用远程loading
-                if(item.children){
+                if(item.children && item.children.length>0){
                     let _level=level+1;
                     treeItem.children=this.toTreeData(item.children,_level);
                 }else{
@@ -77,6 +90,16 @@ export default {
                         treeItem.loading=false;
                     }
                 }
+                if(this.maxLevel>0 && level>=this.maxLevel){
+                    delete treeItem.loading;
+                }
+                if(this.mustSelect && index==0 && level==1){
+                    treeItem.selected=true;
+                    if(this.showCheckbox){
+                        treeItem.checked=true;
+                    }
+                    this.$emit("on-select-change",[treeItem]);
+                }
                 _data.push(treeItem);
             });
             return _data;
@@ -84,7 +107,7 @@ export default {
         buildRoot(){
             //加载根部门
             this.dataResource.queryRoot().then(items=>{
-                this.treeData=this.toTreeData(items);
+                this.treeData=this.toTreeData(items,1);
             });
         },
         buildByKeyword(){
@@ -107,7 +130,7 @@ export default {
                     delete item.loading;
                     return;
                 }
-                var _data=this.toTreeData(items);
+                var _data=this.toTreeData(items,item["_level"]+1);
                 callback(_data);
             });
         }

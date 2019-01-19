@@ -342,7 +342,10 @@ export default function (options) {
     /**
      * 构造默认的创建表单Path
      */
-    metaEntity.formPathForCreate = function () {
+    metaEntity.formPathForCreate = function (isRelative) {
+        if(isRelative){
+            return context.getCurrentVue().$route.path+"/create";
+        }
         var path = this.projectId ? `/${this.projectId}/entities/${this.name}/create` : `/entities/${this.name}/create`;
         return path;
     }
@@ -352,14 +355,20 @@ export default function (options) {
      * id 是要编辑的数据的id值
      * @returns {string}
      */
-    metaEntity.formPathForEdit = function (id) {
+    metaEntity.formPathForEdit = function (id,isRelative) {
+        if(isRelative){
+            return context.getCurrentVue().$route.path+`/edit/${id}`;
+        }
         var path = this.projectId ? `/${this.projectId}/entities/${this.name}/edit/${id}` : `/entities/${this.name}/edit/${id}`;
         return path;
     }
     /**
      * 实体数据列表的路径地址
      */
-    metaEntity.viewPath = function () {
+    metaEntity.viewPath = function (isRelative) {
+        if(isRelative){
+            return context.getCurrentVue().$route.path+"/list";
+        }
         var path = this.projectId ? `/${this.projectId}/entities/${this.name}/list` : `/entities/${this.name}/list`;
         return path;
     }

@@ -39,4 +39,29 @@ function convertSettings(_settings,curInst,options){
     parseProps(temp.layout,curInst);
     return temp;
 }
-export default {convert:convertSettings};
+
+function visit(layout,process,parent,indexOrKey) {
+    if(_.isArray(layout)){
+        _.forEach(layout,(widget,index)=>{
+            if(_.isPlainObject(widget) || _.isArray(widget)){
+                visit(widget,process,layout,index);
+            }
+        });
+    }
+    if(_.isPlainObject(layout)){
+        if(_.has(layout,"ctype")){
+            process(layout,parent,indexOrKey);
+        }
+        _.forIn(layout,(widget,key)=>{
+            if(_.isPlainObject(widget) || _.isArray(widget)){
+                visit(widget,process,layout,key);
+            }
+        });
+    }
+}
+
+
+export default {
+    convert:convertSettings,
+    visit:visit
+};

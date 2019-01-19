@@ -30,6 +30,11 @@ export default{
         maxColumnsSize:{//默认生成列时，列表最多显示的列数
             type:Number,
             required:false
+        },
+        useRelativePath:{//CRUD时使用关系的相对路径
+            type:Boolean,
+            required:false,
+            default:false
         }
     }
 }

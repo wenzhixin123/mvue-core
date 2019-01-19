@@ -16,6 +16,9 @@ function concatIgnoreDuplicated(firstArray,secondArray,key='userId'){
 
 function  buildQueryOptions(queryOptions,filters) {
     var cloned=_.cloneDeep(queryOptions);
+    if(_.isEmpty(filters)){
+        return cloned;
+    }
     if(_.isEmpty(cloned.filters)){
         cloned.filters=filters;
     }else{
@@ -33,12 +36,19 @@ export default{
             }
         },opts);
         var metaEntity=metabase.findMetaEntity(entityName);
+        var parentField=metaEntity.findField(opts.parentField);
+        if(parentField==null){
+             opts.parentField=null;
+        }
         var dataResource=metaEntity.dataResource();
         var titleField=metaEntity.firstTitleField();
         var idField=metaEntity.getIdField();
         return {
             queryRoot() {
                 var queryOptions=buildQueryOptions(opts.queryOptions,`${opts.parentField} is null `);
+                if(opts.parentField==null){
+                    var queryOptions=buildQueryOptions(opts.queryOptions,null);
+                }
                 return dataResource.query(queryOptions).then(({data}) => {
                     return data;
                 });
@@ -84,6 +94,6 @@ export default{
             labelField:titleField&&titleField.name,
             valueField:idField&&idField.name,
             dataResource:dataResource
-        },defaultVal||{});
+        },defaultVal||opts);
     }
 }

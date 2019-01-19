@@ -32,14 +32,14 @@ function impl(context,$optInst){
         router=gridUtils.buildRouteToFromOp($optInst.operation);
     }
     if(router==null){
-        router=buildRoutToFromEntity(metaEntity);
+        router=buildRoutToFromEntity(metaEntity,context.grid && context.grid.useRelativePath);
     }
     router=_.merge(defaultRouter,router);
     gridUtils.goto(router);
 }
 
-function buildRoutToFromEntity(metaEntity) {
-    var path=metaEntity.formPathForCreate();
+function buildRoutToFromEntity(metaEntity,isRelative) {
+    var path=metaEntity.formPathForCreate(isRelative);
     if(_.isEmpty(path)){
         alert("not implement,please set createPath");
         return ;

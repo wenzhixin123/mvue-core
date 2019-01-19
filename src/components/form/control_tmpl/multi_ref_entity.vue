@@ -17,6 +17,7 @@
                             deselect-label="按enter键取消选择"
                             :show-no-results="true"
                             :internal-search="false"
+                             :closeOnSelect="false"
                             :label="getTitleField()"
                             @search-change="searchChange"
                             :track-by="getIdField()">

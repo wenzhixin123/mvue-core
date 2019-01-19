@@ -444,8 +444,11 @@ export default {
             let _this = this;
             _.forIn(_this.entity, (v, k) => {
                 let metaField = _this.metaEntity.findField(k);
-                if (metaField && metaField.readonly) {
-                    //readonly字段不提交
+                if(!metaField){
+                    _model[k] = v;
+                    return;
+                }
+                if(metaField.readonly){
                     return;
                 }
                 //创建模式，如果字段creatable为false，不提交此字段

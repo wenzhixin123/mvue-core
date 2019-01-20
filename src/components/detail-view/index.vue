@@ -1,5 +1,5 @@
 <template>
-    <Layout>
+    <Layout class="detail-view">
         <b-childheader v-if="showHeader" :title="header.title" :back-route="backRoute"></b-childheader>
         <Menu  ref="topMenus" v-if="mode=='horizontal'"
                :theme="theme" mode="horizontal"
@@ -22,7 +22,7 @@
                 </MenuItem>
             </template>
         </Menu>
-        <Layout class="detail-view">
+        <Layout>
             <Sider hide-trigger v-if="mode=='vertical'">
                 <Menu ref="leftMenus" width="auto" :theme="theme"
                       :active-name="activeName" @on-select="onMenuSelected">
@@ -45,7 +45,7 @@
                 </Menu>
             </Sider>
             <Content>
-                <Card :bordered="false" class="m-md">
+                <Card :bordered="false" :class="marginCls">
                     <router-view></router-view>
                 </Card>
             </Content>
@@ -102,6 +102,14 @@
                     title:"-"
                 }
             }
+        },
+        computed:{
+          marginCls(){
+              if(this.mode=='vertical'){
+                  return 'm-md';
+              }
+              return ""
+          }
         },
         mounted(){
             this.localMenus = _.cloneDeep(this.menus);

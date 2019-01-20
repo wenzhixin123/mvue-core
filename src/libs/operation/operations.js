@@ -75,6 +75,9 @@ function buildByTemplate(opts) {
     delete opts.type;
     var created=create(opts);
     created.name=name;
+    if(created.onBuild){
+        created.onBuild(created);
+    }
     return created;
 }
 

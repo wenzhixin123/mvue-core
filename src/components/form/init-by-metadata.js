@@ -21,6 +21,14 @@ function initRelationField(formInst,relationFieldName,_model){
             let idField=formInst.$metaBase.findMetaEntity(targetEntity).getIdField().name;
             _model[relationFieldName]=refEntity[idField];
         }
+        let topEntityRow=formInst.$store.state.core.topEntityRow;
+        if(topEntityRow){
+            var topEntityInfo=topEntityRow.split("/");
+            if(topEntityInfo.length==2 && topEntityInfo[0].toLowerCase()==targetEntity.toLowerCase()){
+                _model[relationFieldName]=topEntityInfo[1];
+            }
+        }
+
     }
 }
 //根据关系填充模型关系字段数据：只考虑多对一关系

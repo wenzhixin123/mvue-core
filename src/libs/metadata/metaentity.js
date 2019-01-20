@@ -15,6 +15,7 @@ export default function (options) {
         relations: {},
         engineUrl: "",
         ui: null,
+        relationUI:{},
         creatable: true,
         editable: true,
         deletable: true,
@@ -251,7 +252,8 @@ export default function (options) {
         var resourceName = `${this.entityPath}{/id}`;
         var customActions = {
             calc: {method: 'POST', url: `${this.entityPath}/calc`},
-            ui: {method: 'GET', url: `${this.entityPath}/_ui.json`}
+            ui: {method: 'GET', url: `${this.entityPath}/_ui.json`},
+            relationUI:{method: 'GET', url: `${this.entityPath}/$relations/:relation/_ui.json`}
         };
         //一对多关系接口附加
         _.forIn(this.relations, (metaRelation, key) => {
@@ -336,6 +338,27 @@ export default function (options) {
             page = ui.pages[pageKey];
         }
         return page;
+    }
+
+    metaEntity.getRelationUI = async function (relationName) {
+        var ui=this.relationUI[relationName.toLowerCase()];
+        if(ui){
+            return ui;
+        }
+        var resource = this.dataResource();
+        var resp=await resource.relationUI({relation:relationName});
+        ui=resp.data;
+        registerEntityOps(ui.operations);
+        this.relationUI[relationName.toLowerCase()]=ui;
+        return ui;
+    }
+
+    metaEntity.getRelationPage = async function (relationName,pageKey) {
+        var relationUI=await this.getRelationUI(relationName);
+        if(relationUI){
+            return relationUI[pageKey];
+        }
+        return null;
     }
 
 

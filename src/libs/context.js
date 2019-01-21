@@ -263,5 +263,50 @@ export default {
         if(appCtx.getCurrentVue){
             this.setCurrentVue(appCtx.getCurrentVue());
         }
+    },
+    componentInRoute(component){
+        let idKey="_uid";
+        var uid=component[idKey];
+        if(!uid){
+            return null;
+        }
+        var routes=this.getCurrentVue().$route.matched;
+        var matchedRoute=null;
+        for(var i=routes.length-1;i>=0;i--){
+            var route=routes[i];
+            var rootComponents=route.instances.default;
+            this.visitComponents(rootComponents,(com)=>{
+                if(com[idKey]==uid){
+                    matchedRoute=route;
+                    return false;
+                }
+            });
+            if(matchedRoute){
+                break;
+            }
+        }
+        return matchedRoute;
+    },
+    visitComponents(com,process){
+        if(com){
+            let result=process(com);
+            if(result===false){
+                return false;
+            }
+        }
+        if(com.$children){
+            var result=null;
+            _.forEach(com.$children,(children,index)=>{
+               var result =this.visitComponents(children,process);
+               if(result===false){
+                   result=false;
+                   return result;
+               }
+            });
+            if(result===false){
+                return result;
+            }
+        }
     }
+
 }

@@ -55,6 +55,9 @@
 
 <script>
     import context from "../../libs/context";
+    import  paths from "../../libs/paths";
+    var pathToRegexp = require('path-to-regexp');
+
     export default {
         props: {
             menus: {
@@ -81,14 +84,6 @@
                 type:Boolean,
                 default:true
             },
-            backRoute:{
-                type:Object,
-                default(){
-                    return {
-                        path:"../../list"
-                    }
-                }
-            }
         },
         data: function () {
             this.setEntityToContext();
@@ -100,7 +95,8 @@
                 menuMappings: {},
                 header:{
                     title:"-"
-                }
+                },
+                basePath:""
             }
         },
         computed:{
@@ -109,7 +105,10 @@
                   return 'm-md';
               }
               return ""
-          }
+          },
+            backRoute(){
+                return paths.relativeToAbsolute(this.basePath,"../../list");
+            }
         },
         mounted(){
             this.localMenus = _.cloneDeep(this.menus);
@@ -117,6 +116,7 @@
                 return;
             }
             this.prepare();
+            this.calBasePath();
             if(this.$route.name==="defaultEditForm"){
                 let lm=this.localMenus[0];
                 while(lm.children&&lm.children.length>0){
@@ -129,11 +129,21 @@
             this.setActiveMenu();
         },
         methods: {
+            calBasePath(){
+              var matchedRoute=context.componentInRoute(this);
+              if(!matchedRoute){
+                  this.basePath=this.$route.path;
+              }
+              var url=pathToRegexp.compile(matchedRoute.path)(this.$route.params);
+              this.basePath=url;
+              return url;
+            },
             setActiveMenu() {//设置导航菜单选中
-                var url=this.$route.path.substring(this.$route.path.lastIndexOf("/")+1);
+                var url=this.$route.path;
                 var matched=null;
                 this.visitTree(this.localMenus,menu=>{
-                    if(url.indexOf(menu.url)>-1){
+                    var menuUrl=paths.relativeToAbsolute(this.basePath,menu.url);
+                    if(url.indexOf(menuUrl)>-1){
                         matched=menu;
                         return false;
                     }
@@ -174,11 +184,7 @@
                         alert("菜单定义数据有误");
                         return;
                     }
-                    var toPath=this.$route.path;
-                    if(this.$route.name!='defaultEditForm'){
-                        toPath=toPath.substring(0,this.$route.path.lastIndexOf("/"));
-                    }
-                    toPath=toPath+"/"+selectedMenu.url;
+                    var toPath=paths.relativeToAbsolute(this.basePath,selectedMenu.url);
                     this.activeName = selectedMenu.id;
                     this.$router.push({path: toPath,query:this.$route.query});
                 }

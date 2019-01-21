@@ -367,7 +367,7 @@ export default function (options) {
      */
     metaEntity.formPathForCreate = function (isRelative) {
         if(isRelative){
-            return context.getCurrentVue().$route.path+"/create";
+            return "./create";
         }
         var path = this.projectId ? `/${this.projectId}/entities/${this.name}/create` : `/entities/${this.name}/create`;
         return path;
@@ -380,7 +380,7 @@ export default function (options) {
      */
     metaEntity.formPathForEdit = function (id,isRelative) {
         if(isRelative){
-            return context.getCurrentVue().$route.path+`/edit/${id}`;
+            return `./edit/${id}`;
         }
         var path = this.projectId ? `/${this.projectId}/entities/${this.name}/edit/${id}` : `/entities/${this.name}/edit/${id}`;
         return path;
@@ -390,7 +390,7 @@ export default function (options) {
      */
     metaEntity.viewPath = function (isRelative) {
         if(isRelative){
-            return context.getCurrentVue().$route.path+"/list";
+            return "./list";
         }
         var path = this.projectId ? `/${this.projectId}/entities/${this.name}/list` : `/entities/${this.name}/list`;
         return path;

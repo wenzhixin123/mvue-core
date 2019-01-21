@@ -11,7 +11,9 @@
     export default {
         mixins: [treeBase],
         mounted:function () {
-            this.buildRoot();
+            if(this.loadDataWhenMount){
+                this.buildRoot();
+            }
         },
         methods:{
             handleSelectChange:function (data) {

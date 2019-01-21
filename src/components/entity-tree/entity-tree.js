@@ -35,6 +35,10 @@ export default {
         showCheckbox:{
             type:Boolean,
             default:false
+        },
+        loadDataWhenMount:{
+            type:Boolean,
+            default:true
         }
     },
     data(){

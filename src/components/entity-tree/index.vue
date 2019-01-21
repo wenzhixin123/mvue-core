@@ -1,9 +1,10 @@
 <template>
-    <Tree :multiple="false" :data="treeData"
+    <m-simple-tree :multiple="false" :data="treeData"
             :load-data="queryByParent"
+            :must-select="mustSelect"
             @on-select-change="handleSelectChange"
             @on-check-change="handleCheckChange"
-            @on-toggle-expand="handleToggleExpand"></Tree>
+            @on-toggle-expand="handleToggleExpand"></m-simple-tree>
 </template>
 
 <script>

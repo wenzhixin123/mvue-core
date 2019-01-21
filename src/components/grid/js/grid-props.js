@@ -121,10 +121,6 @@ export default{
                 }
                 return value&&value.entityName;
             }
-        },
-        loadDataWhenMount:{
-            type:Boolean,
-            default:true
         }
     }
 }

@@ -29,14 +29,14 @@
                     无数据
                 </template>
             </Multiselect>
-            <meta-entity-tree ref="categoryTree" v-if="canTreeRender()"
+            <meta-entity-tree ref="categoryTree"
                               v-bind="realTreeSettings"
                               :load-data-when-mount="loadDataWhenMount"
                               @on-select-change="onTreeSelectChange"
             ></meta-entity-tree>
         </Sider>
         <Content>
-            <meta-grid v-if="canGridRender()" ref="gridList"
+            <meta-grid ref="gridList"
                        v-bind="gridSettings"
                        :query="innerQuery"
                        :create-params="createParams"

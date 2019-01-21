@@ -1,4 +1,5 @@
 import metabase from '../../../libs/metadata/metabase';
+import rowMeta from './row-meta';
 var types={
     RefEntity:{ 
         id: "RefEntity", 
@@ -56,7 +57,7 @@ function formatData(componentType,item,metaField){
     let targetEntity=metabase.findMetaEntity(relation.targetEntity);
     let titleField=targetEntity.firstTitleField().name;
     if(!titleField || !expandData){
-        return origin;
+        return rowMeta.title(item,fieldName)||origin;
     }
     if(_.isArray(origin)){
         let titleArray=[];

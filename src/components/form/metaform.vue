@@ -82,7 +82,8 @@
             return {
                 metaEntity:metaEntity,
                 dataResource:dataResource,
-                entity:entity
+                entity:entity,
+                firstEntityData:null
             };
         },
         mounted:function () {
@@ -145,6 +146,7 @@
             reinitEntityModel(){
                 var expand= this.metaEntity.getExpand();
                 return this.dataResource.get({id: this.entityId,expand:expand}).then(({data})=> {
+                    this.firstEntityData=data;
                     this.$store.commit("core/setEntity",{entityName:this.entityName,entity:data});
                     //根据实体记录数据初始化操作权限
                     this.initPerm(data);

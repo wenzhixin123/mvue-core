@@ -1,4 +1,5 @@
 import context from '../../../libs/context';
+import rowMeta from '../js/row-meta';
 export default{
     data(){
         return {
@@ -84,6 +85,17 @@ export default{
                 _this.initSelectedItemByFirstValue(this.value);
                 return;
             }
+            //从topEntity来的条件
+            let topEntity=context.getStore().state.core.topEntityRow;
+            if(topEntity){
+                let _t=topEntity.split('/');
+                let entityName=_t[0];
+                if(entityName.toLowerCase()==this.formItem.componentParams.entityId.toLowerCase()){
+                    let _id=_t[1];
+                    _this.initSelectedItemByFirstValue(_id);
+                    return;
+                }
+            }
              //默认值填充
             if(this.shouldInitDefault&&this.shouldInitDefault()){
                 this.calcField().then((data)=>{
@@ -124,7 +136,38 @@ export default{
                 return;
             }
             var _this=this;
-            this.searchByIds(val,function (items) {
+            //如果val指定的查询在后端不存在，一种情况就是已经被删除，另一种情况是使用外部数据(存储在__meta__中)
+            let valLen=1;
+            if(_.isArray(val)){
+                valLen=val.length;
+            }
+            this.searchByIds(val,(items) =>{
+                //后端数据不完整
+                if(items.length<valLen){
+                    //构造已删除的
+                    //构造__meta__中的
+                    let itemsMap=_.keyBy(items,item=>{
+                        return item[this.getIdField()];
+                    });
+                    let fakeVals=[];
+                    if(_.isArray(val)){
+                        val.forEach(ele => {
+                            if(!itemsMap.hasOwnProperty(ele)){
+                                fakeVals.push(ele);
+                            }
+                        });
+                    }else{
+                        fakeVals.push(val);
+                    }
+                    //需要从form构造
+                    let form=this.getParentForm();
+                    if(form){
+                        let rowData=form.firstEntityData;
+                        let fakeItems=rowMeta.rebuildRefData(fakeVals,rowData,this.formItem.dataField,this.getIdField(),this.getTitleField());
+                        this.ensureHistoryItems(fakeItems);
+                        items=items.concat(fakeItems);
+                    }
+                }
                 if(items.length>0){
                     let multiple=_.isArray(val);
                     if(multiple){
@@ -184,7 +227,8 @@ export default{
                 queryOptions.expand=this.buildQueryExpand();
             }
             if(this.entityResource){
-                this.entityResource.query(queryOptions).then(function({data}){
+                this.entityResource.query(queryOptions).then(({data})=>{
+                    this.ensureHistoryItems(data);
                     callback&&callback(data);
                 });
             }

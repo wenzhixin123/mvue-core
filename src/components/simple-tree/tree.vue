@@ -37,6 +37,10 @@
                 type: Boolean,
                 default: false
             },
+            checkStrictly:{
+                type:Boolean,
+                default:true
+            },
             emptyText: {
                 type: String
             },
@@ -49,6 +53,10 @@
             },
             render: {
                 type: Function
+            },
+            mustSelect:{
+                type:Boolean,
+                default:false
             }
         },
         data () {
@@ -102,21 +110,20 @@
             },
             updateTreeUp(nodeKey){
                 //不需要向上更新所以去掉
-                // const parentKey = this.flatState[nodeKey].parent;
-                // if (typeof parentKey == 'undefined') return;
+                const parentKey = this.flatState[nodeKey].parent;
+                if (typeof parentKey == 'undefined' || this.checkStrictly) return;
+                const node = this.flatState[nodeKey].node;
+                const parent = this.flatState[parentKey].node;
+                if (node.checked == parent.checked && node.indeterminate == parent.indeterminate) return; // no need to update upwards
 
-                // const node = this.flatState[nodeKey].node;
-                // const parent = this.flatState[parentKey].node;
-                // if (node.checked == parent.checked && node.indeterminate == parent.indeterminate) return; // no need to update upwards
-
-                // if (node.checked == true) {
-                //     this.$set(parent, 'checked', parent[this.childrenKey].every(node => node.checked));
-                //     this.$set(parent, 'indeterminate', !parent.checked);
-                // } else {
-                //     this.$set(parent, 'checked', false);
-                //     this.$set(parent, 'indeterminate', parent[this.childrenKey].some(node => node.checked || node.indeterminate));
-                // }
-                // this.updateTreeUp(parentKey);
+                if (node.checked == true) {
+                    this.$set(parent, 'checked', parent[this.childrenKey].every(node => node.checked));
+                    this.$set(parent, 'indeterminate', !parent.checked);
+                } else {
+                    this.$set(parent, 'checked', false);
+                    this.$set(parent, 'indeterminate', parent[this.childrenKey].some(node => node.checked || node.indeterminate));
+                }
+                this.updateTreeUp(parentKey);
             },
             rebuildTree () { // only called when `data` prop changes
                 const checkedNodes = this.getCheckedNodes();
@@ -161,6 +168,10 @@
             },
             handleSelect (nodeKey) {
                 const node = this.flatState[nodeKey].node;
+                //禁用取消选中
+                if(this.mustSelect&&node.selected){
+                    return;
+                }
                 if (!this.multiple){ // reset previously selected node
                     const currentSelectedKey = this.flatState.findIndex(obj => obj.node.selected);
                     if (currentSelectedKey >= 0 && currentSelectedKey !== nodeKey) this.$set(this.flatState[currentSelectedKey].node, 'selected', false);

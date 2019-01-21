@@ -275,7 +275,7 @@ export default {
             if(this.fromRelation) {
                 var targetEntity = metabase.findMetaEntity(this.fromRelation.entityName);
                 var relation = targetEntity.relations[this.fromRelation.name];
-                if (relation) {
+                if (relation && relation.joinFields && relation.joinFields.length>0) {
                     let jf=relation.joinFields;
                     return jf[0];
                 }

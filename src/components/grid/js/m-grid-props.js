@@ -34,7 +34,7 @@ export default{
         useRelativePath:{//CRUD时使用关系的相对路径
             type:Boolean,
             required:false,
-            default:false
+            default:true
         }
     }
 }

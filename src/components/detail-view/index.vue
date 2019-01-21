@@ -133,7 +133,7 @@
                 var url=this.$route.path.substring(this.$route.path.lastIndexOf("/")+1);
                 var matched=null;
                 this.visitTree(this.localMenus,menu=>{
-                    if(menu.url==url){
+                    if(url.indexOf(menu.url)>-1){
                         matched=menu;
                         return false;
                     }

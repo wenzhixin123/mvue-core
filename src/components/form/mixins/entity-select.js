@@ -10,7 +10,7 @@ export default{
             historyItems:[],//选中过的历史选项
             cachedDataItems:null,//默认提示的可选数据
             viewModeValue:"",
-            preselectFirst:false,
+            preselectFirst:false
         };
     },
     computed:{

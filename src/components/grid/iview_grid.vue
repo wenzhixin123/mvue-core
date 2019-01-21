@@ -21,6 +21,7 @@
              :no-data-text="noDataText"
              :no-filtered-data-text="noFilteredDataText"
              :id="id"
+             :load-data-when-mount="loadDataWhenMount"
              @on-current-change="handleOnCurrentChange"
              @on-select="handleOnSelect"
              @on-select-cancel="handleOnSelectCancel"

@@ -29,11 +29,15 @@
                     无数据
                 </template>
             </Multiselect>
-            <meta-entity-tree ref="categoryTree" v-if="canTreeRender()" v-bind="realTreeSettings" @on-select-change="onTreeSelectChange"></meta-entity-tree>
+            <meta-entity-tree ref="categoryTree" v-if="canTreeRender()"
+                              v-bind="realTreeSettings"
+                              :load-data-when-mount="loadDataWhenMount"
+                              @on-select-change="onTreeSelectChange"
+            ></meta-entity-tree>
         </Sider>
         <Content>
             <meta-grid v-if="canGridRender()" ref="gridList"
-                       v-bind="$props"
+                       v-bind="gridSettings"
                        :query="innerQuery"
                        :create-params="createParams"
                        @on-current-change="handleOnCurrentChange"
@@ -102,12 +106,23 @@
                 }
                 return "请输入关键字搜索";
             },
+            loadDataWhenMount(){
+              if(this.isCategoryEnable() && this.category.mustSelect){
+                  return false;
+              }
+              return true;
+            },
             createParams(){
                 let params={};
                 if(this.selectedTreeNode){
                     params[this.treeSettings.targetField]=this.selectedTreeNode.id;
                 }
                 return params;
+            },
+            gridSettings(){
+                return _.assign(this.$props,{
+                    loadDataWhenMount:this.loadDataWhenMount
+                });
             },
             deselectLabel(){
                 if(this.category.mustSelect){
@@ -269,6 +284,9 @@
                 }
             },
             onCategoryChange(value,id){
+                if(!this.isCategoryEnable() || !this.entitySelectInited){
+                    return;
+                }
                 if(!this.treeSettings.queryOptions){
                     this.treeSettings.queryOptions={};
                 }

@@ -49,7 +49,8 @@ export default {
     },
     data: function(){
         return {
-            dropdownVisible:false
+            dropdownVisible:false,
+            mVueToolkit:mVueToolkit
         }
     },
     methods:{

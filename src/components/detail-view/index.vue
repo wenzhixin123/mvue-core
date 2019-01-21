@@ -107,7 +107,7 @@
               return ""
           },
             backRoute(){
-                return paths.relativeToAbsolute(this.basePath,"../../list");
+                return {path:paths.relativeToAbsolute(this.basePath,"../../list")}
             }
         },
         mounted(){

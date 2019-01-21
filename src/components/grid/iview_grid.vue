@@ -106,6 +106,10 @@ export default {
         createParams:{//grid创建操作可使用的外部指定的查询参数，由m-tree-grid传入，create操作使用
             type:Object,
             required:false
+        },
+        loadDataWhenMount:{
+            type:Boolean,
+            default:true
         }
     },
     components:{

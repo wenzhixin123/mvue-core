@@ -87,7 +87,7 @@ export default{
             }
             //从topEntity来的条件
             let topEntity=context.getStore().state.core.topEntityRow;
-            if(topEntity){
+            if(topEntity&&this.formItem&&this.formItem.componentParams&&this.formItem.componentParams.entityId){
                 let _t=topEntity.split('/');
                 let entityName=_t[0];
                 if(entityName.toLowerCase()==this.formItem.componentParams.entityId.toLowerCase()){

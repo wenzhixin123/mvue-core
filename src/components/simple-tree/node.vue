@@ -33,13 +33,12 @@
     import CollapseTransition from './collapse-transition';
     import Emitter from '../mixins/emitter';
     import { findComponentUpward } from './assist';
-
     const prefixCls = 'ivu-tree';
 
     export default {
         name: 'TreeNode',
         mixins: [ Emitter ],
-        components: { CollapseTransition, Render },
+        components: {CollapseTransition, Render },
         props: {
             data: {
                 type: Object,
@@ -167,3 +166,4 @@
         }
     };
 </script>
+

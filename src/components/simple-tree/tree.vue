@@ -20,7 +20,7 @@
 
     export default {
         name: 'Tree',
-        mixins: [ Emitter],
+        mixins: [ Emitter ],
         components: { TreeNode },
         props: {
             data: {
@@ -62,15 +62,15 @@
         data () {
             return {
                 prefixCls: prefixCls,
-                stateTree: _.cloneDeep(this.data),
-                flatState: []
+                stateTree: this.data,
+                flatState: [],
             };
         },
         watch: {
             data: {
                 deep: true,
                 handler () {
-                    this.stateTree = _.cloneDeep(this.data);
+                    this.stateTree = this.data;
                     this.flatState = this.compileFlatState();
                     this.rebuildTree();
                 }
@@ -109,9 +109,9 @@
                 return flatTree;
             },
             updateTreeUp(nodeKey){
-                //不需要向上更新所以去掉
                 const parentKey = this.flatState[nodeKey].parent;
                 if (typeof parentKey == 'undefined' || this.checkStrictly) return;
+
                 const node = this.flatState[nodeKey].node;
                 const parent = this.flatState[parentKey].node;
                 if (node.checked == parent.checked && node.indeterminate == parent.indeterminate) return; // no need to update upwards
@@ -153,21 +153,20 @@
                 return this.flatState.filter(obj => (obj.node.checked || obj.node.indeterminate)).map(obj => obj.node);
             },
             updateTreeDown(node, changes = {}) {
-                //{checked: true ,indeterminate: false}
+                if (this.checkStrictly) return;
+
                 for (let key in changes) {
                     this.$set(node, key, changes[key]);
                 }
-                //仅仅处理全选通知到子节点
-                if(changes.checked){
-                    if (node[this.childrenKey]) {
-                        node[this.childrenKey].forEach(child => {
-                            this.updateTreeDown(child, changes);
-                        });
-                    }
+                if (node[this.childrenKey]) {
+                    node[this.childrenKey].forEach(child => {
+                        this.updateTreeDown(child, changes);
+                    });
                 }
             },
             handleSelect (nodeKey) {
                 const node = this.flatState[nodeKey].node;
+                debugger
                 //禁用取消选中
                 if(this.mustSelect&&node.selected){
                     return;
@@ -178,7 +177,7 @@
                 }
                 this.$set(node, 'selected', !node.selected);
 
-                this.$emit('on-select-change', this.getSelectedNodes());
+                this.$emit('on-select-change', this.getSelectedNodes(), node);
             },
             handleCheck({ checked, nodeKey }) {
                 const node = this.flatState[nodeKey].node;
@@ -188,7 +187,7 @@
                 this.updateTreeUp(nodeKey); // propagate up
                 this.updateTreeDown(node, {checked, indeterminate: false}); // reset `indeterminate` when going down
 
-                this.$emit('on-check-change', this.getCheckedNodes());
+                this.$emit('on-check-change', this.getCheckedNodes(), node);
             }
         },
         created(){

@@ -1,3 +1,5 @@
+import topEntityService from "../services/store/top-entity";
+
 const state = {
   currentRouteData:{},//当前路由的公共数据
   autoPageConfs:{},//当前系统所有动态页面组件的配置集合
@@ -79,6 +81,9 @@ const mutations = {
   },
   setTopEntityRow(state,topEntityRow){
     state.topEntityRow=topEntityRow;
+    if(_.isEmpty(topEntityRow) && topEntityService.get()){
+      topEntityService.clear();
+    }
   }
 }
 

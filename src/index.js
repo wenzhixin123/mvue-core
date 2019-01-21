@@ -188,6 +188,7 @@ import  context from "./libs/context";
 import getParent from './components/mixins/get-parent';
 import operationManager from "./libs/operation/operations";
 import formControlManager from './components/form/control-manager';
+import topEntityService from "./services/store/top-entity";
 
 let MvueCore={
     install:install,
@@ -222,7 +223,7 @@ let MvueCore={
                     }
                     //多租户过滤参数附加
                     if(to.query["x_top_entity_row"]){
-                        store.commit('core/setTopEntityRow',to.query["x_top_entity_row"]);
+                        topEntityService.setByString(to.query["x_top_entity_row"]);
                     }
                 }
                 next();

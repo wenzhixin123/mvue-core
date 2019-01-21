@@ -63,6 +63,8 @@
     import gridEvents from "../grid/js/grid-events";
     import treeService from "../../services/tool/tree-service";
     import entitySelect from '../form/mixins/entity-select';
+    import topEntityService from "../../services/store/top-entity";
+
     export default {
         mixins:[mGridProps,gridProps, gridEvents, entitySelect],
         props: {
@@ -165,8 +167,21 @@
             canGridRender(){
                 return this.entitySelectInited;
             },
-            onEntitySelectInited(){
+            onEntitySelectInited(items){
               this.entitySelectInited=true;
+              this.onCategoryChange(items);
+            },
+            entitySelectInitialValue(){
+                if(this.isCategoryEnable()){
+                    let topEntity=topEntityService.getHistory(this.category.entityName);
+                    if(topEntity){
+                        if(this.category.topEntity){
+                            topEntityService.set(topEntity.entityName,topEntity.value);
+                        }
+                        return topEntity.value;
+                    }
+                }
+                return null;
             },
             processSettings:function () {
                 //对setting进行预处理
@@ -183,10 +198,9 @@
                 //设置topEntity
                 if(this.treeSettings.topEntity && this.treeSettings.entityName){
                     if(data && data.length>0){
-                        let topEntityRow=`${this.treeSettings.entityName}/${this.selectedTreeNode.id}`;
-                        this.$store.commit('core/setTopEntityRow',topEntityRow);
+                        topEntityService.set(this.treeSettings.entityName,this.selectedTreeNode.id);
                     }else{
-                        this.$store.commit('core/setTopEntityRow','');
+                        topEntityService.remove();
                     }
                 }
                 this.$refs["gridList"].reload();
@@ -278,11 +292,6 @@
                 }
                 return "name";
             },
-            selectedItemChanged(items){
-                if(this.canGridRender()){
-                    this.onCategoryChange(items);
-                }
-            },
             onCategoryChange(value,id){
                 if(!this.isCategoryEnable() || !this.entitySelectInited){
                     return;
@@ -310,10 +319,9 @@
                     if(this.category.topEntity){
                         if(this.selectedItem){
                             let id=this.selectedItem[this.getIdField()];
-                            let topEntityRow=`${this.category.entityName}/${id}`;
-                            this.$store.commit('core/setTopEntityRow',topEntityRow);
+                            topEntityService.set(this.category.entityName,id);
                         }else{
-                            this.$store.commit('core/setTopEntityRow', '');
+                            topEntityService.remove();
                         }
                         this.$refs["gridList"].reload();
                     }

@@ -1,3 +1,4 @@
+import topEntityService from "../../../services/store/top-entity";
 export default {
   methods: {
     handleOnCurrentChange(currentRow,oldCurrentRow){
@@ -20,7 +21,7 @@ export default {
         if(selection.length==1){
           this.setTopEntityRowIfNecessary(selection[0]);
         }else if(selection.length==0){
-          this.$store.commit('core/setTopEntityRow','');
+            topEntityService.remove();
         }
       }
       this.selectedItems=selection;
@@ -36,8 +37,7 @@ export default {
       if(this.topEntity&&this.metaEntity){
         let metaEntity = this.metaEntity;
         let idFieldName=metaEntity.getIdField().name;
-        let topEntityRow=`${metaEntity.name}/${row[idFieldName]}`;
-        this.$store.commit('core/setTopEntityRow',topEntityRow);
+        topEntityService.set(metaEntity.name,row[idFieldName]);
       }
     },
     handleOnRowClick(row,index){

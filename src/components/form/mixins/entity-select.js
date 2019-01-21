@@ -1,5 +1,7 @@
 import context from '../../../libs/context';
 import rowMeta from '../js/row-meta';
+import topEntityService from "../../../services/store/top-entity";
+
 export default{
     data(){
         return {
@@ -71,7 +73,7 @@ export default{
                     this.selectedItem=items[0];
                 }
                 if(this.onEntitySelectInited){
-                    this.onEntitySelectInited();
+                    this.onEntitySelectInited(this.selectedItem);
                 }
             });
             if(this.viewMode){
@@ -81,21 +83,12 @@ export default{
         //第一次进入页面时执行初始化
         firstSearch(){
             let _this=this;
-            if(this.value){
-                _this.initSelectedItemByFirstValue(this.value);
+            var initValue=this.getInitialValue();
+            if(initValue){
+                _this.initSelectedItemByFirstValue(initValue);
                 return;
             }
-            //从topEntity来的条件
-            let topEntity=context.getStore().state.core.topEntityRow;
-            if(topEntity&&this.formItem&&this.formItem.componentParams&&this.formItem.componentParams.entityId){
-                let _t=topEntity.split('/');
-                let entityName=_t[0];
-                if(entityName.toLowerCase()==this.formItem.componentParams.entityId.toLowerCase()){
-                    let _id=_t[1];
-                    _this.initSelectedItemByFirstValue(_id);
-                    return;
-                }
-            }
+
              //默认值填充
             if(this.shouldInitDefault&&this.shouldInitDefault()){
                 this.calcField().then((data)=>{
@@ -106,15 +99,32 @@ export default{
                 });
             }
         },
+        getInitialValue(){
+            var initValue=this.value;
+            if(initValue){
+                return initValue;
+            }
+            //从topEntity来的条件
+            if(this.formItem && this.formItem.componentParams){
+                let topEntity=topEntityService.getHistory(this.formItem.componentParams.entityId);
+                if(topEntity){
+                    initValue=topEntity.value;
+                }
+            }
+            if(initValue){
+                return initValue;
+            }
+            if(this.entitySelectInitialValue){
+                initValue=this.entitySelectInitialValue();
+            }
+            return initValue;
+        },
         //单选
         notifySingleSelect:function(){
             var idField=this.getIdField();
             var sid=null;
             if(this.selectedItem){
                 sid=this.selectedItem[idField];
-            }
-            if(this.selectedItemChanged){
-                this.selectedItemChanged(sid);
             }
             this.$emit('input',sid);
             this.dispatch&&this.dispatch('FormItem', 'on-form-change', sid);

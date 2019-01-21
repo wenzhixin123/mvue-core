@@ -6,7 +6,7 @@
                 <Button type="primary" size="small"
                         :title="operation.title" >
                     <Icon :type="operation.icon"></Icon>
-                    <img width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon">
+                    <img v-if="!operation.hideImg" width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon" @error="hideImg(operation)">
                     {{operation.title}}
                 </Button>
             </slot>
@@ -77,6 +77,11 @@
                     router.push({name:"defaultPageIndex",query:_query,params:_params});
                     _t.$emit("triggered","toPage");
                 });
+            },
+            hideImg(operation){
+                //隐藏图片
+                operation.hideImg=true;
+                this.$forceUpdate();
             }
         }
     }

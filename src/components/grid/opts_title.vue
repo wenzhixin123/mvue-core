@@ -8,7 +8,7 @@
                 <meta-operation v-for="(btn,index) in permedBtns()" :key="index" :operation="btn" v-if="index<2 || permedBtns().length==3" :widget-context="getWidgetContext()">
                     <a href="javascript:void(0)" class="btn opt-btn" :title="operation.title" slot-scope="{operation}">
                         <Icon :type="operation.icon"></Icon>
-                        <img width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon">
+                        <img v-if="!operation.hideImg" width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon" @error="hideImg(operation)">
                     </a>
                 </meta-operation>
                 <Dropdown v-if="permedBtns().length>3" transfer @on-click="handleDropdownMenuClick" @on-visible-change="handleOnVisibleChange" class="opts-dropdown">
@@ -107,6 +107,11 @@ export default {
                 };
             }
             return context
+        },
+        hideImg(operation){
+            //隐藏图片
+            operation.hideImg=true;
+            this.$forceUpdate();
         }
     }
 }

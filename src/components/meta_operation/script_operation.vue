@@ -4,10 +4,11 @@
             <Button type="primary" size="small"
                     :title="operation.title">
                 <Icon :type="operation.icon"></Icon>
-                <img width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon">
+                <img v-if="!operation.hideImg" width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon" @error="hideImg(operation)">
                 {{operation.title}}
             </Button>
         </slot>
+
     </div>
 </template>
 <script>
@@ -44,13 +45,13 @@
           }
           var _widgetCtx = Object.assign(this.widgetContext, {'buttonInfo': this.operation})
           if (_.isFunction(this.operation.onclick)) {
-            this.mustStopRepeatedClick = true
+            this.mustStopRepeatedClick = true;
             this.operation.onclick(_widgetCtx, window.factoryApp)
           } else {
-            this.mustStopRepeatedClick = true
+            this.mustStopRepeatedClick = true;
             _t.cellExecScript()
           }
-          this.mustStopRepeatedClick = false
+          this.mustStopRepeatedClick = false;
           this.$emit('triggered', 'script')
         } else {
           if (this.mustStopRepeatedClick) {
@@ -91,6 +92,11 @@
           this.$emit('triggered', 'script')
           OperationUtils.execution(this.operation, _widgetCtx, 'afterExecCode', this)//执行后
         })
+      },
+      hideImg(operation){
+        //隐藏图片
+        operation.hideImg=true;
+        this.$forceUpdate();
       }
     }
   }

@@ -5,7 +5,7 @@
             <Button type="primary" size="small" 
                 :title="operation.title" >
                 <Icon :type="operation.icon"></Icon>
-                <img width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon">
+                <img v-if="!operation.hideImg" width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon" @error="hideImg(operation)">
                 {{operation.title}}
             </Button>
         </slot>
@@ -53,6 +53,11 @@ export default {
         },
         close(){//关闭对话框
             this.popupWidgetModal=false;
+        },
+        hideImg(operation){
+            //隐藏图片
+            operation.hideImg=true;
+            this.$forceUpdate();
         }
     }
 }

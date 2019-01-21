@@ -5,6 +5,9 @@
     <div class="toolBar compact" v-if="!innerToolbar.hide && toolbarType=='compact'">
         <Row type="flex" align="middle" style="padding-bottom:16px;">
             <i-col span="20" style="text-align:left;">
+                <div style="display: inline-block;">
+                    <slot name="compactToolBar"></slot>
+                </div>
 
                 <div v-if="innerToolbar.btns" class="innerToolbar">
                     <meta-operation v-for="(toolbarBtn,index) in innerToolbar.btns" :key="index" v-if="index<1" :operation="toolbarBtn" :widget-context="getWidgetContext()">

@@ -7,7 +7,7 @@
     <meta-operation v-for="(btn,index) in permedBtns()" :key="index" :operation="btn" :widget-context="getWidgetContext()">
         <a href="javascript:void(0)" class="btn" :title="operation.title"  slot-scope="{operation}">
             <Icon :type="operation.icon"></Icon>
-            <img width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon">
+            <img v-if="!operation.hideImg" width="16" height="16" :src="mVueToolkit.config.getUploadUrl()+'?filePath='+operation.icon" @error="hideImg(operation)">
         </a>
     </meta-operation>
 </div>
@@ -46,7 +46,12 @@ export default {
                 selectedItem:this.item,
                 metaEntity:this.context&&this.context.grid&&this.context.grid.metaEntity
             }
-        }
+        },
+          hideImg(operation){
+              //隐藏图片
+              operation.hideImg=true;
+              this.$forceUpdate();
+          }
     },
     data(){
         return {

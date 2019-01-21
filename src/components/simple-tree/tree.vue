@@ -166,7 +166,6 @@
             },
             handleSelect (nodeKey) {
                 const node = this.flatState[nodeKey].node;
-                debugger
                 //禁用取消选中
                 if(this.mustSelect&&node.selected){
                     return;

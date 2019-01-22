@@ -10,6 +10,7 @@ import gridLinkTitle from './components/grid/column-render/link_title';
 import gridPictures from './components/grid/column-render/pictures';
 import gridFiles from './components/grid/column-render/files';
 import gridPassword from './components/grid/column-render/password';
+import gridRelationField from './components/grid/column-render/relation-field';
 import gridImportData from './components/grid/import_data.vue';
 
 import operation from './components/meta_operation/operation';
@@ -130,6 +131,7 @@ const gridInnerComponents={
     'm-grid-pictures':gridPictures,
     'm-grid-files':gridFiles,
     'm-grid-password':gridPassword,
+    'm-grid-relation-field':gridRelationField,
     'm-grid-import-data':gridImportData,
     'meta-operation':operation,
     'm-operation':operation

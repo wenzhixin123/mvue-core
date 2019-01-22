@@ -1,7 +1,6 @@
 <template>
     <Layout v-if="processed" class="com-wrapper tree-list" >
         <Sider hide-trigger class="tree-list-sidebar">
-            <div class="menu-title" v-if="treeSettings && treeSettings.title">{{treeSettings.title}}</div>
             <Multiselect v-if="entityResource" style="margin-top:0px;"
                 :multiple="false" v-model="selectedItem"
                 :options="dataItems"
@@ -30,6 +29,7 @@
                     无数据
                 </template>
             </Multiselect>
+            <div class="menu-title" v-if="treeSettings && treeSettings.title">{{treeSettings.title}}</div>
             <meta-entity-tree ref="categoryTree"
                               v-bind="realTreeSettings"
                               :load-data-when-mount="loadDataWhenMount"

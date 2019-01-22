@@ -4,6 +4,9 @@
 import coreStore from '../store/core';
 import mvueCore from '../index';
 import userEx from './security/user-ex';
+import topEntityService from "../services/store/top-entity";
+
+
 var cachedContext={
   mvueComponents:null,  
   currentVue:null,
@@ -234,9 +237,9 @@ export default {
                 if(accessMode){
                     config.headers['x-access-mode']=accessMode;
                 }
-                let topEntityRow=appCtx.getStore().state.core.topEntityRow;
+                let topEntityRow=topEntityService.get();
                 if(topEntityRow){
-                    config.headers['x-top-entity-row']=topEntityRow;
+                    config.headers['x-top-entity-row']=`${topEntityRow.entityName}/${topEntityRow.value}`;
                 }
                 return config;
             },error=>{

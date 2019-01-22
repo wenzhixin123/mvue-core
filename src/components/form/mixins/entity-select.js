@@ -38,7 +38,7 @@ export default{
                     var metaForm=this.getParentForm&&this.getParentForm();
                     if(metaForm&&this.formItem){
                         this.$store.commit("core/setFormRefEntities",{
-                            id:metaForm.id,
+                            formId:metaForm.id,
                             name:this.formItem.dataField,
                             refEntity:this.selectedItem
                         });

@@ -174,7 +174,6 @@ export default{
                     if(form){
                         let rowData=form.firstEntityData;
                         let fakeItems=rowMeta.rebuildRefData(fakeVals,rowData,this.formItem.dataField,this.getIdField(),this.getTitleField());
-                        this.ensureHistoryItems(fakeItems);
                         items=items.concat(fakeItems);
                     }
                 }
@@ -238,7 +237,6 @@ export default{
             }
             if(this.entityResource){
                 this.entityResource.query(queryOptions).then(({data})=>{
-                    this.ensureHistoryItems(data);
                     callback&&callback(data);
                 });
             }

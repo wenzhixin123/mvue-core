@@ -160,7 +160,16 @@ export default {
                     align: metaField.align||"center",
                 };
                 if(metaField.width){
+                    //优先读取设的宽度值
                     __col.width=metaField.width;
+                }else if(["Date","Time"].indexOf(metaField.inputType)!=-1){
+                    //时间字段设置默认宽度,不希望换行
+                    __col.width=120;
+                }else if(["DateTime"].indexOf(metaField.inputType)!=-1){
+                    //时间字段设置默认宽度,不希望换行
+                    __col.width=180;
+                }else{
+                    __col.width=90;
                 }
                 if(metaField.fixed){
                     __col.fixed=metaField.fixed;

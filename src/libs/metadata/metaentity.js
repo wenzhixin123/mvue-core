@@ -356,7 +356,11 @@ export default function (options) {
     metaEntity.getRelationPage = async function (relationName,pageKey) {
         var relationUI=await this.getRelationUI(relationName);
         if(relationUI){
-            return relationUI[pageKey];
+            var page= relationUI[pageKey];
+            if(!page && relationUI.pages){
+                page=relationUI.pages[pageKey];
+            }
+            return page;
         }
         return null;
     }

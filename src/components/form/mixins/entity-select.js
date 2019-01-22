@@ -106,7 +106,7 @@ export default{
             }
             //从topEntity来的条件
             if(this.formItem && this.formItem.componentParams){
-                let topEntity=topEntityService.getHistory(this.formItem.componentParams.entityId);
+                let topEntity=topEntityService.get(this.formItem.componentParams.entityId);
                 if(topEntity){
                     initValue=topEntity.value;
                 }

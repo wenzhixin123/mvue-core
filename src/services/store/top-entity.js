@@ -83,13 +83,16 @@ export default {
         context.getStore().commit(setter,"");
         sendToStore();
     },
-    get(){
+    get(entityName){
         //let topEntityRow=appCtx.getStore().state.core.topEntityRow;
         if(cached.userId!=context.getMvueToolkit().session.getCurrentUser().userId) {
             cached=defaultVal();
             return null;
         }
         if(cached.current){
+            if(entityName && entityName.toLowerCase()!=cached.current.entityName.toLowerCase()){
+                return null;
+            }
             return cached.current;
         }
         return null;

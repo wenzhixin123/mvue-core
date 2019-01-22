@@ -283,7 +283,7 @@ export default {
             }
         },
         isNotEmpty(value){//判断当前控件的值是否不为空
-            if(_.isBoolean(value)||_.isNumber(value)){
+            if(value===false||value===true||_.isNumber(value)){
                 return true;
             }
             return !_.isEmpty(value);

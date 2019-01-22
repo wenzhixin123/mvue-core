@@ -258,7 +258,7 @@ export default function (options) {
         //一对多关系接口附加
         _.forIn(this.relations, (metaRelation, key) => {
             var type = metaRelation.type, name = metaRelation.name;
-            var pathName = _.kebabCase(name);
+            var pathName = name;
             if (type == 'one-to-many') {
                 customActions[name] = {method: 'GET', url: `${this.entityPath}{/parentEntityId}/${pathName}`}
             }

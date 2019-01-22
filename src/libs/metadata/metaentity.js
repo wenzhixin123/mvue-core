@@ -150,12 +150,10 @@ export default function (options) {
     metaEntity.getDefaultModel = function () {
         var model = {};
         _.forIn(this.fields, function (metaField, key) {
-            if (!metaField.readonly) {
-                if (metaField.inputTypeParams["options"]) {//选项类型默认值由options的checked属性指定
-                    model[key] = null;
-                } else {
-                    model[key] = metaField.default;
-                }
+            if (metaField.inputTypeParams["options"]) {//选项类型默认值由options的checked属性指定
+                model[key] = null;
+            } else {
+                model[key] = metaField.default;
             }
         });
         return model;
@@ -203,7 +201,7 @@ export default function (options) {
             if (metaField.semantics == "title") {
                 fields.splice(0, 0, key);
             } else {
-                if (!metaField.identity && !_.includes(["redundant", "createdAt", "updatedAt", "createdBy", "updatedBy"], metaField.semantics)) {
+                if (!metaField.identity && !metaField.readonly) {
                     fields.push(key);
                 }
             }
@@ -217,7 +215,9 @@ export default function (options) {
             if (metaField.semantics == "title") {
                 fields.splice(0, 0, key);
             } else {
-                if (!_.includes(["redundant", "createdAt", "updatedAt", "createdBy", "updatedBy"], metaField.semantics)) {
+                if(metaField.identity){
+                    fields.push(key);
+                }else if (!metaField.readonly) {
                     fields.push(key);
                 }
             }

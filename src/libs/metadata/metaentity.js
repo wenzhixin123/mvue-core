@@ -275,7 +275,7 @@ export default function (options) {
 
     metaEntity.getUISettings = function () {
         if (this.ui == "none") {
-            throw `ui for entity(${this.name}) is disabled`;
+            throw Error(`ui for entity(${this.name}) is disabled`);
         }
         var promise = Promise.resolve();
         if (_.isString(this.ui)) {

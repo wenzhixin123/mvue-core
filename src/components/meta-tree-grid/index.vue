@@ -1,7 +1,8 @@
 <template>
-    <Layout v-if="processed" class="com-wrapper" >
+    <Layout v-if="processed" class="com-wrapper tree-list" >
         <Sider hide-trigger class="tree-list-sidebar">
-            <Multiselect v-if="entityResource" style="margin-top:16px;"
+            <div class="menu-title" v-if="treeSettings && treeSettings.title">{{treeSettings.title}}</div>
+            <Multiselect v-if="entityResource" style="margin-top:0px;"
                 :multiple="false" v-model="selectedItem"
                 :options="dataItems"
                 :placeholder="category.placeholder"

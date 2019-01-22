@@ -64,10 +64,10 @@ export default {
     },
     setByString(str){
         var topEntityInfo=str.split("/");
-        if(topEntityInfo.length!=2){
+        if(topEntityInfo.length==2){
             this.set(topEntityInfo[0],topEntityInfo[1]);
         }else{
-            throw "topEntity format error:"+str;
+            throw Error("topEntity format error:"+str);
         }
     },
     clear(){

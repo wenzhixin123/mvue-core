@@ -16,6 +16,22 @@ function goto(router) {
 
 export default {
   /**
+   * 关系字段显示
+   * @param metaField
+   * @returns {Function}
+   */
+  renderForRelationField: function (context, metaField,column,targetField) {
+    return function (h, params) {
+      return h("m-grid-relation-field", {
+        props: {
+          item:params.row,
+          column:column,
+          targetField:targetField
+        }
+      });
+    }
+  },
+  /**
    * 密文控件
    * @param metaField
    * @returns {Function}

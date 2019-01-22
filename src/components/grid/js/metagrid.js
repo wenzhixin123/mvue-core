@@ -3,6 +3,7 @@
  */
 import controlTypeService from '../../form/js/control_type_service';
 import renderManager from './metagrid_render';
+import metabase from '../../../libs/metadata/metabase';
 /**
  *  将metaField转成ivue需要的col对象
  * @param metaField
@@ -69,11 +70,31 @@ function metaFieldToCol(context,metaField,initialCol) {
       col.render = renderManager.renderForFileUpload(context,metaField);
     } else if(controlTypeService.isPassword(metaField.inputType)) {
       col.render = renderManager.renderForPassword(context,metaField);
+    } else if (metaField.name&&metaField.name.indexOf('.')>0) {
+      let targetField=setRelationFieldColumnTitle(context,col);
+      col.render = renderManager.renderForRelationField(context,metaField,col,targetField);
     } else {
       col.render = renderManager.renderForCommon(context,metaField,initialCol);
     }
   }
   return col;
+}
+function setRelationFieldColumnTitle(context,column){
+  if(column.title){
+      return;
+  }
+  let names=column.key.split('.');
+  let relationName=names[0];
+  let targetEntityField=names[1];
+  let metaEntity=context.grid&&context.grid.metaEntity;
+  let r=metaEntity&&metaEntity.relations[relationName];
+  if(r&&r.targetEntity){
+      let targetEntity=metabase.findMetaEntity(r.targetEntity);
+      let targetField=targetEntity&&targetEntity.findField(targetEntityField);
+      column.title=targetField&&targetField.title;
+      return targetField;
+  }
+  return null;
 }
 
 function buildInnerColumns(columns,metaEntityObj,context){
@@ -83,7 +104,8 @@ function buildInnerColumns(columns,metaEntityObj,context){
     var _col=_.omit(col,["metaParams"]);
     var metaField={name:_col.key};
     if(metaEntityObj!=null){
-      metaField=metaEntityObj.findField(_col.key) || {};
+      //这里如果字段不存在，还是附加name属性，以处理relation.fieldName列渲染
+      metaField=metaEntityObj.findField(_col.key) || {name:_col.key};
     }
     metaField=_.extend(metaField,metaParams);
     var defaultCol=metaFieldToCol(context,metaField,_col);

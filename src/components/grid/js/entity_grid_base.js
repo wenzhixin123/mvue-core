@@ -168,7 +168,7 @@ export default {
                 }else if(["DateTime"].indexOf(metaField.inputType)!=-1){
                     //时间字段设置默认宽度,不希望换行
                     __col.width=180;
-                }else{
+                }else if(i!=(visibleFields.length-1)){
                     __col.width=90;
                 }
                 if(metaField.fixed){

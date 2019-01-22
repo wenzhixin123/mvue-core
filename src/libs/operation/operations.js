@@ -68,7 +68,7 @@ function buildEntitySecurity(op,entityName){
 function buildByTemplate(opts) {
     if(_.isEmpty(opts.name) || _.isEmpty(opts.type)){
         var error="operation must has name and type property:"+JSON.stringify(opts);
-        throw error;
+        throw Error(error);
     }
     var name=opts.name;
     opts.name=opts.type;

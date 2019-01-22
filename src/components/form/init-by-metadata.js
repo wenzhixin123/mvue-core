@@ -23,7 +23,7 @@ function initRelationField(formInst,relationFieldName,_model){
             let idField=formInst.$metaBase.findMetaEntity(targetEntity).getIdField().name;
             _model[relationFieldName]=refEntity[idField];
         }
-        let topEntityRow=topEntityService.getHistory(targetEntity);
+        let topEntityRow=topEntityService.get(targetEntity);
         if(topEntityRow) {
             _model[relationFieldName] = topEntityRow.value;
         }

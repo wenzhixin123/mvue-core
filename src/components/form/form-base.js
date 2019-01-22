@@ -1,5 +1,6 @@
 import TransferDom from './js/transfer_dom';
 import constants from './js/constants';
+import widgetMode from './js/widget-mode';
 import contextHelper from "../../libs/context";
 import globalConsts from "../../libs/consts";
 import cartesian from "../../libs/cartesian";

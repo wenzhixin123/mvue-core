@@ -30,6 +30,8 @@
 import context from '../../libs/context';
 import metabase from '../../libs/metadata/metabase';
 import entitySelect from '../form/mixins/entity-select';
+import topEntityService from "../../services/store/top-entity";
+
 export default {
     mixins:[entitySelect],
     props:{
@@ -70,6 +72,14 @@ export default {
         getTitleField(){
             return this.metaEntity.firstTitleField().name;
         },
+        entitySelectInitialValue() {
+            let topEntity = topEntityService.getHistory(this.entityName);
+            if (topEntity) {
+                topEntityService.set(topEntity.entityName, topEntity.value);
+                return topEntity.value;
+            }
+            return null;
+        },
         buildQueryOptions(params,keyword){
             var encodeKeyword=context.getMvueToolkit().utils.leapQueryValueEncode(keyword);
             var filters=`${this.getTitleField()} like '%${encodeKeyword}%'`;
@@ -99,9 +109,10 @@ export default {
             let topEntityRow='';
             if(this.selectedItem){
                 let idFieldName=this.getIdField();
-                topEntityRow=`${this.entityName}/${this.selectedItem[idFieldName]}`;
+                topEntityService.set(this.entityName,this.selectedItem[idFieldName]);
+            }else{
+                topEntityService.remove();
             }
-            this.$store.commit('core/setTopEntityRow',topEntityRow);
             this.$emit('on-top-entity-change');
         }
     }

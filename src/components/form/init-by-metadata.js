@@ -1,3 +1,5 @@
+import topEntityService from "../../services/store/top-entity";
+
 //创建模式时，如果url参数是实体的字段则填充相应的模型数据
 function initModelByQueryParams(formInst,_model){
     var metaEntity=formInst.metaEntity;
@@ -21,12 +23,9 @@ function initRelationField(formInst,relationFieldName,_model){
             let idField=formInst.$metaBase.findMetaEntity(targetEntity).getIdField().name;
             _model[relationFieldName]=refEntity[idField];
         }
-        let topEntityRow=formInst.$store.state.core.topEntityRow;
-        if(topEntityRow){
-            var topEntityInfo=topEntityRow.split("/");
-            if(topEntityInfo.length==2 && topEntityInfo[0].toLowerCase()==targetEntity.toLowerCase()){
-                _model[relationFieldName]=topEntityInfo[1];
-            }
+        let topEntityRow=topEntityService.getHistory(targetEntity);
+        if(topEntityRow) {
+            _model[relationFieldName] = topEntityRow.value;
         }
 
     }

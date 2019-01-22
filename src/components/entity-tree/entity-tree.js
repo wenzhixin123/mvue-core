@@ -1,4 +1,5 @@
 import  context from "../../libs/context";
+import topEntityService from "../../services/store/top-entity";
 export default {
     props:{
         treeExpandLevel:{//树默认展开到第几级
@@ -39,6 +40,9 @@ export default {
         loadDataWhenMount:{
             type:Boolean,
             default:true
+        },
+        entityName:{
+            type:String
         }
     },
     data(){
@@ -69,6 +73,7 @@ export default {
         },
         toTreeData(items,level){
             var _data=[];
+            var toBeSelected=null;
             _.forEach(items,(item,index)=>{
                 var treeItem=Object.assign({},item,{
                     id:item[this.valueField],
@@ -97,15 +102,26 @@ export default {
                 if(this.maxLevel>0 && level>=this.maxLevel){
                     delete treeItem.loading;
                 }
-                if(this.mustSelect && index==0 && level==1){
-                    treeItem.selected=true;
-                    if(this.showCheckbox){
-                        treeItem.checked=true;
+                if(this.mustSelect && level==1){
+                    if(index==0){
+                        toBeSelected=treeItem;
                     }
-                    this.$emit("on-select-change",[treeItem]);
+                    if(this.entityName){
+                        var  topEntity=topEntityService.getHistory(this.entityName);
+                        if(topEntity && topEntity.value==treeItem.id){
+                            toBeSelected=treeItem;
+                        }
+                    }
                 }
                 _data.push(treeItem);
             });
+            if(toBeSelected){
+                toBeSelected.selected=true;
+                if(this.showCheckbox){
+                    toBeSelected.checked=true;
+                }
+                this.$emit("on-select-change",[toBeSelected]);
+            }
             return _data;
         },
         buildRoot(){

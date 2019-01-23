@@ -104,6 +104,9 @@
               if(this.mode=='vertical'){
                   return 'm-md';
               }
+              if(this.mode=="horizontal"){
+                return 'has-horizontal-menu';
+              }
               return ""
           },
             backRoute(){

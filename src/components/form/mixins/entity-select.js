@@ -105,7 +105,7 @@ export default{
                 return initValue;
             }
             //从topEntity来的条件
-            if(this.formItem && this.formItem.componentParams){
+            if(this.formItem && this.isCreate() &&  this.formItem.componentParams){
                 let topEntity=topEntityService.get(this.formItem.componentParams.entityId);
                 if(topEntity){
                     initValue=topEntity.value;

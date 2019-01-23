@@ -1,5 +1,5 @@
 <template>
-    <Form v-if="preprocessed" :ref="'formRef'" :model="entity"
+    <Form @submit.native.prevent v-if="preprocessed" :ref="'formRef'" :model="entity"
           :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="itemLabelWidth"
           :show-message="showMessage" :autocomplete="autocomplete">
         <slot>

@@ -238,7 +238,7 @@ export default {
                     config.headers['x-access-mode']=accessMode;
                 }
                 let topEntityRow=topEntityService.get();
-                if(topEntityRow){
+                if(topEntityRow && !_.isEmpty(topEntityRow.value)){
                     config.headers['x-top-entity-row']=`${topEntityRow.entityName}/${topEntityRow.value}`;
                 }
                 return config;

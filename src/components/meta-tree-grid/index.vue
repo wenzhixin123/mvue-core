@@ -51,6 +51,7 @@
                        @on-filter-change="handleOnFilterChange"
                        @on-row-click="handleOnRowClick"
                        @on-row-dblclick="handleOnRowDblclick"
+                       @on-row-delete="handleOnRowDelete"
                        @on-expand="handleOnExpand">
             </meta-grid>
         </Content>
@@ -159,6 +160,12 @@
             this.processed=true;
         },
         methods:{
+            handleOnRowDelete(ids){
+                //如果当前tree和grid数据来源于同一个实体，则删除grid数据，tree也要刷新
+                if(this.treeSettings.entityName==this.entityName){
+                    this.$refs.categoryTree.buildRoot();
+                }
+            },
             canTreeRender(){
                 if(this.entitySelectInited && this.realTreeSettings){
                     return true;

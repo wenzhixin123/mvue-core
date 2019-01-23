@@ -44,7 +44,7 @@ function impl(context,$optInst){
                     return onFailed(error,{id:id,metaEntity:metaEntity});
                 }}).then(function (re) {
                 //如果是grid列表的操作，刷新列表
-                context.grid&&context.grid.reload();
+                context.grid&&context.grid.reload(false,{action:'delete',ids:[id]});
                 //如果是表单的删除操作，执行表单的删除后回调
                 context.form&&context.form.onDeleted();
             });

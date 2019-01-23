@@ -109,7 +109,10 @@ export default{
                 this.reload(true);
             },"changedQueue",delay);
         },
-        reload:function (resetPage) {
+        reload:function (resetPage,evt) {
+            if(evt&&evt.action=="delete"){
+                this.$emit("on-row-delete",evt.ids);
+            }
             this.$refs.listInst.doReload(resetPage);
             this.selectedItems=[];
         },

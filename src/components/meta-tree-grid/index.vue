@@ -323,15 +323,18 @@
                 var defaultTreeSetting=treeService.build(this.treeSettings.entityName,_treeSettings);
                 this.realTreeSettings=defaultTreeSetting;
                 this.$nextTick(()=>{
-                    this.$refs.categoryTree.buildRoot();
-                    if(this.category.topEntity){
-                        if(this.selectedItem){
-                            let id=this.selectedItem[this.getIdField()];
-                            topEntityService.set(this.category.entityName,id);
-                        }else{
-                            topEntityService.remove();
+                    if(this.$refs.categoryTree){
+                        //快速切换时，报错
+                        this.$refs.categoryTree.buildRoot();
+                        if(this.category.topEntity){
+                            if(this.selectedItem){
+                                let id=this.selectedItem[this.getIdField()];
+                                topEntityService.set(this.category.entityName,id);
+                            }else{
+                                topEntityService.remove();
+                            }
+                            this.$refs["gridList"].reload();
                         }
-                        this.$refs["gridList"].reload();
                     }
                 });
             }

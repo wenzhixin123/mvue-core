@@ -2,8 +2,6 @@
     <m-field 
     :name="name" 
     :title="title" 
-    :required="required" 
-    :labelWidth="labelWidth" 
     :propName='propName' 
     :params="params"
     :rules="rules"
@@ -25,13 +23,6 @@ export default {
         },
         label:{
             type:String
-        },
-        required:{
-            type:Boolean,
-        },
-        labelWidth:{
-            type:Number,
-            default:0
         }
     },
     data(){
@@ -61,8 +52,9 @@ export default {
         rules(){
             let form=this.getParentForm();
             let metaEntity=this.$metaBase.findMetaEntity(form.entityName);
-            let _rule=metaformUtils.buildValidatorForCompare(this.name,"equals",form.entity,metaEntity);
-            return [_rule];
+            let _requiredRule=metaformUtils.buildValidationRuleForRequired(this.innerLabel);
+            let _rule=metaformUtils.buildValidationRuleForCompare(this.name,"equals",form.entity,metaEntity);
+            return [_requiredRule,_rule];
         }
     }
 }

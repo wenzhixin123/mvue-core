@@ -135,7 +135,7 @@ function compareRuleMessage(op,fieldName,metaEntity){
     }``
     return `必须${opDesc}${title}的值`;
 }
-function buildValidatorForCompare(compareToFieldName,operator,entity,metaEntity){
+function buildValidationRuleForCompare(compareToFieldName,operator,entity,metaEntity){
     let _compareRule={
         validator(rule, value, callback) {
             if(!value){
@@ -158,6 +158,11 @@ function buildValidatorForCompare(compareToFieldName,operator,entity,metaEntity)
     }
     return _compareRule;
 }
+function buildValidationRuleForRequired(fieldTitle){
+    return {
+        required: true,message:`${fieldTitle}不能为空`
+    };
+}
 //初始化字段组件的验证规则，async-validator验证时，按rules顺序进行验证
 function initValidation(formItem,metaEntity,dataId,entity) {
     if (!formItem.isDataField) {
@@ -172,9 +177,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
     var rules = [];
     //必填必须放在第一个，否则label前的红色星号不生效，应该是iview的bug
     if (params.required) {
-        rules.push({
-            required: true,message:`${fieldTitle}不能为空`
-        });
+        rules.push(buildValidationRuleForRequired(fieldTitle));
     }
     //长度验证
     if (params.limitLength && params.limitLength.limit) {
@@ -219,7 +222,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
         && _.includes(["lessThan", "biggerThan", "equals"], params.validation.rule.operator)
         && params.validation.rule.fieldName
     ) {
-        let _compareRule=buildValidatorForCompare(params.validation.rule.fieldName,params.validation.rule.operator,entity,metaEntity);
+        let _compareRule=buildValidationRuleForCompare(params.validation.rule.fieldName,params.validation.rule.operator,entity,metaEntity);
         rules.push(_compareRule);
     }
 
@@ -321,5 +324,6 @@ export default{
     indexOfFormItem:indexOfFormItem,
     initValidation:initValidation,
     metaComponentType:metaComponentType,
-    buildValidatorForCompare:buildValidatorForCompare
+    buildValidationRuleForCompare,
+    buildValidationRuleForRequired
 }

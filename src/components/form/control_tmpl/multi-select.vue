@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div v-text="viewModeValue()"></div>
+            <div class="form-item-view" v-text="viewModeValue()"></div>
         </template>
         <template v-else>
             <Select v-model="valueObj" multiple :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">

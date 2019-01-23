@@ -1,7 +1,7 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
         <template v-if="viewMode">
-            <div v-text="viewModeValue"></div>
+            <div class="form-item-view" v-text="viewModeValue"></div>
         </template>
         <template v-else>
             <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">

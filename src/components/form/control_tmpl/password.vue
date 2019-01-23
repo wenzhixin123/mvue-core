@@ -1,7 +1,7 @@
 <template>
     <div class="password-con">
         <template v-if="viewMode">
-                <div>********</div>
+                <div class="form-item-view">********</div>
         </template>
         <template v-else>
             <template v-if="formItem.componentParams.showBtn">

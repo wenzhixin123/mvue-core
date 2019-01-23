@@ -3,10 +3,10 @@
         <template v-if="showLabel" slot="label">
             <slot name="label">{{innerTitle}}<info-tip v-if="description" :content="description"></info-tip></slot>
         </template>
-        <div class="ref-field-val-con" v-if="entity&&entity[refField]">
+        <div class="form-item-view" v-if="entity&&entity[refField]">
             <item-render :render="fieldRender" :meta-field="metaField" :entity="entity"></item-render>
         </div>
-        <div class="ref-field-val-con" v-else>
+        <div class="form-item-view" v-else>
             --
         </div>
     </FormItem>
@@ -102,10 +102,3 @@ export default {
     }
 }
 </script>
-<style scoped>
-.ref-field-val-con{
-    padding: 4px 7px;
-    height: 34px;
-    line-height:28px;
-}
-</style>

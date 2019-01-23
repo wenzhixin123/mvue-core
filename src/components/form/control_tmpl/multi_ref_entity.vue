@@ -1,9 +1,7 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
         <template v-if="viewMode">
-            <div class="form-item-view-con" v-if="isNotEmpty(selectedItem)">
-                <div v-text="viewModeValue"></div>
-            </div>
+            <div v-text="viewModeValue"></div>
         </template>
         <template v-else>
             <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">

@@ -1,9 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div class="form-item-view-con" v-if="isNotEmpty(value)">
-                <div v-text="issuedObjcet.fullText"></div>
-            </div>
+            <div v-text="issuedObjcet.fullText"></div>
         </template>
         <template v-else>
             <div>

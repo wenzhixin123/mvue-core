@@ -1,8 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div class="form-item-view-con" v-if="isNotEmpty(defaultList)">
-                <div class="view-title" v-text="formItem.componentParams.title"></div>
+            <div v-if="isNotEmpty(defaultList)">
                 <ul class="ivu-upload-list">
                     <li class="ivu-upload-list-file ivu-upload-list-file-finish" style="padding-left:0px;" v-for="item in defaultList" :key="item.id||item.url">
                         <span @click="handlePreview(item)"><i class="ivu-icon ivu-icon-document"></i> {{item.name}}</span>

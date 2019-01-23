@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div v-text="getOptionsExData(valueObj)"></div>
+            <div class="form-item-view" v-text="getOptionsExData(valueObj)"></div>
         </template>
         <template v-else>
             <RadioGroup v-model="valueObj" @on-change="updateValue" >

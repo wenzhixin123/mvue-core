@@ -1,9 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div class="form-item-view-con" v-if="isNotEmpty(innerText)">
-                <div v-text="innerText"></div>
-            </div>
+            <div v-text="innerText"></div>
         </template>
         <template v-else>
             <div class="ivu-input-wrapper ivu-input-type ivu-input-group ivu-input-group-with-prepend ivu-input-group-with-append ivu-input-hide-icon link-select-userorg">

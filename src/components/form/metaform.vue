@@ -1,6 +1,6 @@
 <template>
     <Form v-if="preprocessed" :ref="'formRef'" :model="entity"
-          :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="itemLabelWith"
+          :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="itemLabelWidth"
           :show-message="showMessage" :autocomplete="autocomplete">
         <slot>
             <meta-layout :layout="layout" :itemProcessor="layoutProcessor"></meta-layout>
@@ -178,7 +178,15 @@
                     }
                 }else{
                     //已经由命令行解析程序处理后的对象：参数解析完毕，--width 100
-                    if(_.has(item,"value") &&(item.ctype=="m-expand"||item.ctype=="m-field"||item.ctype=="meta-field"|| item.ctype=="metaField")){
+                    //定义哪些是表单内部的控件，需要将value转为name
+                    let formControls={
+                        "meta-field":true,
+                        "metaField":true,
+                        "m-field":true,
+                        "m-expand":true,
+                        "m-confirm":true
+                    };
+                    if(_.has(item,"value") && formControls[item.ctype]){
                         item["name"]=item["value"];
                         delete item["value"];
                     }

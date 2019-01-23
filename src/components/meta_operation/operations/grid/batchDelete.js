@@ -67,7 +67,7 @@ function impl(context,$optInst){
                 let id=row[idField.name];
                 //,cascade_delete:true
                 handler({id:id}).then(function (re) {
-                    context.grid&&context.grid.reload();
+                    context.grid&&context.grid.reload(false,{action:'delete',ids:[id]});
                 });
             });
         }

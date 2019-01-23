@@ -135,6 +135,29 @@ function compareRuleMessage(op,fieldName,metaEntity){
     }``
     return `必须${opDesc}${title}的值`;
 }
+function buildValidatorForCompare(compareToFieldName,operator,entity,metaEntity){
+    let _compareRule={
+        validator(rule, value, callback) {
+            if(!value){
+                callback();
+                return;
+            }
+            var comparedFieldValue=entity[compareToFieldName];
+            if(!comparedFieldValue){
+                callback();
+                return;
+            }
+            var ok=compareRuleValidate(operator,value,comparedFieldValue);
+            if(ok){
+                callback();
+            }else{
+                callback(rule.message);
+            }
+        },
+        message:compareRuleMessage(operator,compareToFieldName,metaEntity)
+    }
+    return _compareRule;
+}
 //初始化字段组件的验证规则，async-validator验证时，按rules顺序进行验证
 function initValidation(formItem,metaEntity,dataId,entity) {
     if (!formItem.isDataField) {
@@ -196,26 +219,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
         && _.includes(["lessThan", "biggerThan", "equals"], params.validation.rule.operator)
         && params.validation.rule.fieldName
     ) {
-        let _compareRule={
-            validator(rule, value, callback) {
-                if(!value){
-                    callback();
-                    return;
-                }
-                var comparedFieldValue=entity[params.validation.rule.fieldName];
-                if(!comparedFieldValue){
-                    callback();
-                    return;
-                }
-                var ok=compareRuleValidate(params.validation.rule.operator,value,comparedFieldValue);
-                if(ok){
-                    callback();
-                }else{
-                    callback(rule.message);
-                }
-            },
-            message:compareRuleMessage(params.validation.rule.operator,params.validation.rule.fieldName,metaEntity)
-        };
+        let _compareRule=buildValidatorForCompare(params.validation.rule.fieldName,params.validation.rule.operator,entity,metaEntity);
         rules.push(_compareRule);
     }
 
@@ -316,5 +320,6 @@ export default{
     getFormItemById:getFormItemById,
     indexOfFormItem:indexOfFormItem,
     initValidation:initValidation,
-    metaComponentType:metaComponentType
+    metaComponentType:metaComponentType,
+    buildValidatorForCompare:buildValidatorForCompare
 }

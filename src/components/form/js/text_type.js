@@ -44,12 +44,14 @@ function textBaseInputRules(componentType){
     if(componentType===textTypes.Password.id){
         base.limitLength.max=20;
         base.showBtn=false;
+        base.encrypt=false;//表示后端是否会加密，此时前端表单不会提交密码到后端，必须通过特殊的接口修改密码
     }
     return base;
 };
 var componentParams={
     SingleLineText:textBaseInputRules(textTypes.SingleLineText.id),
-    MultiLineText:textBaseInputRules(textTypes.MultiLineText.id)
+    MultiLineText:textBaseInputRules(textTypes.MultiLineText.id),
+    Password:textBaseInputRules(textTypes.Password.id)
 };
 //判断是否文本组件
 function accept(componentType){

@@ -142,12 +142,12 @@ export default {
                 return `#default-form-uuid-${this.entityName}`;
             }
         },
-        itemLabelWith(){
+        itemLabelWidth(){
             if(this.labelPosition=="top"){
                 return this.labelWidth;
             }
             if(typeof this.labelWidth=="undefined" || this.labelWidth==null){
-                return 80;
+                return 120;
             }
             return this.labelWidth;
         }

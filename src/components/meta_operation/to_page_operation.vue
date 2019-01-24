@@ -77,7 +77,8 @@ export default {
     },
     methods:{
         getIdFromContext(){
-            var context = Object.assign(this.widgetContext, this.operation);
+            this.context = this.widgetContext;
+            var context = Object.assign({},this.widgetContext, this.operation);
             var id = context.selectedId;
             var metaEntity = context.metaEntity;
             if(!context.selectedItem&&context.selectedItems&&context.selectedItems.length){
@@ -110,7 +111,6 @@ export default {
                 var _params=_.extend({pageId:pageId,byOperation:false}/*,_t.operation.pathParams*/);
                 OperationUtils.setUrlParam(this.operation,this);//按钮输入参数处理
                 OperationUtils.execution(this.operation,_widgetCtx,"afterExecCode",this)//执行后
-
                 router.push({name:"defaultPageIndex"/*,query:_query*/,params:_params,query:{
                     _t:(new Date().getTime())
                 }});

@@ -41,7 +41,7 @@
         },
         methods:{
             getIdFromContext(){
-                var context = Object.assign(this.widgetContext, this.operation);
+                var context = Object.assign({},this.widgetContext, this.operation);
                 var id = context.selectedId;
                 var metaEntity = context.metaEntity;
                 if(!context.selectedItem&&context.selectedItems&&context.selectedItems.length){

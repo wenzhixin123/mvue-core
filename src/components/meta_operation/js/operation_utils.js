@@ -65,6 +65,9 @@ var utils={
             _.each(_childWidgets,(cw)=>{
                 if(_.isFunction(cw.getWidgetContext)){
                     let _data = cw.getWidgetContext();//部件自身暴露的参数
+                    if(_t.widgetContext){
+                        _.extend(_data,_t.widgetContext);//合并行内动态赋予的值
+                    }
                     if((widgetCode&&widgetCode==cw.widgetParams.widgetCode)||widgetCode==""){
                         if(_data.widgetParams&&_data.widgetParams[key]){
                             //存了部件参数,从部件参数去取
@@ -95,6 +98,10 @@ var utils={
             let _exportParams = upward(_t);
             if(_.isFunction(_exportParams)){
                 let _data = _exportParams()
+                if(_t.widgetContext){
+                    debugger
+                    _.extend(_data,_t.widgetContext);//合并行内动态赋予的值
+                }
                 if(_data.widgetParams&&_data.widgetParams[key]){
                     //存了部件参数,从部件参数去取
                     returnVal = _data.widgetParams[key]

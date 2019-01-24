@@ -158,6 +158,7 @@ export default {
                     key: metaField.name,
                     sortable: columnsMap && columnsMap[metaField.name].sortable ? "custom" : false,
                     align: metaField.align||"center",
+                    minWidth:100
                 };
                 if(metaField.width){
                     //优先读取设的宽度值

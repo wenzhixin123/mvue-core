@@ -33,6 +33,9 @@ export default {
             this.$emit('input',this.valueObj);
         },
         convertedValue(){
+            if(!this.value){
+                return '';
+            }
             let _v=_.replace(this.value,/\r|\n/g,"<br>");
             _v=_.replace(_v,/\s/g,"&nbsp;");
             return _v;

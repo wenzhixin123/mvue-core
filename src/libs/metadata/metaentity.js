@@ -384,9 +384,9 @@ export default function (options) {
      */
     metaEntity.formPathForEdit = function (id,isRelative) {
         if(isRelative){
-            return `./edit/${id}`;
+            return `./${id}/edit`;
         }
-        var path = this.projectId ? `/${this.projectId}/entities/${this.name}/edit/${id}` : `/entities/${this.name}/edit/${id}`;
+        var path = this.projectId ? `/${this.projectId}/entities/${this.name}/${id}/edit` : `/entities/${this.name}/${id}/edit`;
         return path;
     }
     /**

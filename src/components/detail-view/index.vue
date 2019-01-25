@@ -120,7 +120,8 @@
             }
             this.prepare();
             this.calBasePath();
-            if(this.$route.name==="defaultEditForm"){
+            let matchedMenu=this.getMatchedMenu();
+            if(matchedMenu==null){
                 let lm=this.localMenus[0];
                 while(lm.children&&lm.children.length>0){
                     lm=lm.children[0];
@@ -129,7 +130,7 @@
                     this.onMenuSelected(lm.id);
                 }
             }
-            this.setActiveMenu();
+            this.setActiveMenu(matchedMenu);
         },
         methods: {
             calBasePath(){
@@ -141,16 +142,10 @@
               this.basePath=url;
               return url;
             },
-            setActiveMenu() {//设置导航菜单选中
-                var url=this.$route.path;
-                var matched=null;
-                this.visitTree(this.localMenus,menu=>{
-                    var menuUrl=paths.relativeToAbsolute(this.basePath,menu.url);
-                    if(url.indexOf(menuUrl)>-1){
-                        matched=menu;
-                        return false;
-                    }
-                });
+            setActiveMenu(matched) {//设置导航菜单选中
+                if(!matched){
+                    matched=this.getMatchedMenu();
+                }
                 if(matched){
                     this.activeName=matched.id;
                     this.$nextTick(()=> {
@@ -160,6 +155,18 @@
                         }
                     });
                 }
+            },
+            getMatchedMenu(){
+                let url=this.$route.path;
+                let matched=null;
+                this.visitTree(this.localMenus,menu=>{
+                    var menuUrl=paths.relativeToAbsolute(this.basePath,menu.url);
+                    if(url.indexOf(menuUrl)>-1){
+                        matched=menu;
+                        return false;
+                    }
+                });
+                return matched;
             },
             getMenuRef(){
                 if(this.mode=="horizontal"){

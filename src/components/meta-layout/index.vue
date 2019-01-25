@@ -169,6 +169,10 @@ export default {
                         }else if(key=="c"){
                             component["class"]=val;
                         }else{
+                            if(!_.isEmpty(val)
+                                && val.charAt(0)=="[" && val.charAt(val.length-1)=="]"){
+                                val=JSON.parse(val);
+                            }
                             component[key]=val;
                         }
                     }

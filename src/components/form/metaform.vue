@@ -132,7 +132,9 @@
             },
             initOthers(){
                 //根据实体字段信息初始化表单默认验证规则
-                this.initValidateRulesByMetaEntity();
+                if(!this.isView){
+                    this.initValidateRulesByMetaEntity();
+                }
                 //通知页面表单这边需要修改页面标题，并提交变化后的标题数据
                 this.commitPageTitle();
                 //预处理完毕，表单可以渲染了
@@ -184,7 +186,8 @@
                         "metaField":true,
                         "m-field":true,
                         "m-expand":true,
-                        "m-confirm":true
+                        "m-confirm":true,
+                        "m-relation":true
                     };
                     if(_.has(item,"value") && formControls[item.ctype]){
                         item["name"]=item["value"];
@@ -205,6 +208,10 @@
                 //表单上下文都要附加到m-field组件上去
                 _item.context=_.extend({},this.fieldContext(),_item.context);
                 this.batchFieldConvert(_item);
+                //如果是关系，而不是字段，切换成关系控件
+                if(this.metaEntity.relations[_item.name]){
+                    _item.ctype='m-relation';
+                }
                 return _item;
             }
         }

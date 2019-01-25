@@ -24,8 +24,6 @@ import layout from './components/meta-layout/index';
 import page from './components/meta-page/index';
 import mfield from './components/form/metafield';
 import mform from './components/form/metaform';
-import mExpand from './components/form/control_tmpl/expand/index';
-import mConfirm from './components/form/control_tmpl/confirm/index';
 import detailView from "./components/detail-view/index";
 
 import Description from './components/form/control_tmpl/description';
@@ -66,6 +64,10 @@ import Boolean from './components/form/control_tmpl/boolean';
 import IssuedNumber from './components/form/control_tmpl/issued_number';
 import BitCode from './components/form/control_tmpl/bit-code';
 import Password from './components/form/control_tmpl/password';
+import mExpand from './components/form/control_tmpl/expand/index';
+import mConfirm from './components/form/control_tmpl/confirm/index';
+import mRelation from './components/form/control_tmpl/relation/index';
+
 //link特殊打开的组件
 import PclinkSingleUserSelect from './components/form/pclink/single_user_select';
 import PclinkSingleOrgSelect from './components/form/pclink/single_org_select';
@@ -169,7 +171,8 @@ const mComponents={
     'm-simple-tree':simpleTree,
     'm-expand':mExpand,
     'm-confirm':mConfirm,
-    'm-detail-view':detailView
+    'm-detail-view':detailView,
+    'm-relation':mRelation
 };
 const allComponents=_.extend({},gridInnerComponents,oldFasionComponents,mComponents);
 //全局组件样式在这里引入，避免在内部重复引用

@@ -62,6 +62,14 @@ export default{
             type: Boolean,
             default: true
         },
+        "showRefreshBtn": {//是否显示刷新按钮
+            type: Boolean,
+            default: true
+        },
+        "showConfigColumnsBtn": {//是否显示配置按钮
+            type: Boolean,
+            default: true
+        },
         wrapperClass: {
             type: [String, Object, Array],
             default: "default-list-wrapper"
@@ -121,6 +129,10 @@ export default{
                 }
                 return value&&value.entityName;
             }
+        },
+        hidePagerIfOnePage:{//如果只有一页数据，是否隐藏分页页脚
+            type:Boolean,
+            default:false
         }
     }
 }

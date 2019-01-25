@@ -278,6 +278,9 @@ export default {
         for(var i=routes.length-1;i>=0;i--){
             var route=routes[i];
             var rootComponents=route.instances.default;
+            if(!rootComponents){
+                continue;
+            }
             this.visitComponents(rootComponents,(com)=>{
                 if(com[idKey]==uid){
                     matchedRoute=route;

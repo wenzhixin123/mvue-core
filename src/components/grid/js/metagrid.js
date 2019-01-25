@@ -100,6 +100,9 @@ function setRelationFieldColumnTitle(context,column){
 function buildInnerColumns(columns,metaEntityObj,context){
   var _cols=[];
   _.each(columns,function(col){
+    if(_.isString(col)){
+      col={key:col};
+    }
     var metaParams=col.metaParams ||{};
     var _col=_.omit(col,["metaParams"]);
     var metaField={name:_col.key};

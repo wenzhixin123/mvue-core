@@ -222,21 +222,31 @@
     }
 }
 
-.detail-view .ivu-layout-has-sider{
-    margin: -16px;
+.detail-view {
+    .ivu-layout-has-sider {
+        margin: -16px;
+    }
+    .ivu-menu-vertical {
+        height: 750px;
+        padding-top: 8px;
+    }
+
+    .ivu-menu-horizontal{
+        margin: -28px -16px 16px -16px;
+    }
+    .has-horizontal-menu .tree-list{
+        margin: 0px;
+    }
+    .detail-view{
+        margin: -32px;
+        .ivu-menu-horizontal{
+            margin: 0px;
+        }
+    }
+
 }
 
-.detail-view .ivu-menu-vertical {
-   height: 750px;
-    padding-top: 8px;
-}
 
-.detail-view .ivu-menu-horizontal{
-    margin: -28px -16px 16px -16px;
-}
-.detail-view .has-horizontal-menu .tree-list{
-    margin: 0px;
-}
 
 .form-item-view{
     padding: 4px 7px;

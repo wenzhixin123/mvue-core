@@ -14,6 +14,7 @@
                     <ufs-image class="preview-img" v-if="visible" :item='previewItem' :paths='paths'></ufs-image>
                 </Modal>
             </div>
+            <div class="form-item-view" v-else>无图片</div>
         </template>
         <template v-else>
             <div>

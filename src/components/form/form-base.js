@@ -89,6 +89,10 @@ export default {
             default(){
                 return {createAnother:false};
             }
+        },
+        emptyText:{
+            type:String,
+            default:'--'
         }
     },
     data(){

@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-                <div class="form-item-view" v-text="value"></div>
+                <div class="form-item-view" v-text="value||emptyText"></div>
         </template>
         <template v-else>
             <Input ref="focusInput" v-model="valueObj" @input="updateValue"  :disabled="disabled" type="text"  :placeholder="formItem.componentParams.placeholder"></Input>

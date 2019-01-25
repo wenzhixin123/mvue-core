@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-                <div class="form-item-view" v-text="getOptionsExData(valueObj)"></div>
+                <div class="form-item-view" v-text="getOptionsExData(valueObj)||emptyText"></div>
         </template>
         <template v-else>
             <Select v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">

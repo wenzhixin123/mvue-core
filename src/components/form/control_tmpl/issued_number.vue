@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div v-text="issuedObjcet.fullText"></div>
+            <div v-text="issuedObjcet.fullText||emptyText"></div>
         </template>
         <template v-else>
             <div>

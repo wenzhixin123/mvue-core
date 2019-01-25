@@ -87,6 +87,13 @@ export default {
                 return true;
             }
             return false;
+        },
+        emptyText(){
+            let metaForm=this.getParentForm();
+            if(metaForm){
+                return metaForm.emptyText;
+            }
+            return '';
         }
     },
     methods:{

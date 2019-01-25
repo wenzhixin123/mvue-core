@@ -1,7 +1,7 @@
 <template>
     <div >
         <template v-if="viewMode">
-                <div v-html="convertedValue()" class="view-textarea"></div>
+                <div v-html="convertedValue()||emptyText" class="form-item-view"></div>
         </template>
         <template v-else>
             <Input ref="focusInput" v-model="valueObj" @on-change="updateValue"  :disabled="disabled" type="textarea"  :rows="formItem.componentParams.rows||3"  :autosize="formItem.componentParams.autosize||{minRows: 3, maxRows: 10 }"
@@ -33,6 +33,9 @@ export default {
             this.$emit('input',this.valueObj);
         },
         convertedValue(){
+            if(!this.value){
+                return '';
+            }
             let _v=_.replace(this.value,/\r|\n/g,"<br>");
             _v=_.replace(_v,/\s/g,"&nbsp;");
             return _v;

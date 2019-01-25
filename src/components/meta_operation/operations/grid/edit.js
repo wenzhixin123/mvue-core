@@ -3,7 +3,6 @@
  */
 import contextHelper from "../../../../libs/context";
 import  gridUtils from "../utils";
-var pathToRegexp = require('path-to-regexp');
 
 var operation= {
     name: "edit",
@@ -46,25 +45,10 @@ function impl(context,$optInst){
         router=gridUtils.buildRouteToFromOp($optInst.operation);
     }
     if(router==null){
-        router=buildRouteToFromEntity(metaEntity,id,context.grid && context.grid.useRelativePath);
+        router=gridUtils.buildRouteToFromEntity(metaEntity,id,context.grid && context.grid.useRelativePath);
     }
     router=_.merge(defaultRouter,router);
     gridUtils.goto(router);
-}
-
-function buildRouteToFromEntity(metaEntity,id,isRelative) {
-    var path=metaEntity.formPathForEdit(id,isRelative);
-    if(_.isEmpty(path)){
-        alert("not implement,please set createPath");
-        return ;
-    }
-    var router=null;
-    if(path.indexOf('/')>-1){
-        router={path:path,query:{}};
-    }else{
-        router={name:path,params:{},query:{}};
-    }
-    return router;
 }
 
 export default  operation

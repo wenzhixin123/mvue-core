@@ -136,6 +136,9 @@ export default {
             if(this.forceView||this.isArchived){
                 return true;
             }
+            if(this.$route.action=="view"){
+                return true;
+            }
             return false;
         },
         toolbarTransferDomId(){

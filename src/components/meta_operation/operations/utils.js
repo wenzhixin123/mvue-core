@@ -76,6 +76,20 @@ function buildRouteToFromOp(op) {
     }
     return router;
 }
+function buildRouteToFromEntity(metaEntity,id,isRelative) {
+    var path=metaEntity.formPathForEdit(id,isRelative);
+    if(_.isEmpty(path)){
+        alert("not implement,please set createPath");
+        return ;
+    }
+    var router=null;
+    if(path.indexOf('/')>-1){
+        router={path:path,query:{}};
+    }else{
+        router={name:path,params:{},query:{}};
+    }
+    return router;
+}
 
 function buildDeleteHandler(opInst,grid,metaEntity) {
     var func=null;
@@ -126,6 +140,7 @@ export default {
     buildQuery,
     getIdFromContext,
     buildRouteToFromOp,
+    buildRouteToFromEntity,
     buildDeleteHandler,
     expandOperation
 }

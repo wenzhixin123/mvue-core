@@ -40,6 +40,17 @@ manager.register(cancel);
 import save from "./form/save";
 manager.register(save);
 
+manager.registerByTpl({
+    name:"gotoEdit",
+    title: "修改",
+    icon: "md-create",
+    btnType:"primary",
+    security:["edit"],
+    entitySecurity:true,
+    url:"./view",
+    type:"routeTo"
+});
+
 
 
 export default manager;

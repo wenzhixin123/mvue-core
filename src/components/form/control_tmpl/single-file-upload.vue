@@ -9,6 +9,7 @@
                     </li>
                 </ul>
             </div>
+            <div class="form-item-view" v-else>无文件</div>
         </template>
         <template v-else>
                 <Upload ref="upload"

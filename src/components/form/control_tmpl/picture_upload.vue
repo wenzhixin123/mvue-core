@@ -1,19 +1,20 @@
 <template>
     <div>
         <template v-if="viewMode">
-                <div v-if="isNotEmpty(defaultList)">
-                    <div class="demo-upload-list" v-for="item in defaultList" :key="item.id||item.url">
-                        <div>
-                            <ufs-image :item='item' :paths='paths'></ufs-image>
-                            <div class="demo-upload-list-cover">
-                                <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item)"></i> 
-                            </div>
+            <div v-if="isNotEmpty(defaultList)">
+                <div class="demo-upload-list" v-for="item in defaultList" :key="item.id||item.url">
+                    <div>
+                        <ufs-image :item='item' :paths='paths'></ufs-image>
+                        <div class="demo-upload-list-cover">
+                            <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item)"></i> 
                         </div>
                     </div>
-                    <Modal title="查看图片" v-model="visible">
-                        <img class="preview-img" :src="previewImgSrc" v-if="visible">
-                    </Modal>
+                </div>
+                <Modal title="查看图片" v-model="visible">
+                    <img class="preview-img" :src="previewImgSrc" v-if="visible">
+                </Modal>
             </div>
+            <div class="form-item-view" v-else>无图片</div>
         </template>
         <template v-else>
             <div>

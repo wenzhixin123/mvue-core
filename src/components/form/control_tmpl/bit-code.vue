@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div class="form-item-view" v-text="viewModeValue()"></div>
+            <div class="form-item-view" v-text="viewModeValue()||emptyText"></div>
         </template>
         <template v-else>
             <CheckboxGroup v-model="valueObj" @on-change="updateValue">

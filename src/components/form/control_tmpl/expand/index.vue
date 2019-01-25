@@ -7,7 +7,7 @@
             <item-render :render="fieldRender" :meta-field="metaField" :entity="entity"></item-render>
         </div>
         <div class="form-item-view" v-else>
-            --
+            {{emptyText}}
         </div>
     </FormItem>
 </template>

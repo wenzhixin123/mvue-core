@@ -140,14 +140,14 @@
     .grid-quick-search-con{
         padding: 15px 5px 0;
         border: 1px #f1f1f1 solid;
-        .ivu-form-item-label{display: inline-block; width: 120px; line-height: 30px;}
+        label{display: inline-block; width: 100px; line-height: 30px; text-align: center;}
         display: flex;
         .layout_l{ flex: 3;
             .form-group{ display: flex;}
             .field{ width: 30% !important; display: inline-block; margin-right: 2%;}
             .form-control{ display: inline-block;}
         }
-        .layout_r{ flex: 1}
+        .layout_r{ /*flex: 1*/ width:140px;}
     }
 </style>
 

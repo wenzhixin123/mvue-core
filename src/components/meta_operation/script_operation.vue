@@ -77,7 +77,7 @@
             if (_.isFunction(fun)) {
               this.mustStopRepeatedClick = true
               fun(_widgetCtx, window.factoryApp);
-            } else {
+            } else if(fun){
               this.mustStopRepeatedClick = true
               var onclick = Function('"use strict";return ' + fun)()
               onclick(_widgetCtx, window.factoryApp);

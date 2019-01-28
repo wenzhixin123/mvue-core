@@ -16,13 +16,13 @@
                             {{toolbarBtn.title}}
                         </Button>
                     </meta-operation>
-                    <Dropdown v-if="innerToolbar.btns.length>1" @on-click="handleDropdownMenuClick" placement="bottom-end" trigger="click">
-                        <Button type="primary" title="更多" size="small" class="default-color-btn">
+                    <Dropdown v-if="innerToolbar.btns.length>1" @on-click="handleDropdownMenuClick" placement="bottom-end" trigger="click" :visible="dropdownVisible">
+                        <Button type="primary" title="更多" size="small" class="default-color-btn" @click="dropdownVisible=true">
                             <Icon type="arrow-down-b"></Icon>
                         </Button>
                         <DropdownMenu slot="list">
                             <DropdownItem v-for="(toolbarBtn,index) in innerToolbar.btns" v-if="index>=1" :name="index" :key="index">
-                                <meta-operation :operation="toolbarBtn" :widget-context="getWidgetContext()">
+                                <meta-operation @triggered="dropdownVisible=false" :operation="toolbarBtn" :widget-context="getWidgetContext()">
                                     <Button style="min-width:100px" :key="index"
                                             type="text"  :icon="toolbarBtn.icon"
                                     >{{toolbarBtn.title}}</Button>
@@ -312,6 +312,7 @@ export default {
             showQuickSearchModel:false,
             pageParams:{},
             selectedItem:{},//记录选择对象--合并暴露对象
+            dropdownVisible:false//控制显隐导航下拉选项
         };
     },
     computed:{

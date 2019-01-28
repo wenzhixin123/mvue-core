@@ -1,5 +1,5 @@
 <template>
-    <div class="grid-quick-search-con">
+    <div id="grid-quick-search-con">
         <div class="layout_l" style="padding-left: 0px;padding-right: 0px;">
                 <div class="field" v-if="isKey">
                     <div class="form-group">
@@ -137,13 +137,13 @@
 </script>
 
 <style lang="less">
-    .grid-quick-search-con{
+    #grid-quick-search-con{
         padding: 15px 5px 0;
         border: 1px #f1f1f1 solid;
-        label{display: inline-block; width: 100px; line-height: 30px; text-align: center;}
         display: flex;
         .layout_l{ flex: 3;
             .form-group{ display: flex;}
+            label{display: inline-block; width: 100px; line-height: 30px; text-align: center;}
             .field{ width: 30% !important; display: inline-block; margin-right: 2%;}
             .form-control{ display: inline-block;}
         }

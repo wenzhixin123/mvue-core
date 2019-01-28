@@ -1,5 +1,5 @@
 <template>
-    <Layout class="detail-view">
+    <Layout class="detail-view" :class="containerCls">
         <b-childheader v-if="showHeader" :title="header.title" :back-route="backRoute"></b-childheader>
         <Menu  ref="topMenus" v-if="mode=='horizontal'"
                :theme="theme" mode="horizontal"
@@ -66,23 +66,23 @@
                     return [];
                 }
             },
-            theme:{
-                type:String,
-                default:"light"
+            theme: {
+                type: String,
+                default: "light"
             },
-            mode:{
-                type:String,
-                default:"vertical"
+            mode: {
+                type: String,
+                default: "vertical"
             },
-            recordId:{
-                type:String,
+            recordId: {
+                type: String,
             },
-            entityName:{
-                type:String
+            entityName: {
+                type: String
             },
-            showHeader:{
-                type:Boolean,
-                default:true
+            showHeader: {
+                type: Boolean,
+                default: true
             },
         },
         data: function () {
@@ -93,98 +93,107 @@
                 openNames: [],
                 activeName: "",
                 menuMappings: {},
-                header:{
-                    title:"-"
+                header: {
+                    title: "-"
                 },
-                basePath:""
+                basePath: ""
             }
         },
-        computed:{
-          marginCls(){
-              if(this.mode=='vertical'){
-                  return 'm-md';
-              }
-              if(this.mode=="horizontal"){
-                return 'has-horizontal-menu';
-              }
-              return ""
-          },
-            backRoute(){
-                return {path:paths.relativeToAbsolute(this.basePath,"../../list")}
+        computed: {
+            marginCls() {
+                if (this.mode == 'vertical') {
+                    return 'm-md';
+                }
+                if (this.mode == "horizontal") {
+                    return 'has-horizontal-menu';
+                }
+                return ""
+            },
+            containerCls() {
+                if (this.mode == 'vertical') {
+                    return 'detail-view-vertical';
+                }
+                if (this.mode == "horizontal") {
+                    return 'detail-view-horizontal';
+                }
+                return ""
+            },
+            backRoute() {
+                return {path: paths.relativeToAbsolute(this.basePath, "../../list")}
             }
         },
-        mounted(){
+        mounted() {
             this.localMenus = _.cloneDeep(this.menus);
-            if(this.localMenus.length<1){
+            if (this.localMenus.length < 1) {
                 return;
             }
             this.prepare();
             this.calBasePath();
-            let matchedMenu=this.getMatchedMenu();
-            if(matchedMenu==null){
-                let lm=this.localMenus[0];
-                while(lm.children&&lm.children.length>0){
-                    lm=lm.children[0];
+            let matchedMenu = this.getMatchedMenu();
+            if (matchedMenu == null) {
+                let lm = this.localMenus[0];
+                while (lm.children && lm.children.length > 0) {
+                    lm = lm.children[0];
                 }
-                if(lm){
+                if (lm) {
                     this.onMenuSelected(lm.id);
                 }
             }
             this.setActiveMenu(matchedMenu);
         },
         methods: {
-            calBasePath(){
-              var matchedRoute=context.componentInRoute(this);
-              if(!matchedRoute){
-                  this.basePath=this.$route.path;
-              }
-              var url=pathToRegexp.compile(matchedRoute.path)(this.$route.params);
-              this.basePath=url;
-              return url;
+            calBasePath() {
+                var matchedRoute = context.componentInRoute(this);
+                if (!matchedRoute) {
+                    this.basePath = this.$route.path;
+                }
+                var url = pathToRegexp.compile(matchedRoute.path)(this.$route.params);
+                this.basePath = url;
+                return url;
             },
             setActiveMenu(matched) {//设置导航菜单选中
-                if(!matched){
-                    matched=this.getMatchedMenu();
+                if (!matched) {
+                    matched = this.getMatchedMenu();
                 }
-                if(matched){
-                    this.activeName=matched.id;
-                    this.$nextTick(()=> {
-                        var menuRef=this.getMenuRef();
-                        if(menuRef!=null){
+                if (matched) {
+                    this.activeName = matched.id;
+                    this.$nextTick(() => {
+                        var menuRef = this.getMenuRef();
+                        if (menuRef != null) {
                             menuRef.updateActiveName();
                         }
                     });
                 }
             },
-            getMatchedMenu(){
-                let url=this.$route.path;
-                let matched=null;
-                this.visitTree(this.localMenus,menu=>{
-                    var menuUrl=paths.relativeToAbsolute(this.basePath,menu.url);
-                    if(url.indexOf(menuUrl)>-1){
-                        matched=menu;
+            getMatchedMenu() {
+                let url = this.$route.path;
+                let matched = null;
+                this.visitTree(this.localMenus, menu => {
+                    var menuUrl = paths.relativeToAbsolute(this.basePath, menu.url);
+                    if (url.indexOf(menuUrl) > -1) {
+                        matched = menu;
                         return false;
                     }
                 });
                 return matched;
             },
-            getMenuRef(){
-                if(this.mode=="horizontal"){
+            getMenuRef() {
+                if (this.mode == "horizontal") {
                     return this.$refs.topMenus;
-                }else{
+                } else {
                     return this.$refs.leftMenus;
                 }
             },
             setEntityToContext() {
-                if(_.isEmpty(this.entityName) || _.isEmpty(this.recordId)){
+                if (_.isEmpty(this.entityName) || _.isEmpty(this.recordId)) {
                     return;
                 }
-                var metaEntity=this.$metaBase.findMetaEntity(this.entityName);
-                var dataResource=metaEntity.dataResource();
-                dataResource.get({id: this.recordId}).then(({data})=> {
+                var metaEntity = this.$metaBase.findMetaEntity(this.entityName);
+                var dataResource = metaEntity.dataResource();
+                dataResource.get({id: this.recordId}).then(({data}) => {
                     let titleField = metaEntity.firstTitleField();
-                    this.header.title=(titleField==null?metaEntity.title:data[titleField.name]);
-                    this.$store.commit("core/setEntity",{entityName:this.entityName,entity:data});
+                    this.header.title = (titleField == null ? metaEntity.title : data[titleField.name]);
+                    this.$store.commit("core/setEntity", {entityName: this.entityName, entity: data});
                 });
             },
             onMenuSelected: function (name) {
@@ -194,9 +203,9 @@
                         alert("菜单定义数据有误");
                         return;
                     }
-                    var toPath=paths.relativeToAbsolute(this.basePath,selectedMenu.url);
+                    var toPath = paths.relativeToAbsolute(this.basePath, selectedMenu.url);
                     this.activeName = selectedMenu.id;
-                    this.$router.push({path: toPath,query:this.$route.query});
+                    this.$router.push({path: toPath, query: this.$route.query});
                 }
             },
             prepare: function () {
@@ -206,7 +215,7 @@
                 }
                 _this.visitTree(_this.localMenus, function (menu) {
                     var menuId = menu.id;
-                    if (menu.url&&menu.url.indexOf("#") > 0) {
+                    if (menu.url && menu.url.indexOf("#") > 0) {
                         menu["path"] = menu.url.substring(menu.url.indexOf("#") + 1);
                     } else {
                         menu["path"] = "/";
@@ -214,20 +223,20 @@
                     _this.menuMappings[menuId] = menu;
                 });
             },
-            visitTree: function (tree, processor,parent) {
+            visitTree: function (tree, processor, parent) {
                 var self = this;
                 _.forEach(tree, function (node, index) {
-                    if(parent && _.isEmpty(node.parentId)){
-                        node["parentId"]=parent.id;
+                    if (parent && _.isEmpty(node.parentId)) {
+                        node["parentId"] = parent.id;
                     }
                     if (processor) {
-                        var result=processor(node, tree, index);
-                        if(result===false){
+                        var result = processor(node, tree, index);
+                        if (result === false) {
                             return false;
                         }
                     }
                     if (node.children) {
-                        self.visitTree(node.children, processor,node);
+                        self.visitTree(node.children, processor, node);
                     }
                 });
             }

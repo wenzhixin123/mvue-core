@@ -8,7 +8,7 @@
                 <template v-if="level0.children&& level0.children.length>0">
                     <Submenu v-if="level0.children&& level0.children.length>0" :key="level0.id" :name="level0.id">
                         <template slot="title">
-                            <Icon :type="level0.icon"></Icon>
+                            <Icon v-if="level0.icon" :type="level0.icon"></Icon>
                             <span>{{level0.title}}</span>
                         </template>
                         <MenuItem v-for="level1 in level0.children" :key="level1.id" :name="level1.id">
@@ -17,28 +17,29 @@
                     </Submenu>
                 </template>
                 <MenuItem v-else :key="level0.id" :name="level0.id">
-                    <Icon :type="level0.icon"></Icon>
+                    <Icon v-if="level0.icon" :type="level0.icon"></Icon>
                     <span>{{level0.title}}</span>
                 </MenuItem>
             </template>
         </Menu>
         <Layout>
-            <Sider hide-trigger v-if="mode=='vertical'">
+            <Sider hide-trigger v-if="mode=='vertical'" :width="siderWidth">
                 <Menu ref="leftMenus" width="auto" :theme="theme"
-                      :active-name="activeName" @on-select="onMenuSelected">
+                      :open-names="openNames" :active-name="activeName" @on-select="onMenuSelected">
                     <template v-for="level0 in localMenus">
                         <template v-if="level0.children&& level0.children.length>0">
-                            <MenuGroup :title="level0.title" :key="level0.id">
-                                <template v-for="level1 in level0.children">
-                                    <MenuItem :key="level1.id" :name="level1.id">
-                                        <Icon :type="level1.icon"></Icon>
-                                        <span>{{level1.title}}</span>
-                                    </MenuItem>
+                            <Submenu v-if="level0.children&& level0.children.length>0" :key="level0.id" :name="level0.id">
+                                <template slot="title">
+                                    <Icon v-if="level0.icon" :type="level0.icon"></Icon>
+                                    <span>{{level0.title}}</span>
                                 </template>
-                            </MenuGroup>
+                                <MenuItem v-for="level1 in level0.children" :key="level1.id" :name="level1.id">
+                                    <span>{{level1.title}}</span>
+                                </MenuItem>
+                            </Submenu>
                         </template>
                         <MenuItem v-else :key="level0.id" :name="level0.id">
-                            <Icon :type="level0.icon"></Icon>
+                            <Icon v-if="level0.icon" :type="level0.icon"></Icon>
                             <span>{{level0.title}}</span>
                         </MenuItem>
                     </template>
@@ -84,13 +85,21 @@
                 type: Boolean,
                 default: true
             },
+            siderWidth:{
+                type:Number,
+                default:160
+            }
         },
         data: function () {
             this.setEntityToContext();
+            let opens=[];
+            _.forEach(this.menus,menu=>{
+                opens.push(menu.id);
+            });
             return {
                 isShow: true,
                 localMenus: _.cloneDeep(this.menus),
-                openNames: [],
+                openNames: opens,
                 activeName: "",
                 menuMappings: {},
                 header: {

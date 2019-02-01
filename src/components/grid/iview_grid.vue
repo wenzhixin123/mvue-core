@@ -5,7 +5,7 @@
     <div class="toolBar compact" v-if="!innerToolbar.hide && toolbarType=='compact'">
         <Row type="flex" align="middle" style="padding-bottom:16px;">
             <i-col span="20" style="text-align:left;">
-                <div style="display: inline-block;">
+                <div style="display: inline-block; vertical-align: middle;">
                     <slot name="compactToolBar"></slot>
                 </div>
 

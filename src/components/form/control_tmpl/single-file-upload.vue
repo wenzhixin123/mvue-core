@@ -1,10 +1,10 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div v-if="isNotEmpty(defaultList)">
+            <div v-if="isNotEmpty(defaultList)" class="upload-form-item-view">
                 <ul class="ivu-upload-list">
                     <li class="ivu-upload-list-file ivu-upload-list-file-finish" style="padding-left:0px;" v-for="item in defaultList" :key="item.id||item.url">
-                        <span @click="handlePreview(item)"><i class="ivu-icon ivu-icon-document"></i> {{item.name}}</span>
+                        <span @click="handlePreview(item)"><Icon type="ios-document-outline" />{{item.name}}</span>
                         <span>{{humanFileSize(item.size)}}</span>
                     </li>
                 </ul>

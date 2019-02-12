@@ -2,7 +2,7 @@
     <m-field 
     :name="name" 
     :title="innerLabel" 
-    :propName='propName' 
+    :propName='innerPropName' 
     :params="params"
     :rules="rules"></m-field>
 </template>
@@ -19,6 +19,9 @@ export default {
         },
         title:{
             type:String
+        },
+        propName:{
+            type:String
         }
     },
     data(){
@@ -28,7 +31,10 @@ export default {
         };
     },
     computed:{
-        propName(){
+        innerPropName(){
+            if(this.propName){
+                return this.propName;
+            }
             return `${this.name}_${this.propSuffix}`;
         },
         innerLabel(){

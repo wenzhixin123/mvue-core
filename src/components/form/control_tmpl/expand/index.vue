@@ -84,6 +84,13 @@ export default {
             let curFormRefEntities=refEntities[id];
             let refEntity=curFormRefEntities[this.expandField];
             return refEntity||{};
+        },
+        emptyText(){
+            let metaForm=this.getParentForm();
+            if(metaForm){
+                return metaForm.emptyText;
+            }
+            return '';
         }
     },
     methods:{

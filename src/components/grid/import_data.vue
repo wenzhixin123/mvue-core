@@ -396,7 +396,7 @@ export default {
             });
         },
         doDownloadTmpl(){
-            alert("TODO");
+            console.error("TODO");
         },
         doDownloadReport(){//根据报告生成csv数据下载
             if(!this.report){

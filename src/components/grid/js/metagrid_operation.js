@@ -72,7 +72,7 @@ function operationForCreate(){
         path=context.metaEntity.formPathForCreate();
       }
       if(_.isEmpty(path)){
-        alert("not implement,please set createPath");
+        console.error("not implement,please set createPath");
         return ;
       }
       if(path.indexOf('/')>-1){

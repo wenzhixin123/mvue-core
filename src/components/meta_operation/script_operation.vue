@@ -9,6 +9,18 @@
             </Button>
         </slot>
 
+        <!--脚本内调用跳转页面,类型为弹窗-->
+        <Modal class="popup-widget-con" v-model="modalInfo.show"
+               :width="modalInfo.width"
+               :title="modalInfo.title"
+               :scrollable="true"
+               :mask-closable="false"
+        >
+          <div class="modal-inner-widget" :style="{height:modalInfo.height+'px'}">
+            <meta-widget-page :vue-modal="this" :widget-params="modalInfo.pageParams"></meta-widget-page>
+          </div>
+          <div slot="footer"></div>
+        </Modal>
     </div>
 </template>
 <script>
@@ -28,9 +40,18 @@
       }
     },
     data () {
+      let _this = this;
       return {
         mustStopRepeatedClick: false,//阻止点击操作重复触发
-        mVueToolkit:mVueToolkit
+        mVueToolkit:mVueToolkit,
+        //弹窗信息
+        modalInfo:{
+          width:500,
+          height:340,
+          title:_this.operation.title||"",
+          show:false,
+          pageParams:{}
+        }
       }
     },
     methods: {
@@ -71,9 +92,10 @@
       cellExecScript () {
         var _widgetCtx = Object.assign(this.widgetContext, {'buttonInfo': this.operation}),_this = this;
         OperationUtils.execution(this.operation, _widgetCtx, 'beforeExecCode', this).then((res) => {
+          OperationUtils.setUrlParam(this.operation,this);//按钮输入参数处理
           //所有跳转都带入dataId数据id,entity实体id
           var fun = _this.operation.onClick;
-        try{
+          try{
             if (_.isFunction(fun)) {
               this.mustStopRepeatedClick = true
               fun(_widgetCtx, window.factoryApp);
@@ -97,6 +119,10 @@
         //隐藏图片
         operation.hideImg=true;
         this.$forceUpdate();
+      },
+      close(){//关闭对话框
+        this.modalInfo.pageParams = {pageId :""};
+        this.modalInfo.show=false;
       }
     }
   }

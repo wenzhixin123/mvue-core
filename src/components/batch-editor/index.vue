@@ -24,6 +24,7 @@
                 @on-row-save="handleOnRowSave"
                 @on-row-cancel-edit="handleOnRowCancelEdit"
                 @on-batch-fill-data="handleOnBatchFillData"
+                :handle-on-title-click="handleOnTitleClick"
                 >
             </m-grid>
         </m-form>
@@ -32,6 +33,7 @@
 <script>
 import globalContext from '../../libs/context';
 const uuidv1 = require('uuid/v1');
+var dayjs = require("dayjs");
 export default {
     props:{
         entityName:{//当前批量编辑的实体名称
@@ -73,6 +75,8 @@ export default {
         let metaEntity=this.$metaBase.findMetaEntity(this.entityName);
         let idFieldName=metaEntity.getIdField().name;
         let self=this;
+        //禁用所有列排序
+        this.disableSortable();
         return {
             toolbar: {
                 btnSizeBeforeMore:2,
@@ -107,6 +111,11 @@ export default {
         };
     },
     methods:{
+        disableSortable(){
+            this.columns.forEach(col => {
+                col.sortable=false
+            });
+        },
         handleOnBatchFillData(model,clearModel){
             let edited=false;
             for (const key in model) {
@@ -172,6 +181,27 @@ export default {
             });
         },
         handleOnFormEntityChanged(entity){
+            let formFields=this.buildFormFields();
+            let changed=false;
+            formFields.forEach(fieldName => {
+                let newV=entity[fieldName];
+                let oldV=this.currentRow[fieldName];
+                //2019-02-21T05:46:50.000Z
+                if(oldV&&_.isString(oldV)&&oldV.indexOf('T')===10&&oldV.endsWith('Z')){
+                    let metaField=this.metaEntity.findField(fieldName);
+                    if(metaField.inputType=="DateTime"){
+                        let _d=dayjs(oldV);
+                        oldV=_d.format('YYYY-MM-DD HH:mm:ss');
+                    }
+                }
+                if(!_.isEqual(newV,oldV)){
+                    changed=true;
+                    return false;
+                }
+            });
+            if(!changed){
+                return;
+            }
             let id=entity[this.idFieldName];
             //编辑后的form数据反映到grid
             _.forIn(entity, (value, key) => {
@@ -180,6 +210,9 @@ export default {
             });
             this.currentRow.__rowStatus__='unsaved';
             this.localDataMap[id]['__rowStatus__']='unsaved';
+        },
+        handleOnTitleClick(){
+            //什么都不做，批量编辑模式，标题点击不可跳转
         },
         query(ctx,queryResource){
             //分页数据只在第一次加载时获取全部，后续都在内存取值
@@ -308,7 +341,16 @@ export default {
                 _model[k] = v;
             });
             return _model;
-        }
+        },
+        buildFormFields(){
+            let fields=[];
+            this.columns.forEach(col => {
+                if(this.metaEntity.findField(col.key)){
+                    fields.push(col.key);
+                }
+            });
+            return fields;
+        },
     }
 }
 </script>

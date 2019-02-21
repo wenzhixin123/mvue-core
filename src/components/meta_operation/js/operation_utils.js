@@ -23,7 +23,7 @@ var utils={
         }
         //执行操作的时候调用函数解析
         return new Promise(function(resolve, reject) {
-            if(!operation.hasPermission&&operation.securityControllTypes&&operation.securityControllTypes==2){
+            if(!operation.hasPermission&&operation.securityControlType&&operation.securityControlType==2){
                 //无权时-不可点击
                 resolve(false)
             }else {
@@ -179,7 +179,7 @@ var utils={
          }
          }*/
         return new Promise(function(resolve, reject) {
-            if(!operation.hasPermission&&operation.securityControllTypes&&operation.securityControllTypes==1){
+            if(!operation.hasPermission&&operation.securityControlType&&operation.securityControlType==1){
                 //无权时-隐藏
                 resolve(false)
             }else {

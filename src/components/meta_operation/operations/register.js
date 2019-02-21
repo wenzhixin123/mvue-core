@@ -33,6 +33,13 @@ manager.register(importOp);
 import view from "./grid/view";
 manager.register(view);
 
+import openEdit from "./grid/open-edit";
+manager.register(openEdit);
+import cancelEdit from "./grid/cancel-edit";
+manager.register(cancelEdit);
+import saveRow from "./grid/save-row";
+manager.register(saveRow);
+
 // 表单操作
 import cancel from "./form/cancel";
 manager.register(cancel);

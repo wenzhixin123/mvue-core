@@ -4,7 +4,7 @@
                 <div class="form-item-view" v-text="valueObj||emptyText"></div>
         </template>
         <template v-else>
-            <TimePicker
+            <TimePicker transfer
             v-model="valueObj" 
             @on-change="handleChange" 
             :readonly="disabled" :disabled="disabled" :format="timeFormat" :placeholder="formItem.componentParams.placeholder"></TimePicker>

@@ -32,7 +32,30 @@ function metaFieldToCol(context,metaField,initialCol) {
     }
   } else if (metaField.type == "imgTitle") {
     col.render = renderManager.renderForImgTitle(context,metaField);
-  } else if(metaField.autoFilterable&&
+  } else if(metaField.type == "rowStatus"){//编辑状态显示列
+    col.filterMultiple=false;
+    col.filterRemote=(selectedValues)=>{//远程过滤
+                        //修改过滤条件
+                        var _filter=null;
+                        _filter={
+                          op:'eq',
+                          value:selectedValues[0]
+                        };
+                        context.grid.filtersFromColumnHeader[col.key]=_filter;
+                        //重新加载数据
+                        context.grid.$refs.listInst.doReload();
+                    };
+    let options=[{id:'unsaved',text:'未保存'},{id:'failed',text:'出错'},{id:'saved',text:'已保存'}];
+    let _filters=[]; 
+    _.each(options,opt=>{
+      _filters.push({
+        label:opt.text,
+        value:opt.id
+      });
+    })
+    col.filters=_filters;
+    col.render = renderManager.renderForRowStatus(context,metaField,options);
+  }else if(metaField.autoFilterable&&
     controlTypeService.isOptions(metaField.inputType)){//如果是选项列，自动添加列头过滤相关功能
     col.filterMultiple=false;
     col.filterRemote=(selectedValues)=>{//远程过滤
@@ -156,6 +179,10 @@ function  initColumns(grid) {
   //多选框列
   if(grid.showSelection){
     __cols.push({type: 'selection',key:'__selection__',width:50,align:"center"});
+  }
+  //行编辑状态显示列显示
+  if(grid.showRowStatus){
+    __cols.push({metaParams:{type: 'rowStatus'},key:'__rowStatus__',title:'编辑状态',width:100,align:"center"});
   }
 
   _cols=__cols.concat(_cols);

@@ -272,3 +272,13 @@
         }
     }
 }
+.b-list .b-list-header:before,.b-list .b-list-header:after{
+    content: "";
+    display: table;
+}
+.b-list .b-list-header:after{
+    clear: both;
+    visibility: hidden;
+    font-size: 0;
+    height: 0;
+}

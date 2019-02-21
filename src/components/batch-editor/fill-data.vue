@@ -1,0 +1,124 @@
+<template>
+    <div class="grid-fill-data-con">
+        <div @click="handleBtnClick" style="width:100%;">
+            <slot>
+                <Button type="primary"  :icon="operation.icon">{{operation.title}}</Button>
+            </slot>
+        </div>
+        <Drawer
+            :title="title"
+            v-model="showDrawer"
+            :width="80"
+            :mask-closable="false"
+            :styles="styles"
+            class="grid-fill-data-con-drawer"
+        >
+            <m-form ref="form" 
+                :entity-name="metaEntity.name" 
+                :ignore-validate="true" 
+                :on-inited="handleOnInited">
+                <Row v-for="fieldName in formFields" :key="fieldName">
+                    <i-col :span="12">
+                        <m-field :name="fieldName"></m-field>
+                    </i-col>
+                    <i-col :span="12">
+                        <FormItem class="clear-model-check">
+                            <Checkbox v-model="clearModel[fieldName]">全部置空</Checkbox>
+                        </FormItem>
+                    </i-col>
+                </Row>
+            </m-form>
+            <div class="drawer-footer">
+                <Button style="margin-right: 8px" @click="showDrawer = false">取消</Button>
+                <Button type="primary" @click="handleOnConfirmClick">确定</Button>
+            </div>
+        </Drawer>
+    </div>
+</template>
+<script>
+import context from "../../libs/context";
+export default {
+    props:{
+        operation:{
+            type:Object,
+            required:true
+        },
+        widgetContext:{
+            type:Object,
+            required:true
+        }
+    },
+    data:function(){
+        let metaEntity=this.widgetContext.metaEntity;
+        let formFields=this.buildFormFields();
+        let clearModel=this.buildClearFieldsModel(formFields);
+        return {
+            title:"批量设值",
+            showDrawer:false,
+            styles:{
+                height: 'calc(100% - 55px)',
+                overflow: 'auto'
+            },
+            metaEntity:metaEntity,
+            formFields:formFields,
+            clearModel:clearModel
+        }
+    },
+    methods:{
+        handleOnInited(form){
+            //清空所有表单项
+            this.formFields.forEach(fieldName => {
+                form.entity[fieldName]=null;
+            });
+        },
+        handleBtnClick(){
+            this.showDrawer=true;
+        },
+        handleOnConfirmClick(){
+            let entity=this.$refs.form.entity;
+            let _model={};
+            this.formFields.forEach(fieldName => {
+                _model[fieldName]=entity[fieldName];
+            });
+            this.widgetContext.grid.$emit("on-batch-fill-data",_model,this.clearModel);
+            this.showDrawer=false;
+        },
+        buildFormFields(){
+            let metaEntity=this.widgetContext.metaEntity;
+            let grid=this.widgetContext.grid;
+            let columns=grid.columns;
+            let fields=[];
+            columns.forEach(col => {
+                if(metaEntity.findField(col.key)){
+                    fields.push(col.key);
+                }
+            });
+            return fields;
+        },
+        buildClearFieldsModel(formFields){
+            let clearModel={};
+            formFields.forEach(fieldName => {
+                clearModel[fieldName]=false;
+            });
+            return clearModel;
+        }
+    }
+}
+</script>
+<style lang="less">
+.clear-model-check .ivu-form-item-content{
+    margin-left:10px !important;
+}
+.grid-fill-data-con-drawer .drawer-footer{
+    width: 100%;
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    border-top: 1px solid #e8e8e8;
+    padding: 10px 16px;
+    text-align: left;
+    background: #fff;
+}
+</style>
+
+

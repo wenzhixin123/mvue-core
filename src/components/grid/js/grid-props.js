@@ -33,9 +33,8 @@ export default{
                 return [10, 20, 50, 100];
             }
         },
-        "pager": {
-            type: Boolean,
-            required: false,
+        pager: {//是否启用分页
+            type: [Boolean, String],
             default: true
         },
         "pageSize": {//每页条数
@@ -61,6 +60,10 @@ export default{
         "showSelection": {//是否显示多选列
             type: Boolean,
             default: true
+        },
+        "showRowStatus": {//是否显示行编辑状态列
+            type: Boolean,
+            default: false
         },
         "showRefreshBtn": {//是否显示刷新按钮
             type: Boolean,
@@ -133,6 +136,10 @@ export default{
         hidePagerIfOnePage:{//如果只有一页数据，是否隐藏分页页脚
             type:Boolean,
             default:false
+        },
+        maxLocalSize:{
+            type:Number,
+            default:500
         }
     }
 }

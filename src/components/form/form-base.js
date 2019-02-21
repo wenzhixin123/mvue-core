@@ -93,12 +93,15 @@ export default {
         emptyText:{
             type:String,
             default:'--'
+        },
+        localModel:{//默认情况下，编辑模式会通过recordId远程获取实体数据，但是指定了localModel参数后，将使用localModel代替远程数据初始化表单模型
+            type:Object
         }
     },
     data(){
         var formStatus=contextHelper.getMvueToolkit().utils.formActions.create;
         var entityId=this.recordId;
-        if(!_.isEmpty(entityId)){
+        if(!!entityId||(entityId===0)){
             formStatus=contextHelper.getMvueToolkit().utils.formActions.edit;
         }
         return {

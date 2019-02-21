@@ -41,7 +41,10 @@ export default {
       var value = controlTypeService.formatData(params.row, metaField);
       return h("m-grid-password", {
         props: {
-          value:value
+          value:value,
+          metaField:metaField,
+          context:context,
+          item: params.row
         }
       });
     }
@@ -55,10 +58,9 @@ export default {
     return function (h, params) {
       return h("m-grid-pictures", {
         props: {
-          params: {
-            metaField:metaField,
-            uploadUrl:globalContext.getConfig().getUploadUrl()
-          },
+          metaField:metaField,
+          uploadUrl:globalContext.getConfig().getUploadUrl(),
+          context:context,
           item: params.row
         }
       });
@@ -74,10 +76,9 @@ export default {
     return function (h, params) {
       return h("m-grid-files", {
         props: {
-          params: {
-            metaField:metaField,
-            uploadUrl:globalContext.getConfig().getUploadUrl()
-          },
+          uploadUrl:globalContext.getConfig().getUploadUrl(),
+          metaField:metaField,
+          context:context,
           item: params.row
         }
       });
@@ -95,6 +96,8 @@ export default {
           params: _.extend({
               uploadUrl:globalContext.getConfig().getUploadUrl()
             },metaField),
+          metaField:metaField,
+          context:context,
           item: params.row
         },
         on: {
@@ -140,11 +143,11 @@ export default {
 
             return h("m-grid-link-title", {
                 props: {
-                    params:metaField,
                     item: params.row,
                     context:context,
                     btn:oper,
-                    initialCol:initialCol
+                    initialCol:initialCol,
+                    metaField:metaField
                 }
             });
         }
@@ -160,12 +163,13 @@ export default {
       return h("m-grid-opts-title", {
         props: {
           params: {
-            metaField:metaField,
             wordlimit:31
           },
           btns:btns,
-          item: params.row,
-          grid:context.grid
+          grid:context.grid,
+          metaField:metaField,
+          context:context,
+          item: params.row
         }
       });
     }
@@ -193,6 +197,23 @@ export default {
       });
     }
   },
+  /**
+   *  行编辑状态列
+   * @param metaField
+   * @returns {Function}
+   */
+  renderForRowStatus:function (context,metaField,options) {
+    return function(h,params){
+      return h("m-grid-row-status",{
+        props:{
+          item: params.row,
+          context:context,
+          options:options,
+          metaField:metaField
+        }
+      });
+    }
+  },
 
   /**
    * 通用渲染
@@ -205,7 +226,10 @@ export default {
       return h("m-grid-render-html", {
         props: {
           value: value,
-          initialCol:initialCol
+          initialCol:initialCol,
+          item: params.row,
+          context:context,
+          metaField:metaField
         }
       });
     }

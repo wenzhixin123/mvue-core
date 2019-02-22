@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div @click="toggleModal">
+    <div @click.stop="toggleModal">
         <slot>
             <Button type="primary" size="small" 
                 :title="operation.title" >

@@ -24,6 +24,10 @@ function metaFieldToCol(context,metaField,initialCol) {
   if (metaField.type == "operation") {
     col.render = renderManager.renderForOperation(context,metaField);
   }else if (metaField.isTitleField||metaField.type == "optsTitle") {
+    if(context.grid.batchEditorMode){
+      col.render = renderManager.renderForCommon(context,metaField,initialCol);
+      return col;
+    }
     if(context.grid.operationsWithTitleColumn){
         col.render = renderManager.renderForOptsTitle(context,metaField);
         col.width=col.width||350;
@@ -31,6 +35,10 @@ function metaFieldToCol(context,metaField,initialCol) {
         col.render=renderManager.renderForLinkTitle(context,metaField,context.metaEntity.getIdField().name,initialCol);
     }
   } else if (metaField.type == "imgTitle") {
+    if(context.grid.batchEditorMode){
+      col.render = renderManager.renderForCommon(context,metaField,initialCol);
+      return col;
+    }
     col.render = renderManager.renderForImgTitle(context,metaField);
   } else if(metaField.type == "rowStatus"){//编辑状态显示列
     col.filterMultiple=false;
@@ -169,27 +177,39 @@ function  initColumns(grid) {
   var __cols=[];
   //序号列放在多选列前面
   if(grid.showIndex) {
-      __cols.push({
-          type: 'index',
-          key:'__index__',
-          width: 50,
-          align: 'center'
-      });
+    let indexCol={
+      type: 'index',
+      key:'__index__',
+      width: 50,
+      align: 'center'
+    };
+    if(grid.indexColumnFixed){
+      indexCol.fixed=grid.indexColumnFixed;
+    }
+    __cols.push(indexCol);
   }
   //多选框列
   if(grid.showSelection){
-    __cols.push({type: 'selection',key:'__selection__',width:50,align:"center"});
+    let selectionCol={type: 'selection',key:'__selection__',width:50,align:"center"};
+    if(grid.selectionColumnFixed){
+      selectionCol.fixed=grid.selectionColumnFixed;
+    }
+    __cols.push(selectionCol);
   }
   //行编辑状态显示列显示
   if(grid.showRowStatus){
-    __cols.push({metaParams:{type: 'rowStatus'},key:'__rowStatus__',title:'编辑状态',width:100,align:"center"});
+    let statusCol={metaParams:{type: 'rowStatus'},key:'__rowStatus__',title:'编辑状态',width:100,align:"center"};
+    if(grid.statusColumnFixed){
+      statusCol.fixed=grid.statusColumnFixed;
+    }
+    __cols.push(statusCol);
   }
 
   _cols=__cols.concat(_cols);
   //如果操作列不和标题列合并，并且定义了单行操作，默认最后一列为操作列
   if(!grid.operationsWithTitleColumn&&!_.isEmpty(grid.innerToolbar.singleBtns)){
     var colWidth=Math.max(grid.innerToolbar.singleBtns.length*45,95);
-    _cols.push({
+    let operationCol={
       title:"具体操作",
       key:"__operation_column__",
       width:colWidth,
@@ -197,7 +217,11 @@ function  initColumns(grid) {
       metaParams:{
         type:"operation"
       }
-    });
+    };
+    if(grid.operationColumnFixed){
+      operationCol.fixed=grid.operationColumnFixed;
+    }
+    _cols.push(operationCol);
   }
   //如果元数据信息存在，用metaField初始化列，操作列也要转化成render列
   _cols=buildInnerColumns(_cols,metaEntityObj,context);

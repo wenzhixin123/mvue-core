@@ -24,6 +24,9 @@ export default {
             return files;
         },
         handlePreview(file){
+            if(this.context.grid.batchEditorMode){
+                return;
+            }
             fileUtils.download(file,this.uploadUrl);
         }
     }

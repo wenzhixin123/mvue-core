@@ -187,7 +187,20 @@ export default {
    */
   renderForOperation:function (context,metaField) {
     let btns=context.grid.innerToolbar.singleBtns;
+    let batchEditor=false;
+    btns.forEach(btn => {
+      if(btn.name=='openEdit'){
+        batchEditor=true;
+        return false;
+      }
+    });
+    
     return function(h,params){
+      if(batchEditor){
+        let idFieldName=context.grid.metaEntity.getIdField().name;
+        let id=params.row[idFieldName];
+        context.grid.rowMap[id]=params.row;
+      }
       return h("m-grid-operation-btn",{
         props:{
           btns:btns,

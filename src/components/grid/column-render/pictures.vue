@@ -40,6 +40,9 @@ export default {
             return files;
         },
         handleView (item) {
+            if(this.context.grid.batchEditorMode){
+                return;
+            }
             this.previewItem = item;
             this.visible = true;
         }

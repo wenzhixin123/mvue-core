@@ -1,5 +1,5 @@
 <template>
-<div @click="execScript">
+<div @click.stop="execScript">
     <slot>
         <Button type="primary" size="small" 
             :title="operation.title" >

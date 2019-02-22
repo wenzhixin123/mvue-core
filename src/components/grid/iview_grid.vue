@@ -25,6 +25,7 @@
              :load-data-when-mount="loadDataWhenMount"
              :show-refresh-btn="showRefreshBtn"
              :show-config-columns-btn="showConfigColumnsBtn"
+             :operation-column-fixed="operationColumnFixed"
              :hide-pager-if-one-page="hidePagerIfOnePage"
              @on-current-change="handleOnCurrentChange"
              @on-select="handleOnSelect"
@@ -135,7 +136,8 @@ export default {
             saveStatusKey:saveStatusKey,
             advanceSearchInitModel:ctx.advModel||null,
             advanceSearchFilters:ctx.advanceSearchFilters||[],
-            editRow:''//当前行是否开启了编辑模式
+            editRow:'',//当前行是否开启了编辑模式
+            rowMap:{}//m-batch-editor模式，用来存储所有行的引用数据
         };
     },
     //保存一下当前grid的状态到vuex，页码、快捷查询条件、排序等

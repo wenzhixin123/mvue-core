@@ -73,6 +73,18 @@ export default{
             type: Boolean,
             default: true
         },
+        indexColumnFixed:{//指定索引列固定位置：left or right
+            type:String,
+        },
+        selectionColumnFixed:{//指定选择列固定位置：left or right
+            type:String,
+        },
+        operationColumnFixed:{//指定操作列固定位置：left or right
+            type:String,
+        },
+        statusColumnFixed:{//指定编辑状态列固定位置：left or right
+            type:String,
+        },
         wrapperClass: {
             type: [String, Object, Array],
             default: "default-list-wrapper"
@@ -140,6 +152,10 @@ export default{
         maxLocalSize:{
             type:Number,
             default:500
+        },
+        batchEditorMode:{//是否批量编辑模式
+            type:Boolean,
+            defualt:false
         }
     }
 }

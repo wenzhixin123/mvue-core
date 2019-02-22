@@ -20,10 +20,15 @@
                 :show-selection="false"
                 :show-refresh-btn="false"
                 :show-config-columns-btn="false"
+                :status-column-fixed="statusColumnFixed"
+                :operation-column-fixed="operationColumnFixed"
+                :index-column-fixed="indexColumnFixed"
+                :batch-editor-mode="true"
                 @on-row-edit="handleOnRowEdit"
                 @on-row-save="handleOnRowSave"
                 @on-row-cancel-edit="handleOnRowCancelEdit"
                 @on-batch-fill-data="handleOnBatchFillData"
+                @on-row-click="handleOnRowClick"
                 :handle-on-title-click="handleOnTitleClick"
                 >
             </m-grid>
@@ -69,6 +74,18 @@ export default {
             default: function () {
                 return [5, 100];
             }
+        },
+        indexColumnFixed:{//指定索引列固定位置：left or right
+            type:String,
+            default:'left'
+        },
+        statusColumnFixed:{//指定编辑状态列固定位置：left or right
+            type:String,
+            default:'left'
+        },
+        operationColumnFixed:{//指定操作列固定位置：left or right
+            type:String,
+            default:'right'
         }
     },
     data(){
@@ -111,6 +128,15 @@ export default {
         };
     },
     methods:{
+        handleOnRowClick(row,index){
+            let id=row[this.idFieldName];
+            let realRow=this.$refs.grid.rowMap[id];
+            if(this.currentRecordId===id){
+                return;
+            }
+            this.$refs.grid.editRow=id;
+            this.handleOnRowEdit(id,realRow);
+        },
         disableSortable(){
             this.columns.forEach(col => {
                 col.sortable=false

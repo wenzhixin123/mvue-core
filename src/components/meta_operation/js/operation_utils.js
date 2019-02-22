@@ -370,7 +370,8 @@ var utils={
                        promises.push(new Promise(function(resolve, reject) {
                            //获取执行代码
                            mvueCore.resource(`meta_swagger_api`, null, {root: _.trimEnd(Config.getMetadApiEndpoint(), '/')}).get({
-                               filters:`operationId eq ${apiId}`
+                               filters:`projectId eq ${button.projectId} and operationId eq ${apiId}`,
+                               select:"contentType,id,endpoint,path,projectId,method"
                            }).then(({data}) => {
                                str = str.replace(a,`app.api(${JSON.stringify(data[0])},`);
                                com_replace();

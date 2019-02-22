@@ -72,7 +72,7 @@ export default {
             type: Array,
             required: false,
             default: function () {
-                return [5, 100];
+                return [50, 100];
             }
         },
         indexColumnFixed:{//指定索引列固定位置：left or right

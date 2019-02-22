@@ -86,6 +86,12 @@ export default {
         operationColumnFixed:{//指定操作列固定位置：left or right
             type:String,
             default:''
+        },
+        quickSearch:{//快捷搜索配置{fields: null,placeholder: ""}
+            type:Object,
+            default(){
+                return {fields: null,placeholder: ""};
+            }
         }
     },
     data(){
@@ -96,6 +102,7 @@ export default {
         this.disableSortable();
         return {
             toolbar: {
+                quicksearch:this.quickSearch,
                 btnSizeBeforeMore:2,
                 btns:[
                     {
@@ -240,23 +247,62 @@ export default {
         handleOnTitleClick(){
             //什么都不做，批量编辑模式，标题点击不可跳转
         },
+        filteredByQuicksearch(filtered,quicksearchKeyword,quicksearchFields){
+            if(quicksearchKeyword){
+                let _filtered=_.filter(filtered,item=>{
+                    let ok=false;
+                    _.forEach(quicksearchFields,sf => {
+                        let value=item[sf];
+                        let find=false;
+                        if(_.isString(value)){
+                            find=value.indexOf(quicksearchKeyword)>-1;
+                        }else if(_.isNumber(value)){
+                            value=value.toString();
+                            find=value.indexOf(quicksearchKeyword)>-1;
+                        }else{
+                            try{
+                                if(!value){
+                                    return false;
+                                }
+                                value=JSON.stringify(value);
+                                find=value.indexOf(quicksearchKeyword)>-1;
+                            }catch(e){
+                                return false;
+                            }
+                        }
+                        if(find){
+                            ok=true;
+                            return false;
+                        }
+                    });
+                    return ok;
+                });
+                return _filtered;
+            }else{
+                return filtered;
+            }
+        },
         query(ctx,queryResource){
             //分页数据只在第一次加载时获取全部，后续都在内存取值
             if(this.localListData&&(!ctx.localPagerSecondLoad)){
+                let quicksearchFields=ctx.quicksearchFields;
+                let quicksearchKeyword=ctx.quicksearchKeyword;
                 //按照编辑状态对内存数据过滤
                 let __rowStatus__=ctx.filters&&ctx.filters.rules&&ctx.filters.rules.__rowStatus__;
+                let filtered=[];
                 if(__rowStatus__&&__rowStatus__.value){
                     let pageSize=ctx.currentPageSize;
-                    let filtered=_.filter(this.localListData.data,item=>{
+                    filtered=_.filter(this.localListData.data,item=>{
                         return item.__rowStatus__===__rowStatus__.value;
                     });
-                    return Promise.resolve({
-                        data:_.cloneDeep(filtered),
-                        total:filtered.length
-                    });
+                    filtered=this.filteredByQuicksearch(filtered,quicksearchKeyword,quicksearchFields);
                 }else{
-                    return Promise.resolve(_.cloneDeep(this.localListData));
+                    filtered=this.filteredByQuicksearch(_.cloneDeep(this.localListData.data),quicksearchKeyword,quicksearchFields);
                 }
+                return Promise.resolve({
+                    data:_.cloneDeep(filtered),
+                    total:filtered.length
+                });
             }
             //外部指定了查询地址，由此地址构造查询resource
             let _resource=queryResource;

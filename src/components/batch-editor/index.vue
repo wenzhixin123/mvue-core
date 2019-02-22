@@ -77,15 +77,15 @@ export default {
         },
         indexColumnFixed:{//指定索引列固定位置：left or right
             type:String,
-            default:'left'
+            default:''
         },
         statusColumnFixed:{//指定编辑状态列固定位置：left or right
             type:String,
-            default:'left'
+            default:''
         },
         operationColumnFixed:{//指定操作列固定位置：left or right
             type:String,
-            default:'right'
+            default:''
         }
     },
     data(){

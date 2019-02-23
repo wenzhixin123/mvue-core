@@ -103,7 +103,7 @@
       },
       operations: {
         //操作的定义，必传参数
-        type: Object,
+        type: Array,
         required: false
       }
     },

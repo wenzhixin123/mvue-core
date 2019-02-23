@@ -91,8 +91,8 @@
 
 
     <div class="data-table-list">
-        <Table :loading="loadingData" 
-            :columns="innerColumns" 
+        <Table :loading="loadingData"
+            :columns="innerColumns"
             :data="filteredData"
             :highlight-row="highlightRow"
             :show-header="showHeader"
@@ -794,7 +794,7 @@ export default {
             .widget-operation{
                 margin-right:5px;
             }
-        } 
+        }
         .compact.toolBar{
             .innerToolbar{
                 display: inline-block; margin-right:20px;

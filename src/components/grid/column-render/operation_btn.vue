@@ -4,7 +4,7 @@
     href="javascript:void(0)" class="btn" :title="btn.title" >
       <Icon :type="btn.icon"></Icon>
     </a> -->
-    <meta-operation v-for="(btn,index) in permedBtns()" :key="index" :operation="btn" :widget-context="getWidgetContext()">
+    <meta-operation v-for="(btn,index) in permedBtns()" v-show="showBtn(btn)" :key="index" :operation="btn" :widget-context="getWidgetContext()">
         <a href="javascript:void(0)" class="btn" :title="btn.title" >
             <Icon :type="btn.icon"></Icon>
         </a>
@@ -12,7 +12,7 @@
 </div>
 </template>
 <script>
-import context from '../../../libs/context';
+import globalContext from '../../../libs/context';
 export default {
   props:{
     btns:{
@@ -27,13 +27,20 @@ export default {
     }
   },
   methods: {
+        showBtn(btn){
+            if(!btn.show){
+                return true;
+            }else if(_.isFunction(btn.show)){
+                return btn.show(this.context,this.item);
+            }
+        },
         handleClick (btn) {
             this.$emit('click', btn);
         },
         permedBtns(){
             var _this=this;
             let _btns= _.filter(this.btns, function(o) { 
-                let has=context.getMvueToolkit().utils.hasDataPerm(_this.item,o); 
+                let has=globalContext.getMvueToolkit().utils.hasDataPerm(_this.item,o); 
                 return has;
             });
             return _btns;

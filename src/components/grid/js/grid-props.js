@@ -33,9 +33,8 @@ export default{
                 return [10, 20, 50, 100];
             }
         },
-        "pager": {
-            type: Boolean,
-            required: false,
+        pager: {//是否启用分页
+            type: [Boolean, String],
             default: true
         },
         "pageSize": {//每页条数
@@ -62,6 +61,10 @@ export default{
             type: Boolean,
             default: true
         },
+        "showRowStatus": {//是否显示行编辑状态列
+            type: Boolean,
+            default: false
+        },
         "showRefreshBtn": {//是否显示刷新按钮
             type: Boolean,
             default: true
@@ -69,6 +72,18 @@ export default{
         "showConfigColumnsBtn": {//是否显示配置按钮
             type: Boolean,
             default: true
+        },
+        indexColumnFixed:{//指定索引列固定位置：left or right
+            type:String,
+        },
+        selectionColumnFixed:{//指定选择列固定位置：left or right
+            type:String,
+        },
+        operationColumnFixed:{//指定操作列固定位置：left or right
+            type:String,
+        },
+        statusColumnFixed:{//指定编辑状态列固定位置：left or right
+            type:String,
         },
         wrapperClass: {
             type: [String, Object, Array],
@@ -133,6 +148,14 @@ export default{
         hidePagerIfOnePage:{//如果只有一页数据，是否隐藏分页页脚
             type:Boolean,
             default:false
+        },
+        maxLocalSize:{
+            type:Number,
+            default:500
+        },
+        batchEditorMode:{//是否批量编辑模式
+            type:Boolean,
+            defualt:false
         }
     }
 }

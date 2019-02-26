@@ -79,7 +79,7 @@ function buildRouteToFromOp(op) {
 function buildRouteToFromEntity(metaEntity,id,isRelative) {
     var path=metaEntity.formPathForEdit(id,isRelative);
     if(_.isEmpty(path)){
-        alert("not implement,please set createPath");
+        console.error("not implement,please set createPath");
         return ;
     }
     var router=null;

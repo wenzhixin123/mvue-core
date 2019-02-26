@@ -1,7 +1,8 @@
 <template>
-    <div class="opts-title-con" :class="{'opts-title-con-showopts':dropdownVisible}">
+    <m-field v-if="editRow" :name="metaField.name"></m-field>
+    <div v-else class="opts-title-con" :class="{'opts-title-con-showopts':dropdownVisible}">
         <div class="title-con-box table-column-center" @click="handleTitleClick">
-            <div v-wordlimit="{length:params.wordlimit,text:item[params.metaField.name]}"></div>
+            <div v-wordlimit="{length:params.wordlimit,text:item[metaField.name]}"></div>
         </div>
         <div class="opts-con-box table-column-center">
             <div v-if="permedBtns()" class="opts-con">
@@ -29,7 +30,9 @@
 </template>
 <script>
 import context from '../../../libs/context';
+import batchEditorSupport from './batch-editor-support';
 export default {
+    mixins:[batchEditorSupport],
     props:{
         params:{
             type:Object,
@@ -37,10 +40,6 @@ export default {
         },
         btns:{
             type:Array
-        },
-        item:{
-            type:Object,
-            required:true
         },
         grid:{
             type:Object

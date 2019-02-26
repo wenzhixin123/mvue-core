@@ -1,5 +1,6 @@
 <template>
-    <div class="img-title-con">
+    <m-field v-if="editRow" :name="metaField.name"></m-field>
+    <div v-else class="img-title-con">
         <span class="fl imgBox">
             <i>
                 <img v-if="params.iconField && item[params.iconField]" :src="contextPath + item[params.iconField]" @error="nofind($event)" alt="">
@@ -18,13 +19,11 @@
 </template>
 <script>
 import context from "../../../libs/context";
+import batchEditorSupport from './batch-editor-support';
 export default {
+    mixins:[batchEditorSupport],
     props:{
         params:{
-            type:Object,
-            required:true
-        },
-        item:{
             type:Object,
             required:true
         }

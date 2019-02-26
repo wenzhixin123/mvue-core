@@ -1,11 +1,10 @@
 <template>
     <m-field 
     :name="name" 
-    :title="title" 
-    :propName='propName' 
+    :title="innerLabel" 
+    :propName='innerPropName' 
     :params="params"
-    :rules="rules"
-    :label='innerLabel'></m-field>
+    :rules="rules"></m-field>
 </template>
 <script>
 import getParent from '../../../mixins/get-parent';
@@ -21,7 +20,7 @@ export default {
         title:{
             type:String
         },
-        label:{
+        propName:{
             type:String
         }
     },
@@ -32,12 +31,15 @@ export default {
         };
     },
     computed:{
-        propName(){
+        innerPropName(){
+            if(this.propName){
+                return this.propName;
+            }
             return `${this.name}_${this.propSuffix}`;
         },
         innerLabel(){
-            if(this.label){
-                return this.label;
+            if(this.title){
+                return this.title;
             }
             let form=this.getParentForm();
             let metaEntity=this.$metaBase.findMetaEntity(form.entityName);

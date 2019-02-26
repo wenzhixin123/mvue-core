@@ -1,10 +1,12 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <RadioGroup v-model="valueObj">
-                <Radio :label="1" disabled>是</Radio>
-                <Radio :label="0" disabled>否</Radio>
-            </RadioGroup>
+            <div style="padding-left:7px;">
+                <RadioGroup v-model="valueObj">
+                    <Radio :label="1" disabled>是</Radio>
+                    <Radio :label="0" disabled>否</Radio>
+                </RadioGroup>
+            </div>
         </template>
         <template v-else>
             <RadioGroup v-model="valueObj" @on-change="updateValue">

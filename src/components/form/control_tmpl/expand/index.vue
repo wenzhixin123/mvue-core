@@ -81,9 +81,16 @@ export default {
             }
             let refEntities=this.$store.state.core.formStatus.refEntities;
             let id=metaForm.id||this.$store.state.core.defaultFormId;
-            let curFormRefEntities=refEntities[id];
+            let curFormRefEntities=refEntities[id]||{};
             let refEntity=curFormRefEntities[this.expandField];
             return refEntity||{};
+        },
+        emptyText(){
+            let metaForm=this.getParentForm();
+            if(metaForm){
+                return metaForm.emptyText;
+            }
+            return '';
         }
     },
     methods:{

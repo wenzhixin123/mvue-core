@@ -11,7 +11,9 @@ import gridPictures from './components/grid/column-render/pictures';
 import gridFiles from './components/grid/column-render/files';
 import gridPassword from './components/grid/column-render/password';
 import gridRelationField from './components/grid/column-render/relation-field';
+import gridRowStatus from './components/grid/column-render/row-status';
 import gridImportData from './components/grid/import_data.vue';
+import batchEditorFillData from './components/batch-editor/fill-data';
 
 import operation from './components/meta_operation/operation';
 
@@ -25,6 +27,7 @@ import page from './components/meta-page/index';
 import mfield from './components/form/metafield';
 import mform from './components/form/metaform';
 import detailView from "./components/detail-view/index";
+import batchEditor from "./components/batch-editor/index";
 
 import Description from './components/form/control_tmpl/description';
 import DivisionLine from './components/form/control_tmpl/division_line';
@@ -135,7 +138,9 @@ const gridInnerComponents={
     'm-grid-files':gridFiles,
     'm-grid-password':gridPassword,
     'm-grid-relation-field':gridRelationField,
+    'm-grid-row-status':gridRowStatus,
     'm-grid-import-data':gridImportData,
+    'm-batch-editor-fill-data':batchEditorFillData,
     'meta-operation':operation,
     'm-operation':operation
 };
@@ -172,7 +177,8 @@ const mComponents={
     'm-expand':mExpand,
     'm-confirm':mConfirm,
     'm-detail-view':detailView,
-    'm-relation':mRelation
+    'm-relation':mRelation,
+    'm-batch-editor':batchEditor
 };
 const allComponents=_.extend({},gridInnerComponents,oldFasionComponents,mComponents);
 //全局组件样式在这里引入，避免在内部重复引用

@@ -119,7 +119,6 @@ import controlTypeService from '../form/js/control_type_service';
 import constants from '../form/js/constants';
 import toolService from '../../services/tool/tool_service';
 import metaservice from "../../services/meta/metaservice";
-import contextHelper from "../../libs/context"
 import ExportCsv from './js/export_csv';
 
 var dayjs = require("dayjs");
@@ -373,11 +372,11 @@ export default {
         },
         doImport(){
             if(this.importFinished===false){
-                contextHelper.info("正在导入数据");
+                context.info("正在导入数据");
                 return;
             }
             if(this.importFinished===true){
-                contextHelper.info("已经完成导入，请上传新的Excel文件后导入");
+                context.info("已经完成导入，请上传新的Excel文件后导入");
                 return;
             }
             var _this=this;
@@ -396,7 +395,7 @@ export default {
             });
         },
         doDownloadTmpl(){
-            alert("TODO");
+            console.error("TODO");
         },
         doDownloadReport(){//根据报告生成csv数据下载
             if(!this.report){

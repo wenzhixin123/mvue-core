@@ -41,7 +41,7 @@ function impl(context,$optInst){
 function buildRoutToFromEntity(metaEntity,isRelative) {
     var path=metaEntity.formPathForCreate(isRelative);
     if(_.isEmpty(path)){
-        alert("not implement,please set createPath");
+        console.error("not implement,please set createPath");
         return ;
     }
     var router=null;

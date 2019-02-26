@@ -273,9 +273,34 @@
         }
     }
 }
-
 .form-item-view{
     padding: 4px 7px;
     height: 34px;
     line-height:28px;
+    overflow: hidden;
+}
+.upload-form-item-view{
+    padding: 4px 7px;
+    line-height:28px;
+    word-break: break-all;
+    .ivu-upload-list{
+        margin-top:0px;
+        .ivu-upload-list-file{
+            padding:0px;
+        }
+    }
+}
+.b-list .b-list-header:before,.b-list .b-list-header:after{
+    content: "";
+    display: table;
+}
+.b-list .b-list-header:after{
+    clear: both;
+    visibility: hidden;
+    font-size: 0;
+    height: 0;
+}
+//默认ivu-menu有z-index 900,导致滚动条样式混乱
+.ivu-menu{
+    z-index:auto;
 }

@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div v-if="isNotEmpty(defaultList)">
+            <div v-if="isNotEmpty(defaultList)" class="upload-form-item-view">
                 <div class="demo-upload-list" v-for="item in defaultList" :key="item.url">
                     <div>
                         <ufs-image :width='uploadIconWidth' :height='uploadIconHeight' :item='item' :paths='paths'></ufs-image>

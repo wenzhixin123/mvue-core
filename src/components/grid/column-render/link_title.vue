@@ -1,5 +1,6 @@
 <template>
-    <meta-operation  :operation="btn" :widget-context="getWidgetContext()" class="link-title-opt">
+    <m-field v-if="editRow" :name="metaField.name"></m-field>
+    <meta-operation v-else  :operation="btn" :widget-context="getWidgetContext()" class="link-title-opt">
         <Tooltip v-if="initialCol&&initialCol.tooltip" transfer :content="titleVal" :disabled="!showTooltip" :max-width="300" class="ivu-table-cell-tooltip">
             <a ref="content" @mouseenter="handleTooltipIn" @mouseleave="handleTooltipOut" class="ivu-table-cell-tooltip-content">{{ titleVal }}</a>
         </Tooltip>
@@ -11,22 +12,13 @@
 </template>
 <script>
 import controlTypeService from '../../form/js/control_type_service';
+import batchEditorSupport from './batch-editor-support';
 export default {
+    mixins:[batchEditorSupport],
     props:{
-        params:{
-            type:Object,
-            required:true
-        },
         btn:{
             type:Object,
             required:true
-        },
-        item:{
-            type:Object,
-            required:true
-        },
-        context:{
-            type:Object
         },
         initialCol:{
             type:Object
@@ -34,7 +26,7 @@ export default {
     },
     computed:{
       titleVal:function () {
-          var val = controlTypeService.formatData(this.item, this.params);
+          var val = controlTypeService.formatData(this.item, this.metaField);
           return val;
       }
     },

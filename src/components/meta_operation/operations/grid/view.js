@@ -48,7 +48,7 @@ function impl(context,$optInst){
 function buildRoutToFromEntity(metaEntity) {
     var path=metaEntity.formPathForEdit();
     if(_.isEmpty(path)){
-        alert("not implement,please set createPath");
+        console.error("not implement,please set createPath");
         return ;
     }
     var router=null;

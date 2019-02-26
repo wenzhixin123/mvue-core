@@ -4,7 +4,7 @@
                 <div class="form-item-view" v-text="getOptionsExData(valueObj)||emptyText"></div>
         </template>
         <template v-else>
-            <Select v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
+            <Select transfer v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
                 <Option v-for="item in formItem.componentParams.options" :key="item.id" :value="item.id">{{ item.text }}</Option>
             </Select>
         </template>
@@ -19,13 +19,14 @@ export default {
     },
     data: function(){
         return {
-            valueObj:null,
-            isNumber:false
+            valueObj:null
         };
     },
     watch:{
         "value":function(newV,oldV){
-            this.valueToString();
+            if(!_.isEqual(this.value,this.valueObj)){
+                this.valueToString();
+            }
         },
         "formItem.componentParams.options":{
             handler:function(newOptions,oldOptions){
@@ -37,16 +38,13 @@ export default {
     mounted:function(){
         var _this=this;
         this.valueToString();
-        if(!this.valueObj){
+        if((!this.valueObj)&&this.valueObj!==0){
             this.initDefault();
         }
     },
     methods: {
         valueToString(){
-            if(_.isNumber(this.value)){
-                this.isNumber=true;
-            }
-            this.valueObj=_.toString(this.value);
+            this.valueObj=this.value;
         },
         initDefault:function(){
             var _this=this;
@@ -59,13 +57,7 @@ export default {
             });
         },
         updateValue: function (value) {
-            if(this.isNumber){
-                value=_.toNumber(value);
-            }
             this.$emit('input',value);
-            var optionsMap=_.keyBy(this.formItem.componentParams.options,function (item) {
-                return item["id"];
-            });
         }
     }
 }

@@ -34,6 +34,7 @@
     import controlTypeService from './js/control_type_service';
     import initByMetadata from './init-by-metadata';
     import formBase from './form-base';
+    import contextHelper from "../../libs/context";
     export default {
         mixins:[formBase],
         props:{
@@ -60,10 +61,30 @@
             createParams:{//由弹出部件操作设置的创建时查询参数
                 type:Object,
                 required:false
+            },
+            ignoreValidate:{//是否忽略验证
+                type:Boolean,
+                default:false
+            }
+        },
+        watch:{
+            recordId(newV,oldV){
+                //每次切换recordId时，需要先去掉entity的监听器
+                if(this.entityUnWatcher){
+                    this.entityUnWatcher();
+                    this.entityUnWatcher=null;
+                }
+                this.recordIdChangedPreprocessed=false;
+                this.entityId=this.recordId;
+                if(!!this.entityId||(this.entityId===0)){
+                    this.formStatus=contextHelper.getMvueToolkit().utils.formActions.edit;
+                }
+                this.reinitEntityModel();
             }
         },
         data:function(){
             var metaEntity=this.$metaBase.findMetaEntity(this.entityName);
+            let idFieldName=metaEntity.getIdField().name;
             var dataResource=metaEntity.dataResource();
             //构造实体数据操作的基本数据模型，会包含需要提交到后台的所有字段：会过滤掉主键、创建时间等维护字段
             //这里提前初始化entity数据，保证字段的存在性，对于双向绑定和表单验证是必须的
@@ -80,6 +101,9 @@
                 });
             }
             return {
+                entityUnWatcher:null,
+                recordIdChangedPreprocessed:false,
+                idFieldName:idFieldName,
                 metaEntity:metaEntity,
                 dataResource:dataResource,
                 entity:entity,
@@ -132,22 +156,47 @@
             },
             initOthers(){
                 //根据实体字段信息初始化表单默认验证规则
-                if(!this.isView){
+                if(!this.isView && (!this.ignoreValidate)){
                     this.initValidateRulesByMetaEntity();
                 }
                 //通知页面表单这边需要修改页面标题，并提交变化后的标题数据
                 this.commitPageTitle();
                 //预处理完毕，表单可以渲染了
                 this.preprocessed=true;
+                this.recordIdChangedPreprocessed=true;
                 //调用外部传入的初始化回调函数
                 if(this.onInited){
                     this.onInited(this);
+                }
+                //TODO 如何保证entity变化后激发，而不是初始化是也激发
+                if(this.isEdit){
+                    this.$nextTick(()=>{
+                        //初始化完成后注册entity的监听器
+                        this.entityUnWatcher=this.$watch('entity',{
+                            handler:(newV,oldV)=>{
+                                let oldId=oldV[this.idFieldName];
+                                if(!oldId&&(oldId!==0)){
+                                    return;
+                                }
+                                if(this.recordIdChangedPreprocessed&&this.isEdit&&newV[this.idFieldName]===oldV[this.idFieldName]){
+                                    this.$emit("on-form-entity-changed",this.entity);
+                                }
+                            },
+                            deep:true
+                        });
+                    });
                 }
             },
             //根据数据id重新初始化entity模型数据
             reinitEntityModel(){
                 var expand= this.metaEntity.getExpand();
-                return this.dataResource.get({id: this.entityId,expand:expand}).then(({data})=> {
+                let p=null;
+                if(this.localModel){
+                    p=Promise.resolve({data:this.localModel});
+                }else{
+                    p=this.dataResource.get({id: this.entityId,expand:expand})
+                }
+                return p.then(({data})=> {
                     this.firstEntityData=data;
                     this.$store.commit("core/setEntity",{entityName:this.entityName,entity:data});
                     //根据实体记录数据初始化操作权限

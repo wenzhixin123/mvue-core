@@ -47,7 +47,7 @@ manager.registerByTpl({
     btnType:"primary",
     security:["edit"],
     entitySecurity:true,
-    url:"./view",
+    url:"./edit",
     type:"routeTo"
 });
 

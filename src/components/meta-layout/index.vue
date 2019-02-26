@@ -22,11 +22,21 @@
 <script>
     var minimist=require("minimist");
 export default {
+    meta:{
+      title:"布局组件",
+      init(){
+
+      }  
+    },
     name:"meta-layout",
     props:{
         layout:{//settings的length代表行，每个元素的length代表列，和二维数组对应
             type:[Array],
-            required:true
+            required:true,
+            meta:{
+                title:"",
+                from:"que"
+            }
         },
         itemProcessor:{ //内容组件处理器
             type:Function

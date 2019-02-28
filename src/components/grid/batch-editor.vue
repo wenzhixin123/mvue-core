@@ -114,11 +114,21 @@ export default {
             let grid=this.widgetContext.grid;
             let gridColumns=grid.innerColumns;
             let _columns=[];
+            let props=['minWidth','width','maxWidth','tooltip']
             gridColumns.forEach(col => {
                 let key=col.key;
                 let metaField=grid.metaEntity.findField(key);
                 if(metaField){
-                    _columns.push(_.cloneDeep(col));
+                    let _col={
+                        key:col.key,
+                        title:col.title
+                    };
+                    props.forEach(prop => {
+                        if(col[prop]){
+                            _col[prop]=col[prop];
+                        }
+                    });
+                    _columns.push(_col);
                 }
             });
             return _columns;

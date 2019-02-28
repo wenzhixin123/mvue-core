@@ -291,7 +291,6 @@ export default {
             }
         },
         query(ctx,queryResource){
-            debugger
             //分页数据只在第一次加载时获取全部，后续都在内存取值
             if(this.localListData&&(!ctx.localPagerSecondLoad)){
                 let quicksearchFields=ctx.quicksearchFields;

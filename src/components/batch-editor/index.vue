@@ -389,7 +389,10 @@ export default {
                 savePromises.push(this.singleSave(item))
             }
             Promise.all(savePromises).then(()=>{
+                this.$refs.grid.editRow='';
                 this.$refs.grid.reload();
+            },()=>{
+                
             });
         },
          //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据

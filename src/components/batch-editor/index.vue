@@ -35,6 +35,9 @@
                 >
             </m-grid>
         </m-form>
+        <Spin fix size="large" v-if="loading">
+            <slot name="loading"></slot>
+        </Spin>
     </div>
 </template>
 <script>
@@ -120,6 +123,7 @@ export default {
                         operationType:"script",
                         btnType:"primary",
                         onclick:function(){
+                            self.loading=true;
                             self.saveAll();
                         }
                     },
@@ -139,7 +143,8 @@ export default {
             currentRecordId:'',
             currentRow:{},
             localListData:null,//{data:[],total:0}
-            localDataMap:{}
+            localDataMap:{},
+            loading:false
         };
     },
     methods:{
@@ -185,6 +190,7 @@ export default {
                 }
             }
             if(edited){
+                this.$refs.grid.editRow='';
                 this.$refs.grid.reload();
             }
         },
@@ -381,18 +387,27 @@ export default {
                 }
             });
         },
+        needSave(item){//判断item是否需要保存
+            if(item.__virtualId__||item.__rowStatus__=='unsaved'){
+                return true;
+            }
+            return false;
+        },
         saveAll(){
             let localListData=this.localListData;
             let savePromises=[];
             for(let i=0;i<localListData.data.length;++i){
                 let item=localListData.data[i];
-                savePromises.push(this.singleSave(item))
+                if(this.needSave(item)){
+                    savePromises.push(this.singleSave(item))
+                }
             }
             Promise.all(savePromises).then(()=>{
+                this.loading=false;
                 this.$refs.grid.editRow='';
                 this.$refs.grid.reload();
             },()=>{
-                
+                this.loading=false;
             });
         },
          //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据

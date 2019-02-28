@@ -16,6 +16,20 @@
 .grid-title-cell{
     margin-left: 5px;
 }
+.ivu-layout-sider .ivu-menu-vertical{
+    height: 100%;
+}
+.ivu-layout-sider .ivu-layout-sider-children{
+    margin-top:0px;
+}
+.ivu-layout-sider .ivu-menu-vertical.ivu-menu-light:after{
+    background: white;
+}
+
+.layout .ivu-menu{
+    z-index: auto;
+}
+
 .ivu-dropdown-item .widget-operation{
     >div{
         width:100%;
@@ -227,12 +241,13 @@
         margin: -16px;
     }
     .ivu-menu-vertical {
-        height: 750px;
+        //height: 750px;
         padding-top: 8px;
     }
 
     .ivu-menu-horizontal{
         margin: -28px -16px 16px -16px;
+        padding-left:20px;
     }
     .has-horizontal-menu .tree-list{
         margin: 0px;
@@ -240,6 +255,9 @@
 }
 
 .detail-view-vertical {
+    .ivu-menu-item>i{
+        margin-right: 0px;
+    }
     .detail-view-horizontal{
         margin: -32px;
         .ivu-menu-horizontal{

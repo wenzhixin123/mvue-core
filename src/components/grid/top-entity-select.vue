@@ -10,6 +10,7 @@
         :show-no-results="true"
         :internal-search="false"
         :label="getTitleField()"
+        :allowEmpty="!mustSelect"
         @search-change="searchChange"
         @input="handleOnChange"
         :track-by="getIdField()">
@@ -54,6 +55,10 @@ export default {
         placeholder:{
             type:String,
             default:''
+        },
+        mustSelect:{
+            type:Boolean,
+            default:false
         }
     },
     data(){

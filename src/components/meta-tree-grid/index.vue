@@ -124,8 +124,12 @@
                 return params;
             },
             gridSettings(){
+                let loadDataWhenMount=this.loadDataWhenMount;
+                if(this.treeSettings.mustSelect){
+                    loadDataWhenMount=false;
+                }
                 return _.assign(this.$props,{
-                    loadDataWhenMount:this.loadDataWhenMount
+                    loadDataWhenMount:loadDataWhenMount
                 });
             },
             deselectLabel(){

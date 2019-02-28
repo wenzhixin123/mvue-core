@@ -51,7 +51,7 @@ function metaFieldToCol(context,metaField,initialCol) {
                         };
                         context.grid.filtersFromColumnHeader[col.key]=_filter;
                         //重新加载数据
-                        context.grid.$refs.listInst.doReload();
+                        context.grid.$refs.listInst.doReload(true);
                     };
     let options=[{id:'unsaved',text:'未保存'},{id:'failed',text:'出错'},{id:'saved',text:'已保存'}];
     let _filters=[]; 
@@ -82,7 +82,7 @@ function metaFieldToCol(context,metaField,initialCol) {
                         }
                         context.grid.filtersFromColumnHeader[col.key]=_filter;
                         //重新加载数据
-                        context.grid.$refs.listInst.doReload();
+                        context.grid.$refs.listInst.doReload(true);
                     };
     let options=metaField.inputTypeParams&&
       metaField.inputTypeParams["options"],_filters=[]; 

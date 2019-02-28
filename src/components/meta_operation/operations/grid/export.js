@@ -2,7 +2,7 @@ import ExportCsv from "../../../grid/js/export_csv";
 import contextHelper from "../../../../libs/context";
 import metabase from "../../../../libs/metadata/metabase";
 import toolServices from '../../../../services/tool/tool_service';
-
+import controlTypeService from '../../../form/js/control_type_service';
 /**
  *  列表的导出操作
  */
@@ -19,7 +19,20 @@ var operation= {
         return impl(context,$optInst);
     }
 };
-
+function formatData(context,data){
+    let metaEntity=context.metaEntity;
+    data.forEach(item => {
+        for (const key in item) {
+            if (item.hasOwnProperty(key)) {
+                let metaField=metaEntity.findField(key);
+                if(metaField){
+                    let newValue=controlTypeService.formatData(item, metaField);
+                    item[key]=newValue;
+                }
+            }
+        }
+    });
+}
 function impl(context,$optInst){
     var resource=context.grid&&context.grid.queryResource;
     var metaEntity=context.metaEntity;
@@ -55,8 +68,9 @@ function impl(context,$optInst){
                 if(grid){
                     query=grid.$route.query;
                 }
-                toolServices().doExport(query,exportTaskSetting).then(function (records) {
-                    ExportCsv.download(metaEntity.title+".csv", records.body.join("\r\n"));
+                toolServices().doExport(query,exportTaskSetting).then(({data}) => {
+                    formatData(context,data);
+                    ExportCsv.download(metaEntity.title+".csv", data.join("\r\n"));
                 });
             });
         }

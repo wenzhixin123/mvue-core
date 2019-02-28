@@ -24,6 +24,8 @@
                 :operation-column-fixed="operationColumnFixed"
                 :index-column-fixed="indexColumnFixed"
                 :batch-editor-mode="true"
+                :filters="filters"
+                :default-sort="defaultSort"
                 @on-row-edit="handleOnRowEdit"
                 @on-row-save="handleOnRowSave"
                 @on-row-cancel-edit="handleOnRowCancelEdit"
@@ -92,6 +94,12 @@ export default {
             default(){
                 return {fields: null,placeholder: ""};
             }
+        },
+        filters: {//高级查询的条件和列表头部的筛选条件设置
+            type: Object
+        },
+        defaultSort: {//默认排序设置{key:'',order:'desc'}
+            type: Object
         }
     },
     data(){
@@ -107,7 +115,7 @@ export default {
                 btns:[
                     {
                         name:"saveAll",
-                        title:"保存",
+                        title:"全部保存",
                         icon:"ios-document-outline",
                         operationType:"script",
                         btnType:"primary",
@@ -283,6 +291,7 @@ export default {
             }
         },
         query(ctx,queryResource){
+            debugger
             //分页数据只在第一次加载时获取全部，后续都在内存取值
             if(this.localListData&&(!ctx.localPagerSecondLoad)){
                 let quicksearchFields=ctx.quicksearchFields;
@@ -291,7 +300,6 @@ export default {
                 let __rowStatus__=ctx.filters&&ctx.filters.rules&&ctx.filters.rules.__rowStatus__;
                 let filtered=[];
                 if(__rowStatus__&&__rowStatus__.value){
-                    let pageSize=ctx.currentPageSize;
                     filtered=_.filter(this.localListData.data,item=>{
                         return item.__rowStatus__===__rowStatus__.value;
                     });

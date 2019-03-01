@@ -27,6 +27,7 @@
              :show-config-columns-btn="showConfigColumnsBtn"
              :operation-column-fixed="operationColumnFixed"
              :hide-pager-if-one-page="hidePagerIfOnePage"
+             :external-local-pager-data="externalLocalPagerData"
              @on-current-change="handleOnCurrentChange"
              @on-select="handleOnSelect"
              @on-select-cancel="handleOnSelectCancel"

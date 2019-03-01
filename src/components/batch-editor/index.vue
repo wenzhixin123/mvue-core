@@ -26,6 +26,7 @@
                 :batch-editor-mode="true"
                 :filters="filters"
                 :default-sort="defaultSort"
+                :external-local-pager-data="localListData&&localListData.data"
                 @on-row-edit="handleOnRowEdit"
                 @on-row-save="handleOnRowSave"
                 @on-row-cancel-edit="handleOnRowCancelEdit"

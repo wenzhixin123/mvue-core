@@ -156,6 +156,9 @@ export default{
         batchEditorMode:{//是否批量编辑模式
             type:Boolean,
             defualt:false
+        },
+        externalLocalPagerData:{//本地分页的外部数据
+            type:Array
         }
     }
 }

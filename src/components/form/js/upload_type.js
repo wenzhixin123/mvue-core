@@ -191,6 +191,22 @@ function isPictureUpload(componentType){
             ||componentType===uploadTypes.SingleImageUpload.id
             ||componentType===uploadTypes.MultiImageUpload.id||componentType===uploadTypes.Avatar.id;
 }
+function formatDataForExport(componentType,item,metaField){
+    let fieldName=metaField.name;
+    let origin=item[fieldName];
+    if(_.isNil(origin)||origin===''){
+        return "";
+    }
+    if(_.isArray(origin)){
+        let names=[];
+        origin.forEach(item => {
+            names.push(item.name);
+        });
+        return names.join(',')
+    }else{
+        return origin.name;
+    }
+}
 export default {
     types:uploadTypes,
     uploadFilters:uploadFilters,
@@ -198,5 +214,6 @@ export default {
     accept:accept,
     isPictureUpload:isPictureUpload,
     isFileUpload:isFileUpload,
-    maxSize:maxSize
+    maxSize:maxSize,
+    formatDataForExport
 }

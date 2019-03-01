@@ -129,6 +129,9 @@ function formatData(componentType,item,metaField){
         return optionText&&optionText.join(",");
     }
 }
+function formatDataForExport(componentType,item,metaField){
+    return formatData(componentType,item,metaField);
+}
 //由swagger.json生成的metaField构造组件参数
 function fillComponentParams(formItem,metaField){
     var options=metaField.inputTypeParams["options"];
@@ -144,6 +147,7 @@ export default{
     isSingleSelect:isSingleSelect,
     isSingleOption:isSingleOption,
     formatData:formatData,
+    formatDataForExport,
     fillComponentParams:fillComponentParams,
     toDiscreteValue:toDiscreteValue
 }

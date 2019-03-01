@@ -159,6 +159,10 @@ export default{
         },
         externalLocalPagerData:{//本地分页的外部数据
             type:Array
+        },
+        maxExportSize:{//可允许的最大导出数据量
+            type:Number,
+            default:10000
         }
     }
 }

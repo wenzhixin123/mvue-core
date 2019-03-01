@@ -53,7 +53,7 @@ function metaFieldToCol(context,metaField,initialCol) {
                         //重新加载数据
                         context.grid.$refs.listInst.doReload(true);
                     };
-    let options=[{id:'unsaved',text:'未保存'},{id:'failed',text:'出错'},{id:'saved',text:'已保存'}];
+    let options=[{id:'unsaved',text:'未保存'},{id:'failed',text:'出错'},{id:'saved',text:'已保存|未编辑'}];
     let _filters=[]; 
     _.each(options,opt=>{
       _filters.push({
@@ -198,7 +198,7 @@ function  initColumns(grid) {
   }
   //行编辑状态显示列显示
   if(grid.showRowStatus){
-    let statusCol={metaParams:{type: 'rowStatus'},key:'__rowStatus__',title:'编辑状态',width:100,align:"center"};
+    let statusCol={metaParams:{type: 'rowStatus'},key:'__rowStatus__',title:'编辑状态',width:90,align:"center"};
     if(grid.statusColumnFixed){
       statusCol.fixed=grid.statusColumnFixed;
     }

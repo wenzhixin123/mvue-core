@@ -313,10 +313,11 @@ export default {
                 }else{
                     filtered=this.filteredByQuicksearch(_.cloneDeep(this.localListData.data),quicksearchKeyword,quicksearchFields);
                 }
-                return Promise.resolve({
+                let _listData={
                     data:_.cloneDeep(filtered),
                     total:filtered.length
-                });
+                };
+                return Promise.resolve(_listData);
             }
             //外部指定了查询地址，由此地址构造查询resource
             let _resource=queryResource;

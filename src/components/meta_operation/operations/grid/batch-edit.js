@@ -8,7 +8,7 @@ var operation= {
     icon: "ios-create-outline",
     operationType:"common",
     btnType:"primary",
-    security:["create"],
+    security:["edit"],
     entitySecurity:true,
     renderComponent:"m-grid-batch-editor"
 };

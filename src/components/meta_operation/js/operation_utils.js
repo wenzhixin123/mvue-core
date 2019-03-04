@@ -228,6 +228,7 @@ var utils = {
       }
     } else if (operation.onClick && operation.operationType == 'script') {//脚本操作
       utils.execution(operation, _widgetCtx, 'beforeExecCode', _t).then((res) => {
+        utils.setUrlParam(operation, _t)
         if (_.isFunction(operation.onClick)) {
           operation.onClick(_widgetCtx, window.factoryApp)
         } else {
@@ -239,6 +240,7 @@ var utils = {
     } else if (operation.operationType == 'execOperation') {//脚本操作
       function cellExecScript () {
         utils.execution(operation, _widgetCtx, 'beforeExecCode', _t).then((res) => {
+          utils.setUrlParam(operation, _t)
           if (_.isFunction(_t.implCode)) {
             _t.implCode(_widgetCtx, window.factoryApp)
           } else {

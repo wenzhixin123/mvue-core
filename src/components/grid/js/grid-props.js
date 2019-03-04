@@ -156,6 +156,13 @@ export default{
         batchEditorMode:{//是否批量编辑模式
             type:Boolean,
             defualt:false
+        },
+        externalLocalPagerData:{//本地分页的外部数据
+            type:Array
+        },
+        maxExportSize:{//可允许的最大导出数据量
+            type:Number,
+            default:10000
         }
     }
 }

@@ -24,6 +24,9 @@
                 :operation-column-fixed="operationColumnFixed"
                 :index-column-fixed="indexColumnFixed"
                 :batch-editor-mode="true"
+                :filters="filters"
+                :default-sort="defaultSort"
+                :external-local-pager-data="localListData&&localListData.data"
                 @on-row-edit="handleOnRowEdit"
                 @on-row-save="handleOnRowSave"
                 @on-row-cancel-edit="handleOnRowCancelEdit"
@@ -33,6 +36,9 @@
                 >
             </m-grid>
         </m-form>
+        <Spin fix size="large" v-if="loading">
+            <slot name="loading"></slot>
+        </Spin>
     </div>
 </template>
 <script>
@@ -92,6 +98,12 @@ export default {
             default(){
                 return {fields: null,placeholder: ""};
             }
+        },
+        filters: {//高级查询的条件和列表头部的筛选条件设置
+            type: Object
+        },
+        defaultSort: {//默认排序设置{key:'',order:'desc'}
+            type: Object
         }
     },
     data(){
@@ -107,11 +119,12 @@ export default {
                 btns:[
                     {
                         name:"saveAll",
-                        title:"保存",
+                        title:"全部保存",
                         icon:"ios-document-outline",
                         operationType:"script",
                         btnType:"primary",
                         onclick:function(){
+                            self.loading=true;
                             self.saveAll();
                         }
                     },
@@ -131,7 +144,8 @@ export default {
             currentRecordId:'',
             currentRow:{},
             localListData:null,//{data:[],total:0}
-            localDataMap:{}
+            localDataMap:{},
+            loading:false
         };
     },
     methods:{
@@ -177,6 +191,7 @@ export default {
                 }
             }
             if(edited){
+                this.$refs.grid.editRow='';
                 this.$refs.grid.reload();
             }
         },
@@ -291,7 +306,6 @@ export default {
                 let __rowStatus__=ctx.filters&&ctx.filters.rules&&ctx.filters.rules.__rowStatus__;
                 let filtered=[];
                 if(__rowStatus__&&__rowStatus__.value){
-                    let pageSize=ctx.currentPageSize;
                     filtered=_.filter(this.localListData.data,item=>{
                         return item.__rowStatus__===__rowStatus__.value;
                     });
@@ -299,10 +313,11 @@ export default {
                 }else{
                     filtered=this.filteredByQuicksearch(_.cloneDeep(this.localListData.data),quicksearchKeyword,quicksearchFields);
                 }
-                return Promise.resolve({
+                let _listData={
                     data:_.cloneDeep(filtered),
                     total:filtered.length
-                });
+                };
+                return Promise.resolve(_listData);
             }
             //外部指定了查询地址，由此地址构造查询resource
             let _resource=queryResource;
@@ -374,15 +389,27 @@ export default {
                 }
             });
         },
+        needSave(item){//判断item是否需要保存
+            if(item.__virtualId__||item.__rowStatus__=='unsaved'){
+                return true;
+            }
+            return false;
+        },
         saveAll(){
             let localListData=this.localListData;
             let savePromises=[];
             for(let i=0;i<localListData.data.length;++i){
                 let item=localListData.data[i];
-                savePromises.push(this.singleSave(item))
+                if(this.needSave(item)){
+                    savePromises.push(this.singleSave(item))
+                }
             }
             Promise.all(savePromises).then(()=>{
+                this.loading=false;
+                this.$refs.grid.editRow='';
                 this.$refs.grid.reload();
+            },()=>{
+                this.loading=false;
             });
         },
          //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据

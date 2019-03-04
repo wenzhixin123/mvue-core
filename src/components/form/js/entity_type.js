@@ -69,6 +69,9 @@ function formatData(componentType,item,metaField){
         return expandData[titleField];
     }
 }
+function formatDataForExport(componentType,item,metaField){
+    return formatData(componentType,item,metaField);
+}
 function fillComponentParams(formItem,metaField){
     var relation=metaField.manyToOneRelation||metaField.embeddedRelation;
     var itemEntityName=metaField.xAttrs&&metaField.xAttrs.targetEntity;
@@ -97,5 +100,6 @@ export default{
     accept:accept,
     componentParams:componentParams,
     formatData:formatData,
+    formatDataForExport,
     fillComponentParams:fillComponentParams
 }

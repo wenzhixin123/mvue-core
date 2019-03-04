@@ -1,6 +1,6 @@
 <template>
     <div :class="{'ivu-table-cell-ellipsis':true}">
-        <Tag :color="colorMap[item[metaField.name]]">{{optionsMap[item[metaField.name]]}}</Tag>
+        <span class="ivu-tag-dot-inner" :title="optionsMap[item[metaField.name]]" :style="{background:colorMap[item[metaField.name]]}"></span>
     </div>
 </template>
 <script>
@@ -31,7 +31,7 @@ export default {
         return {
             optionsMap:optionsMap,
             colorMap:{
-                unsaved:'cyan',
+                unsaved:'blue',
                 failed:'red',
                 saved:'green'
             }

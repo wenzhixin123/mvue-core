@@ -170,6 +170,18 @@ function formatData(item,metaField){
     }
     return initValue;
 }
+//格式化输出组件的数据显示
+function formatDataForExport(item,metaField){
+    let componentType=metaField.inputType;
+    let fieldName=metaField.name;
+    let initValue=item[fieldName];
+    for(let type of allType){
+        if(type.accept(componentType)&&type.formatDataForExport){
+            return type.formatDataForExport(componentType,item,metaField);
+        }
+    }
+    return initValue;
+}
 //定义数据库类型到组件类型的默认映射关系
 //添加新组件时 step2 需要添加新组件和数据类型的映射
 var columnTypeMapping={
@@ -383,6 +395,7 @@ export default{
     buildFormLayoutByMetaFields:buildFormLayoutByMetaFields,
     buildFormItemByMetaField:buildFormItemByMetaField,
     formatData:formatData,
+    formatDataForExport:formatDataForExport,
     getMetaFieldComponentType:getMetaFieldComponentType,
     defaultValueTypes:defaultValueTypes,
     semantics:semantics,

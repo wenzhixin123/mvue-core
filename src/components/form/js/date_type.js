@@ -141,7 +141,9 @@ function formatData(componentType,item,metaField){
     }
     return result;
 }
-
+function formatDataForExport(componentType,item,metaField){
+    return formatData(componentType,item,metaField);
+}
 export default{
     types:dateTypes,
     componentParams:componentParams,
@@ -154,5 +156,6 @@ export default{
     formatDate:formatDate,
     formatTime:formatTime,
     formatDateTime:formatDateTime,
-    formatData:formatData
+    formatData:formatData,
+    formatDataForExport:formatDataForExport
 }

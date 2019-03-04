@@ -11,7 +11,7 @@
             :width="80"
             :mask-closable="false"
             :styles="styles"
-            class="grid-fill-data-con-drawer"
+            class="grid-drawer-con"
         >
             <m-form ref="form" 
                 :entity-name="metaEntity.name" 
@@ -108,16 +108,6 @@ export default {
 <style lang="less">
 .clear-model-check .ivu-form-item-content{
     margin-left:10px !important;
-}
-.grid-fill-data-con-drawer .drawer-footer{
-    width: 100%;
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    border-top: 1px solid #e8e8e8;
-    padding: 10px 16px;
-    text-align: left;
-    background: #fff;
 }
 </style>
 

@@ -30,6 +30,9 @@ manager.register(exportOp);
 import importOp from "./grid/import";
 manager.register(importOp);
 
+import batchEditOp from "./grid/batch-edit";
+manager.register(batchEditOp);
+
 import view from "./grid/view";
 manager.register(view);
 

@@ -72,10 +72,13 @@ function switchableComponents(componentType){
 function formatData(componentType,item,metaField){
     return entityType.formatData(componentType,item,metaField);
 }
-
+function formatDataForExport(componentType,item,metaField){
+    return formatData(componentType,item,metaField);
+}
 export default{
     types:orgUserTypes,
     accept:accept,
     switchableComponents:switchableComponents,
-    formatData:formatData
+    formatData:formatData,
+    formatDataForExport
 }

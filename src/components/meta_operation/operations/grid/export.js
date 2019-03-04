@@ -2,7 +2,7 @@ import ExportCsv from "../../../grid/js/export_csv";
 import contextHelper from "../../../../libs/context";
 import metabase from "../../../../libs/metadata/metabase";
 import toolServices from '../../../../services/tool/tool_service';
-
+import controlTypeService from '../../../form/js/control_type_service';
 /**
  *  列表的导出操作
  */
@@ -19,45 +19,78 @@ var operation= {
         return impl(context,$optInst);
     }
 };
-
-function impl(context,$optInst){
-    var resource=context.grid&&context.grid.queryResource;
-    var metaEntity=context.metaEntity;
-    var grid=context.grid;
-    if(_.isEmpty(resource) &&  !_.isEmpty(metaEntity)){
-        resource=metaEntity.dataResource();
+function formatData(context,data){
+    let metaEntity=context.metaEntity;
+    let gridColumns=context.grid.innerColumns;
+    let formattedData=[];
+    let header=[];
+    let exportFields=[];
+    gridColumns.forEach(ele => {
+        let key=ele.key;
+        let metaField=metaEntity.findField(key);
+        if(metaField){
+            exportFields.push(key);
+        }
+    });
+    for(let i=0;i<data.length;++i){
+        let item=data[i];
+        let formattedItem=[];
+        exportFields.forEach(key => {
+            if (item.hasOwnProperty(key)) {
+                let metaField=metaEntity.findField(key);
+                if(metaField){
+                    if(i==0){
+                        header.push(metaField.title);
+                    }
+                    let newValue=controlTypeService.formatDataForExport(item, metaField);
+                    formattedItem.push(newValue);
+                }
+            }
+        });
+        if(i==0){
+            formattedData.push(header.join(','));
+        }
+        formattedData.push(formattedItem.join(','));
     }
-    if(_.isEmpty(resource)){
-        contextHelper.error({content:`实体查询地址未设置`});
+    return formattedData.join('\r\n');
+}
+function impl(context,$optInst){
+    var grid=context.grid;
+    if(!grid){
+        contextHelper.error({content:`必须在m-grid组件使用`});
         return;
     }
     contextHelper.confirm({
         title: '提示',
         content: '是否导出当前列表所有数据?',
         onOk: () => {
-            var queryOptions={page_size:500};
-            if(grid){
-                queryOptions=grid.buildQueryOptions();
-                queryOptions.page_size=grid.totalCount || queryOptions.page_size;
-            }
-            queryOptions.total=false;
-            queryOptions.page=1;
-            queryOptions.select="*";
-            //获取当前项目的swagger地址
-            metabase.currentSwagger(metaEntity.projectId).then(function(swagger){
-                var exportTaskSetting={
-                    "entityName":metaEntity.name,
-                    "swagger":swagger,
-                    "options":queryOptions
-                };
-                var metaEntity=metabase.findMetaEntity(metaEntity.name);
-                var query={};
-                if(grid){
-                    query=grid.$route.query;
+            let ctx=_.cloneDeep(grid.currentQueryCtx),_p=null;
+            ctx.currentPage=1;
+            ctx.currentPageSize=grid.maxExportSize;
+            if(grid.query){//外部指定了query，用外部的
+                _p=grid.query(ctx,grid.queryResource);
+            }else{
+                //外部指定了查询地址，由此地址构造查询resource
+                let _resource=grid.queryResource;
+                if(grid.queryUrl){
+                    _resource=contextHelper.buildResource(grid.queryUrl);
                 }
-                toolServices().doExport(query,exportTaskSetting).then(function (records) {
-                    ExportCsv.download(metaEntity.title+".csv", records.body.join("\r\n"));
+                //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
+                _p= contextHelper.getMvueComponents().leapQueryConvertor.exec(_resource,ctx,(params)=>{
+                    grid.beforeQuery&&grid.beforeQuery(params);
                 });
+            }
+            _p.then(({data,total})=>{
+                if(total>grid.maxExportSize){
+                    contextHelper.warning({content:`已超过最大导出数据量${grid.maxExportSize}`});
+                    return;
+                }
+                if(total==0){
+                    contextHelper.warning({content:`数据为空，请确定所导出的数据源是否正确或者重设查询条件再导出`});
+                    return;
+                }
+                let formattedData=formatData(context,data);
+                ExportCsv.download(grid.metaEntity.title+".csv", formattedData);
             });
         }
     });

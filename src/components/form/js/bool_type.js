@@ -21,9 +21,18 @@ function formatData(componentType,item,metaField){
     }
     return `<input ${origin?'checked':''} disabled="disabled" type="checkbox">`;
 }
+function formatDataForExport(componentType,item,metaField){
+    let fieldName=metaField.name;
+    let origin=item[fieldName];
+    if(_.isUndefined(origin)||_.isNull(origin)||origin===''){
+        return "";
+    }
+    return origin?'是':'否';
+}
 export default{
     types:types,
     accept:accept,
     componentParams:componentParams,
-    formatData:formatData
+    formatData:formatData,
+    formatDataForExport:formatDataForExport
 }

@@ -120,6 +120,7 @@ import constants from '../form/js/constants';
 import toolService from '../../services/tool/tool_service';
 import metaservice from "../../services/meta/metaservice";
 import ExportCsv from './js/export_csv';
+import globalConsts from "../../libs/consts";
 
 var dayjs = require("dayjs");
 import context from "../../libs/context";
@@ -156,6 +157,8 @@ export default {
             metaEntity=this.$metaBase.findMetaEntity(grid.metaEntity);
         }
         let entityName=metaEntity.name;
+        let associatedMetaEntitiesMap={};
+        associatedMetaEntitiesMap[entityName]=true;
         return {
             grid:grid,
             metaEntity:metaEntity,
@@ -190,7 +193,10 @@ export default {
             importFinished:null,//导入是否完成，null:未开始 false:一开始 true:结束
             report:null,//导入报告详细数据
             current:0,//表示进度条的位置
-            hasReport:false//是否已经有报告了
+            hasReport:false,//是否已经有报告了
+            associatedMetaEntities:[metaEntity],//所有与主实体相关联的实体,
+            associatedMetaEntitiesMap:associatedMetaEntitiesMap,
+            parsedMetaEntitiesMap:{}//已经获取过关系实体的所有实体集合
         }
     },
     watch:{
@@ -473,6 +479,23 @@ export default {
             }else{
                 return [];
             }
+        },
+        buildAssociatedMetaEntities(parentMetaEntity){
+            //已经转换过的不再转换
+            if(this.parsedMetaEntitiesMap[parentMetaEntity.name]){
+                return;
+            }
+            let relations=parentMetaEntity.relations||[];
+            _.forIn(relations, (metaRelation, key) => {
+                if(metaRelation.type==globalConsts.manyToOne){
+                    let targetMetaEntity=this.$metaBase.findMetaEntity(metaRelation.targetEntity);
+                    if(!this.associatedMetaEntitiesMap[targetMetaEntity.name]){
+                        this.associatedMetaEntitiesMap[targetMetaEntity.name]=true;
+                        this.associatedMetaEntities.push(targetMetaEntity);
+                    }
+                }
+            });
+            this.parsedMetaEntitiesMap[parentMetaEntity.name]=true;
         }
     },
     components:{

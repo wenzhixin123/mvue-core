@@ -273,7 +273,7 @@ export default {
         if(!uid){
             return null;
         }
-        var routes=this.getCurrentVue().$route.matched;
+        var routes=component.$route.matched;
         var matchedRoute=null;
         for(var i=routes.length-1;i>=0;i--){
             var route=routes[i];

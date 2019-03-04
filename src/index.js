@@ -206,6 +206,7 @@ import topEntityService from "./services/store/top-entity";
 let MvueCore={
     install:install,
     metaBase:metabase,
+    metaService:metaservice,
     propParser:propParser,
     linkplugin,
     formConstants,

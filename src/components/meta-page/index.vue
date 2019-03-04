@@ -1,6 +1,6 @@
 <template>
   <div class="bvue-page">
-    <b-childheader :title="innerTitle" :subtitle="header.description" :showBack="header.showBack" ></b-childheader>
+    <b-childheader v-if="innerTitle" :title="innerTitle" :subtitle="header.description" :showBack="header.showBack" ></b-childheader>
     <div class="bvue-page-body">
       <Card>
         <meta-layout :layout="pageSettings.layout"></meta-layout>

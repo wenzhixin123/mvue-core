@@ -88,6 +88,10 @@
             siderWidth:{
                 type:Number,
                 default:160
+            },
+            title:{
+                type:String,
+                default:"-"
             }
         },
         data: function () {
@@ -103,7 +107,7 @@
                 activeName: "",
                 menuMappings: {},
                 header: {
-                    title: "-"
+                    title: this.title
                 },
                 basePath: ""
             }
@@ -214,6 +218,9 @@
                     }
                     var toPath = paths.relativeToAbsolute(this.basePath, selectedMenu.url);
                     this.activeName = selectedMenu.id;
+                    if(selectedMenu.redirect){
+
+                    }
                     this.$router.push({path: toPath, query: this.$route.query});
                 }
             },

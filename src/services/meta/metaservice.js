@@ -5,6 +5,7 @@
 import context from "../../libs/context";
 
 var $resource=null;
+var remotePages={};
 var customActions = {
     getFormByShortId: {method: 'GET', url: 'meta_form/short{/id}'},
     getProject: {method: 'GET', url: 'meta_project{/id}'},
@@ -16,21 +17,31 @@ var customActions = {
     getEntityTemplate:{method:'GET',url:'meta_template/entity_template'}
 };
 
+async function getPage(key) {
+    if(remotePages[key]){
+        return remotePages[key];
+    }
+    let page=await $resource.request({
+        url:`$pages/${key}`
+    });
+    if(page){
+        remotePages[key]=page.data;
+    }
+    return page.data;
+}
+
 export  default function () {
     if($resource!=null){
         return $resource;
     };
-    const baseServiceRoot=context.getMvueToolkit().config.getMetaserviceUrl();
-    $resource=context.buildResource('meta_form{/id}',customActions,{root:baseServiceRoot});
-    return {
-        getForm:$resource.get,
-        getFormByShortId:$resource.getFormByShortId,
-        getProject:$resource.getProject,
-        getSuite:$resource.getSuite,
-        saveArchive:$resource.saveArchive,
-        getSuiteDataSetting:$resource.getSuiteDataSetting,
-        getView:$resource.getView,
-        getViewByShortId:$resource.getViewByShortId,
-        getEntityTemplate:$resource.getEntityTemplate,
+    let baseServiceRoot=context.getMvueToolkit().config.getMetaserviceUrl();
+    if(!baseServiceRoot){
+        baseServiceRoot=context.getMvueToolkit().config.getApiBaseUrl();
     }
+    $resource=context.buildResource('meta_form{/id}',customActions,{root:baseServiceRoot});
+    $resource=Object.assign($resource,{
+        getForm:$resource.get,
+        getPage:getPage
+    });
+    return $resource;
 };

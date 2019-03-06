@@ -85,6 +85,7 @@ function formatDate(value,precision){
     if(!value){
         return _valueValidPart;
     }
+    value = myTimeToLocal(value);
     let _d=moment(value,'YYYY-MM-DD');
     if(datePrecision.year===precision){
         _valueValidPart=_d.format('YYYY');
@@ -100,6 +101,7 @@ function formatTime(value,precision){
     if(!value){
         return _valueValidPart;
     }
+    value = myTimeToLocal(value);
     let _d=moment(value,'HH:mm:ss');
     if(timePrecision.minute===precision){
         _valueValidPart=_d.format('HH:mm');
@@ -139,6 +141,18 @@ function formatData(componentType,item,metaField){
         result= formatDateTime(origin,timePrecision);
     }
     return result;
+}
+function myTimeToLocal(inputTime){
+    if(!inputTime && typeof inputTime !== 'number'){
+        return '';
+    }
+    var localTime = '';
+    inputTime = new Date(inputTime).getTime();
+    const offset = (new Date()).getTimezoneOffset();
+    localTime = (new Date(inputTime - offset * 60000)).toISOString();
+    localTime = localTime.substr(0, localTime.lastIndexOf('.'));
+    localTime = localTime.replace('T', ' ');
+    return localTime;
 }
 
 export default{

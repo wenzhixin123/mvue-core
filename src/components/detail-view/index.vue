@@ -182,6 +182,9 @@
                 let url = this.$route.path;
                 let matched = null;
                 this.visitTree(this.localMenus, menu => {
+                    if(!menu.url){
+                        return;
+                    }
                     var menuUrl = paths.relativeToAbsolute(this.basePath, menu.url);
                     if (url.indexOf(menuUrl) > -1) {
                         matched = menu;

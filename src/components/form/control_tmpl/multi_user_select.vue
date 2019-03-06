@@ -152,17 +152,7 @@ export default {
     },
     mounted:function(){
         let _this = this;
-        this.doSearch(null,function(){
-            //默认值
-            if(_this.shouldInitDefault()){
-                _this.calcField().then((data)=>{
-                    if(!data){
-                        return;
-                    }
-                    _this.setCurrentUserIfCreate(data);
-                });
-            }
-        });
+        this.doSearch();
     },
     methods: {
         onSelect:function(selectedItems){

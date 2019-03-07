@@ -2,7 +2,7 @@
     <div class="grid-advance-search-con">
         <div v-if="toolbarType=='compact'" @click="advanceSearch" class="concat-toolbar-btn"><Icon type="funnel"></Icon>高级</div>
         <Button v-else @click="advanceSearch" type="ghost"><Icon type="funnel"></Icon>高级</Button>
-        <div v-show="searchModal" class="ivu-poptip-popper v-transfer-dom" style="width: 400px; position: absolute; left: 210px; top: 5px; transform-origin: right center 0px;text-align:left;" x-placement="right-start">
+        <div v-show="searchModal" class="ivu-poptip-popper v-transfer-dom" style="width: 400px; position: absolute; left: 40px; top: 5px; transform-origin: right center 0px;text-align:left;" x-placement="right-start">
             <div class="ivu-poptip-content">
                 <div class="ivu-poptip-arrow"></div>
                 <div class="ivu-poptip-inner">
@@ -149,6 +149,7 @@ export default {
 
 <style lang="less" scoped>
 .grid-advance-search-con{
+    position: relative;
     display:inline-block;
 }
 </style>

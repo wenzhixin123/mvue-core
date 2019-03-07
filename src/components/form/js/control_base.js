@@ -111,7 +111,7 @@ export default {
          * @param id  必须传入
          * @param title  必须传入
          */
-        initDefaultForUserOrg(id,title){
+        initDefaultForUserOrg(id,title,user_orgs){
             let _selectedItem=null;
             if(id){
                 let idField=this.getIdField();
@@ -128,22 +128,34 @@ export default {
                         this.dataItems=_dataItems;
                     }
                 }
-                this.selectedItem=_selectedItem;
-                //pclink选择控件属性
-                this.innerValue=id;
-                this.onSelect(_selectedItem);
+                if(user_orgs){
+                    //传入了多选对象
+                    try{
+                        user_orgs.push(_selectedItem);
+                        //pclink选择控件属性
+                        this.innerValue.push(id);
+                        this.onSelect(_selectedItem);
+                    }catch (e){
+                        console.log(e);
+                    }
+                }else{
+                    this.selectedItem=_selectedItem;
+                    //pclink选择控件属性
+                    this.innerValue=id;
+                    this.onSelect(_selectedItem);
+                }
             }
         },
-        setCurrentUserIfCreate(userId){
+        setCurrentUserIfCreate(userId,users){
             var _this=this;
             this.entityResource&&this.entityResource.get({id:userId}).then(({data})=>{
-                _this.initDefaultForUserOrg(data.userId,data.name);
+                _this.initDefaultForUserOrg(data.userId,data.name,users);
             });
         },
-        setCurrentOrgIfCreate(orgId){
+        setCurrentOrgIfCreate(orgId,orgs){
             var _this=this;
             this.entityResource&&this.entityResource.get({id:orgId}).then(({data})=>{
-                _this.initDefaultForUserOrg(data.id,data.name);
+                _this.initDefaultForUserOrg(data.id,data.name,orgs);
             });
         },//end 用户组织默认值相关的基础方法
         /**

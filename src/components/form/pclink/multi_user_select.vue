@@ -75,8 +75,18 @@ export default {
         }
     },
     mounted:function(){
+        var _this=this;
         if(this.value){
             this.initValue();
+        }else{
+            if(_this.shouldInitDefault()){
+                _this.calcField().then((data)=>{
+                    if(!data){
+                    return;
+                }
+                _this.setCurrentUserIfCreate(data,_this.innerValue);//多选
+            });
+            }
         }
     },
     methods: {

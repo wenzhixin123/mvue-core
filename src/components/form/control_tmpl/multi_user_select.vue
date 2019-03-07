@@ -151,10 +151,23 @@ export default {
         }
     },
     mounted:function(){
-        let _this = this;
-        this.doSearch();
+        this.firstSearch();
     },
     methods: {
+        firstSearch(){
+            let _this=this;
+            this.doSearch(null,function(){//默认值填充
+                if(_this.shouldInitDefault()){
+                    _this.calcField().then((data)=>{
+                        if(!data){
+                            return;
+                        }
+                        _this.userSelected=true;
+                        _this.setCurrentUserIfCreate(data,_this.selectedItem);
+                    });
+                }
+            });
+        },
         onSelect:function(selectedItems){
             this.userSelected=true;
         },

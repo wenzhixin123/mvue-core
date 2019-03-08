@@ -116,14 +116,14 @@ export default {
         },
         dataItems:function(){
             var _this=this;
-            if(this.value){
+            /*if(this.value){
                 _.each(this.value,function(v){
                     let item=_this.dataItemsMap[v]||null;
                     if(item){
                         _this.selectedItem.push(item);
                     }
                 });
-            }
+            }*/
         },
         "paths.userApiUrl":function(newValue,oldValue){//监听地址，一旦设置值，用户操作的resource就可以构造了
             var _this=this;
@@ -174,7 +174,8 @@ export default {
         searchChange:function(keyword){
             var _this=this;
             this.doSearch(keyword,function(){
-                _this.selectedItem=null;
+                //_this.selectedItem=null;
+                _this.userSelected=false;
             });
         },
         doSearchForCache:function(callback){

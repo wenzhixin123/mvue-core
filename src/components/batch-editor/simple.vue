@@ -1,8 +1,9 @@
 <template>
     <div class="m-simple-batch-editor" :style="{width: editorWidth+'px'}">
-        <!-- <div class="toolbar">
-            <Button type="primary" size="small" icon="ios-document-outline" @click="doImport">保存</Button>
-        </div> -->
+        <div class="toolbar" v-if="beginImport">
+            <!-- <Button type="primary" size="small" icon="ios-document-outline" @click="doImport">保存</Button> -->
+            <div>总记录数{{items.length}}条,已导入{{items.length-total}}条;本次导入{{currentImported}}条,耗时{{ellapsedTime()}}毫秒</div>
+        </div>
         <div class="header">
             <div class="header-item">错误信息</div>
             <div v-for="cm in columnMappings" :key="cm.index" v-text="cm.title" class="header-item"></div>
@@ -67,11 +68,16 @@ export default {
     data(){
         return {
             innerItems:this.items,
+            otherInnerItems:this.items,
             innerItemsSuccessFlag:{},
             currentPage:1,
             currentItems:[],//[{index:0,item:['lijing','架构部',{error}]}]
             eachBatchSize:10,
-            total:0
+            total:0,
+            beginImport:false,
+            startTime:null,
+            endTime:null,
+            currentImported:0
         };
     },
     computed:{
@@ -89,14 +95,19 @@ export default {
                 this.$Message.info('数据已全部导入成功，可重新导入其它数据');
                 return;
             }
-            let batches=Math.ceil(this.innerItems.length/this.eachBatchSize);
+            this.startComputeEllapsedTime();
+            let _otherInnerItems=this.otherInnerItems;
+            let batches=Math.ceil(_otherInnerItems.length/this.eachBatchSize);
+            this.currentImported=0;
+            //每次导入要清空成功数据索引
+            this.innerItemsSuccessFlag={};
             for(let i=0;i<batches;++i){
                 var start=i*this.eachBatchSize;
                 var end=start+this.eachBatchSize;
-                if(end>this.innerItems.length){
-                    end=this.innerItems.length;
+                if(end>_otherInnerItems.length){
+                    end=_otherInnerItems.length;
                 }
-                let rows=_.cloneDeep(this.innerItems.slice(start,end));
+                let rows=_.cloneDeep(_otherInnerItems.slice(start,end));
                 //去掉每个row的最后一列：错误信息列
                 for(let j=0;j<rows.length;++j){
                     rows[j]=rows[j].slice(0,rows[j].length-1);
@@ -106,6 +117,7 @@ export default {
                     columns:this.columnMappings,
                     rows:rows
                 };
+                this.beginImport=true;
                 let success=await importService().executeImportRows2({entityName:this.entityName},_model).then(({data})=>{
                     //有失败的数据
                     if(data.failedRows>0){
@@ -115,11 +127,12 @@ export default {
                             let err=data.errors[k];
                             if(err){
                                 //如果有错修改错误信息
-                                let oldRow=this.innerItems[realIndex];
+                                let oldRow=_otherInnerItems[realIndex];
                                 oldRow[oldRow.length-1].e=err.e;
                             }else{
                                 //如果已导入，标记已成功导入
                                 this.innerItemsSuccessFlag[realIndex]=true;
+                                this.currentImported++;
                             }
                         }
                         return false;
@@ -127,6 +140,7 @@ export default {
                         for(let kk=start;kk<end;++kk){
                             //如果已导入，标记已成功导入
                             this.innerItemsSuccessFlag[kk]=true;
+                            this.currentImported++;
                         }
                         return true;
                     }
@@ -134,8 +148,9 @@ export default {
                     console.error(err);
                     return false;
                 });
+                this.endComputeEllapsedTime();
                 //每批次导入后根据成功或者错误情况，重新渲染列表
-                this.doReload();
+                this.doReload(_otherInnerItems);
                 //如果本批次提交失败，终止整个提交流程
                 if(!success){
                     break;
@@ -154,7 +169,7 @@ export default {
             }
             this.doReload();
         },
-        buildCurrentItems(){
+        buildCurrentItems(_otherInnerItems){
             var currentPageSize=this.pageSize;
             if(this.$refs.pageRef){
                 currentPageSize=this.$refs.pageRef.currentPageSize;
@@ -162,7 +177,8 @@ export default {
             var currentPage=this.currentPage||1;
             var start=(currentPage-1)*currentPageSize;
             var end=start+currentPageSize;
-            let otherInnerItems=_.filter(this.innerItems,(item,index)=>{
+
+            let otherInnerItems=_.filter(_otherInnerItems||this.otherInnerItems,(item,index)=>{
                 return !this.innerItemsSuccessFlag[index];
             })
             if(end>otherInnerItems.length){
@@ -183,12 +199,27 @@ export default {
                 this.$emit("on-all-succeessed");
             }
             //设置未完成导入的剩余总数
+            this.otherInnerItems=otherInnerItems;
             this.total=otherInnerItems.length;
             return _citems;
         },
-        doReload(){
-            let _citems=this.buildCurrentItems();
+        doReload(_otherInnerItems){
+            let _citems=this.buildCurrentItems(_otherInnerItems);
             this.currentItems= _citems;
+        },
+        startComputeEllapsedTime(){
+            this.startTime=new Date();
+        },
+        endComputeEllapsedTime(){
+            this.endTime=new Date();
+        },
+        ellapsedTime(){
+            if(this.endTime&&this.startTime){
+                if(this.endTime<this.startTime){
+                    this.endTime=new Date();
+                }
+                return this.endTime-this.startTime;
+            }
         }
     }
 }

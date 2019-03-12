@@ -44,7 +44,7 @@
                                 :ref="`refEntity_ref_${index}`"
                                 v-if="refEntity.entityResource"
                                 :query-resource="refEntity.entityResource"
-                                :query-options="{'orderby':refEntity.orderbyField?`${refEntity.orderbyField} ${refEntity.orderbyType||''}`:''}"
+                                :query-options="{'orderby':refEntity.orderbyField?`${refEntity.orderbyField} ${refEntity.orderbyType||''}`:'',filters:refEntity.filter?refEntity.filter:''}"
                                 :highlight-row="true"
                                 @on-current-change="singleSelectedChange"
                                 :toolbar="showToolbar(refEntity)"
@@ -223,6 +223,14 @@ export default {
                 }
             }else{
                 params.filters=`${refEntity.titleField} like '%${keyword}%'`;
+            }
+            if(refEntity.filter){
+                //设置了过滤条件
+                if(params.filters){
+                    params.filters+=`and ${refEntity.filter}`
+                }else{
+                    params.filters =`${refEntity.filter}`
+                }
             }
             if(refEntity.orderbyField){
                 let orderbyType=refEntity.orderbyType||'asc';

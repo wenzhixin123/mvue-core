@@ -5,6 +5,12 @@ var types={
         id: "RefEntity", 
         title: "引用实体", 
         icon:"ivu-icon ivu-icon-pound"
+    },
+    MultiRefEntity:{
+        id: "MultiRefEntity",
+        title: "引用实体(多选)",
+        icon:"ivu-icon ivu-icon-pound",
+        hidden:true
     }
 };
 var componentParams={
@@ -15,10 +21,41 @@ var componentParams={
         orderbyField:"",//排序字段
         orderbyType:"asc",//排序规则
         entityResourceUrl:""//后端自动生成
+    },
+    MultiRefEntity:{
+        refEntitys:[
+            {
+                entityId:"",//必填
+                idField:"",//必填
+                titleField:"",//必填
+                orderbyField:"",//排序字段
+                orderbyType:"asc",//排序规则
+                entityResourceUrl:""//后端自动生成
+            }
+        ]
     }
 };
 function accept(componentType){
     return !!types[componentType];
+}
+//componentType对应的可切换的组件集合
+function switchableComponents(componentType){
+    if(types.RefEntity.id===componentType){
+        return [
+            {
+                id:types.MultiRefEntity.id,
+                title:'引用实体(多选)'
+            }
+        ];
+    }else if(types.MultiRefEntity.id===componentType){
+        return [
+            {
+                id:types.RefEntity.id,
+                title:'引用实体'
+            }
+        ];
+    }
+    return false;
 }
 function formatData(componentType,item,metaField){
     let fieldName=metaField.name;
@@ -29,8 +66,24 @@ function formatData(componentType,item,metaField){
     let rkey=constants.entityModelRedundantKey;
     let titleKey=constants.entityModelTitleKey;
     var $data=(item[rkey]&&item[rkey][fieldName])||{};
-    var result= $data[origin]&&$data[origin][titleKey];
-    result=result||origin;
+
+    var result="";
+    //单选
+    if(types.RefEntity.id===componentType){
+        result= $data[origin]&&$data[origin][titleKey];
+        result=result||origin;
+    }else if(types.MultiRefEntity.id===componentType){
+        //多选
+        let names=[];
+        _.each(origin,function(id){
+            let name=$data[id]&&$data[id][titleKey];
+            name=name||id;
+            names.push(name);
+        });
+        result= names.join(",");
+    }
+    /*var result= $data[origin]&&$data[origin][titleKey];
+    result=result||origin;*/
     return result;
 }
 function fillComponentParams(formItem,metaField){
@@ -53,6 +106,7 @@ export default{
     types:types,
     accept:accept,
     componentParams:componentParams,
+    switchableComponents:switchableComponents,
     formatData:formatData,
     fillComponentParams:fillComponentParams
 }

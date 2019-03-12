@@ -76,7 +76,7 @@ export default {
     },
     mounted:function(){
         var _this=this;
-        if(this.value){
+        if(this.value.length){
             this.initValue();
         }else{
             if(_this.shouldInitDefault()){

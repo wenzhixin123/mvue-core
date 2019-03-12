@@ -62,7 +62,8 @@ export default{
                 _.each(this.advanceSearchFilters,asf=>{
                     useInnerAdvSearchFilters.rules[asf.key]={
                         op:asf.op,
-                        value:asf.value
+                        value:asf.value,
+                        mappingKey:asf.mappingKey
                     };
                 });
                 ctx.filters=useInnerAdvSearchFilters;

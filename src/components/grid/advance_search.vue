@@ -109,12 +109,14 @@ export default {
                         ||metaField.inputType==controlTypeService.componentTypes.Date.id){
                         //对于日期自动转成范围查询
                         advanceSearchFilters.push({
-                            key:key,
+                            key:key+'1',
+                            mappingKey:key,
                             op:"ge",
                             value:value[0]
                         });
                         advanceSearchFilters.push({
-                            key:key,
+                            key:key+'2',
+                            mappingKey:key,
                             op:"le",
                             value:value[1]
                         });

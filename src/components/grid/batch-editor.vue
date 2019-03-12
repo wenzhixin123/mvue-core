@@ -114,14 +114,15 @@ export default {
             let grid=this.widgetContext.grid;
             let gridColumns=grid.innerColumns;
             let _columns=[];
-            let props=['minWidth','width','maxWidth','tooltip']
+            let props=['tooltip']
             gridColumns.forEach(col => {
                 let key=col.key;
                 let metaField=grid.metaEntity.findField(key);
                 if(metaField){
                     let _col={
                         key:col.key,
-                        title:col.title
+                        title:col.title,
+                        width:250
                     };
                     props.forEach(prop => {
                         if(col[prop]){

@@ -134,7 +134,7 @@ export default {
                         user_orgs.push(_selectedItem);
                         //pclink选择控件属性
                         this.innerValue.push(id);
-                        this.onSelect(_selectedItem);
+                        this.onSelect([_selectedItem]);
                     }catch (e){
                         console.log(e);
                     }

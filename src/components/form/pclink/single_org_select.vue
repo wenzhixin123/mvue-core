@@ -10,7 +10,7 @@
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.vertical" class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
             <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
             <div class="ivu-input-wrapper ivu-input-type ivu-input-group ivu-input-group-with-prepend ivu-input-group-with-append ivu-input-hide-icon  link-select-userorg">
-                <input readonly type="text" class="ivu-input" :value="innerText"> 
+                <input readonly type="text" class="ivu-input" :value="innerText" @click="showPcLinkSelectModal">
                 <input type="hidden" class="ivu-input" :value="innerValue"> 
                 <div class="ivu-input-group-append">
                     <Button type="ghost" icon="ios-search" class="btn-search" @click="showPcLinkSelectModal"></Button>
@@ -26,7 +26,7 @@
                 <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
                 <div class="col-md-10" :style="{width:controlWidth}">
                     <div class="ivu-input-wrapper ivu-input-type ivu-input-group ivu-input-group-with-prepend ivu-input-group-with-append ivu-input-hide-icon  link-select-userorg">
-                        <input readonly type="text" class="ivu-input" :value="innerText"> 
+                        <input readonly type="text" class="ivu-input" :value="innerText" @click="showPcLinkSelectModal">
                         <input type="hidden" class="ivu-input" :value="innerValue"> 
                         <div class="ivu-input-group-append">
                             <Button type="ghost" icon="ios-search" class="btn-search" @click="showPcLinkSelectModal"></Button>

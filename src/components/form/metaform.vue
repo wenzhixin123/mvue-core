@@ -36,6 +36,7 @@
     import formBase from './form-base';
     import contextHelper from "../../libs/context";
     export default {
+        name: 'mForm',
         mixins:[formBase],
         props:{
             entityName:{//必填参数，表示元数据实体的名称）

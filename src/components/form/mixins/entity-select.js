@@ -13,7 +13,8 @@ export default{
             historyItems:[],//选中过的历史选项
             cachedDataItems:null,//默认提示的可选数据
             viewModeValue:"",
-            preselectFirst:false
+            preselectFirst:false,
+            searchChangedQueue:[]
         };
     },
     computed:{
@@ -26,44 +27,49 @@ export default{
         }
     },
     watch:{
-        //监听selectedItem的变化，选中过的数据加入到历史选项
-        selectedItem:{
-            handler(){
-                this.addHistoryItems();
-                if(_.isArray(this.selectedItem)){
-                    this.notifyMultipleSelect();
-                }else{
-                    this.notifySingleSelect();
-                    //向metaForm的refEntities写入引用数据
-                    var metaForm=this.getParentForm&&this.getParentForm();
-                    if(metaForm&&this.formItem){
-                        this.$store.commit("core/setFormRefEntities",{
-                            formId:metaForm.id,
-                            name:this.formItem.dataField,
-                            refEntity:this.selectedItem
-                        });
-                    }
-                }
-            },
-            immediate:true
-        },
         value(newV,oldV){
-            //特殊处理：外部v-model设置值回传进来
-            if(_.isEmpty(newV)&&(!_.isEmpty(oldV))){
+            if(_.isEmpty(newV)){
                 if(_.isArray(oldV)){
                     this.selectedItem=[];
                 }else{
                     this.selectedItem=null;
                 }
-            }else if((!_.isEmpty(newV))&&(!_.isEqual(newV,oldV))){
-                this.firstInit();
+            }
+            if(!_.isEqual(newV,oldV)){
+                context.getMvueToolkit().utils.smartAction(this,"searchChangedQueue",()=>{
+                    this.firstInit();
+                });
             }
         }
     },
     mounted:function(){
-        this.firstInit();
+        context.getMvueToolkit().utils.smartAction(this,"searchChangedQueue",()=>{
+            this.firstInit();
+        });
     },
     methods:{
+        notifySelectedItemChanged(selectedOption){
+            let newSelectedItem=selectedOption;
+            this.addHistoryItems(newSelectedItem);
+            this.dispatch&&this.dispatch("mForm","on-ref-selected-changed",[this,newSelectedItem]);
+            if(_.isArray(newSelectedItem)){
+                this.notifyMultipleSelect(newSelectedItem);
+            }else{
+                this.notifySingleSelect(newSelectedItem);
+                //向metaForm的refEntities写入引用数据
+                var metaForm=this.getParentForm&&this.getParentForm();
+                if(metaForm&&this.formItem){
+                    this.$store.commit("core/setFormRefEntities",{
+                        formId:metaForm.id,
+                        name:this.formItem.dataField,
+                        refEntity:newSelectedItem
+                    });
+                }
+            }
+        },
+        handleOnSelectChange(selectedOption, id){
+            this.notifySelectedItemChanged(selectedOption);
+        },
         firstInit(){
             this.firstSearch();
             this.doSearchForCache((items) => {
@@ -120,20 +126,22 @@ export default{
             return initValue;
         },
         //单选
-        notifySingleSelect:function(){
+        notifySingleSelect:function(selectedOption){
             var idField=this.getIdField();
             var sid=null;
-            if(this.selectedItem){
-                sid=this.selectedItem[idField];
+            let newSelectedItem=selectedOption;
+            if(newSelectedItem){
+                sid=newSelectedItem[idField];
             }
             this.$emit('input',sid);
             this.dispatch&&this.dispatch('FormItem', 'on-form-change', sid);
         },
         //多选
-        notifyMultipleSelect(){
+        notifyMultipleSelect(selectedOption){
             var idField=this.getIdField();
             var sIds=[];
-            _.each(this.selectedItem,(sitem)=>{
+            let newSelectedItem=selectedOption;
+            _.each(newSelectedItem,(sitem)=>{
                 var sid=sitem[idField];
                 sIds.push(sid);
             });

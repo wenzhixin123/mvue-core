@@ -5,6 +5,7 @@
             :record-id="currentRecordId" 
             :local-model="currentRow"
             @on-form-entity-changed="handleOnFormEntityChanged"
+            @on-ref-selected-changed="handleOnRefSelectedChanged"
             >
             <m-grid ref="grid"
                 :entity-name="entityName" 
@@ -43,6 +44,7 @@
 </template>
 <script>
 import globalContext from '../../libs/context';
+import rowMeta from '../form/js/row-meta';
 const uuidv1 = require('uuid/v1');
 var dayjs = require("dayjs");
 export default {
@@ -68,7 +70,7 @@ export default {
         },
         maxLocalSize:{
             type:Number,
-            default:500
+            default:100
         },
         pageSize: {//每页条数
             type: Number,
@@ -149,6 +151,18 @@ export default {
         };
     },
     methods:{
+        handleOnRefSelectedChanged(refControl,selectedItem){
+            let fieldName=refControl.formItem.dataField;
+            if(this.currentRow){
+                let data={
+                    title:selectedItem&&selectedItem[refControl.getTitleField()]
+                };
+                rowMeta.setRowMeta(this.currentRow,fieldName,data);
+                this.currentRow.__forceMeta__=true;
+                rowMeta.setRowMeta(this.localDataMap[this.currentRecordId],fieldName,data);
+                this.localDataMap[this.currentRecordId].__forceMeta__=true;
+            }
+        },
         handleOnRowClick(row,index){
             let id=row[this.idFieldName];
             let realRow=this.$refs.grid.rowMap[id];
@@ -163,7 +177,7 @@ export default {
                 col.sortable=false
             });
         },
-        handleOnBatchFillData(model,clearModel){
+        handleOnBatchFillData(model,clearModel,currentMeta){
             let edited=false;
             for (const key in model) {
                 if (model.hasOwnProperty(key)) {
@@ -180,6 +194,15 @@ export default {
                         });
                     }
                 }
+            }
+            //如果设置了引用字段的值，填充冗余字段__meta__，供列表显示
+            if(!_.isEmpty(currentMeta)){
+                this.localListData.data.forEach(item => {
+                    item.__forceMeta__=true;
+                    for (const fieldName in currentMeta) {
+                        rowMeta.setRowMeta(item,fieldName,currentMeta[fieldName]);
+                    }
+                });
             }
             for (const key in clearModel) {
                 if (clearModel[key]===true) {
@@ -325,31 +348,67 @@ export default {
                 _resource=globalContext.buildResource(this.queryUrl);
             }
             let refGrid=this.$refs.grid;
-            //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
-            return globalContext.getMvueComponents().leapQueryConvertor.exec(_resource,ctx,(params)=>{
-                refGrid.beforeQuery&&refGrid.beforeQuery(params);
-            },(listData)=>{//{data:[],total:10}
-                listData.data.forEach(item => {
-                    let id=item[this.idFieldName];
-                    //如果id不存在构造一个虚拟的id
-                    if(!id&&(id!==0)){
-                        item[this.idFieldName]=uuidv1();
-                        //标记为虚拟id数据
-                        item.__virtualId__=true;
-                        item.__rowStatus__="unsaved";
-                    }else{
-                        item.__rowStatus__="saved";
-                    }
+            //如果总数大于maxLocalSize设置的100，由于expand限制只能100，所以此时应该分批次获取数据合并
+            if(ctx.localPagerSecondLoad){
+                let pSize =ctx.currentPageSize;
+                let pages=Math.ceil(pSize/this.maxLocalSize);
+                let pagesSize=[],batchPromises=[];
+                for(let i=0;i<pages;++i){
+                    let __ctx=_.cloneDeep(ctx);
+                    __ctx.currentPage=i+1;
+                    __ctx.currentPageSize=this.maxLocalSize;
+                    batchPromises.push(globalContext.getMvueComponents().leapQueryConvertor.exec(_resource,__ctx,(params)=>{
+                        refGrid.beforeQuery&&refGrid.beforeQuery(params);
+                    }));
+                }
+                return new Promise((resolve,reject)=>{
+                    Promise.all(batchPromises).then((dataAll)=>{
+                        let listData={data:[],total:0};
+                        dataAll.forEach(item => {
+                            listData.data=listData.data.concat(item.data);
+                            listData.total=item.total;
+                        });
+                        this.rebuildLocalListData(listData);
+                        resolve(listData);
+                    },(err)=>{
+                        console.err(err);
+                        reject();
+                    });
                 });
-                this.localListData=_.cloneDeep(listData);
-                this.localListData.data.forEach(item => {
-                    this.localDataMap[item[this.idFieldName]]=item;
+            }else{
+                //一次性获取数据回来
+                return globalContext.getMvueComponents().leapQueryConvertor.exec(_resource,ctx,(params)=>{
+                    refGrid.beforeQuery&&refGrid.beforeQuery(params);
+                },(listData)=>{//{data:[],total:10}
+                    this.rebuildLocalListData(listData);
                 });
+            }
+        },
+        rebuildLocalListData(listData){
+            listData.data.forEach(item => {
+                let id=item[this.idFieldName];
+                //如果id不存在构造一个虚拟的id
+                if(!id&&(id!==0)){
+                    item[this.idFieldName]=uuidv1();
+                    //标记为虚拟id数据
+                    item.__virtualId__=true;
+                    item.__rowStatus__="unsaved";
+                }else{
+                    item.__rowStatus__="saved";
+                }
+            });
+            this.localListData=_.cloneDeep(listData);
+            this.localListData.data.forEach(item => {
+                this.localDataMap[item[this.idFieldName]]=item;
             });
         },
         ignoreVirtualFields(_model){
-            delete _model.perms;
-            delete _model.__rowStatus__;
+            let ignores=['perms','__rowStatus__','__virtualId__','__id__','__forceMeta__','__meta__']
+            ignores.forEach(key => {
+                if(_model.hasOwnProperty(key)){
+                    delete _model[key];
+                }
+            });
         },
         singleSave(item){
             return new Promise((resolve,reject)=>{

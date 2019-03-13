@@ -18,6 +18,7 @@
                              :closeOnSelect="false"
                             :label="getTitleField()"
                             @search-change="searchChange"
+                            @input="handleOnSelectChange"
                             :track-by="getIdField()">
                                 <template slot="option" slot-scope="props">
                                     <div class="option__desc">
@@ -107,6 +108,7 @@ export default {
                 return;
             }
             this.selectedItem=selectedItem;
+            this.handleOnSelectChange(selectedItem,null);
             this.close();
         }
     },

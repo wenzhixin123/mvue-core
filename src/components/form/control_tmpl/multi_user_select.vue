@@ -132,9 +132,9 @@ export default {
                 this.doSearch();
             }
         },
-        "selectedItem":function(){
+        "selectedItem":function(val){
             var _this=this;
-            if(this.selectedItem&&this.userSelected){
+            if((this.selectedItem&&this.userSelected)||this.selectedItem.length===0){
                 var idField=this.getIdField();
                 var exData={};
                 var sIds=[];

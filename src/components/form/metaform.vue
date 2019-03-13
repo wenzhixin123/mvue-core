@@ -403,7 +403,7 @@
                 return this.dataResource.get({id:this.entityId}).then(function({data}){
                     _this.loadingFormData=false;
                     _this.initPerm(data);
-                    if(_this.metaForm){//已经定义过表单，以表单定义字段为准初始化模型
+                    /*if(_this.metaForm){//已经定义过表单，以表单定义字段为准初始化模型
                         let fields=metaformUtils.getAllFieldItems(_this.metaForm);
                         _.each(fields,function(field){
                             let key=field.dataField;
@@ -414,7 +414,11 @@
                         _.each(_this.entity,function(value,key){
                             _this.entity[key]=data[key];
                         });
-                    }
+                    }*/
+                    //使用默认实体表单字段
+                    _.each(_this.entity,function(value,key){
+                        _this.entity[key]=data[key];
+                    });
                     return true;
                 },function(){
                     _this.loadingFormData=false;

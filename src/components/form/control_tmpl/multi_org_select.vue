@@ -112,7 +112,7 @@ export default {
         },
         dataItems:function(){
             var _this=this;
-            if(this.value){
+            if(this.value&&!this.searchchange){
                 _.each(this.value,function(v){
                     let item=_this.dataItemsMap[v]||null;
                     if(item){
@@ -169,7 +169,9 @@ export default {
         searchChange:function(keyword){
             var _this=this;
             this.doSearch(keyword,function(){
-                _this.selectedItem=null;
+                //_this.selectedItem=null;
+                _this.userSelected=false;
+                _this.searchchange=true;
             });
         },
         doSearchForCache:function(callback){

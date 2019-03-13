@@ -28,10 +28,18 @@ function parseProps(layout,curInst){
         context:curInst.widgetContext
     };
     visitObj(layout,(itemNode,parent,indexOrKey)=>{
+        let isMForm=parent&&(parent.ctype=="meta-form"||parent.ctype=="m-form");
+        if(isMForm&&indexOrKey=="pageTitleTmpl"){
+            return;
+        }
         if(_.isString(itemNode) && itemNode.indexOf("${")>-1){
             let compiled=_.template(itemNode);
-            let newVal=compiled(evalContext);
-            parent[indexOrKey]=newVal;
+            try{
+                let newVal=compiled(evalContext);
+                parent[indexOrKey]=newVal;
+            }catch(e){
+                console.log(e);
+            }
             return;
         }
         if(itemNode.value&&itemNode.value.from){
@@ -40,15 +48,13 @@ function parseProps(layout,curInst){
             parent[indexOrKey]=_v;
             return;
         }
-
-        let isMForm=itemNode.ctype=="meta-form"||itemNode.ctype=="m-form";
         if(isMForm){
             if(curInst.operation&&curInst.operation.name=="create"){
-                itemNode.recordId=null;
+                parent.recordId=null;
             }
             //m-tree-grid组件附加的表单参数
             if(curInst.widgetContext&&curInst.widgetContext.grid&&curInst.widgetContext.grid.createParams){
-                itemNode.createParams=_.cloneDeep(curInst.widgetContext.grid.createParams);
+                parent.createParams=_.cloneDeep(curInst.widgetContext.grid.createParams);
             }
         }
     });

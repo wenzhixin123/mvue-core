@@ -62,7 +62,12 @@ function title(rowData,fieldName){
     }
     return '';
 }
+function setRowMeta(rowData,fieldName,data){
+    rowData[rowMetaKey]=rowData[rowMetaKey]||{fields:{}};
+    rowData[rowMetaKey].fields[fieldName]=data;
+}
 export default {
     rebuildRefData,
-    title
+    title,
+    setRowMeta
 }

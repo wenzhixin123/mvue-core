@@ -56,7 +56,8 @@ function formatData(componentType,item,metaField){
     var expandData=item[relation.name];
     let targetEntity=metabase.findMetaEntity(relation.targetEntity);
     let titleField=targetEntity.firstTitleField().name;
-    if(!titleField || !expandData){
+    //__forceMeta__用在批量编辑grid，标记使用__meta__冗余数据，因为此时expand数据不正确
+    if(!titleField || (item.__forceMeta__||!expandData)){
         return rowMeta.title(item,fieldName)||origin;
     }
     if(_.isArray(origin)){

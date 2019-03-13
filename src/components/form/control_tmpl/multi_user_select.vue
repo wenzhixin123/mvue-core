@@ -15,6 +15,7 @@
                             :show-no-results="false"
                             :label="getTitleField()"
                             @search-change="searchChange"
+                            @input="handleOnSelectChange"
                             :track-by="getIdField()">
                     <template slot="option" slot-scope="props">
                         <div class="option__desc">
@@ -136,6 +137,7 @@ export default {
             }
             this.entityResource.query({filters:`id in ${value.join(',')}`}).then(({data})=>{
                 this.selectedItem=data;
+                this.handleOnSelectChange(data,null);
                 this.close();
             });
         }

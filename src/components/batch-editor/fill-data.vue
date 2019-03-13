@@ -16,6 +16,7 @@
             <m-form ref="form" 
                 :entity-name="metaEntity.name" 
                 :ignore-validate="true" 
+                @on-ref-selected-changed="handleOnRefSelectedChanged"
                 :on-inited="handleOnInited">
                 <Row v-for="fieldName in formFields" :key="fieldName">
                     <i-col :span="12">
@@ -61,10 +62,18 @@ export default {
             },
             metaEntity:metaEntity,
             formFields:formFields,
-            clearModel:clearModel
+            clearModel:clearModel,
+            currentMeta:{}
         }
     },
     methods:{
+        handleOnRefSelectedChanged(refControl,selectedItem){
+            let fieldName=refControl.formItem.dataField;
+            let data={
+                title:selectedItem&&selectedItem[refControl.getTitleField()]
+            };
+            this.currentMeta[fieldName]=data;
+        },
         handleOnInited(form){
             //清空所有表单项
             this.formFields.forEach(fieldName => {
@@ -80,7 +89,14 @@ export default {
             this.formFields.forEach(fieldName => {
                 _model[fieldName]=entity[fieldName];
             });
-            this.widgetContext.grid.$emit("on-batch-fill-data",_model,this.clearModel);
+            let _currentMeta={};
+            for (const key in this.currentMeta) {
+                if (this.currentMeta.hasOwnProperty(key)) {
+                    const value = this.currentMeta[key];
+                    _currentMeta[key]=value;
+                }
+            }
+            this.widgetContext.grid.$emit("on-batch-fill-data",_model,this.clearModel,this.currentMeta);
             this.showDrawer=false;
         },
         buildFormFields(){

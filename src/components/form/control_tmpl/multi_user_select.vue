@@ -20,6 +20,7 @@
                         label="name"
                         @select="onSelect"
                         @search-change="searchChange"
+                        @remove="remove"
                         :track-by="getIdField()">
                 <template slot="option" slot-scope="props">
                     <div class="option__desc">
@@ -47,6 +48,7 @@
                         label="name"
                         @select="onSelect"
                         @search-change="searchChange"
+                        @remove="remove"
                         :track-by="getIdField()">
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
@@ -134,7 +136,7 @@ export default {
         },
         "selectedItem":function(val){
             var _this=this;
-            if((this.selectedItem&&this.userSelected)||this.selectedItem.length===0){
+            if(this.selectedItem&&this.userSelected){
                 var idField=this.getIdField();
                 var exData={};
                 var sIds=[];
@@ -258,6 +260,9 @@ export default {
                 return texts.join(",");
             }
             return "";
+        },
+        remove(){
+            this.userSelected=true;
         }
     }
 }

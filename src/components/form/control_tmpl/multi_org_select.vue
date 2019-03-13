@@ -20,6 +20,7 @@
                         label="name"
                         @select="onSelect"
                         @search-change="searchChange"
+                        @remove="remove"
                         :track-by="getIdField()">
                 <template slot="option" slot-scope="props">
                     <div class="option__desc">
@@ -45,6 +46,7 @@
                         label="name"
                         @select="onSelect"
                         @search-change="searchChange"
+                        @remove="remove"
                         :track-by="getIdField()">
                         <template slot="option" slot-scope="props">
                             <div class="option__desc">
@@ -253,6 +255,9 @@ export default {
                 return texts.join(",");
             }
             return "";
+        },
+        remove(){
+            this.userSelected=true;
         }
     }
 }

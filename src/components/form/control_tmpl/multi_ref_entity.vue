@@ -12,13 +12,30 @@
                 <label class="ivu-form-item-label" v-text="formItem.componentParams.title"></label>
                 <div class="form-control form-control-w" :placeholder="formItem.componentParams.placeholder">
                     <div class="_input">
-                        <Tag closable color="blue" v-for="(item,index) in selectedItems">{{item.title}}</Tag>
-                        <Input v-model="value" placeholder="Enter something..." style="width: 300px"></Input>
+                        <Tag closable @on-close="onControlTargetItemDelete(index)" color="blue"
+                             v-for="(item,index) in selectedItems">{{item.title}}
+                        </Tag>
+                        <!--<Input v-if="formItem.componentParams.supportInput"-->
+                               <!--placeholder="请输入内容，按回车键确定"-->
+                               <!--style="width: 300px; border-width: 0px"-->
+                               <!--size="small"-->
+                               <!--@on-enter="onInputEnter"-->
+                               <!--@on-focus="onControlTargetItemInputFocus"-->
+                               <!--v-model="idInput"-->
+                        <!--&gt;</Input>-->
+                        <input v-if="formItem.componentParams.supportInput"
+                               v-model="idInput"
+                               type="text" value="" :placeholder="placeholder"
+                               @keyup.enter="onInputEnter()"
+                               @focus="onControlTargetItemInputFocus()"
+                               @blur="onControlTargetItemInputNotFocus()"
+                               style="border-width: 0px; width: 300px; "/>
                         <!--<span class="_select_text" v-for="(item,index) in selectedItems">{{item.title}}-->
                         <!--<Icon type="android-cancel" class="_item_del" @click="del(index)"></Icon>-->
                         <!--</span>-->
                     </div>
-                    <Icon size="20" type="ios-list-outline" @click="selectRemoteEntityModal=true"></Icon>
+                    <Icon size="20" type="ios-list-outline" @click="selectRemoteEntityModal=true"
+                          style="margin-top: 4px"></Icon>
                 </div>
                 <span class="colorRed"
                       v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
@@ -85,7 +102,7 @@
   export default {
     mixins: [controlBase],
     props: {
-      'value': {
+      value: {
         type: Array,
         default: function () {
           return []
@@ -113,28 +130,11 @@
         localTab: '',
         refEntitys: [],//存入实体数据的操作resource
         selectRemoteEntityModal: false,
-        selectedItems: [
-          {title: '林郡为'},
-          {title: '黄特新'},
-          {title: '张晨一'},
-          {title: '赵卫民'},
-          {title: '郑振涛'},
-          {title: '秦瑞有'},
-          {title: '林郡为'},
-          {title: '黄特新'},
-          {title: '张晨一'},
-          {title: '赵卫民'},
-          {title: '郑振涛'},
-          {title: '秦瑞有'},
-          {title: '林郡为'},
-          {title: '黄特新'},
-          {title: '张晨一'},
-          {title: '赵卫民'},
-          {title: '郑振涛'},
-          {title: '秦瑞有'}
-        ],//已经选择的项
+        selectedItems: [],//已经选择的项
         dataItems: [],//远程获取的数据项
-        cachedDataItems: null//默认提示的可选数据
+        cachedDataItems: null,//默认提示的可选数据
+        idInput: '',
+        placeholder: '请输入内容，按回车键确定'
       }
     },
     computed: {
@@ -306,6 +306,33 @@
               }
             })
         }
+      },
+      onInputEnter () {
+        var _this = this
+        var has = false
+        for (var index in _this.selectedItems) {
+          var item = _this.selectedItems[index]
+          if (item.title == this.idInput) {
+            has = true
+            break
+          }
+        }
+        if (!has) {
+          this.selectedItems.push({title: this.idInput})
+        }
+        this.idInput = ''
+      },
+      onControlTargetItemDelete (index) {
+        this.selectedItems.splice(index, 1)
+      },
+      onControlTargetItemInputFocus () {
+        this.placeholder = '请输入内容，按回车键确定'
+      },
+      onControlTargetItemInputNotFocus () {
+        this.placeholder = ''
+      },
+      onKeyDown (value) {
+        debugger
       }
     }
   }

@@ -148,7 +148,13 @@ export default {
             //没有表单时，不需要渲染出必填样式
             metaField.required=false;
         }
-        this.overrideProps(metaField);
+        //默认不在批量编辑grid中
+        let inBatchEditor=false;
+        if(form){
+            //如果在form中，继承form的inBatchEditor属性
+            inBatchEditor=form.inBatchEditor;
+        }
+        this.overrideProps(metaField,inBatchEditor);
         var formItem=controlTypeService.buildFormItemByMetaField(metaField);
         formItem.componentParams=_.extend(formItem.componentParams,this.params);
         //构造字段描述
@@ -188,7 +194,6 @@ export default {
             }
         }
         return {
-            //innerVal:_innerVal,
             formItem:formItem,
             form:form,
             metaEntity:metaEntity,
@@ -201,7 +206,7 @@ export default {
     },
     methods:{
         //根据组件传递进来的参数，覆盖metaField的属性
-        overrideProps(metaField){
+        overrideProps(metaField,inBatchEditor){
             if(this.title){
                 metaField.title=this.title;
             }
@@ -210,6 +215,18 @@ export default {
             }
             if(this.inputType){
                 metaField.inputType=this.inputType;
+            }
+            //inBatchEditor为true，表示在批量编辑grid中，这时候因为grid的样式，需要将CheckboxGroup等转换为下拉框显示
+            let convertMap={
+                "RadioButton":"SingleSelect",
+                "CheckboxGroup":"MultiSelect"
+            }
+            if(inBatchEditor){
+                for (const key in convertMap) {
+                    if(metaField.inputType==key){
+                        metaField.inputType=convertMap[key];
+                    }
+                }
             }
         },
         componentName(formItem){

@@ -4,6 +4,7 @@
             :entity-name="entityName" 
             :record-id="currentRecordId" 
             :local-model="currentRow"
+            :in-batch-editor="true"
             @on-form-entity-changed="handleOnFormEntityChanged"
             @on-ref-selected-changed="handleOnRefSelectedChanged"
             >

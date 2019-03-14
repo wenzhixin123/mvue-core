@@ -16,12 +16,12 @@
                              v-for="(item,index) in selectedItems">{{item.title}}
                         </Tag>
                         <!--<Input v-if="formItem.componentParams.supportInput"-->
-                               <!--placeholder="请输入内容，按回车键确定"-->
-                               <!--style="width: 300px; border-width: 0px"-->
-                               <!--size="small"-->
-                               <!--@on-enter="onInputEnter"-->
-                               <!--@on-focus="onControlTargetItemInputFocus"-->
-                               <!--v-model="idInput"-->
+                        <!--placeholder="请输入内容，按回车键确定"-->
+                        <!--style="width: 300px; border-width: 0px"-->
+                        <!--size="small"-->
+                        <!--@on-enter="onInputEnter"-->
+                        <!--@on-focus="onControlTargetItemInputFocus"-->
+                        <!--v-model="idInput"-->
                         <!--&gt;</Input>-->
                         <input v-if="formItem.componentParams.supportInput"
                                v-model="idInput"
@@ -199,7 +199,9 @@
         var exData = {}
         var sIds = []
         if (_select_data.length) {
-          _this.selectedItems = []
+          if (!_this.selectedItems) {
+            _this.selectedItems = []
+          }
           _.each(_select_data, function (sitem) {
             var idField = _this.getIdField(sitem.refEntity)
             var titleField = _this.getTitleField(sitem.refEntity)

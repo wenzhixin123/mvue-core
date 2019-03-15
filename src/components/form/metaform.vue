@@ -66,6 +66,10 @@
             ignoreValidate:{//是否忽略验证
                 type:Boolean,
                 default:false
+            },
+            inBatchEditor:{//是否在批量编辑grid中
+                type:Boolean,
+                default:false
             }
         },
         watch:{

@@ -141,9 +141,9 @@
                 return;
             }
             this.prepare();
-            this.calBasePath();
+            let routeInfo=this.calComponentInRoute();
             let matchedMenu = this.getMatchedMenu();
-            if (matchedMenu == null) {
+            if (matchedMenu == null && routeInfo.index==this.$route.matched.length-1) {
                 let lm = this.localMenus[0];
                 while (lm.children && lm.children.length > 0) {
                     lm = lm.children[0];
@@ -155,14 +155,14 @@
             this.setActiveMenu(matchedMenu);
         },
         methods: {
-            calBasePath() {
-                var matchedRoute = context.componentInRoute(this);
-                if (!matchedRoute) {
+            calComponentInRoute() {
+                var routeInfo = context.componentInRouteInfo(this);
+                if (!routeInfo) {
                     this.basePath = this.$route.path;
                 }
-                var url = pathToRegexp.compile(matchedRoute.path)(this.$route.params);
+                var url = pathToRegexp.compile(routeInfo.route.path)(this.$route.params);
                 this.basePath = url;
-                return url;
+                return routeInfo;
             },
             setActiveMenu(matched) {//设置导航菜单选中
                 if (!matched) {

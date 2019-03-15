@@ -267,13 +267,14 @@ export default {
             this.setCurrentVue(appCtx.getCurrentVue());
         }
     },
-    componentInRoute(component){
+    componentInRouteInfo(component,withIndex){
         let idKey="_uid";
         var uid=component[idKey];
         if(!uid){
             return null;
         }
         var routes=component.$route.matched;
+        let index=-1;
         var matchedRoute=null;
         for(var i=routes.length-1;i>=0;i--){
             var route=routes[i];
@@ -288,10 +289,26 @@ export default {
                 }
             });
             if(matchedRoute){
+                index=i;
                 break;
             }
         }
-        return matchedRoute;
+        if(matchedRoute!=null){
+            return {
+                route:matchedRoute,
+                index:index
+            };
+        }else{
+            return null;
+        }
+
+    },
+    componentInRoute(component){
+        let routeInfo=this.componentInRouteInfo(component);
+        if(routeInfo==null){
+            return null;
+        }
+        return routeInfo.route;
     },
     visitComponents(com,process){
         if(com){

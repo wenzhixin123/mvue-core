@@ -114,7 +114,7 @@ export default {
             var btnOpts=null;
             var clickHandler=context.grid&&context.grid.handleOnTitleClick;
             if(clickHandler){
-                btnOpts={name:"edit"};
+                btnOpts={name:"edit",security:["find"]};
                 if(_.isFunction(clickHandler)){
                     btnOpts["onclick"]=clickHandler;
                 }else if(_.isString(clickHandler)) {
@@ -128,13 +128,16 @@ export default {
                     _.forEach(context.grid.toolbar.singleBtns,btn=>{
                         if(btn.name=="edit"){
                             btnOpts=btn;
+                            btnOpts=Object.assign(btnOpts,{
+                                security:["find"]
+                            });
                             return false;
                         }
                     });
                 }
             }
             if(btnOpts==null){
-                btnOpts={name:"edit"};
+                btnOpts={name:"edit",security:["find"]};
             }
             if(context.grid){
               btnOpts.entityName=context.grid.metaEntity.name;

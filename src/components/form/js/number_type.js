@@ -1,4 +1,4 @@
-
+var filesize = require('file-size');
 //定义基础组件:数字类型基础组件定义
 var numberTypes={
     NumberInput:{ 
@@ -26,6 +26,7 @@ var componentParams={
             digits:2//小数位数
         },
         allowNegative:false,//是否允许负数
+        formatter:"",
         unit:""//TODO 单位，显示的单位
     },
     Number:{
@@ -39,15 +40,39 @@ var componentParams={
             digits:2//小数位数
         },
         allowNegative:false,//是否允许负数
+        formatter:"",
         unit:""//TODO 单位，显示的单位
     }
 };
+const formatters={
+    bytes:{
+        format(bytesSize){
+            return filesize(bytesSize).human('jedec');
+        }
+    }
+}
 //判断是否数值类型组件
 function accept(componentType){
     return !!numberTypes[componentType];
 }
+function formatData(componentType,item,metaField){
+    let fieldName=metaField.name;
+    let origin=item[fieldName];
+    if(_.isNil(origin)||origin===''){
+        return "";
+    }
+    if(metaField.inputTypeParams&&metaField.inputTypeParams.formatter){
+        let fs=formatters[metaField.inputTypeParams.formatter];
+        if(fs){
+            return fs.format(origin);
+        }
+    }
+    return origin;
+}
 export default{
     types:numberTypes,
     componentParams:componentParams,
-    accept:accept
+    accept:accept,
+    formatData:formatData,
+    formatters
 }

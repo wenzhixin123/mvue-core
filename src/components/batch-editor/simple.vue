@@ -2,7 +2,7 @@
     <div class="m-simple-batch-editor" :style="{width: editorWidth+'px'}">
         <div class="toolbar" v-if="beginImport">
             <!-- <Button type="primary" size="small" icon="ios-document-outline" @click="doImport">保存</Button> -->
-            <div>总记录数{{items.length}}条,已导入{{items.length-total}}条;本次导入{{currentImported}}条,耗时{{ellapsedTime()}}毫秒</div>
+            <div>总记录数{{items.length}}条,已导入{{items.length-total-ignoredItems.length}}条;本次导入{{currentImported}}条,大约耗时{{ellapsedTime()}}</div>
         </div>
         <div class="header">
             <div class="header-item">错误信息</div>
@@ -11,6 +11,12 @@
         <div class="body">
             <div v-for="ci in currentItems" :key="ci.index" class="body-item">
                 <div class="body-item-input">
+                    <Tooltip placement="bottom-start" theme="light" v-if="ci.item[ci.item.length-1].e">
+                        <a href="javascript:void(0)"  class="ignore-btn">忽略</a>
+                        <div slot="content">
+                            <a title="忽略后本行数据将不再显示，并且不作导入，当导入都完成后可选择进入已忽略的数据列表" href="javascript:void(0)"  class="ignore-btn" @click="ignoreItem(ci)">确定忽略</a>
+                        </div>
+                    </Tooltip>
                     <div class="error" v-text="ci.item[ci.item.length-1].e" :title="ci.item[ci.item.length-1].e"></div>
                 </div>
                 <template v-for="(p,idx) in ci.item">
@@ -35,6 +41,7 @@
 </template>
 <script>
 import importService from "../../services/tool/import-service";
+import context from '../../libs/context';
 export default {
     props:{
         importId:{
@@ -67,9 +74,10 @@ export default {
     },
     data(){
         return {
-            innerItems:this.items,
-            otherInnerItems:this.items,
-            innerItemsSuccessFlag:{},
+            otherInnerItems:this.items,//未处理的总数据
+            innerItemsSuccessFlag:{},//每批次成功处理的记录
+            innerItemsIgnoredFlag:{},//被忽略的记录标记
+            ignoredItems:[],//被忽略的数据
             currentPage:1,
             currentItems:[],//[{index:0,item:['lijing','架构部',{error}]}]
             eachBatchSize:10,
@@ -77,7 +85,8 @@ export default {
             beginImport:false,
             startTime:null,
             endTime:null,
-            currentImported:0
+            currentImported:0,
+            importing:false//表示是否已经在导入了，避免重复点击
         };
     },
     computed:{
@@ -95,6 +104,10 @@ export default {
                 this.$Message.info('数据已全部导入成功，可重新导入其它数据');
                 return;
             }
+            if(this.importing){
+                return;
+            }
+            this.importing=true;
             this.startComputeEllapsedTime();
             let _otherInnerItems=this.otherInnerItems;
             let batches=Math.ceil(_otherInnerItems.length/this.eachBatchSize);
@@ -156,6 +169,9 @@ export default {
                     break;
                 }
             }
+            //所有批次导入完成后，清理标记数据
+            this.innerItemsSuccessFlag={};
+            this.importing=false;
         },
         //分页页码切换
         handleCurrentPageChange(currentPage){
@@ -169,7 +185,7 @@ export default {
             }
             this.doReload();
         },
-        buildCurrentItems(_otherInnerItems){
+        computeCurrentItems(_otherInnerItems){
             var currentPageSize=this.pageSize;
             if(this.$refs.pageRef){
                 currentPageSize=this.$refs.pageRef.currentPageSize;
@@ -179,7 +195,7 @@ export default {
             var end=start+currentPageSize;
 
             let otherInnerItems=_.filter(_otherInnerItems||this.otherInnerItems,(item,index)=>{
-                return !this.innerItemsSuccessFlag[index];
+                return !this.innerItemsSuccessFlag[index] && !this.innerItemsIgnoredFlag[index];
             })
             if(end>otherInnerItems.length){
                 end=otherInnerItems.length;
@@ -195,17 +211,45 @@ export default {
                     item:otherInnerItems[i]
                 });
             }
-            if(_citems.length==0){
-                this.$emit("on-all-succeessed");
-            }
             //设置未完成导入的剩余总数
             this.otherInnerItems=otherInnerItems;
             this.total=otherInnerItems.length;
             return _citems;
         },
-        doReload(_otherInnerItems){
-            let _citems=this.buildCurrentItems(_otherInnerItems);
+        reset(_citems){
             this.currentItems= _citems;
+            this.innerItemsIgnoredFlag={};
+        },
+        doReload(_otherInnerItems){
+            let _citems=this.computeCurrentItems(_otherInnerItems);
+            //当只有一条数据，并且被忽略需要特殊处理
+            if(_citems.length==0){
+                if(this.ignoredItems.length==0){
+                    this.$emit('on-all-succeessed');
+                    this.reset(_citems);
+                }else{
+                    context.confirm({
+                        okText:'显示忽略数据',
+                        cancelText:'完成导入',
+                        title: '提示',
+                        content: '导入已完成，是否显示所有已忽略的数据?',
+                        onOk: () => {
+                            this.currentPage=1;
+                            this.innerItemsSuccessFlag={};
+                            this.innerItemsIgnoredFlag={};
+                            _citems=this.computeCurrentItems(this.ignoredItems,true);
+                            this.ignoredItems=[];
+                            this.reset(_citems);
+                        },
+                        onCancel:()=>{
+                            this.$emit('on-all-succeessed');
+                            this.reset(_citems);
+                        }
+                    });
+                }
+            }else{
+                this.reset(_citems);
+            }
         },
         startComputeEllapsedTime(){
             this.startTime=new Date();
@@ -218,8 +262,29 @@ export default {
                 if(this.endTime<this.startTime){
                     this.endTime=new Date();
                 }
-                return this.endTime-this.startTime;
+                let duration = this.endTime-this.startTime;
+                if(duration<1000){
+                    return `${duration}毫秒`;
+                }else if(duration>=1000&&duration<60000){
+                    let s= new Number(duration/1000).toFixed(2);
+                    return `${s}秒`;
+                }else{
+                    let m= new Number(duration/(1000*60)).toFixed(2);
+                    return `${m}分钟`;
+                }
             }
+        },
+        ignoreItem({item,index}){
+            this.innerItemsIgnoredFlag[index]=true;
+            this.ignoredItems.push(item);
+            this.doReload();
+            // context.confirm({
+            //     title: '提示',
+            //     content: '忽略后本行数据将不再显示，并且不作导入，当导入都完成后可选择进入已忽略的数据列表，确定忽略吗?',
+            //     onOk: () => {
+                    
+            //     }
+            // });
         }
     }
 }
@@ -255,12 +320,18 @@ export default {
                 .control{
                     width:100%;
                 }
+                .ignore-btn{
+                    width:28px;
+                    vertical-align: middle;
+                }
                 .error{
                     word-break: keep-all;
                     white-space: nowrap;
                     overflow: hidden;
                     text-overflow: ellipsis;
                     width:120px;
+                    display: inline-block;
+                    vertical-align: middle;
                 }
             }
         }

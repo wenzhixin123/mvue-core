@@ -33,6 +33,7 @@ export default{
                     this.selectedItem=[];
                 }else{
                     this.selectedItem=null;
+                    this.commitRefData({});
                 }
             }
             if(!_.isEqual(newV,oldV)){
@@ -48,6 +49,17 @@ export default{
         });
     },
     methods:{
+        commitRefData(newSelectedItem){
+            //向metaForm的refEntities写入引用数据
+            var metaForm=this.getParentForm&&this.getParentForm();
+            if(metaForm&&this.formItem){
+                this.$store.commit("core/setFormRefEntities",{
+                    formId:metaForm.id,
+                    name:this.formItem.dataField,
+                    refEntity:newSelectedItem
+                });
+            }
+        },
         notifySelectedItemChanged(selectedOption){
             let newSelectedItem=selectedOption;
             this.addHistoryItems(newSelectedItem);
@@ -56,15 +68,7 @@ export default{
                 this.notifyMultipleSelect(newSelectedItem);
             }else{
                 this.notifySingleSelect(newSelectedItem);
-                //向metaForm的refEntities写入引用数据
-                var metaForm=this.getParentForm&&this.getParentForm();
-                if(metaForm&&this.formItem){
-                    this.$store.commit("core/setFormRefEntities",{
-                        formId:metaForm.id,
-                        name:this.formItem.dataField,
-                        refEntity:newSelectedItem
-                    });
-                }
+                this.commitRefData(newSelectedItem);
             }
         },
         handleOnSelectChange(selectedOption, id){
@@ -77,6 +81,7 @@ export default{
                 if(this.selectedItem==null && this.preselectFirst
                     && items && items.length>0){
                     this.selectedItem=items[0];
+                    this.commitRefData(this.selectedItem);
                 }
                 if(this.onEntitySelectInited){
                     this.onEntitySelectInited(this.selectedItem);
@@ -106,11 +111,12 @@ export default{
             }
         },
         getInitialValue(){
+            //如果外部传入了value值，用外部的值
             var initValue=this.value;
             if(initValue){
                 return initValue;
             }
-            //从topEntity来的条件
+            //如果当前引用实体，与topEntity设置的一致，则自动设置为topEntity的值
             if(this.formItem && this.isCreate() &&  this.formItem.componentParams){
                 let topEntity=topEntityService.get(this.formItem.componentParams.entityId);
                 if(topEntity){
@@ -120,6 +126,7 @@ export default{
             if(initValue){
                 return initValue;
             }
+            //top-entity-select和树列表控件，设置了默认的选中值
             if(this.entitySelectInitialValue){
                 initValue=this.entitySelectInitialValue();
             }
@@ -191,6 +198,7 @@ export default{
                         _this.selectedItem=items;
                     }else{
                         _this.selectedItem=items[0];
+                        _this.commitRefData(_this.selectedItem);
                     }
                 }
             });

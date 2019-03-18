@@ -98,11 +98,11 @@ export default {
             let metaField=this.metaField;
             let render=null;
             if (controlTypeService.isPictureUpload(metaField.inputType)) {
-                render = renderManager.renderForPictureUpload(null,metaField);
+                render = renderManager.renderForPictureUpload({},metaField);
             } else if (controlTypeService.isFileUpload(metaField.inputType)) {
-                render = renderManager.renderForFileUpload(null,metaField);
+                render = renderManager.renderForFileUpload({},metaField);
             } else {
-                render = renderManager.renderForCommon(null,metaField);
+                render = renderManager.renderForCommon({},metaField);
             }
             return render(h,params);
         }

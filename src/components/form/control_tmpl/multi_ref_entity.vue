@@ -57,8 +57,6 @@
                 </div>
             </div>
         </template>
-
-
         <Modal class="select-remote-entity-modal"
                v-model="selectRemoteEntityModal"
                width="800"
@@ -74,7 +72,6 @@
                                 :query-resource="refEntity.entityResource"
                                 :query-options="{'orderby':refEntity.orderbyField?`${refEntity.orderbyField} ${refEntity.orderbyType||''}`:'',filters:refEntity.filter?refEntity.filter:''}"
                                 :highlight-row="true"
-                                @on-current-change="singleSelectedChange"
                                 :toolbar="showToolbar(refEntity)"
                                 :columns="showColumns(refEntity)"
                                 :showIndex="false"
@@ -84,13 +81,13 @@
                 </Tabs>
             </div>
             <div slot="footer">
-                <button type="button" class="ivu-btn ivu-btn-text ivu-btn-large" @click="cancelSelectEntity">
+                <button type="button" class="ivu-btn ivu-btn-text ivu-btn-large"
+                        @click="selectRemoteEntityModal = false">
                     <span>取消</span></button>
                 <button type="button" class="ivu-btn ivu-btn-primary ivu-btn-large" @click="doSelect"><span>确定</span>
                 </button>
             </div>
         </Modal>
-
     </div>
 </template>
 <script>
@@ -98,6 +95,7 @@
   import controlBase from '../js/control_base'
   import metabase from '../../../libs/metadata/metabase'
   import metaservice from '../../../services/meta/metaservice'
+  import utils from '../js/utils'
 
   export default {
     mixins: [controlBase],
@@ -130,24 +128,17 @@
         localTab: '',
         refEntitys: [],//存入实体数据的操作resource
         selectRemoteEntityModal: false,
-        selectedItems: [],//已经选择的项
         dataItems: [],//远程获取的数据项
         cachedDataItems: null,//默认提示的可选数据
         idInput: '',
-        placeholder: '请输入内容，按回车键确定'
+        placeholder: '请输入内容，按回车键确定',
+        selectedItems: [],//已经选择的项
+        dataCommit: {},
+        sIds: []
       }
     },
-    computed: {
-      /*dataItemsMap:function(){
-          var idField=this.getIdField();
-          return _.keyBy(this.dataItems,idField);
-      }*/
-    },
-    watch: {
-      value: function (val) {
-        //this.setValue(val);
-      }
-    },
+    computed: {},
+    watch: {},
     mounted: function () {
     },
     methods: {
@@ -161,97 +152,18 @@
         }
         if (val) {
           _.each(val, (e, index) => {
-            _.each(this.refEntitys, (refEntity) => {
-              this.doSearch(refEntity, e, null, null, index)
-            })
-            /*if(this.model["_data"][this.formItem.dataField][e]){
-                this.selectedItems.push(Object.assign({id:e},this.model["_data"][this.formItem.dataField][e]))
-            }*/
+            var data = utils.findValueFromJSONByDeep(e, this.model._data)
+            if (data) {
+              var _item = {id: data.id, title: data.title, entityId: data.entityId}
+              this.addData(_item)
+            } else {
+              _.each(this.refEntitys, (refEntity) => {
+                // console.log('HXB', 'refEntity==', JSON.stringify(refEntity))
+                this.doSearch(refEntity, e, null, null, index)
+              })
+            }
           })
-        } else {
-          this.selectedItems = null
         }
-      },
-      getIdField: function (formItem) {
-        return formItem.idField
-      },
-      getTitleField: function (formItem) {
-        return formItem.titleField
-      },
-      cancelSelectEntity () {
-        //关闭对话框
-        this.selectRemoteEntityModal = false
-      },
-      doSelect: function () {
-        //点击选择实体数据
-        var _select_data = [], _this = this
-        _.each(this.refEntitys, (refEntity, index) => {
-          //选中数据
-          if (this.$refs[`refEntity_ref_${index}`] && this.$refs[`refEntity_ref_${index}`][0].checked) {
-            var checkedData = this.$refs[`refEntity_ref_${index}`][0].checked
-            _.each(checkedData, (data) => {
-              data.refEntity = refEntity
-            })
-            _select_data = _select_data.concat(checkedData)
-          }
-
-        })
-        var exData = {}
-        var sIds = []
-        if (_select_data.length) {
-          if (!_this.selectedItems) {
-            _this.selectedItems = []
-          }
-          _.each(_select_data, function (sitem) {
-            var idField = _this.getIdField(sitem.refEntity)
-            var titleField = _this.getTitleField(sitem.refEntity)
-            var sid = sitem[idField]
-            sIds.push(sid)
-            var _item = {id: sid, title: sitem[titleField], entityId: sitem.refEntity.entityId}
-            _this.selectedItems.push(_item)
-            var exDataItem = _item
-            exData[sid] = exDataItem
-          })
-          this.emitExData(exData)
-          this.$emit('input', sIds)
-        }
-        this.selectRemoteEntityModal = false
-      },
-      singleSelectedChange (value) {
-        this.localSelected = value && value.id
-      },
-      singleSelectedChangeForRemote (value) {
-        this.remoteSelected = value && value.id
-      },
-      showToolbar (item) {
-        return {
-          quicksearch: {
-            placeholder: '根据名称搜索',
-            fields: [item.titleField]
-          },
-          batchBtns: [{}]
-        }
-      },
-      showColumns (item) {
-        return [
-          {title: '名称', key: item.titleField, align: 'left'}
-        ]
-      },
-      emitExData: function (exData) {
-        this.$emit('exDataChanged', exData, this.formItem.dataField)
-      },
-      del (index) {
-        //删除单条数据
-        var exData = {}
-        var sIds = []
-        this.selectedItems.splice(index, 1)
-        _.each(this.selectedItems, function (item) {
-          sIds.push(item.id)
-          var exDataItem = item
-          exData[sid] = exDataItem
-        })
-        this.emitExData(exData)
-        this.$emit('input', sIds)
       },
       doSearch: function (refEntity, value, keyword, callback, index) {
         var _this = this
@@ -279,53 +191,120 @@
           }
         }
         if (refEntity.entityResource) {
+
           refEntity.entityResource.query(params)
             .then(function ({data}) {
-              //debugger
+
               if (data && data[0]) {
                 data = data[0]
                 var idField = _this.getIdField(refEntity)
                 var titleField = _this.getTitleField(refEntity)
                 var sid = data[idField]
                 var _item = {id: sid, title: data[titleField], entityId: refEntity.entityId}
-                _this.selectedItems[index] = _item
+                _this.addData(_item)
               } else {
                 //找不到数据-直接填充值
-                _this.selectedItems[index] = {
+                var _item = {
                   id: value,
                   title: value,
-                  entityId: refEntity.entityId
+                  entityId: ''
                 }
+                _this.addData(_item)
               }
               _this.$forceUpdate()
               callback && callback()
             }, function (erro) {
+
               //找不到数据-直接填充值
-              _this.selectedItems[index] = {
+              var _item = {
                 id: value,
                 title: value,
-                entityId: refEntity.entityId
+                entityId: ''
               }
+              _this.addData(_item)
             })
         }
       },
+      getIdField: function (formItem) {
+        return formItem.idField
+      },
+      getTitleField: function (formItem) {
+        return formItem.titleField
+      },
+      doSelect: function () {
+        //点击选择实体数据
+        var _select_data = [], _this = this
+        _.each(this.refEntitys, (refEntity, index) => {
+          //选中数据
+          if (this.$refs[`refEntity_ref_${index}`] && this.$refs[`refEntity_ref_${index}`][0].checked) {
+            var checkedData = this.$refs[`refEntity_ref_${index}`][0].checked
+            _.each(checkedData, (data) => {
+              data.refEntity = refEntity
+            })
+            _select_data = _select_data.concat(checkedData)
+          }
+        })
+        if (_select_data.length) {
+          _.each(_select_data, function (sitem) {
+            var idField = _this.getIdField(sitem.refEntity)
+            var titleField = _this.getTitleField(sitem.refEntity)
+            var sid = sitem[idField]
+            _this.addData({id: sid, title: sitem[titleField], entityId: sitem.refEntity.entityId})
+          })
+          this.emitData()
+        }
+        this.selectRemoteEntityModal = false
+      },
+      showToolbar (item) {
+        return {
+          quicksearch: {
+            placeholder: '根据名称搜索',
+            fields: [item.titleField]
+          },
+          batchBtns: [{}]
+        }
+      },
+      showColumns (item) {
+        return [
+          {title: '名称', key: item.titleField, align: 'left'}
+        ]
+      },
       onInputEnter () {
-        var _this = this
-        var has = false
+        var item = {
+          entityId: '',
+          id: this.guid(),
+          title: this.idInput
+        }
+        this.addData(item)
+        this.emitData()
+        this.idInput = ''
+      },
+      addData (data) {
+        // var item = {
+        //   entityId: '',
+        //   id: id,
+        //   title: this.idInput
+        // }
+        var _this = this, has = false
         for (var index in _this.selectedItems) {
           var item = _this.selectedItems[index]
-          if (item.title == this.idInput) {
+          if (item.title == data.title) {
             has = true
             break
           }
         }
         if (!has) {
-          this.selectedItems.push({title: this.idInput})
+          _this.selectedItems.push(data)
+          _this.dataCommit[data.id] = data
+          _this.sIds.push(data.id)
         }
-        this.idInput = ''
       },
       onControlTargetItemDelete (index) {
-        this.selectedItems.splice(index, 1)
+        //删除单条数据
+        var delItem = this.selectedItems.splice(index, 1)
+        this.sIds.splice(index, 1)
+        delete this.dataCommit[delItem[0].id]
+        this.emitData()
       },
       onControlTargetItemInputFocus () {
         this.placeholder = '请输入内容，按回车键确定'
@@ -333,8 +312,15 @@
       onControlTargetItemInputNotFocus () {
         this.placeholder = ''
       },
-      onKeyDown (value) {
-        debugger
+      emitData () {
+        this.$emit('exDataChanged', this.dataCommit, this.formItem.dataField)
+        this.$emit('input', this.sIds)
+      },
+      S4 () {
+        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1)
+      },
+      guid () {
+        return (this.S4() + this.S4() + '-' + this.S4() + '-' + this.S4() + '-' + this.S4() + '-' + this.S4() + this.S4() + this.S4())
       }
     }
   }

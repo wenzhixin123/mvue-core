@@ -66,13 +66,23 @@ export default {
             filters:null,
             queryOptions:null,
             defaultSort:null,
+            idInFilters:false,
             preprocessed:false
         }
     },
     methods:{
         handleBtnClick(){
+            //如果原始列表是勾选过的，用当前勾选的行进行批量编辑
+            let idInFilters=this.buildIdInFilters();
+            if(idInFilters){
+                this.idInFilters=idInFilters;
+                this.showDrawer=true; 
+                return;
+            }else{
+                this.idInFilters=false;
+            }
             let grid=this.widgetContext.grid;
-            let total=(grid&&grid.$refs.listInst&&grid.$refs.listInst.total)||0;
+            let total=(grid.$refs.listInst&&grid.$refs.listInst.total)||0;
             if(total>1000){
                 context.confirm({
                     title: '提示',
@@ -89,10 +99,14 @@ export default {
             let grid=this.widgetContext.grid;
             let queryCtx=grid.currentQueryCtx;
             let quickSearch=_.cloneDeep(grid.innerToolbar.quickSearch);
-            let filters=_.cloneDeep(queryCtx.filters);
-            let queryOptions=this.buildQueryOptions();
             this.quickSearch=quickSearch;
-            this.filters=filters;
+            let filters=_.cloneDeep(queryCtx.filters);
+            let queryOptions=null;
+            if(this.idInFilters){
+                queryOptions={filters:this.idInFilters};
+            }else{
+                queryOptions=this.buildQueryOptions();
+            }
             this.queryOptions=queryOptions;
             this.defaultSort=grid.innerSort;
             this.preprocessed=true;
@@ -145,6 +159,20 @@ export default {
                 }
             });
             return _columns;
+        },
+        buildIdInFilters(){
+            let grid=this.widgetContext.grid;
+            let selectedItems=grid.$refs.listInst&&grid.$refs.listInst.selectedItems;
+            if(!_.isEmpty(selectedItems)){
+                let idFieldName=grid.metaEntity.getIdField().name;
+                let ids=[];
+                selectedItems.forEach(item => {
+                    ids.push(item[idFieldName]);
+                });
+                return `${idFieldName} in ${ids.join(",")}`;
+            }else{
+                return false;
+            }
         }
     }
 }

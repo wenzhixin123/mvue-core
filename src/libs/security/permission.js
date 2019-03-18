@@ -50,6 +50,9 @@ function hasPerm(op,metaEntityName) {
         if(entityOps==null){
             return false;
         }
+        if(_.has(entityOps,"*")){
+            return true;
+        }
         return _.has(entityOps,op);
     }
     return false;

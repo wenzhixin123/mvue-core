@@ -112,7 +112,7 @@ export default {
         //通过数据id获取引用实体数据的title语义数据，供显示使用
         getEntityExData(id){
             if(!id){
-                return '';
+                return Promise.resolve('');
             }
             var metaEntity=this.context.metaEntity;
             var targetTitleField=this.getTitleField();

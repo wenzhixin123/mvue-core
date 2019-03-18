@@ -143,7 +143,6 @@ export default {
               btnOpts.entityName=context.grid.metaEntity.name;
             }
             var oper=gridOperations.create(btnOpts);
-
             return h("m-grid-link-title", {
                 props: {
                     item: params.row,

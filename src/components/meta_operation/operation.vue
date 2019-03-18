@@ -103,7 +103,7 @@ export default {
                         needPerm=needPerm.substring(needPerm.indexOf(":")+1);
                     }
                     _.forEach(itemPermOps,(permOp)=>{
-                        if(needPerm.toLowerCase()==permOp.toLowerCase()){
+                        if(permOp=="*" ||needPerm.toLowerCase()==permOp.toLowerCase()){
                             opMatch=true;
                             return false;
                         }

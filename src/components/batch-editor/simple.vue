@@ -27,7 +27,7 @@
             </div>
         </div>
         <div class="footer">
-            <Page ref="pageRef"
+            <Page ref="pageRef" transfer
                 :total="total"
                 :current.sync="currentPage"
                 :page-size="pageSize"

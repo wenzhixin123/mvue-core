@@ -14,6 +14,7 @@
             class="grid-drawer-con"
         >
             <m-batch-editor v-if="preprocessed"
+                :id="id"
                 :default-sort="defaultSort"
                 :query-options="queryOptions"
                 :filters="filters"
@@ -54,6 +55,7 @@ export default {
         let entityName=grid.metaEntity.name;
         let columns=this.buildColumns();
         return {
+            id:grid.id?`${grid.id}-batch-editor`:null,
             showDrawer:false,
             styles:{
                 height: 'calc(100% - 55px)',
@@ -148,6 +150,7 @@ export default {
                     let _col={
                         key:col.key,
                         title:col.title,
+                        hidden:col.hidden,
                         width:250
                     };
                     props.forEach(prop => {

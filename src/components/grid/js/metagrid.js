@@ -16,6 +16,7 @@ function metaFieldToCol(context,metaField,initialCol) {
     _metaField: metaField,
     fixed:metaField.fixed,
     align:metaField.align,
+    hidden:!!metaField.hidden
   };
   if(metaField.width){
     col.width=metaField.width;

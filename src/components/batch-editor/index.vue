@@ -9,6 +9,7 @@
             @on-ref-selected-changed="handleOnRefSelectedChanged"
             >
             <m-grid ref="grid"
+                :id="id"
                 :entity-name="entityName" 
                 :toolbar="toolbar" 
                 :columns="columns"
@@ -21,7 +22,7 @@
                 :show-row-status="true"
                 :show-selection="false"
                 :show-refresh-btn="false"
-                :show-config-columns-btn="false"
+                :show-config-columns-btn="true"
                 :status-column-fixed="statusColumnFixed"
                 :operation-column-fixed="operationColumnFixed"
                 :index-column-fixed="indexColumnFixed"
@@ -107,6 +108,9 @@ export default {
         },
         defaultSort: {//默认排序设置{key:'',order:'desc'}
             type: Object
+        },
+        id:{//用来唯一标志一个列表，用于存储列表的配置数据key，如配置列数据本地存储的key
+            type:String
         }
     },
     data(){

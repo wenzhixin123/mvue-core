@@ -71,7 +71,19 @@ export default {
     },
     methods:{
         handleBtnClick(){
-            this.showDrawer=true;
+            let grid=this.widgetContext.grid;
+            let total=(grid&&grid.$refs.listInst&&grid.$refs.listInst.total)||0;
+            if(total>1000){
+                context.confirm({
+                    title: '提示',
+                    content: '当前数据超过1000条，是否继续进行批量编辑?',
+                    onOk: () => {
+                        this.showDrawer=true;
+                    }
+                });
+            }else{
+               this.showDrawer=true; 
+            }
         },
         init(){
             let grid=this.widgetContext.grid;

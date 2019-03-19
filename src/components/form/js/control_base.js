@@ -154,7 +154,7 @@ export default {
                     });
                 }
             }
-            return _.isArray(id)?[]:'';
+            return Promise.resolve(_.isArray(id)?[]:'');
         },
         isCreate(){//判断当前表单是否为新建模式
             if(this.context

@@ -25,6 +25,7 @@ import vgrid from './components/v-grid/index';
 import vform from './components/v-form/index';
 import layout from './components/meta-layout/index';
 import page from './components/meta-page/index';
+import pageTmpl from './components/meta-page/tmpl/index';
 import mfield from './components/form/metafield';
 import mform from './components/form/metaform';
 import detailView from "./components/detail-view/index";
@@ -176,6 +177,7 @@ const mComponents={
     'm-v-form':vform,
     'm-layout':layout,
     'm-page':page,
+    'm-page-tmpl':pageTmpl,
     'm-simple-tree':simpleTree,
     'm-expand':mExpand,
     'm-confirm':mConfirm,

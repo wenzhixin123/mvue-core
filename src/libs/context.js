@@ -57,6 +57,7 @@ function initWebContext(location) {
 }
 
 export default {
+    appCtx:null,
     init: function (Vue, opts) {
         cachedContext.Vue = Vue;
         cachedContext.eventBus = new Vue();
@@ -224,6 +225,7 @@ export default {
         return cachedContext.mvueComponents;
     },
     initAfterAppCtxCreated(appCtx){
+        this.appCtx=appCtx;
         if(appCtx.getMvueToolkit){
             cachedContext.mvueToolkit=appCtx.getMvueToolkit();
         }

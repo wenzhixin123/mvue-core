@@ -345,6 +345,19 @@ export default{
                 return _expand;
             }
             return '';
+        },
+        buildDefaultOrderBy(){
+            let entityName=this.formItem.componentParams.entityId;
+            if(!entityName){
+                return null;
+            }
+            let metaEntity=this.$metaBase.findMetaEntity(entityName);
+            let updatedAtField = metaEntity.firstSemanticsField("updatedAt");
+            let orderby = null;
+            if (updatedAtField && updatedAtField.sortable) {//实体有更新时间字段，则按照更新时间降序排列
+                orderby =`${updatedAtField.name} desc`;
+            }
+            return orderby;
         }
     }
 }

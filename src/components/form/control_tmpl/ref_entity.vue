@@ -83,6 +83,8 @@ export default {
             if(this.formItem.componentParams.orderbyField){
                 let orderbyType=this.formItem.componentParams.orderbyType||'asc';
                 params.orderby=`${this.formItem.componentParams.orderbyField} ${orderbyType}`;
+            }else{
+                params.orderby=this.buildDefaultOrderBy();
             }
         },
         getIdField:function(){

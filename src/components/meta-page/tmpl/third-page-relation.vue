@@ -60,6 +60,7 @@
         });
         this.ready = true;
       } catch (e) {
+        console.error(e);
         this.errorObj.has = true;
         this.errorObj.message = e;
       }

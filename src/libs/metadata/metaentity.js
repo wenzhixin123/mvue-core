@@ -336,7 +336,7 @@ export default function (options) {
         if (page == null && ui.pages != null) {
             page = ui.pages[pageKey];
         }
-        return page;
+        return _.cloneDeep(page);
     }
 
     metaEntity.getRelationUI = async function (relationName) {
@@ -359,7 +359,7 @@ export default function (options) {
             if(!page && relationUI.pages){
                 page=relationUI.pages[pageKey];
             }
-            return page;
+            return _.cloneDeep(page);
         }
         return null;
     }

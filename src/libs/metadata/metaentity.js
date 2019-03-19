@@ -277,7 +277,6 @@ export default function (options) {
         if (this.ui == "none") {
             throw Error(`ui for entity(${this.name}) is disabled`);
         }
-        var promise = Promise.resolve();
         if (_.isString(this.ui)) {
             var resource = this.dataResource();
             return resource.ui().then(({data}) => {
@@ -305,7 +304,7 @@ export default function (options) {
                 return this.ui;
             })
         }
-        return promise.then(() => this.ui);
+        return Promise.resolve(this.ui);
     }
 
     metaEntity.getFormSettings = function (formType) {

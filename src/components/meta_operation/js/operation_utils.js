@@ -139,7 +139,7 @@ var utils = {
         } else if (prop.type == 'script') {
           let _script = prop.script//执行的代码
           //let _props = _script.match(/\{\{(.+?)\}\}/g);//解析需要提取的参数
-          let _props = _script.match(/com.\w*.\w*/g)
+          let _props = _script.match(/com\.((.)*?)\.\w*/g)
           let _vals = []
           _.each(_props, (_prop) => {
             let __props = _prop.split('.')
@@ -159,7 +159,7 @@ var utils = {
             }
             _vals.push(_prop_val)//添加匹配到的值
           })
-          var test = /com.\w*.\w*/g/*/\{\{(.+?)\}\}/g*/, _vals_index = -1
+          var test = /com\.((.)*?)\.\w*/g/*/\{\{(.+?)\}\}/g*/, _vals_index = -1
           urlParam[key] = _script.replace(test, function ($0, $1, $2, $3) {
             _vals_index += 1
             return _vals[_vals_index]

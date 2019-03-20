@@ -42,6 +42,9 @@ import cancelEdit from "./grid/cancel-edit";
 manager.register(cancelEdit);
 import saveRow from "./grid/save-row";
 manager.register(saveRow);
+//一对多，选择多的数据关联
+import associate from "./grid/associate";
+manager.register(associate);
 
 // 表单操作
 import cancel from "./form/cancel";

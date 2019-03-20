@@ -15,6 +15,7 @@ import gridRowStatus from './components/grid/column-render/row-status';
 import gridImportData from './components/grid/import_data.vue';
 import gridBatchEditor from './components/grid/batch-editor';
 import batchEditorFillData from './components/batch-editor/fill-data';
+import gridAssociate from './components/grid/associate';
 
 import operation from './components/meta_operation/operation';
 
@@ -145,6 +146,7 @@ const gridInnerComponents={
     'm-grid-import-data':gridImportData,
     'm-grid-batch-editor':gridBatchEditor,
     'm-batch-editor-fill-data':batchEditorFillData,
+    'm-grid-associate':gridAssociate,
     'meta-operation':operation,
     'm-operation':operation
 };

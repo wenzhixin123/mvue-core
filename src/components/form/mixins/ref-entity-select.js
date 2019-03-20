@@ -28,6 +28,20 @@ export default {
         },
         getTitleField:function(){
             return this.formItem.componentParams.titleField;
+        },
+        title(item){
+            let titleFieldName=this.getTitleField();
+            let titleField=this.$metaBase.findMetaEntity(this.entityName).findField(titleFieldName);
+            let r=titleField.manyToOneRelation;
+            //如果是标题字段是多对一关系字段，使用展开的关系实体的标题显示，而不是id
+            if(r){
+                let name=r.name;
+                if(item[name]){
+                    let targetEntityTitleFieldName=this.$metaBase.findMetaEntity(r.targetEntity).firstTitleField().name;
+                    return item[name][targetEntityTitleFieldName];
+                }
+            }
+            return item[titleFieldName];
         }
     }
 }

@@ -18,9 +18,9 @@
             </div>
             <div class="ref-entity-list-body">
                 <template v-if="multiple&&selectedItem">
-                    <Tag color="success" v-for="item in selectedItem" :key="item[getIdField()]">{{item[getTitleField()]}}</Tag>   
+                    <Tag color="success" v-for="item in selectedItem" :key="item[getIdField()]">{{title(item)}}</Tag>   
                 </template>
-                <Tag color="success" v-if="(!multiple)&&selectedItem">{{selectedItem[getTitleField()]}}</Tag>   
+                <Tag color="success" v-if="(!multiple)&&selectedItem">{{title(selectedItem)}}</Tag>   
             </div>
         </Col>
     </Row>

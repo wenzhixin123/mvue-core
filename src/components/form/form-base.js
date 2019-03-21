@@ -96,6 +96,10 @@ export default {
         },
         localModel:{//默认情况下，编辑模式会通过recordId远程获取实体数据，但是指定了localModel参数后，将使用localModel代替远程数据初始化表单模型
             type:Object
+        },
+        forceViewWhenDeny:{//是否在表单数据没有编辑权限时，自动修改为forceView查看模式
+            type:Boolean,
+            default:false
         }
     },
     data(){
@@ -124,7 +128,8 @@ export default {
                 editBtns:this.wrapBtns(this.toolbar&&this.toolbar.editBtns,formStatus),
                 viewBtns:this.wrapBtns(this.toolbar&&this.toolbar.viewBtns,formStatus)
             },
-            createAnother:false//是否继续创建模式
+            createAnother:false,//是否继续创建模式
+            hasEditPerm:true//是否有编辑权限
         };
     },
     computed:{
@@ -138,6 +143,12 @@ export default {
             //外部指定强制查看模式或者已归档
             if(this.forceView||this.isArchived){
                 return true;
+            }
+            //指定没有编辑权限时，自动改为forceView查看模式
+            if(this.forceViewWhenDeny){
+                if(!this.hasEditPerm){
+                    return true;
+                }
             }
             if(this.$route.action=="view"){
                 return true;

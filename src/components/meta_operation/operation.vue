@@ -94,26 +94,7 @@ export default {
             }
             var selectedItem=ctx.selectedItem;
             if(selectedItem && selectedItem["__ops__"]){
-                //进行行级数据权限判断
-                var itemPermOps=selectedItem["__ops__"];
-                var matched=true;
-                _.forEach(optNeedPerm,(needPerm)=>{
-                    var opMatch=false;
-                    if(needPerm.indexOf(":")>0){
-                        needPerm=needPerm.substring(needPerm.indexOf(":")+1);
-                    }
-                    _.forEach(itemPermOps,(permOp)=>{
-                        if(permOp=="*" ||needPerm.toLowerCase()==permOp.toLowerCase()){
-                            opMatch=true;
-                            return false;
-                        }
-                    });
-                    if(!opMatch){
-                        matched=false;
-                        return false;
-                    }
-                });
-                hasPermission=matched;
+                hasPermission=sc.hasRowPerm(selectedItem,optNeedPerm);
             }else{
                 //功能级权限数据判断
                 hasPermission=sc.hasPerm(optNeedPerm);

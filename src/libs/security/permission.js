@@ -62,6 +62,7 @@ export  default {
     init:function () {
        return init();
     },
+    //实体操作权限判断
     hasPerm:function (op,metaEntity) {
         if(!_.isArray(op)){
             return hasPerm(op,metaEntity);
@@ -75,6 +76,42 @@ export  default {
             }
         });
         return result;
+    },
+    /** 行级数据权限判断
+     *  @param entityData 实体的一条数据记录
+     *  @param permsArray 单个权限或者权限数组，需要判断的权限 'edit' 或者 ['edit','create']
+     */
+    hasRowPerm(entityData,permsArray){
+        let hasPermission=false;
+        //
+        if(!_.isArray(permsArray)){
+            permsArray=[permsArray];
+        }
+        if(entityData && entityData["__ops__"]){
+            //进行行级数据权限判断
+            var itemPermOps=entityData["__ops__"];
+            var matched=true;
+            _.forEach(permsArray,(needPerm)=>{
+                var opMatch=false;
+                if(needPerm.indexOf(":")>0){
+                    needPerm=needPerm.substring(needPerm.indexOf(":")+1);
+                }
+                _.forEach(itemPermOps,(permOp)=>{
+                    if(permOp=="*" ||needPerm.toLowerCase()==permOp.toLowerCase()){
+                        opMatch=true;
+                        return false;
+                    }
+                });
+                if(!opMatch){
+                    matched=false;
+                    return false;
+                }
+            });
+            hasPermission=matched;
+        }else{//没有权限数据，默认为有权限
+            hasPermission=true;
+        }
+        return hasPermission;
     }
 }
 

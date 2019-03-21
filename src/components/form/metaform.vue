@@ -35,6 +35,7 @@
     import initByMetadata from './init-by-metadata';
     import formBase from './form-base';
     import contextHelper from "../../libs/context";
+    import sc from '../../libs/security/permission';
     export default {
         name: 'mForm',
         mixins:[formBase],
@@ -202,6 +203,8 @@
                     p=this.dataResource.get({id: this.entityId,expand:expand})
                 }
                 return p.then(({data})=> {
+                    let hasEditPerm=sc.hasRowPerm(data,'edit');
+                    this.hasEditPerm=hasEditPerm;
                     this.firstEntityData=data;
                     this.$store.commit("core/setEntity",{entityName:this.entityName,entity:data});
                     //根据实体记录数据初始化操作权限

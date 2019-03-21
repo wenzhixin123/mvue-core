@@ -1,5 +1,6 @@
 import ExportCsv from "../../../grid/js/export_csv";
 import contextHelper from "../../../../libs/context";
+import queryByBatches from "../../../../libs/query-by-batches";
 import metabase from "../../../../libs/metadata/metabase";
 import toolServices from '../../../../services/tool/tool_service';
 import controlTypeService from '../../../form/js/control_type_service';
@@ -54,6 +55,7 @@ function formatData(context,data){
     }
     return formattedData.join('\r\n');
 }
+
 function impl(context,$optInst){
     var grid=context.grid;
     if(!grid){
@@ -64,27 +66,17 @@ function impl(context,$optInst){
         title: '提示',
         content: '是否导出当前列表所有数据?',
         onOk: () => {
-            let ctx=_.cloneDeep(grid.currentQueryCtx),_p=null;
+            let ctx=_.cloneDeep(grid.currentQueryCtx);
+            let _resource=grid.queryResource;
+            let _query=null;
             ctx.currentPage=1;
-            ctx.currentPageSize=grid.maxExportSize;
+            ctx.currentPageSize=grid.$refs.listInst.total;
             if(grid.query){//外部指定了query，用外部的
-                _p=grid.query(ctx,grid.queryResource);
-            }else{
-                //外部指定了查询地址，由此地址构造查询resource
-                let _resource=grid.queryResource;
-                if(grid.queryUrl){
-                    _resource=contextHelper.buildResource(grid.queryUrl);
-                }
-                //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
-                _p= contextHelper.getMvueComponents().leapQueryConvertor.exec(_resource,ctx,(params)=>{
-                    grid.beforeQuery&&grid.beforeQuery(params);
-                });
+                _query=grid.query;
+            }else if(grid.queryUrl){
+                _resource=contextHelper.buildResource(grid.queryUrl);
             }
-            _p.then(({data,total})=>{
-                if(total>grid.maxExportSize){
-                    contextHelper.warning({content:`已超过最大导出数据量${grid.maxExportSize}`});
-                    return;
-                }
+            queryByBatches.exec(grid,ctx,grid.maxLocalSize,_resource,_query).then(({data,total})=>{
                 if(total==0){
                     contextHelper.warning({content:`数据为空，请确定所导出的数据源是否正确或者重设查询条件再导出`});
                     return;

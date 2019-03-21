@@ -46,6 +46,7 @@
 </template>
 <script>
 import globalContext from '../../libs/context';
+import queryByBatches from '../../libs/query-by-batches';
 import rowMeta from '../form/js/row-meta';
 const uuidv1 = require('uuid/v1');
 var dayjs = require("dayjs");
@@ -72,7 +73,7 @@ export default {
         },
         maxLocalSize:{
             type:Number,
-            default:100
+            default:1000
         },
         pageSize: {//每页条数
             type: Number,
@@ -355,24 +356,8 @@ export default {
             let refGrid=this.$refs.grid;
             //如果总数大于maxLocalSize设置的100，由于expand限制只能100，所以此时应该分批次获取数据合并
             if(ctx.localPagerSecondLoad){
-                let pSize =ctx.currentPageSize;
-                let pages=Math.ceil(pSize/this.maxLocalSize);
-                let pagesSize=[],batchPromises=[];
-                for(let i=0;i<pages;++i){
-                    let __ctx=_.cloneDeep(ctx);
-                    __ctx.currentPage=i+1;
-                    __ctx.currentPageSize=this.maxLocalSize;
-                    batchPromises.push(globalContext.getMvueComponents().leapQueryConvertor.exec(_resource,__ctx,(params)=>{
-                        refGrid.beforeQuery&&refGrid.beforeQuery(params);
-                    }));
-                }
                 return new Promise((resolve,reject)=>{
-                    Promise.all(batchPromises).then((dataAll)=>{
-                        let listData={data:[],total:0};
-                        dataAll.forEach(item => {
-                            listData.data=listData.data.concat(item.data);
-                            listData.total=item.total;
-                        });
+                    queryByBatches.exec(refGrid,ctx,refGrid.maxLocalSize,_resource).then(listData=>{
                         this.rebuildLocalListData(listData);
                         resolve(listData);
                     },(err)=>{

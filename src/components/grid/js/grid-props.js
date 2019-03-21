@@ -149,9 +149,9 @@ export default{
             type:Boolean,
             default:false
         },
-        maxLocalSize:{
+        maxLocalSize:{//这里用来限制leap expand 1000条数据的限制，一次性查询至多1000条数据
             type:Number,
-            default:500
+            default:1000
         },
         batchEditorMode:{//是否批量编辑模式
             type:Boolean,
@@ -159,10 +159,6 @@ export default{
         },
         externalLocalPagerData:{//本地分页的外部数据
             type:Array
-        },
-        maxExportSize:{//可允许的最大导出数据量
-            type:Number,
-            default:10000
         }
     }
 }

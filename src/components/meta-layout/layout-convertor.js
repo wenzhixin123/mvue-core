@@ -32,14 +32,9 @@ function parseProps(layout,curInst){
         if(isInMForm&&indexOrKey=="pageTitleTmpl"){
             return;
         }
-        if(_.isString(itemNode) && itemNode.indexOf("${")>-1){
-            let compiled=_.template(itemNode);
-            try{
-                let newVal=compiled(evalContext);
-                parent[indexOrKey]=newVal;
-            }catch(e){
-                console.log(e);
-            }
+        if(_.isString(itemNode)){
+            let newVal=evalTemplate(itemNode,evalContext);
+            parent[indexOrKey]=newVal;
             return;
         }
         if(itemNode.value&&itemNode.value.from){
@@ -59,6 +54,30 @@ function parseProps(layout,curInst){
             }
         }
     });
+}
+
+function evalTemplate(tpl,evalContext) {
+    let newVal=tpl;
+    if(tpl.indexOf("${")>-1 || tpl.indexOf("<%")>-1){
+        let compiled=_.template(tpl);
+        try{
+            newVal=compiled(evalContext);
+        }catch(e){
+            console.log(e);
+        }
+    }else if(tpl.indexOf("{{")>-1){
+        let bak=_.templateSettings.interpolate;
+        try{
+            _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+            let compiled=_.template(tpl);
+            newVal=compiled(evalContext);
+        }catch(e){
+            console.log(e);
+        }finally {
+            _.templateSettings.interpolate=bak;
+        }
+    }
+    return newVal;
 }
 
 /**

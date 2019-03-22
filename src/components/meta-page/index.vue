@@ -43,6 +43,12 @@ export default {
                 return {layout:[]};
             }
         },
+        layout:{
+          type:Array,
+          default(){
+            return null;
+          }
+        },
         errorObj:{
             type:Object,
             default(){
@@ -99,6 +105,9 @@ export default {
         }
     },
     data:function(){
+        if(this.layout!=null && this.layout.length>0){
+          this.pageSettings.layout=this.layout;
+        }
         return {
             title:this.header&&this.header.title
         };

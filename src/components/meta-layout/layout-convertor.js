@@ -5,9 +5,13 @@ function convertSettings(_settings,curInst,options){
     var temp=null;
     //对于只有一个组件的情况，自动转换为一列一行的布局
     if(_settings.ctype){
-        temp = {
-            layout:[_settings]
-        };
+        if(_settings.ctype=="m-page"){
+            temp=_settings;
+        }else{
+            temp = {
+                layout:[_settings]
+            };
+        }
     }else if(_settings.layout&&_settings.layout.ctype){//只有一个组件，并且用layout套起来的
         temp = {
             layout:[_settings.layout]

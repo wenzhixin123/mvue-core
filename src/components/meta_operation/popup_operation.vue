@@ -16,9 +16,9 @@
             :mask-closable="false"
             >
             <div class="modal-inner-widget" :style="{height:modalHeight+'px'}" v-if="popupWidgetModal">
-                <component v-if="!isMetaLayout()" @popup-close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
+                <component v-if="!isLayout" @popup-close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
                 </component>
-                <meta-layout v-if="isMetaLayout()" :layout="metaLayoutSettings()" @popup-close="close">
+                <meta-layout v-if="isLayout&&layoutSettings" :layout="layoutSettings" @popup-close="close">
                 </meta-layout>
             </div>
             <div slot="footer" :id="footerDomId"></div>
@@ -27,6 +27,7 @@
 </template>
 <script>
 import metaLayoutConvertor from '../meta-layout/layout-convertor';
+import context from '../../libs/context';
 const uuidv1 = require('uuid/v1');
 export default {
     props:{
@@ -41,14 +42,20 @@ export default {
     },
     data(){
         let footerDomId='footerid-'+uuidv1();
+        let isLayout=this.isMetaLayout();
         return {
             modalWidth:this.operation.modalWidth||750,
             modalHeight:this.operation.modalHeight||380,
             modalTitle:this.operation.modalTitle||this.operation.title,
             popupWidgetModal:false,
             footerDomId:footerDomId,
-            isPopup:true
+            isPopup:true,
+            isLayout:isLayout,
+            layoutSettings:null
         };
+    },
+    mounted(){
+        this.getLayoutSettings();
     },
     methods:{
         toggleModal(){
@@ -63,17 +70,46 @@ export default {
         },
         isMetaLayout(){
             var widget=this.operation.widget;
+            let url=this.operation.url;
             if(_.startsWith(widget,"/pages/")){
+                return true;
+            }
+            //jmms实体配置的key，如view
+            if(url){
                 return true;
             }
             return false;
         },
-        metaLayoutSettings(){
-            var widget=this.operation.widget;
-            var autoPageConfs=this.$store.getters['core/autoPageConfs'];
-            var settings=_.cloneDeep(autoPageConfs[widget]);
-            settings= metaLayoutConvertor.convert(settings,this,{isPopup:true});
-            return settings.layout;
+        async getLayoutSettings(){
+            let settings=null;
+            let widget=this.operation.widget;
+            let url=this.operation.url;
+            if(widget){
+                let autoPageConfs=this.$store.getters['core/autoPageConfs'];
+                settings=_.cloneDeep(autoPageConfs[widget]);
+                if(_.isEmpty(settings)){
+                    context.error({
+                        title:'配置错误',
+                        content:`key为${widget}的页面部件不存在`
+                    });
+                }
+            }else if(url){
+                let metaEntity=this.widgetContext.metaEntity;
+                if(url.startsWith('./')){
+                    url=url.substring(url.indexOf('./')+2);
+                }
+                settings=await metaEntity.getPage(url);
+                if(_.isEmpty(settings)){
+                    context.error({
+                        title:'配置错误',
+                        content:`实体${metaEntity.name},key为${url}的页面部件不存在`
+                    });
+                };
+            }
+            if(!_.isEmpty(settings)){
+                settings= metaLayoutConvertor.convert(settings,this,{isPopup:true});
+                this.layoutSettings=settings.layout;
+            }
         }
     }
 }

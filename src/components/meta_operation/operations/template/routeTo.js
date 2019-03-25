@@ -15,17 +15,6 @@ var operation= {
     selectedItem:null,
     onclick:function(context,$optInst) {
         return impl(context,$optInst);
-    },
-    onBuild:function (inst) {
-        if(inst.selectedItem=="one"){
-            inst["disabled"]=function (ctx) {
-                return !(ctx.selectedItems && ctx.selectedItems.length ==1);
-            }
-        }else if(inst.selectedItem=="multi"){
-            inst["disabled"]=function (ctx) {
-                return !(ctx.selectedItems && ctx.selectedItems.length >0);
-            }
-        }
     }
 };
 //operation[contextHelper.getMvueToolkit().utils.dataPermField]=contextHelper.getMvueToolkit().utils.permValues.create;

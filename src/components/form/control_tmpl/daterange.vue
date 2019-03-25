@@ -65,6 +65,9 @@ export default {
             }else if(this.controlTypeService.datePrecision.month===datePrecision){
                 _dleft=`${newDate[0]}-01`;
                 _dright=`${newDate[1]}-01`;
+            }else{
+                _dleft=newDate[0];
+                _dright=newDate[1];
             }
             _dleft=dayjs(_dleft);
             _dright=dayjs(_dright);

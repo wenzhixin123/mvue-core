@@ -16,7 +16,8 @@ function getStorageClient(){
 }
 function upload(file,options){
     let storageClient=getStorageClient();
-    let apiBaseUrl=getApiBaseUrl();
+    //let apiBaseUrl=getApiBaseUrl();
+    let apiBaseUrl="";
     options=options||{baseUrl:apiBaseUrl};
     return new Promise((resolve,reject)=>{
         //执行上传

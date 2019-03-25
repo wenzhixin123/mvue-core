@@ -14,6 +14,7 @@ var operation= {
     handler:null,
     security:["delete"],
     entitySecurity:true,
+    to:null,
     disabled:function (ctx) {
         if(ctx.isGrid){
             return !(ctx.selectedItems && ctx.selectedItems.length === 1);
@@ -26,27 +27,44 @@ var operation= {
 };
 //operation[contextHelper.getMvueToolkit().utils.dataPermField]=contextHelper.getMvueToolkit().utils.permValues.create;
 
-function impl(context,$optInst){
-    var id=gridUtils.getIdFromContext(context);
-    if(!id){
-        contextHelper.error({content:`当前数据id未设置`});
+function impl(context,$optInst) {
+    var id = gridUtils.getIdFromContext(context);
+    if (!id) {
+        contextHelper.error({content: `当前数据id未设置`});
         return;
     }
-    var metaEntity=context.metaEntity;
-    var handler=gridUtils.buildDeleteHandler($optInst.operation,context.grid,metaEntity);
+    var metaEntity = context.metaEntity;
+    var handler = gridUtils.buildDeleteHandler($optInst.operation, context.grid, metaEntity);
 
     contextHelper.confirm({
         title: '提示',
         content: '确定删除吗?',
         onOk: () => {
             //,cascade_delete:true
-            handler({id:id},null,{onError:function (error) {
-                    return onFailed(error,{id:id,metaEntity:metaEntity});
-                }}).then(function (re) {
+            handler({id: id}, null, {
+                onError: function (error) {
+                    return onFailed(error, {id: id, metaEntity: metaEntity});
+                }
+            }).then(function (re) {
+                let router = null;
+                if ($optInst && $optInst.operation) {
+                    router = gridUtils.buildRouteToFromOp($optInst.operation);
+                }
+                if(router!=null){
+                    router=_.merge({
+                        params:{
+                            entityName:context.metaEntity && context.metaEntity.name,
+                            id:gridUtils.getIdFromContext(context)
+                        },
+                        query:gridUtils.buildQuery(context)
+                    },router);
+                    gridUtils.goto(router);
+                    return;
+                }
                 //如果是grid列表的操作，刷新列表
-                context.grid&&context.grid.reload(false,{action:'delete',ids:[id]});
+                context.grid && context.grid.reload(false, {action: 'delete', ids: [id]});
                 //如果是表单的删除操作，执行表单的删除后回调
-                context.form&&context.form.onDeleted();
+                context.form && context.form.onDeleted();
             });
         }
     });

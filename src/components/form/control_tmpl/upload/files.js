@@ -33,7 +33,8 @@ function fileRealUrl(item,uploadBasePath){
         if(item.id){
             ufs.getDownloadUrl(item.id,item.name).then(res=>{
                 if(!res.url.startsWith('http')){
-                    let baseUrl=context.getMvueToolkit().config.getApiBaseUrl();
+                    //let baseUrl=context.getMvueToolkit().config.getApiBaseUrl();
+                    let baseUrl="";
                     resolve(pathsJoin(baseUrl,res.url));
                 }else{
                     resolve(res.url);

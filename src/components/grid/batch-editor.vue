@@ -102,7 +102,6 @@ export default {
             let queryCtx=grid.currentQueryCtx;
             let quickSearch=_.cloneDeep(grid.innerToolbar.quickSearch);
             this.quickSearch=quickSearch;
-            let filters=_.cloneDeep(queryCtx.filters);
             let queryOptions=null;
             if(this.idInFilters){
                 queryOptions={filters:this.idInFilters};
@@ -119,6 +118,15 @@ export default {
             let queryCtx=grid.currentQueryCtx;
             let quicksearchFields=queryCtx.quicksearchFields;
             let quicksearchKeyword=queryCtx.quicksearchKeyword;
+            let filters=_.cloneDeep(queryCtx.filters);
+            if(!_.isEmpty(filters)){
+                let _filters=context.getMvueComponents().leapQueryConvertor.buildFilter(filters);
+                if(queryOptions.filters){
+                    queryOptions.filters=`(${queryOptions.filters}) and (${_filters})`;
+                }else{
+                    queryOptions.filters=`${_filters}`;
+                }
+            }
             if(quicksearchKeyword&&!_.isEmpty(quicksearchFields)){
                 //默认将逗号和空格，当成多个关键字的分隔符
                 let keywords=quicksearchKeyword.split(/[,，\s]/);
@@ -131,7 +139,7 @@ export default {
                 });
                 leapFilter=qsFilters.join(" or ");
                 if(queryOptions.filters){
-                    queryOptions.filters=`${queryOptions.filters} and (${leapFilter})`;
+                    queryOptions.filters=`(${queryOptions.filters}) and (${leapFilter})`;
                 }else{
                     queryOptions.filters=`(${leapFilter})`;
                 }

@@ -90,6 +90,7 @@ export default {
             }else{
                 this.selectedItem=this.$refs.selectRef.selectedEntityDetails[selectedIds[0]];
             }
+            this.handleOnSelectChange(this.selectedItem,null);
             this.close();
         }
     }

@@ -92,8 +92,9 @@ export default {
                     return reVal;
                 }
             }
-            var selectedItem=ctx.selectedItem;
-            if(selectedItem && selectedItem["__ops__"]){
+            let selectedItem=ctx.selectedItem;
+            if(opt.rowSecurity===true &&
+                selectedItem && selectedItem["__ops__"]){
                 hasPermission=sc.hasRowPerm(selectedItem,optNeedPerm);
             }else{
                 //功能级权限数据判断

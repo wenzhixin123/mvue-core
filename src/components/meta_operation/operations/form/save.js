@@ -13,6 +13,7 @@ var operation= {
     onSuccess:null,
     security:["create"],
     entitySecurity:true,
+    rowSecurity:true,
     onclick:function(context,$optInst) {
         return impl(context,$optInst);
     }

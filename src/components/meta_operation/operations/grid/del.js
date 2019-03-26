@@ -14,6 +14,7 @@ var operation= {
     handler:null,
     security:["delete"],
     entitySecurity:true,
+    rowSecurity:true,
     to:null,
     disabled:function (ctx) {
         if(ctx.isGrid){

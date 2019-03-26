@@ -13,6 +13,7 @@ var operation= {
     btnType:"primary",
     security:["find"],
     entitySecurity:true,
+    rowSecurity:true,
     disabled:function (ctx) {//兼容放在grid头部的button区的控制：仅当选择一条数据时可用
         return !(ctx.selectedItems && ctx.selectedItems.length ==1);
     },

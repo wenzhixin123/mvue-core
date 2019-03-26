@@ -17,6 +17,7 @@
                 :entity-name="metaEntity.name" 
                 :ignore-validate="true" 
                 @on-ref-selected-changed="handleOnRefSelectedChanged"
+                style="height: calc(100% - 55px); overflow: auto;"
                 :on-inited="handleOnInited">
                 <Row v-for="fieldName in formFields" :key="fieldName">
                     <i-col :span="12">
@@ -58,7 +59,7 @@ export default {
             showDrawer:false,
             styles:{
                 height: 'calc(100% - 55px)',
-                overflow: 'auto'
+                overflow: 'visible'
             },
             metaEntity:metaEntity,
             formFields:formFields,
@@ -72,6 +73,7 @@ export default {
             let data={
                 title:selectedItem&&selectedItem[refControl.getTitleField()]
             };
+            debugger
             this.currentMeta[fieldName]=data;
         },
         handleOnInited(form){

@@ -7,7 +7,7 @@
                 title="高级筛选"  ok-text="搜索" cancel-text="重置"
                 @on-ok="doSearch"
                 @on-cancel="doReset">
-            <Form ref="advanceSearchForm" :model="model">
+            <Form ref="advanceSearchForm" :model="model" label-position="top">
                 <FormItem label="关键字" v-if="quicksearch&&quicksearch.fields">
                     <Input v-model="innerQuicksearchKeyword" :placeholder="quicksearch.placeholder"></Input>
                 </FormItem>

@@ -4,11 +4,11 @@
             <div class="form-item-view" v-text="valueObj||emptyText"></div>
         </template>
         <template v-else>
-        <DatePicker transfer
-            v-model="valueObj" 
-            @on-change="handleChange"
-              :disabled="disabled" type="datetimerange" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
-</template>
+            <DatePicker transfer
+                v-model="valueObj" 
+                @on-change="handleChange"
+                :disabled="disabled" type="datetimerange" :format="dateTimeFormat" :placeholder="formItem.componentParams.placeholder"></DatePicker>
+        </template>
     </div>
 </template>
 <script>

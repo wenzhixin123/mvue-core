@@ -151,7 +151,7 @@ export default {
                         key:col.key,
                         title:col.title,
                         hidden:col.hidden,
-                        width:250
+                        minWidth:250
                     };
                     props.forEach(prop => {
                         if(col[prop]){

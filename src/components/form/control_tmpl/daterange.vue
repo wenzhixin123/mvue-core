@@ -1,16 +1,17 @@
-<div>
+<template>
     <div>
         <template v-if="viewMode">
             <div class="form-item-view" v-text="valueObj||emptyText"></div>
         </template>
         <template v-else>
-                <DatePicker transfer
-                            v-model="valueObj"
-                            type="daterange"
-                            @on-change="handleChange"
-                            :readonly="disabled" :disabled="disabled" :placeholder="formItem.componentParams.placeholder"></DatePicker>
+            <DatePicker transfer
+                        v-model="valueObj"
+                        type="daterange"
+                        @on-change="handleChange"
+                        :readonly="disabled" :disabled="disabled" :placeholder="formItem.componentParams.placeholder"></DatePicker>
         </template>
-</div>
+    </div>
+</template>
 <script>
 var dayjs = require("dayjs");
 import controlBase from '../js/control_base';
@@ -64,6 +65,9 @@ export default {
             }else if(this.controlTypeService.datePrecision.month===datePrecision){
                 _dleft=`${newDate[0]}-01`;
                 _dright=`${newDate[1]}-01`;
+            }else{
+                _dleft=newDate[0];
+                _dright=newDate[1];
             }
             _dleft=dayjs(_dleft);
             _dright=dayjs(_dright);

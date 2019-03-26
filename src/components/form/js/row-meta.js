@@ -47,6 +47,11 @@ function rebuildRefData(vals,rowData,fieldName,refValField,refTitleField){
     }
     return refData;
 }
+//rowData是否包含fieldName的冗余数据
+function has(rowData,fieldName){
+    let metaData=rowData[rowMetaKey];
+    return metaData&&metaData.fields&&metaData.fields.hasOwnProperty(fieldName);
+}
 function title(rowData,fieldName){
     let rowMetaData=getRowMetaData(rowData,fieldName);
     if(rowMetaData){
@@ -69,5 +74,6 @@ function setRowMeta(rowData,fieldName,data){
 export default {
     rebuildRefData,
     title,
-    setRowMeta
+    setRowMeta,
+    has
 }

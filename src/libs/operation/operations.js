@@ -64,6 +64,18 @@ function buildEntitySecurity(op,entityName){
     });
     op.security=security;
 }
+//只要操作定义了selectedItem=one或者multi，就执行此逻辑
+function onBuild(inst) {
+    if(inst.selectedItem=="one"){
+        inst["disabled"]=function (ctx) {
+            return !(ctx.selectedItems && ctx.selectedItems.length ==1);
+        }
+    }else if(inst.selectedItem=="multi"){
+        inst["disabled"]=function (ctx) {
+            return !(ctx.selectedItems && ctx.selectedItems.length >0);
+        }
+    }
+}
 
 function buildByTemplate(opts) {
     if(_.isEmpty(opts.name) || _.isEmpty(opts.type)){
@@ -71,12 +83,15 @@ function buildByTemplate(opts) {
         throw Error(error);
     }
     var name=opts.name;
-    opts.name=opts.type;
-    delete opts.type;
+    //对于template定义的模板操作，需要特殊处理
+    if(opts.type=="routeTo"){
+        opts.name=opts.type;
+        delete opts.type;
+    }
     var created=create(opts);
     created.name=name;
-    if(created.onBuild){
-        created.onBuild(created);
+    if(created.selectedItem=="one"||created.selectedItem=="multi"){
+        onBuild(created);
     }
     return created;
 }

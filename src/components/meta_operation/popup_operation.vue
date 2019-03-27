@@ -99,6 +99,11 @@ export default {
                     url=url.substring(url.indexOf('./')+2);
                 }
                 settings=await metaEntity.getPage(url);
+                //查看模式表单，弹出引用实体数据查看表单，按钮区自动修正
+                if(url=='view'&&settings.ctype=="m-form"){
+                    settings.toolbar=settings.toolbar||{};
+                    settings.toolbar.viewBtns=['cancel'];
+                }
                 if(_.isEmpty(settings)){
                     context.error({
                         title:'配置错误',

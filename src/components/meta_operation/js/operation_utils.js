@@ -336,9 +336,9 @@ var utils = {
         //字符为空的时候跳出
         return true
       }
-      let res = new RegExp(/sys.\w*.\w*\(\)/, 'g')
-      let _res_com = new RegExp(/com.\w*.\w*/, 'g')
-      let _res_api = new RegExp(/api.\w*\(/, 'g')
+      let res = new RegExp(/sys\.\w*.\w*\(\)/, 'g')
+      let _res_com = new RegExp(/com\.((.)*?)\.\w*/, 'g')
+      let _res_api = new RegExp(/api\.\w*\(/, 'g')
       let _match = str.match(res)
       let _match_com = str.match(_res_com)
       let _match_api = str.match(_res_api)

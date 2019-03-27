@@ -56,6 +56,9 @@ export default {
             let dataMap = _.keyBy(metaEntity.fields, "name");
             let columnsMap = _.keyBy(metaView.viewFields/*config.columns*/, "fieldName");
             let filters = metaView.config.filters||'';
+            if(_this.queryOptions&&_this.queryOptions.filters){
+                filters = _this.queryOptions.filters;//传入的过滤条件
+            }
             let _metaFields = [], _searchFields = [], _advanceSearchFields=[],_quickSearchFields=[];
             _.each(metaView.viewFields/*metaView.config.columns*/, function (column) {
                 let metaField = dataMap[column.fieldName/*name*/];

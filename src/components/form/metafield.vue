@@ -11,6 +11,7 @@
                 :is="componentName(formItem)"
                 :paths="paths"
                 :model="entity"
+                :first-entity-data="firstEntityData"
                 :mode="mode"
                 :context="context"
                 :form-item="formItem"
@@ -166,9 +167,10 @@ export default {
             this.preprocessor(formItem,this);
         }
         //初始化字段验证
-        var entity=this.model||{},_innerVal=null;
+        var entity=this.model||{},firstEntityData=null,_innerVal=null;
         if(form){
             entity=form.entity;
+            firstEntityData=form.firstEntityData;
             //初始化来自entity的初始值
             _innerVal=entity[metaField.name];
             //如果在表单内部使用m-field组件，大部分都是如此，isCreate继承自表单
@@ -199,6 +201,7 @@ export default {
             metaEntity:metaEntity,
             metaField:metaField,
             entity:entity,
+            firstEntityData:firstEntityData,
             paths:constants.paths(),
             description:description,
             innerPropName:innerPropName

@@ -32,6 +32,9 @@ export default {
         model:{//表单的模型数据
             type:Object
         },
+        firstEntityData:{//表单第一次从后端获取的原始数据
+            type:Object
+        },
         context:{//与上下文相关的对象，{metaEntity:"元数据实体对象",isCreate:true}
             type:Object
         },
@@ -121,7 +124,7 @@ export default {
             if(metaEntity){
                 let metaField=metaEntity.findField(this.formItem.dataField);
                 if (metaField) {
-                    let formattedData=entityType.formatData(this.formItem.componentType,this.model,metaField);
+                    let formattedData=entityType.formatData(this.formItem.componentType,this.firstEntityData,metaField);
                     return Promise.resolve(_.isArray(id)?[formattedData]:formattedData);
                 }
             }else if(this.entityResource){

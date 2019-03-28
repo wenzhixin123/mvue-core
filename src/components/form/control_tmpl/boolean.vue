@@ -1,12 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div style="padding-left:7px;">
-                <RadioGroup v-model="valueObj">
-                    <Radio :label="1" disabled>是</Radio>
-                    <Radio :label="0" disabled>否</Radio>
-                </RadioGroup>
-            </div>
+            <div class="form-item-view">{{valueObj===1?'是':(valueObj===0?'否':emptyText)}}</div>
         </template>
         <template v-else>
             <RadioGroup v-model="valueObj" @on-change="updateValue">

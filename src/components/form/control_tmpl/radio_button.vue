@@ -1,13 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div style="padding-left:7px;">
-                <RadioGroup v-model="valueObj">
-                    <Radio v-for="item in formItem.componentParams.options" :key="item.id" :label="item.id"  disabled>
-                        {{item.text}}
-                    </Radio>
-                </RadioGroup>
-            </div>
+            <div class="form-item-view" v-text="viewModeValue()||emptyText"></div>
         </template>
         <template v-else>
             <RadioGroup v-model="valueObj" @on-change="updateValue" >
@@ -70,6 +64,12 @@ export default {
                }
             });
             this.$emit('input',val);
+        },
+        viewModeValue(){
+            if(this.valueObj&&this.valueObj){
+                return this.getOptionsExData(this.valueObj);
+            }
+            return "";
         }
     }
 }

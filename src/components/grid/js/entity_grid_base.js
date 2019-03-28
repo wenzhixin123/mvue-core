@@ -57,6 +57,7 @@ export default {
             let columnsMap = _.keyBy(metaView.viewFields/*config.columns*/, "fieldName");
             let filters = metaView.config.filters||'';
             if(_this.queryOptions&&_this.queryOptions.filters){
+                if(filters){filters+=" and "}
                 filters = _this.queryOptions.filters;//传入的过滤条件
             }
             let _metaFields = [], _searchFields = [], _advanceSearchFields=[],_quickSearchFields=[];

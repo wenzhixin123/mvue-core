@@ -327,6 +327,10 @@ var utils = {
         button[name] = button[`${name}_com`]
         delete button[`${name}_com`]
       }
+      if(_.isFunction(button[name])){
+        //直接不是字符串-是方法的可直接跳过不匹配处理
+        return true
+      }
       var str = button[name] || ''
       if (button[name] && button[name].indexOf('function(') != 0) {
         str = `function(context,app,resolve){${button[name]}}`

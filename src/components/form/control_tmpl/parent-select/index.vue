@@ -25,6 +25,7 @@
                                 :query-placeholder="selectPlaceholder"
                                 :tree-expand-level="treeExpandLevel"
                                 :tree-leaf-key="treeLeafKey"
+                                :form-item="formItem"
                                 :query-methods="queryMethods"
                             ></entity-select-tree>
                         </div>

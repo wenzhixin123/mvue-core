@@ -40,7 +40,8 @@ var componentParams={
         titleField:"",//必填
         orderbyField:"",//排序字段
         orderbyType:"asc",//排序规则
-        entityResourceUrl:""//后端自动生成
+        entityResourceUrl:"",//后端自动生成
+        selectLevel:0//控制只能选到第几层,selectLevel大于0才有意义，否则不限制
     }
 };
 function accept(componentType){

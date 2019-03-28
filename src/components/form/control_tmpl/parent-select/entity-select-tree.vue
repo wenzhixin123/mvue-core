@@ -66,10 +66,12 @@
             }
         },
         data() {
+            let selectLevel=this.formItem.componentParams.selectLevel;
             return {
                 selectedIds: [],
                 selectedEntityDetails: {},
-                queryKeyword: ''
+                queryKeyword: '',
+                selectLevel:selectLevel
             };
         },
         watch: {

@@ -150,11 +150,7 @@ export default function (options) {
     metaEntity.getDefaultModel = function () {
         var model = {};
         _.forIn(this.fields, function (metaField, key) {
-            if (metaField.inputTypeParams["options"]) {//选项类型默认值由options的checked属性指定
-                model[key] = null;
-            } else {
-                model[key] = metaField.default;
-            }
+            model[key] = metaField.default;
         });
         return model;
     }

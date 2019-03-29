@@ -1,6 +1,6 @@
 <template>
     <div>
-        <template v-if="viewMode">
+        <template v-if="viewMode||disabled">
             <div v-if="isNotEmpty(defaultList)" class="upload-form-item-view">
                 <ul class="ivu-upload-list">
                     <li class="ivu-upload-list-file ivu-upload-list-file-finish" style="padding-left:0px;" v-for="item in defaultList" :key="item.id||item.url">

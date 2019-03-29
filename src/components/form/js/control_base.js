@@ -5,6 +5,7 @@ import emitter from '../../mixins/emitter';
 import getParent from '../../mixins/get-parent';
 import globalContext from '../../../libs/context';
 import optionsUtils from '../../../libs/metadata/options-utils';
+import entityType from './entity_type';
 export default {
     mixins:[emitter,getParent],
     props:{
@@ -29,6 +30,9 @@ export default {
             }
         },
         model:{//表单的模型数据
+            type:Object
+        },
+        firstEntityData:{//表单第一次从后端获取的原始数据
             type:Object
         },
         context:{//与上下文相关的对象，{metaEntity:"元数据实体对象",isCreate:true}
@@ -120,35 +124,29 @@ export default {
             if(metaEntity){
                 let metaField=metaEntity.findField(this.formItem.dataField);
                 if (metaField) {
-                    //处理多对一关系和嵌入关系
-                    let relation=metaField.manyToOneRelation||metaField.embeddedRelation;
-                    if(relation){
-                        if(this.model&&this.model[relation.name]){
-                            let rData=this.model[relation.name];
-                            if(!_.isArray(id)){//单值
-                                return Promise.resolve(rData[targetTitleField]);
-                            }else{//多值
-                                let titleArray=[];
-                                _.each(rData,rd=>{
-                                    titleArray.push(rd[targetTitleField]);
-                                });
-                                return Promise.resolve(titleArray);
-                            }
-                        }
-                    }
+                    let formattedData=entityType.formatData(this.formItem.componentType,this.firstEntityData,metaField);
+                    return Promise.resolve(_.isArray(id)?[formattedData]:formattedData);
                 }
-            }
-            //如果没有关系数据，远程查询引用数据
-            if(this.entityResource){
+            }else if(this.entityResource){
                 if(!_.isArray(id)){
                     return this.entityResource.get({id:id}).then(({data})=>{
                         return data[targetTitleField];
+                    },()=>{
+                        return id;
                     });
                 }else{
-                    return this.entityResource.query({filters:`${this.getIdField()} in ${id.join(',')}`}).then(({data})=>{
-                        let titleArray=[];
+                    let idFieldName=this.getIdField();
+                    return this.entityResource.query({filters:`${idFieldName} in ${id.join(',')}`}).then(({data})=>{
+                        let titleArray=[],idMap={};
                         _.each(data,d=>{
                             titleArray.push(d[targetTitleField]);
+                            idMap[d[idFieldName]]=true;
+                        });
+                        //后端删除的数据id附加上去
+                        _.each(id,idItem=>{
+                            if(!idMap[idItem]){
+                                titleArray.push(idItem);
+                            }
                         });
                         return titleArray;
                     });

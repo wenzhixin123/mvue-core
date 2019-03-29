@@ -25,6 +25,7 @@
                                 :query-placeholder="selectPlaceholder"
                                 :tree-expand-level="treeExpandLevel"
                                 :tree-leaf-key="treeLeafKey"
+                                :form-item="formItem"
                                 :query-methods="queryMethods"
                             ></entity-select-tree>
                         </div>
@@ -90,6 +91,7 @@ export default {
             }else{
                 this.selectedItem=this.$refs.selectRef.selectedEntityDetails[selectedIds[0]];
             }
+            this.handleOnSelectChange(this.selectedItem,null);
             this.close();
         }
     }

@@ -1,5 +1,6 @@
 import propParser from '../../services/tool/prop_parser';
 import attachPropsProcessor from './attach-props-processor';
+import contextHelper from "../../libs/context";
 
 function convertSettings(_settings,curInst,options){
     var temp=null;
@@ -56,8 +57,21 @@ function parseProps(layout,curInst){
             if(curInst.widgetContext&&curInst.widgetContext.grid&&curInst.widgetContext.grid.createParams){
                 itemNode.createParams=_.cloneDeep(curInst.widgetContext.grid.createParams);
             }
+            //处理表单只读
+            if(isViewForm(curInst.$route.query)){
+                itemNode["forceView"]=true;
+            }
         }
     });
+}
+
+function isViewForm(query) {
+    if(_.isEmpty(query)){
+        return false;
+    }
+    let utils=contextHelper.getMvueToolkit().utils;
+    let action=query[utils.queryKeys.action];
+    return utils.formActions.view===action;
 }
 
 function evalTemplate(tpl,evalContext) {

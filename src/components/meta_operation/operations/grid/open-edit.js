@@ -10,7 +10,7 @@ var operation= {
     icon: "md-create",
     operationType:"common",
     btnType:"primary",
-    show:function(context,item){
+    toggle:function(context,item){
         if(!context.grid.editRow&&(context.grid.editRow!==0)){
             return true;
         }

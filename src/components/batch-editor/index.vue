@@ -172,10 +172,10 @@ export default {
         handleOnRowClick(row,index){
             let id=row[this.idFieldName];
             let realRow=this.$refs.grid.rowMap[id];
+            this.$refs.grid.editRow=id;
             if(this.currentRecordId===id){
                 return;
             }
-            this.$refs.grid.editRow=id;
             this.handleOnRowEdit(id,realRow);
         },
         disableSortable(){
@@ -245,8 +245,6 @@ export default {
             form.$refs["formRef"].validate(valid => {
                 if (valid) {
                     this.singleSave(this.localDataMap[id]).then(()=>{
-                        //恢复到查看模式
-                        context.grid.editRow='';
                         this.currentRow.__rowStatus__='saved';
                     },()=>{
                         this.currentRow.__rowStatus__='failed';

@@ -191,7 +191,7 @@ export default {
     let btns=context.grid.innerToolbar.singleBtns;
     let batchEditor=false;
     btns.forEach(btn => {
-      if(btn.name=='openEdit'){
+      if(btn.name=='saveRow'){
         batchEditor=true;
         return false;
       }

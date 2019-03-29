@@ -28,11 +28,12 @@ export default {
   },
   methods: {
         showBtn(btn){
-            if(!btn.show){
-                return true;
-            }else if(_.isFunction(btn.show)){
-                return btn.show(this.context,this.item);
+            if(btn.toggle===false){
+                return false;
+            }else if(_.isFunction(btn.toggle)){
+                return btn.toggle(this.context,this.item);
             }
+            return true;
         },
         handleClick (btn) {
             this.$emit('click', btn);

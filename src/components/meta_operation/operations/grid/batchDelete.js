@@ -3,6 +3,7 @@
  */
 import contextHelper from "../../../../libs/context";
 import  gridUtils from "../utils";
+import sc from "../../../../libs/security/permission";
 
 var operation= {
     name:"batchDelete",
@@ -14,7 +15,18 @@ var operation= {
     security:["delete"],
     entitySecurity:true,
     disabled:function (ctx) {
-        return !(ctx.selectedItems && ctx.selectedItems.length > 0);
+        let noItem= !(ctx.selectedItems && ctx.selectedItems.length > 0);
+        if(!noItem){
+            let oneHasDeletePerm=true;
+            _.forEach(ctx.selectedItems,item => {
+                oneHasDeletePerm = sc.hasRowPerm(item,"delete");
+                if(!oneHasDeletePerm){
+                    return false;
+                }
+            });
+            return !oneHasDeletePerm;
+        }
+        return noItem;
     },
     onclick:function(context,$optInst) {
         return impl(context,$optInst);

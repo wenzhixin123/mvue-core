@@ -46,7 +46,7 @@ export default {
     },
     data(){
         let grid=this.widgetContext.grid;
-        let params={},metaEntity=null,updateModel={},idField=null,titleField=null,dataResource=null;
+        let params={},metaEntity=null,updateModel={},idField=null,titleFieldName=null,dataResource=null;
         if(!grid.ifOneToManyGrid()){
             context.error({
                 content:'必须在一对多关系列表使用关联操作'
@@ -60,7 +60,8 @@ export default {
             metaEntity=grid.metaEntity;
             dataResource=metaEntity.dataResource();
             idField=metaEntity.getIdField().name;
-            titleField=metaEntity.firstTitleField().name;
+            let titleField=metaEntity.firstTitleField();
+            titleFieldName=titleField?titleField.name:idField;
             this.operation.title=this.operation.title||'关联'+metaEntity.title;
         }
         return {
@@ -73,7 +74,7 @@ export default {
                 componentParams:{
                     entityId:metaEntity.name,
                     idField:idField,
-                    titleField:titleField
+                    titleField:titleFieldName
                 }
             },
             grid:grid,

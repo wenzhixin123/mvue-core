@@ -152,7 +152,12 @@ export default{
             if (this["entityName"]) {
                 ops["entityName"] = this["entityName"]
             }
-            return operationManager.batchCreate(btns, ops);
+
+            let _btns = operationManager.batchCreate(btns, ops);
+            _btns=_.filter(_btns,btn=>{
+                return this.showBtn(btn);
+            });
+            return _btns;
         },
         //判断按钮是否禁用
         btnIsDisabled(btn){
@@ -168,6 +173,17 @@ export default{
             }
             return false;
         },
+        showBtn(btn){
+            if(btn.show===false){
+                return false;
+            }else if(_.isFunction(btn.show)){
+                var ctx={
+                    grid:this
+                };
+                return btn.show(ctx);
+            }
+            return true;
+        }
     },
     components:{
         advanceSearch:require("../advance_search")

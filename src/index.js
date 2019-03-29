@@ -75,6 +75,8 @@ import mExpand from './components/form/control_tmpl/expand/index';
 import mConfirm from './components/form/control_tmpl/confirm/index';
 import mRelation from './components/form/control_tmpl/relation/index';
 
+import mComponent from './components/meta-component/index';
+
 //link特殊打开的组件
 import PclinkSingleUserSelect from './components/form/pclink/single_user_select';
 import PclinkSingleOrgSelect from './components/form/pclink/single_org_select';
@@ -148,7 +150,8 @@ const gridInnerComponents={
     'm-batch-editor-fill-data':batchEditorFillData,
     'm-grid-associate':gridAssociate,
     'meta-operation':operation,
-    'm-operation':operation
+    'm-operation':operation,
+    'm-component':mComponent
 };
 //旧的组件定义，文档中会废除
 const oldFasionComponents={

@@ -58,6 +58,11 @@ export default{
                     name:this.formItem.dataField,
                     refEntity:newSelectedItem
                 });
+                let metaField=metaForm.metaEntity.findField(this.formItem.dataField);
+                if(metaField && metaField.manyToOneRelation){
+                    let metaRelation=metaField.manyToOneRelation;
+                    this.$set(metaForm.entity,metaRelation.name,newSelectedItem);
+                }
             }
         },
         notifySelectedItemChanged(selectedOption){
@@ -67,8 +72,8 @@ export default{
             if(_.isArray(newSelectedItem)){
                 this.notifyMultipleSelect(newSelectedItem);
             }else{
-                this.notifySingleSelect(newSelectedItem);
                 this.commitRefData(newSelectedItem);
+                this.notifySingleSelect(newSelectedItem);
             }
         },
         handleOnSelectChange(selectedOption, id){

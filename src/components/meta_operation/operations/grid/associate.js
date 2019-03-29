@@ -10,7 +10,10 @@ var operation= {
     btnType:"primary",
     security:["edit"],
     entitySecurity:true,
-    renderComponent:"m-grid-associate"
+    renderComponent:"m-grid-associate",
+    show:function(context){
+        return context.grid&&context.grid.ifOneToManyGrid();
+    }
 };
 export default  operation
 

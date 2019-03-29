@@ -49,25 +49,29 @@
                 </slot>
              </template>
              <template slot="header-operations" v-if="innerToolbar.btns">
-                <meta-operation  v-for="(btn,index) in innerToolbar.btns" v-if="index<btnSizeBeforeMore" :key="index"
-                        :operation="btn"  :widget-context="getWidgetContext()" class="grid-primary-btn">
-                        <Button slot-scope="{operation}" class="normal-btn"
-                                :disabled="btnIsDisabled(operation)"
-                                :type="operation.btnType||'primary'"  :icon="operation.icon">{{operation.title}}</Button>
-                </meta-operation>
+                 <template v-for="(btn,index) in innerToolbar.btns">
+                    <meta-operation  v-if="index<btnSizeBeforeMore" :key="index"
+                            :operation="btn"  :widget-context="getWidgetContext()" class="grid-primary-btn">
+                            <Button slot-scope="{operation}" class="normal-btn"
+                                    :disabled="btnIsDisabled(operation)"
+                                    :type="operation.btnType||'primary'"  :icon="operation.icon">{{operation.title}}</Button>
+                    </meta-operation>
+                 </template>
                 <Dropdown v-if="innerToolbar.btns.length>btnSizeBeforeMore" >
                     <Button>
                         更多操作
                         <Icon type="md-arrow-dropdown" />
                     </Button>
                     <DropdownMenu slot="list">
-                        <DropdownItem v-for="(btn,index) in innerToolbar.btns" v-if="index>=btnSizeBeforeMore"
-                                        :disabled="btnIsDisabled(btn)"
-                                        :divided="btn.divided" :name="index" :key="index">
-                            <meta-operation  :operation="btn" :widget-context="getWidgetContext()">
-                                <div  slot-scope="{operation}" style="display: block">{{operation.title}}</div>
-                            </meta-operation>
-                        </DropdownItem>
+                        <template v-for="(btn,index) in innerToolbar.btns">
+                            <DropdownItem v-if="index>=btnSizeBeforeMore"
+                                :disabled="btnIsDisabled(btn)"
+                                :divided="btn.divided" :name="index" :key="index">
+                                <meta-operation  :operation="btn" :widget-context="getWidgetContext()">
+                                    <div  slot-scope="{operation}" style="display: block">{{operation.title}}</div>
+                                </meta-operation>
+                            </DropdownItem>
+                        </template>
                     </DropdownMenu>
                 </Dropdown>
             </template>

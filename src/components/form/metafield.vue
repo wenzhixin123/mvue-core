@@ -17,6 +17,7 @@
                 :form-item="formItem"
                 :init-when-create="initWhenCreate"
                 v-bind="formItem.componentParams"
+                @input="handleChange"
             >
             </component>
         </slot>
@@ -109,6 +110,13 @@ export default {
             default:false
         }
     },
+    watch:{
+        title:function (newVal,oldVal) {
+            if(newVal){
+                this.metaField.title=newVal;
+            }
+        }
+    },
     data:function(){
         var entityName=this.entityName;
         var form=this.getParentForm();
@@ -141,7 +149,7 @@ export default {
         if(!metaField){
             context.error({
                 title:"错误",
-                content:`字段${name}不存在`
+                content:`字段${this.name}不存在`
             });
             return {};
         }
@@ -244,6 +252,9 @@ export default {
                 return true;
             }
             return false;
+        },
+        handleChange(event){
+            this.$emit("on-change",event);
         }
     },
     components:{

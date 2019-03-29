@@ -8,13 +8,13 @@
                     <meta-layout @popup-close="handleOnPopupClose" :layout="rowItem" :itemProcessor="itemProcessor"></meta-layout>
                 </template>
                 <template v-else>
-                    <component @popup-close="handleOnPopupClose" :is="rowItem.ctype" v-bind="componentProps(rowItem)"></component>
+                    <m-component @popup-close="handleOnPopupClose"  :settings="componentProps(rowItem)"></m-component>
                 </template>
             </Col>
         </template>
         <!--直接放组件，组件内部实现列排版-->
         <template v-else>
-            <component @popup-close="handleOnPopupClose" :is="rowItems.ctype" v-bind="componentProps(rowItems)"></component>
+            <m-component @popup-close="handleOnPopupClose"  :settings="componentProps(rowItems)"></m-component>
         </template>
     </Row>
 </div>
@@ -45,7 +45,8 @@ export default {
     data(){
         var processed=this.preprocess(this.layout);
         return {
-            innerSettings:processed
+            innerSettings:processed,
+            isLayout:true
         };
     },
     methods:{
@@ -124,7 +125,7 @@ export default {
         },
         componentProps(rowItem){
             var _props={};
-            var ignores=['ctype'];
+            var ignores=[];
             _.forIn(rowItem,(value,key)=>{
                 if(!_.includes(ignores,key)){
                     _props[key]=value;

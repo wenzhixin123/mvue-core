@@ -467,6 +467,9 @@ export default {
             _.forIn(_this.entity, (v, k) => {
                 let metaField = _this.metaEntity.findField(k);
                 if(!metaField){
+                    if(_.has(_this.metaEntity.relations,k)){
+                        return;
+                    }
                     _model[k] = v;
                     return;
                 }

@@ -59,10 +59,17 @@ function create(opts) {
 
 function buildEntitySecurity(op,entityName){
     var security=[];
+    var hasBuilt=false;//表示是否构建过了，比如说两次调用create导致权限实体前缀拼接多次
     _.forEach(op.security,(sec)=>{
+        if(sec.indexOf(':')>0){
+            hasBuilt=true;
+            return false;
+        }
         security.push(`${entityName}:${sec}`);
     });
-    op.security=security;
+    if(!hasBuilt){
+        op.security=security;
+    }
 }
 //只要操作定义了selectedItem=one或者multi，就执行此逻辑
 function onBuild(inst) {

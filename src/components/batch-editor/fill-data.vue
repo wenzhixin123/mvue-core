@@ -73,7 +73,6 @@ export default {
             let data={
                 title:selectedItem&&selectedItem[refControl.getTitleField()]
             };
-            debugger
             this.currentMeta[fieldName]=data;
         },
         handleOnInited(form){

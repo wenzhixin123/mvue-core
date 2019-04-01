@@ -205,6 +205,15 @@ export default {
             }
             //根据实体元数据初始化grid的列
             initByMetadata.initColumns(this);
+            //批量编辑模式禁用非状态列type == "rowStatus"的filterable
+            if(this.batchEditorMode){
+                this.innerColumns.forEach(col => {
+                    if(col.key!=='__rowStatus__'&&col.hasOwnProperty('filterRemote')){
+                        delete col.filterRemote;
+                        delete col.filters;
+                    }
+                });
+            }
             //预处理完毕，b-list可以渲染了
             this.preprocessed = true;
         },

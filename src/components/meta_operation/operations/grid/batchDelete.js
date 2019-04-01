@@ -14,12 +14,12 @@ var operation= {
     handler:null,
     security:["delete"],
     entitySecurity:true,
-    disabled:function (ctx) {
+    disabled:function (ctx,opt) {
         let noItem= !(ctx.selectedItems && ctx.selectedItems.length > 0);
         if(!noItem){
             let oneHasDeletePerm=true;
             _.forEach(ctx.selectedItems,item => {
-                oneHasDeletePerm = sc.hasRowPerm(item,"delete");
+                oneHasDeletePerm = sc.hasRowPerm(item,opt.security);
                 if(!oneHasDeletePerm){
                     return false;
                 }

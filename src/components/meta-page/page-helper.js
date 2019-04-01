@@ -1,7 +1,7 @@
 import expr from "../../libs/evaluate/expr"
 import  contextHelper from  "../../libs/context";
 
-const resolvedRulesName="$rules";
+const ComConfigKeyName="$config";
 let actions={};
 //向上找到当前控件所属的Page对象
 function getParentPage(el) {
@@ -37,8 +37,9 @@ function getParentLayout(el) {
  * @returns {*}
  */
 function preparePageSettings(pageSettings,context) {
-    let resolvedRules=resolveRules(pageSettings.rules,context);
-    pageSettings[resolvedRulesName]=resolvedRules;
+    pageSettings[ComConfigKeyName]={};
+    processComSettings(pageSettings,context);
+    processComRules(pageSettings,context);
     return pageSettings;
 }
 
@@ -48,13 +49,47 @@ function preparePageSettings(pageSettings,context) {
  * @param cId
  * @returns {*}
  */
-function getComRule(pageSettings,cId) {
-    let rules=pageSettings[resolvedRulesName];
+function getComConfig(pageSettings, cId) {
+    let rules=pageSettings[ComConfigKeyName];
     if(!rules){
         return null;
     }
     let com=rules[cId];
     return com;
+}
+
+
+/**
+ *
+ * @param pageSettings
+ * @param context
+ * @returns {*}
+ */
+function processComSettings(pageSettings,context) {
+    let settings = pageSettings.setProps;
+    let comConfigs = pageSettings[ComConfigKeyName];
+    if (!settings) {
+        return null;
+    }
+    _.forIn(settings, (val, key) => {
+        let keyInfo = resolveRuleKey(key);
+        let comConfig = comConfigs[keyInfo.comId];
+        if (comConfig == null) {
+            comConfig = defaultComConfig();
+            comConfigs[keyInfo.comId] = comConfig;
+        }
+        if (_.isString(val)) {
+            comConfig.visible = val;
+        } else {
+            comConfig.props = val;
+        }
+        if (_.has(comConfig.props, "visible")) {
+            comConfig.visible = comConfig.props["visible"];
+            delete comConfig.props["visible"];
+        }
+        return;
+    });
+    return comConfigs;
 }
 
 /**
@@ -63,46 +98,77 @@ function getComRule(pageSettings,cId) {
  * @param context
  * @returns {null}
  */
-function resolveRules(rules,context) {
+function processComRules(pageSettings,context) {
+    let rules=pageSettings.rules;
+    let comConfigs=pageSettings[ComConfigKeyName];
     if(!rules){
         return null;
     }
-    let processed={};
     _.forIn(rules,(val,key)=>{
         let keyInfo=resolveRuleKey(key);
-        let com=processed[keyInfo.comId];
-        if(com==null){
-            com={
-                if:null,
-                props:{},
-                events:{}
-            };
-            processed[keyInfo.comId]=com;
+        let comConfig=comConfigs[keyInfo.comId];
+        if(comConfig==null){
+            comConfig=defaultComConfig();
+            comConfigs[keyInfo.comId]=comConfig;
         }
         if(keyInfo.eventName==null){
-            if(_.isString(val)){
-                com.if=val;
-            }else {
-                com.props = val;
-            }
-            if(_.has(com.props,"if")){
-                com.if=com.props["if"];
-                delete com.props["if"];
-            }
             return;
         }
-        let actions=[];
-        _.forEach(val,(param)=>{
-            let action=buildAction(param,keyInfo);
+        comConfig.events[keyInfo.eventName]=buildEventListener(val,keyInfo,context);
+    });
+    return comConfigs;
+}
+
+/**
+ * 根据设置信息，生成事件的处理器
+ * @param options
+ * @param eventInfo
+ * @param context
+ * @returns {Function}
+ */
+function buildEventListener(options,eventInfo,context) {
+    let condition=true;
+    let actions=[];
+    if(_.isArray(options)){
+        _.forEach(options,(param)=>{
+            let action=buildAction(param,eventInfo);
             actions.push(action);
         });
-        com.events[keyInfo.eventName]=function () {
+    }else if(_.isPlainObject(options)){
+        condition=options.if||true;
+        _.forEach(options.do,(param)=>{
+            let action=buildAction(param,eventInfo);
+            actions.push(action);
+        });
+    }
+
+    return function () {
+        let ifVal=null;
+        if(typeof condition=="boolean"){
+            ifVal=condition;
+        }else if(_.isString(condition)){
+            ifVal=evalExpr(condition,context,false);
+        }else{
+            ifVal=false;
+        }
+        if(ifVal){
             _.forEach(actions,(action)=>{
                 action.exec(context);
             });
         }
-    });
-    return processed;
+    }
+}
+
+/**
+ * 组件配置的基本结构
+ * @returns {{if: null, events: {}, props: {}}}
+ */
+function defaultComConfig() {
+    return {
+        visible:null,
+        props:{},
+        events:{}
+    };
 }
 
 function resolveRuleKey(key) {
@@ -117,18 +183,6 @@ function resolveRuleKey(key) {
         comId:key.substring(0,dotIndex),
         eventName:  _.kebabCase(key.substring(dotIndex+1))
     }
-}
-
-/**
- * 判断当前对象是不是一个action定义
- * @param val
- * @returns {boolean}
- */
-function isAction(val) {
-    if(_.isPlainObject(val) &&_.has(val,"action")){
-        return true;
-    }
-    return false;
 }
 
 /**
@@ -152,37 +206,110 @@ function buildAction(action,event) {
     }
 }
 
+/**
+ * 显示控件，action定义：{action:"show",value:"expr",target:"comId"}
+ * @param action
+ * @param context
+ * @param event
+ */
 actions["show"]=function actionForShow(action,context,event) {
-    let com=context[action.params.target];
-    let isShow=true;
-    if(!_.isEmpty(action.if)){
-        isShow=evalExpr(action.if,context,false);
+    let isShow = true;
+    if (!_.isEmpty(action.value)) {
+        isShow = evalExpr(action.value, context, false);
     }
-    com.$parent.show=isShow;
+
+    if (_.isArray(action.target)) {
+        _.forEach(action.target, (comId) => {
+            let com = context[comId];
+            if (com && com.$parent) {
+                com.$parent.setVisible(isShow);
+            }
+        })
+    } else {
+        let com = context[action.target];
+        if (com && com.$parent) {
+            com.$parent.setVisible(isShow);
+        }
+    }
 }
 
-actions["set"]=function actionForShow(action,context,event) {
-    let target = context[action.params.target];
+actions["hide"]=function actionForShow(action,context,event) {
+    if (_.isArray(action.target)) {
+        _.forEach(action.target, (comId) => {
+            let com = context[comId];
+            if (com && com.$parent) {
+                com.$parent.setVisible(false);
+            }
+        });
+    } else {
+        let com = context[action.target];
+        if (com && com.$parent) {
+            com.$parent.setVisible(false);
+        }
+    }
+}
+
+/**
+ * 根据选项集，批量设置控件的显示或隐藏，action定义如下：{action:"showByOption",fieldName:"",items:{"option1":["com1","com2"],"option2":["com3",...]}}
+ * @param action
+ * @param context
+ * @param event
+ */
+actions["showByValue"]=function actionForShowByValue(action,context,event) {
+    let fieldVal=null;
+    if(action.value) {
+        fieldVal=evalExpr(action.value,context);
+    }else{
+        fieldVal=context.model[event.comId];
+    }
+    let matchedItems=null;
+    _.forIn(action.items,(comIds,key)=>{
+        if(key==fieldVal){
+            matchedItems=comIds;
+            return;
+        }
+        _.forEach(comIds,(comId)=>{
+            let com=context[comId];
+            if(com){
+                com.$parent.hide();
+            }
+        });
+    });
+    if(matchedItems){
+        _.forEach(matchedItems,(comId)=>{
+            let com=context[comId];
+            if(com){
+                com.$parent.show();
+            }
+        });
+    }
+}
+
+/**
+ * 设置控件属性
+ * @param action {action:"setProps","target":"comId","props":{"key1":"value1","key2":"value2",...}}
+ * @param context
+ * @param event
+ */
+actions["setProps"]=function actionForShow(action,context,event) {
+    let target = context[action.target];
     let matchedIf = true;
     if (!_.isEmpty(action.if)) {
         matchedIf = evalExpr(action.if, context, false);
     }
-
-    let valExpr=action.params.value;
-    if (!matchedIf) {
-        valExpr=action.params.falseValue;
-    }
-    if(_.isEmpty(valExpr)){
-        return;
+    if(!matchedIf){
+        return ;
     }
 
-    let propVal = evalExpr(valExpr, context, null);
-    let comSettings = target.$parent && target.$parent.settings;
-    if (comSettings) {
-        this.$set(comSettings, action.params.prop, propVal);
-    } else {
-        this.$set(target,action.params.prop,propVal);
+    let obj=target;
+    if(target.$parent && target.$parent.settings){
+        obj=target.$parent.settings;
     }
+
+    _.forIn(action.props,(propValExpr,prop)=>{
+        let propVal = evalExpr(propValExpr, context, null);
+        this.$set(obj,prop,propVal);
+    });
 }
 
 actions["script"]=function actionForShow(action,context,event) {
@@ -190,10 +317,9 @@ actions["script"]=function actionForShow(action,context,event) {
     if (!_.isEmpty(action.if)) {
         matchedIf = evalExpr(action.if, context, false);
     }
-    let script=action.params.script;
+    let script=action.script;
     if (!matchedIf) {
-        script=action.params.falseScript;
-        return;
+        script=action.falseScript;
     }
     if(_.isEmpty(script)){
         return;
@@ -262,7 +388,7 @@ function buildPageContext(page) {
 
 export default {
     preparePageSettings,
-    getComRule,
+    getComConfig,
     getParentPage,
     getParentLayout,
     evalExpr,

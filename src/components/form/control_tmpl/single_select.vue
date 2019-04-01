@@ -4,7 +4,7 @@
                 <div class="form-item-view" v-text="getOptionsExData(valueObj)||emptyText"></div>
         </template>
         <template v-else>
-            <Select transfer v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="updateValue">
+            <Select transfer v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="onChange">
                 <Option v-for="item in formItem.componentParams.options" :key="item.id" :value="item.id">{{ item.text }}</Option>
             </Select>
         </template>
@@ -35,12 +35,9 @@ export default {
             deep:true
         }
     },
-    mounted:function(){
-        var _this=this;
+    mounted:function() {
         this.valueToString();
-        if((!this.valueObj)&&this.valueObj!==0){
-            this.initDefault();
-        }
+        this.initDefault();
     },
     methods: {
         valueToString(){
@@ -48,15 +45,17 @@ export default {
         },
         initDefault:function(){
             var _this=this;
-            _.each(this.formItem.componentParams.options,function(option){
-                if(option.checked){
-                    _this.valueObj=option.id;
-                    _this.$emit('input',_this.valueObj);
-                    return false;
-                }
-            });
+            if((!this.valueObj)&&this.valueObj!==0) {
+                _.each(this.formItem.componentParams.options, function (option) {
+                    if (option.checked) {
+                        _this.valueObj = option.id;
+                        return false;
+                    }
+                });
+            }
+            this.onChange(this.valueObj);
         },
-        updateValue: function (value) {
+        onChange: function (value) {
             this.$emit('input',value);
         }
     }

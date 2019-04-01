@@ -4,7 +4,7 @@
             <div class="form-item-view" v-text="viewModeValue()||emptyText"></div>
         </template>
         <template v-else>
-            <RadioGroup v-model="valueObj" @on-change="updateValue" >
+            <RadioGroup v-model="valueObj" @on-change="onChange" >
                 <Radio v-for="item in formItem.componentParams.options" :key="item.id" :label="item.id"  :disabled="disabled">
                     {{item.text}}
                 </Radio>
@@ -36,33 +36,26 @@ export default {
         }
     },
     mounted:function(){
-        if(_.isNull(this.valueObj)){
-            this.initDefault();
-        }
+        this.initDefault();
     },
     methods:{
         initDefault:function(){
-            var _this=this;
-            _.each(this.formItem.componentParams.options,function(option){
-                if(option.checked){
-                    _this.valueObj=option.id;
-                    _this.updateValue(option.id);
-                    _this.$emit('input',_this.valueObj);
-                    return false;
-                }
-            });
+            let _this=this;
+            if(_.isNull(this.valueObj)){
+                _.each(this.formItem.componentParams.options,function(option){
+                    if(option.checked){
+                        _this.valueObj=option.id;
+                        return false;
+                    }
+                });
+            }else{
+                _this.onChange(this.valueObj);
+            }
         },
-        updateValue: function (val) {
+        onChange: function (val) {
             if(val==null){
                 return;
             }
-            var selectedItem=null;
-            _.each(this.formItem.componentParams.options,function(option){
-               if(option.id==val){
-                   selectedItem=option;
-                   return false;
-               }
-            });
             this.$emit('input',val);
         },
         viewModeValue(){

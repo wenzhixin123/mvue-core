@@ -11,24 +11,24 @@ export default {
     data(){
         let comId=this.getComId();
         let parentPage=pageHelper.getParentPage(this);
-        let comRule = parentPage && pageHelper.getComRule(parentPage.getPageSettings(), comId);
+        let comConfig = parentPage && pageHelper.getComConfig(parentPage.getPageSettings(), comId);
         let dataVal={
             parentPage:parentPage,
-            comRule:comRule,
-            show:null
+            comConfig:comConfig,
+            visible:null
         }
         return dataVal;
     },
     computed:{
       isShow(){
-          if(this.show!=null){
-              return this.show;
+          if(this.visible!=null){
+              return this.visible;
           }
           let comId=this.getComId();
           let parentPage=this.parentPage;
-          let comRule = parentPage && pageHelper.getComRule(parentPage.getPageSettings(), comId);
-          if(comRule!=null && !_.isEmpty(comRule.if)){
-              return pageHelper.evalExpr(comRule.if,parentPage.getPageContext());
+          let comRule = parentPage && pageHelper.getComConfig(parentPage.getPageSettings(), comId);
+          if(comRule!=null && !_.isEmpty(comRule.visible)){
+              return pageHelper.evalExpr(comRule.visible,parentPage.getPageContext());
           }
           return true;
       }
@@ -60,16 +60,10 @@ export default {
         }
 
         let comId=this.getComId();
-        let comRule = this.comRule;
-        if (comRule) {
-            if (comRule.if && _.isFunction(comRule.if)) {
-                let ifVal = comRule.if();
-                if (ifVal === false) {
-                    return null;
-                }
-            }
-            if(comRule.props){
-                _.forIn(comRule.props,(val,prop)=>{
+        let comConfig = this.comConfig;
+        if (comConfig && comConfig.props) {
+            if(comConfig.props){
+                _.forIn(comConfig.props,(val,prop)=>{
                     Object.defineProperty(params.props,prop, {
                         get: function () {
                             return pageHelper.evalExpr(val,parentPage.getPageContext());
@@ -78,7 +72,7 @@ export default {
                     });
                 });
             }
-            params.on = _.extend(params.on, comRule.events);
+            params.on = _.extend(params.on, comConfig.events);
         }
         let el = createElement(comType, params);
         parentPage.registerComponent(comId, el);
@@ -97,6 +91,15 @@ export default {
                 comId = _.camelCase(this.settings["ctype"]);
             }
             return comId;
+        },
+        show(){
+            this.visible=true;
+        },
+        hide(){
+            this.visible=false;
+        },
+        setVisible(visible){
+            this.visible=visible;
         }
     }
 }

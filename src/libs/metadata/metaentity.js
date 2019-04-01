@@ -150,7 +150,8 @@ export default function (options) {
     metaEntity.getDefaultModel = function () {
         var model = {};
         _.forIn(this.fields, function (metaField, key) {
-            model[key] = metaField.default;
+            /*model[key] = metaField.default;*/
+            model[key]=null;
         });
         return model;
     }

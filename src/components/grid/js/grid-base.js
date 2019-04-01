@@ -169,7 +169,7 @@ export default{
                     isGrid:true,
                     selectedItems:this.selectedItems
                 };
-                return btn.disabled(ctx);
+                return btn.disabled(ctx,btn);
             }
             return false;
         },

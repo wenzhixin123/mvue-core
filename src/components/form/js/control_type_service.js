@@ -287,8 +287,8 @@ function buildFormItemByMetaField(metaField){
     if(metaField.inputTypeParams["maxLength"]||metaField.inputTypeParams["minLength"]){
         formItem.componentParams.limitLength={
             limit:true,
-            max:metaField.inputTypeParams["maxLength"],
-            min:metaField.inputTypeParams["minLength"]
+            max:parseInt(metaField.inputTypeParams["maxLength"]),
+            min:parseInt(metaField.inputTypeParams["minLength"])
         };
     }
     for(let type of allType){

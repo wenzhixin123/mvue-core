@@ -27,15 +27,20 @@ function buildDefaultOrderby(gridInst) {
     }
     return orderby;
 }
-function buildDefaultQuickSearchFields(gridInst){
+function buildDefaultQuickSearch(gridInst){
     var metaEntity=gridInst.metaEntity;
     let titleField=metaEntity.firstSemanticsField("title");
     if(titleField && titleField.filterable){
-        return [titleField.name];
+        let fields=[titleField.name];
+        let placeholder=`搜索${titleField.title}`;
+        return {
+            fields,
+            placeholder
+        }
     }
     return null;
 }
 function initColumns(gridInst){
     metaGrid.initColumns(gridInst);
 }
-export default {initColumns,buildFiltersFromQuery,buildDefaultOrderby,buildDefaultQuickSearchFields};
+export default {initColumns,buildFiltersFromQuery,buildDefaultOrderby,buildDefaultQuickSearch};

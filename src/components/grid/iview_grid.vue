@@ -200,8 +200,10 @@ export default {
             if(this.innerToolbar&&
                 this.innerToolbar.quicksearch&&
                 (!this.innerToolbar.quicksearch.fields)){
-                let _fields=initByMetadata.buildDefaultQuickSearchFields(this);
-                this.innerToolbar.quicksearch.fields=_fields;
+                let _quicksearch=initByMetadata.buildDefaultQuickSearch(this);
+                if(_quicksearch){
+                    this.innerToolbar.quicksearch=_.extend(this.innerToolbar.quicksearch,_quicksearch);
+                }
             }
             //根据实体元数据初始化grid的列
             initByMetadata.initColumns(this);

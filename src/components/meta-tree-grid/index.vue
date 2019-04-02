@@ -229,6 +229,8 @@
                     }else{
                         queryParams.filters=`(${queryParams.filters}) and (${treeFilter})`;
                     }
+                    //每次查询记录最终的查询filters
+                    this.$refs.gridList.currentQueryParams=_.cloneDeep(queryParams);
                 });
             },
             getTreeFilterParam(){

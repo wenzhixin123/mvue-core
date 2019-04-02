@@ -28,7 +28,8 @@ export default{
             quicksearchKeyword:"",//内部高级查询提供的快捷搜索词
             advanceSearchFilters:[],//内部高级查询设置的查询条件
             changedQueue:[],
-            currentQueryCtx:{}//当前查询的所有上下文参数对象
+            currentQueryCtx:{},//当前查询的所有上下文参数对象
+            currentQueryParams:null//通过leap-query-convertor查询的最终拼接条件，{filters:'完整字符串'}不同于currentQueryCtx，是最终查询时完整的filters字符串
         }
     },
     computed:{
@@ -93,6 +94,8 @@ export default{
                 //默认存在元数据情况下，肯定是存在实体的queryResource的，而且是leap的后台，使用leap转换器
                 return globalContext.getMvueComponents().leapQueryConvertor.exec(_resource,ctx,(params)=>{
                     this.beforeQuery&&this.beforeQuery(params);
+                    //每次查询记录最终的查询filters
+                    this.currentQueryParams=_.cloneDeep(params);
                 });
             }
         },

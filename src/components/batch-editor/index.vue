@@ -67,6 +67,10 @@ export default {
             type:String,
             required:false
         },
+        queryResource:{//由外部构造的查询对象
+            type:[Object,Function],
+            required:false
+        },
         queryOptions:{//leap的固定查询参数
             type:Object,
             required:false
@@ -350,6 +354,8 @@ export default {
             let _resource=queryResource;
             if(this.queryUrl){
                 _resource=globalContext.buildResource(this.queryUrl);
+            }else if(this.queryResource){
+                _resource=this.queryResource;
             }
             let refGrid=this.$refs.grid;
             //如果总数大于maxLocalSize设置的100，由于expand限制只能100，所以此时应该分批次获取数据合并

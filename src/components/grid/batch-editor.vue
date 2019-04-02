@@ -15,7 +15,7 @@
         >
             <m-batch-editor v-if="preprocessed"
                 :id="id"
-                :default-sort="defaultSort"
+                :query-resource="widgetContext.grid.queryResource"
                 :query-options="queryOptions"
                 :filters="filters"
                 :quick-search="quickSearch"
@@ -67,7 +67,6 @@ export default {
             quickSearch:null,
             filters:null,
             queryOptions:null,
-            defaultSort:null,
             idInFilters:false,
             preprocessed:false
         }
@@ -99,7 +98,6 @@ export default {
         },
         init(){
             let grid=this.widgetContext.grid;
-            let queryCtx=grid.currentQueryCtx;
             let quickSearch=_.cloneDeep(grid.innerToolbar.quickSearch);
             this.quickSearch=quickSearch;
             let queryOptions=null;
@@ -109,42 +107,12 @@ export default {
                 queryOptions=this.buildQueryOptions();
             }
             this.queryOptions=queryOptions;
-            this.defaultSort=grid.innerSort;
             this.preprocessed=true;
         },
         buildQueryOptions(){
             let grid=this.widgetContext.grid;
-            let queryOptions=_.cloneDeep(grid.queryOptions)||{filters:''};
-            let queryCtx=grid.currentQueryCtx;
-            let quicksearchFields=queryCtx.quicksearchFields;
-            let quicksearchKeyword=queryCtx.quicksearchKeyword;
-            let filters=_.cloneDeep(queryCtx.filters);
-            if(!_.isEmpty(filters)){
-                let _filters=context.getMvueComponents().leapQueryConvertor.buildFilter(filters);
-                if(queryOptions.filters){
-                    queryOptions.filters=`(${queryOptions.filters}) and (${_filters})`;
-                }else{
-                    queryOptions.filters=`${_filters}`;
-                }
-            }
-            if(quicksearchKeyword&&!_.isEmpty(quicksearchFields)){
-                //默认将逗号和空格，当成多个关键字的分隔符
-                let keywords=quicksearchKeyword.split(/[,，\s]/);
-                let qsFilters=[],leapFilter="";
-                keywords.forEach( keyword => {
-                    _.each(quicksearchFields, function (sField) {
-                        let _keyword=context.getMvueToolkit().utils.leapQueryValueEncode(keyword);
-                        qsFilters.push(`${sField} like '%${_keyword}%'`);
-                    });
-                });
-                leapFilter=qsFilters.join(" or ");
-                if(queryOptions.filters){
-                    queryOptions.filters=`(${queryOptions.filters}) and (${leapFilter})`;
-                }else{
-                    queryOptions.filters=`(${leapFilter})`;
-                }
-            }
-            return queryOptions;
+            let currentQueryParams=grid.currentQueryParams;
+            return _.cloneDeep(currentQueryParams);
         },
         buildColumns(){
             let grid=this.widgetContext.grid;

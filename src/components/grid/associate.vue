@@ -1,6 +1,6 @@
 <template>
     <div class="grid-associate-con">
-        <div @click="showImport" style="width:100%;">
+        <div @click="showAssociate" style="width:100%;">
             <slot>
                 <Button :type="operation.btnType||'primary'"  :icon="operation.icon">{{(operation.title)}}</Button>
             </slot>
@@ -85,8 +85,7 @@ export default {
         };
     },
     methods:{
-        //显示导入框
-        showImport(){
+        showAssociate(){
             this.showDrawer=true;
         },
         confirmAssociate(){

@@ -10,17 +10,19 @@ var operation= {
     btnType:"primary",
     disabled:function (ctx,opt) {
         let noItem= !(ctx.selectedItems && ctx.selectedItems.length > 0);
+        //如果勾选了，需要判断权限
         if(!noItem){
-            let oneHasDeletePerm=true;
+            let oneHasEditPerm=true;
             _.forEach(ctx.selectedItems,item => {
-                oneHasDeletePerm = sc.hasRowPerm(item,opt.security);
-                if(!oneHasDeletePerm){
+                oneHasEditPerm = sc.hasRowPerm(item,opt.security);
+                if(!oneHasEditPerm){
                     return false;
                 }
             });
-            return !oneHasDeletePerm;
+            return !oneHasEditPerm;
         }
-        return noItem;
+        //未勾选，可以点击批量编辑，不禁用按钮
+        return false;
     },
     security:["edit"],
     entitySecurity:true,

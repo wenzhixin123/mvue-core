@@ -110,11 +110,17 @@ export default {
     mounted(){
         if(this.viewMode){
             //首先判断对引用的实体是否配置了view页面
-            this.metaEntity.getPage('view').then(settings=>{
-                if(settings){
-                    this.hasViewPage=true;
-                }
-            });
+            let isUIEnable=this.metaEntity.isUIEnable();
+            //如果实体没有ui配置，不用远程获取了
+            if(!isUIEnable){
+                this.hasViewPage=false;
+            }else{
+                this.metaEntity.getPage('view').then(settings=>{
+                    if(settings){
+                        this.hasViewPage=true;
+                    }
+                });
+            }
         }
     },
     methods: {

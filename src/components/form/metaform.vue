@@ -208,9 +208,12 @@
                     this.firstEntityData=data;
                     this.$store.commit("core/setEntity",{entityName:this.entityName,entity:data});
                     //根据实体记录数据初始化操作权限
-                    this.initPerm(data);
-                    _.forIn(this.entity, (value, key) => {
+                    //this.initPerm(data);
+                    /*_.forIn(this.entity, (value, key) => {
                         this.entity[key] = data[key];
+                    });*/
+                    _.forIn(data, (value, key) => {
+                        this.$set(this.entity,key,value);
                     });
                     this.initOthers();
                 });

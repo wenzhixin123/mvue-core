@@ -114,7 +114,7 @@ export default {
             var btnOpts=null;
             var clickHandler=context.grid&&context.grid.handleOnTitleClick;
             if(clickHandler){
-                btnOpts={name:"edit",security:["find"]};
+                btnOpts={name:"edit",security:""};
                 if(_.isFunction(clickHandler)){
                     btnOpts["onclick"]=clickHandler;
                 }else if(_.isString(clickHandler)) {
@@ -129,7 +129,7 @@ export default {
                         if(btn.name=="edit"){
                             btnOpts=btn;
                             btnOpts=Object.assign(btnOpts,{
-                                security:["find"]
+                                security:""
                             });
                             return false;
                         }
@@ -137,7 +137,7 @@ export default {
                 }
             }
             if(btnOpts==null){
-                btnOpts={name:"edit",security:["find"]};
+                btnOpts={name:"edit",security:""};
             }
             //如果handleOnTitleClick设置为false，此时强制禁掉title的所有点击功能，也就是模拟设置一个没有的权限
             if(clickHandler===false){

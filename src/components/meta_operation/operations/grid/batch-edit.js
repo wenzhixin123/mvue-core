@@ -24,7 +24,7 @@ var operation= {
         //未勾选，可以点击批量编辑，不禁用按钮
         return false;
     },
-    security:["edit"],
+    security:["update"],
     entitySecurity:true,
     renderComponent:"m-grid-batch-editor"
 };

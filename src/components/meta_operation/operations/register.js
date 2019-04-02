@@ -58,7 +58,7 @@ manager.registerByTpl({
     title: "修改",
     icon: "md-create",
     btnType:"primary",
-    security:["edit"],
+    security:["update"],
     entitySecurity:true,
     url:"./edit",
     type:"routeTo"

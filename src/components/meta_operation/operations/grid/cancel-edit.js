@@ -21,7 +21,7 @@ var operation= {
         }
         return false;
     },
-    security:["edit"],
+    security:["update"],
     entitySecurity:true,
     onclick:function(context,$optInst) {
         return impl(context,$optInst);

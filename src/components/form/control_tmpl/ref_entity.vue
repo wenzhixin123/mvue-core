@@ -100,6 +100,10 @@ export default {
             if(baseOk){
                 this.buildRefEntityViewOpts();
             }
+            //如果viewModeValue和id是一样的，证明引用数据有问题，不可点击弹出查看
+            if(this.viewModeValue===this.selectedItem[this.getIdField()]){
+                return false;
+            }
             return baseOk;
         }
     },

@@ -10,7 +10,6 @@ export default {
         }
     },
     methods:{
-        handleOnTitleClick:()=>{},//点击标题列，什么都不做
         //单选
         handleOnCurrentChange(currentRow,oldCurrentRow){
             //多选不走这里

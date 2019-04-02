@@ -6,7 +6,7 @@
                 :highlight-row="!multiple"
                 :max-columns-size="5"
                 :show-selection="multiple"
-                :handle-on-title-click="handleOnTitleClick"
+                :handle-on-title-click="false"
                 @on-current-change="handleOnCurrentChange"
                 @on-selection-change="handleOnSelectionChange"
                 :entity-name="entityName">

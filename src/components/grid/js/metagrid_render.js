@@ -139,6 +139,10 @@ export default {
             if(btnOpts==null){
                 btnOpts={name:"edit",security:["find"]};
             }
+            //如果handleOnTitleClick设置为false，此时强制禁掉title的所有点击功能，也就是模拟设置一个没有的权限
+            if(clickHandler===false){
+              btnOpts.security=['$$$force-no-permission$$$'];
+            }
             if(context.grid){
               btnOpts.entityName=context.grid.metaEntity.name;
             }

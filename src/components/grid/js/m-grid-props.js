@@ -16,7 +16,8 @@ export default{
             required:false
         },
         handleOnTitleClick:{//点击标题列处理函数
-            type:[Function,Object,String],
+            type:[Function,Object,String,Boolean],
+            default:undefined,
             required:false
         },
         refField:{//多对一关系列表自动过滤的字段

@@ -18,7 +18,7 @@
                 :query-resource="widgetContext.grid.queryResource"
                 :query-options="queryOptions"
                 :filters="filters"
-                :quick-search="quickSearch"
+                :quicksearch="quicksearch"
                 :columns="columns"
                 :entity-name="entityName" style="height: calc(100% - 55px); overflow: auto;"></m-batch-editor>
             <div class="drawer-footer">
@@ -64,7 +64,7 @@ export default {
             columns:columns,
             metaEntity:grid.metaEntity,
             entityName:entityName,
-            quickSearch:null,
+            quicksearch:null,
             filters:null,
             queryOptions:null,
             idInFilters:false,
@@ -98,8 +98,8 @@ export default {
         },
         init(){
             let grid=this.widgetContext.grid;
-            let quickSearch=_.cloneDeep(grid.innerToolbar.quickSearch);
-            this.quickSearch=quickSearch;
+            let quicksearch=_.cloneDeep(grid.innerToolbar.quicksearch);
+            this.quicksearch=quicksearch;
             let queryOptions=null;
             if(this.idInFilters){
                 queryOptions={filters:this.idInFilters};

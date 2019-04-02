@@ -102,7 +102,7 @@ export default {
             type:String,
             default:''
         },
-        quickSearch:{//快捷搜索配置{fields: null,placeholder: ""}
+        quicksearch:{//快捷搜索配置{fields: null,placeholder: ""}
             type:Object,
             default(){
                 return {fields: null,placeholder: ""};
@@ -126,7 +126,7 @@ export default {
         this.disableSortable();
         return {
             toolbar: {
-                quicksearch:this.quickSearch,
+                quicksearch:this.quicksearch,
                 btnSizeBeforeMore:2,
                 btns:[
                     {

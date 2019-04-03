@@ -141,6 +141,7 @@ export default {
         onRemove:function(item){
             this.innerValue=[];
             this.innerText="";
+            this.selectedUsers = [];
             this.$emit('input',[]);
         },
         getIdField:function(){

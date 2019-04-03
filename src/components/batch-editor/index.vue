@@ -35,7 +35,7 @@
                 @on-row-cancel-edit="handleOnRowCancelEdit"
                 @on-batch-fill-data="handleOnBatchFillData"
                 @on-row-click="handleOnRowClick"
-                :handle-on-title-click="handleOnTitleClick"
+                :handle-on-title-click="false"
                 >
             </m-grid>
         </m-form>
@@ -250,11 +250,14 @@ export default {
                 if (valid) {
                     this.singleSave(this.localDataMap[id]).then(()=>{
                         this.currentRow.__rowStatus__='saved';
+                        this.localDataMap[id]['__rowStatus__']='saved';
                     },()=>{
                         this.currentRow.__rowStatus__='failed';
                         this.localDataMap[id]['__rowStatus__']='failed';
                     });
                 }else{
+                    this.currentRow.__rowStatus__='failed';
+                    this.localDataMap[id]['__rowStatus__']='failed';
                     globalContext.warning({title: "表单验证失败", content: "表单内部分字段验证未通过，请修复"});
                 }
             });
@@ -289,9 +292,6 @@ export default {
             });
             this.currentRow.__rowStatus__='unsaved';
             this.localDataMap[id]['__rowStatus__']='unsaved';
-        },
-        handleOnTitleClick(){
-            //什么都不做，批量编辑模式，标题点击不可跳转
         },
         filteredByQuicksearch(filtered,quicksearchKeyword,quicksearchFields){
             if(quicksearchKeyword){
@@ -463,6 +463,7 @@ export default {
                 this.$refs.grid.reload();
             },()=>{
                 this.loading=false;
+                this.$refs.grid.reload();
             });
         },
          //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据

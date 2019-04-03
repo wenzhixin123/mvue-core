@@ -227,21 +227,34 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
     }
 
     //数值范围
+    var rangeRule = {
+        type: "number",
+    };
+    let rangeAdded=false;
     if (params.limitRange && params.limitRange.limit) {
-        var rangeRule = {
-            type: "number",
-        };
         rules.push(rangeRule);
-        if (params.limitRange.max > 0) {
+        rangeAdded=true;
+        if (_.isNumber(params.limitRange.max)) {
             rangeRule.max = params.limitRange.max;
-            rangeRule["message"]=`${fieldTitle}不大于${params.limitRange.max}`
+            rangeRule["message"]=`${fieldTitle}必须小于${params.limitRange.max}`
         }
-        if (params.limitRange.min > 0) {
+        if (_.isNumber(params.limitRange.min)) {
             rangeRule.min = params.limitRange.min;
-            rangeRule["message"]=`${fieldTitle}不小于${params.limitRange.min}`
+            rangeRule["message"]=`${fieldTitle}必须大于${params.limitRange.min}`
         }
-        if(params.limitRange.min > 0 && params.limitRange.max > 0){
+        if(_.isNumber(params.limitRange.min)&& _.isNumber(params.limitRange.max)){
             rangeRule["message"]=`${fieldTitle}必须在${params.limitRange.min}--${params.limitRange.max}之间`
+        }
+    }
+    //负数限制
+    if (params.allowNegative===false) {
+        //如果最小值没有设置为大于0，设置最小值0
+        if(!(_.isNumber(rangeRule.min)&&rangeRule.min>=0)){
+            rangeRule.min=0;
+            rangeRule["message"]=`${fieldTitle}必须大于${params.limitRange.min}`;
+            if(!rangeAdded){
+                rules.push(rangeRule);
+            }
         }
     }
     //小数点限制
@@ -256,14 +269,6 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
             decimalRule.type = "integer";
             decimalRule.message=`${fieldTitle}必须是整数`;
         }
-    }
-    //负数限制
-    if (params.allowNegative === false) {
-        //没有定义最小值或者最小值设置成负数，设置最小值为0
-        /* if((!rule.min_value)||(_.startsWith(rule.min_value,"-"))){
-             rule.min_value=["0"];
-         }*/
-        //TODO:
     }
     //唯一性校验
     if (params.unique && metaField && metaField.filterable) {

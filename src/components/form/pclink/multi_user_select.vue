@@ -107,6 +107,7 @@ export default {
                     });
                 }
             });
+            console.log(_this.selectedUsers);
             this.innerText=innerTextArray.join(",");
             //如果id为空，显示文本也应该清空
             if(!this.innerValue||this.innerValue.length===0){
@@ -146,14 +147,13 @@ export default {
             var _this=this;
             linkplugin.selectContact({
                 callback:function(res){
-                    debugger
+                    console.log(res);
                     if(res){
                         _this.onSelect(res);
                     }
                 },
                 selected:_this.selectedUsers
             });
-            debugger
         }
     }
 }

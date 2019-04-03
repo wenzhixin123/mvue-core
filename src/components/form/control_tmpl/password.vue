@@ -6,20 +6,20 @@
         <template v-else>
             <template v-if="formItem.componentParams.showBtn">
                 <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append" style='line-height:30px;'>
-                    <Input ref="focusInput" v-if="textShowed" v-model="valueObj" @input="updateValue"  :disabled="disabled" type="text"  :placeholder="formItem.componentParams.placeholder">
+                    <Input ref="focusInput" autocomplete="off" v-if="textShowed" v-model="valueObj" @input="updateValue"  :disabled="disabled" type="text"  :placeholder="formItem.componentParams.placeholder">
                         <Icon type="ios-eye-off" slot="suffix" @click="hideText"/>
                     </Input>
-                    <Input ref="focusInput" v-if="!textShowed" v-model="valueObj" @input="updateValue"  :disabled="disabled" type="password"  :placeholder="formItem.componentParams.placeholder" autocomplete="off">
+                    <Input ref="focusInput" autocomplete="off" v-if="!textShowed" v-model="valueObj" @input="updateValue"  :disabled="disabled" type="password"  :placeholder="formItem.componentParams.placeholder" autocomplete="off">
                         <Icon type="ios-eye" slot="suffix" @click="showText"/>
                     </Input>
                     <Button class="bvue-select-group-append" type="default" @click="updateSecret()">更新</Button>
                 </div>
             </template>
             <template v-else>
-                <Input ref="focusInput" v-if="textShowed" v-model="valueObj" @input="updateValue"  :disabled="disabled" type="text"  :placeholder="formItem.componentParams.placeholder">
+                <Input ref="focusInput" autocomplete="off" v-if="textShowed" v-model="valueObj" @input="updateValue"  :disabled="disabled" type="text"  :placeholder="formItem.componentParams.placeholder">
                     <Icon type="ios-eye-off" slot="suffix" @click="hideText"/>
                 </Input>
-                <Input ref="focusInput" v-if="!textShowed" v-model="valueObj" @input="updateValue"  :disabled="disabled" type="password"  :placeholder="formItem.componentParams.placeholder" autocomplete="off">
+                <Input ref="focusInput" autocomplete="off" v-if="!textShowed" v-model="valueObj" @input="updateValue"  :disabled="disabled" type="password"  :placeholder="formItem.componentParams.placeholder" autocomplete="off">
                     <Icon type="ios-eye" slot="suffix" @click="showText"/>
                 </Input>
             </template>

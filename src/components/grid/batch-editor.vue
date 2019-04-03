@@ -100,7 +100,7 @@ export default {
             let grid=this.widgetContext.grid;
             let quicksearch=_.cloneDeep(grid.innerToolbar.quicksearch);
             this.quicksearch=quicksearch;
-            let queryOptions=this.buildQueryOptions();;
+            let queryOptions=this.buildQueryOptions()||{filters:''};
             if(this.idInFilters){
                 queryOptions.filters=this.idInFilters;
             }

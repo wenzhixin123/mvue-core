@@ -64,7 +64,8 @@ export default {
         return {
             innerValue:_.cloneDeep(this.value),
             innerText:"",
-            entityResource:entityResource
+            entityResource:entityResource,
+            selectedUsers:[],//已选用户
         };
     },
     watch:{
@@ -94,10 +95,16 @@ export default {
             this.innerValue=_.cloneDeep(this.value);
             let innerTextArray=[];
             let _this=this;
+            _this.selectedUsers = [];//清空下数据
             _.each(this.innerValue,function(v){
                 let exData=_this.getExData(v);
                 if(exData){
                     innerTextArray.push(exData);
+                    _this.selectedUsers.push({
+                        id:v,
+                        name:exData,
+                        type:1
+                    });
                 }
             });
             this.innerText=innerTextArray.join(",");
@@ -139,11 +146,14 @@ export default {
             var _this=this;
             linkplugin.selectContact({
                 callback:function(res){
+                    debugger
                     if(res){
                         _this.onSelect(res);
                     }
-                }
+                },
+                selected:_this.selectedUsers
             });
+            debugger
         }
     }
 }

@@ -164,7 +164,7 @@ function buildValidationRuleForRequired(fieldTitle){
     };
 }
 //初始化字段组件的验证规则，async-validator验证时，按rules顺序进行验证
-function initValidation(formItem,metaEntity,dataId,entity) {
+function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate) {
     if (!formItem.isDataField) {
         return null;
     }
@@ -176,7 +176,7 @@ function initValidation(formItem,metaEntity,dataId,entity) {
 
     var rules = [];
     //必填必须放在第一个，否则label前的红色星号不生效，应该是iview的bug
-    if (params.required) {
+    if (params.required&&(!ignoreRequiredValidate)) {
         rules.push(buildValidationRuleForRequired(fieldTitle));
     }
     //长度验证

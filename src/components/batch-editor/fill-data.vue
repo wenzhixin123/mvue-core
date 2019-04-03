@@ -15,7 +15,7 @@
         >
             <m-form ref="form" 
                 :entity-name="metaEntity.name" 
-                :ignore-validate="true" 
+                :ignore-required-validate="true" 
                 @on-ref-selected-changed="handleOnRefSelectedChanged"
                 style="height: calc(100% - 55px); overflow: auto;"
                 :on-inited="handleOnInited">
@@ -85,20 +85,25 @@ export default {
             this.showDrawer=true;
         },
         handleOnConfirmClick(){
-            let entity=this.$refs.form.entity;
-            let _model={};
-            this.formFields.forEach(fieldName => {
-                _model[fieldName]=entity[fieldName];
-            });
-            let _currentMeta={};
-            for (const key in this.currentMeta) {
-                if (this.currentMeta.hasOwnProperty(key)) {
-                    const value = this.currentMeta[key];
-                    _currentMeta[key]=value;
+            let form=this.$refs.form;
+            form.$refs["formRef"].validate(valid => {
+                if(valid){
+                    let entity=form.entity;
+                    let _model={};
+                    this.formFields.forEach(fieldName => {
+                        _model[fieldName]=entity[fieldName];
+                    });
+                    let _currentMeta={};
+                    for (const key in this.currentMeta) {
+                        if (this.currentMeta.hasOwnProperty(key)) {
+                            const value = this.currentMeta[key];
+                            _currentMeta[key]=value;
+                        }
+                    }
+                    this.widgetContext.grid.$emit("on-batch-fill-data",_model,this.clearModel,this.currentMeta);
+                    this.showDrawer=false;
                 }
-            }
-            this.widgetContext.grid.$emit("on-batch-fill-data",_model,this.clearModel,this.currentMeta);
-            this.showDrawer=false;
+            });
         },
         buildFormFields(){
             let metaEntity=this.widgetContext.metaEntity;

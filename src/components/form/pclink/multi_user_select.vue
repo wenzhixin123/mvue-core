@@ -114,12 +114,12 @@ export default {
             }
         },
         onSelect:function(selectItems){
-            _this.selectedUsers = [];
             let valueArray=[],textArray=[];
             let _this=this;
             var idField=this.getIdField();
             var titleField=this.getTitleField();
             var exData={};
+            _this.selectedUsers = [];
             _.each(selectItems,function(selectItem){
                 let value=selectItem[idField];
                 let text=selectItem[titleField];

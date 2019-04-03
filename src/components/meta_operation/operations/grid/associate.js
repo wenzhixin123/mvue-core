@@ -8,7 +8,7 @@ var operation= {
     icon:"ios-infinite",
     operationType:"common",
     btnType:"primary",
-    security:["edit"],
+    security:["update"],
     entitySecurity:true,
     renderComponent:"m-grid-associate",
     show:function(context){

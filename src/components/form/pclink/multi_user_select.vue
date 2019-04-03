@@ -65,7 +65,7 @@ export default {
             innerValue:_.cloneDeep(this.value),
             innerText:"",
             entityResource:entityResource,
-            selectedUsers:[],//已选用户
+            selectedUsers:[]//已选用户
         };
     },
     watch:{
@@ -107,7 +107,6 @@ export default {
                     });
                 }
             });
-            console.log(_this.selectedUsers);
             this.innerText=innerTextArray.join(",");
             //如果id为空，显示文本也应该清空
             if(!this.innerValue||this.innerValue.length===0){
@@ -115,6 +114,7 @@ export default {
             }
         },
         onSelect:function(selectItems){
+            _this.selectedUsers = [];
             let valueArray=[],textArray=[];
             let _this=this;
             var idField=this.getIdField();
@@ -126,6 +126,12 @@ export default {
                 valueArray.push(value);
                 textArray.push(text);
                 exData[value]=_this.buildExData(text);
+
+                _this.selectedUsers.push({
+                    id:value,
+                    name:text,
+                    type:1
+                });
             });
             this.innerValue=valueArray;
             this.innerText=textArray.join(",");

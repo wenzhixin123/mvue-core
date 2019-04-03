@@ -64,7 +64,8 @@ export default {
         return {
             innerValue:_.cloneDeep(this.value),
             innerText:"",
-            entityResource:entityResource
+            entityResource:entityResource,
+            selectedOrgs:[]
         };
     },
     watch:{
@@ -94,10 +95,16 @@ export default {
             this.innerValue=_.cloneDeep(this.value);
             let innerTextArray=[];
             let _this=this;
+            _this.selectedOrgs = [];//清空下数据
             _.each(this.innerValue,function(v){
                 let exData=_this.getExData(v);
                 if(exData){
                     innerTextArray.push(exData);
+                    _this.selectedOrgs.push({
+                        id:v,
+                        name:exData,
+                        type:1
+                    });
                 }
             });
             this.innerText=innerTextArray.join(",");
@@ -107,6 +114,7 @@ export default {
             }
         },
         onSelect:function(selectItems){
+            _this.selectedOrgs = [];
             let valueArray=[],textArray=[];
             let _this=this;
             var idField=this.getIdField();
@@ -118,6 +126,12 @@ export default {
                 valueArray.push(value);
                 textArray.push(text);
                 exData[value]=_this.buildExData(text);
+
+                _this.selectedOrgs.push({
+                    id:value,
+                    name:text,
+                    type:4
+                });
             });
             this.innerValue=valueArray;
             this.innerText=textArray.join(",");
@@ -143,7 +157,8 @@ export default {
                     if(res){
                         _this.onSelect(res);
                     }
-                }
+                },
+                selected:_this.selectedOrgs
             });
         }
     }

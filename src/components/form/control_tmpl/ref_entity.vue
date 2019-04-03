@@ -41,6 +41,7 @@
                         :width="modalWidth"
                         :title="modalTitle"
                         :scrollable="true"
+                        transfer
                         :mask-closable="false"
                         >
                     <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">

@@ -25,7 +25,7 @@ var componentParams={
             isAllowed:false,//是否允许小数
             digits:2//小数位数
         },
-        allowNegative:false,//是否允许负数
+        allowNegative:true,//是否允许负数
         formatter:"",
         unit:""//TODO 单位，显示的单位
     },
@@ -39,7 +39,7 @@ var componentParams={
             isAllowed:false,//是否允许小数
             digits:2//小数位数
         },
-        allowNegative:false,//是否允许负数
+        allowNegative:true,//是否允许负数
         formatter:"",
         unit:""//TODO 单位，显示的单位
     }

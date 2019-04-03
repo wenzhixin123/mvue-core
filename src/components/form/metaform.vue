@@ -64,7 +64,7 @@
                 type:Object,
                 required:false
             },
-            ignoreValidate:{//是否忽略验证
+            ignoreRequiredValidate:{//是否忽略必填验证
                 type:Boolean,
                 default:false
             },
@@ -162,7 +162,7 @@
             },
             initOthers(){
                 //根据实体字段信息初始化表单默认验证规则
-                if(!this.isView && (!this.ignoreValidate)){
+                if(!this.isView){
                     this.initValidateRulesByMetaEntity();
                 }
                 //通知页面表单这边需要修改页面标题，并提交变化后的标题数据
@@ -224,7 +224,7 @@
                 _.forEach(_this.metaEntity.getDefaultFormFieldsWithIds(),function (fieldName) {
                     var metaField=_this.metaEntity.findField(fieldName);
                     var formItem=controlTypeService.buildFormItemByMetaField(metaField);
-                    var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId,_this.entity);
+                    var rules=metaformUtils.initValidation(formItem,_this.metaEntity,_this.entityId,_this.entity,_this.ignoreRequiredValidate);
                     if(rules.length>0) {
                         _this.innerRules[formItem.dataField] = rules;
                     }

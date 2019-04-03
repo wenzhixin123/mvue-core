@@ -10,11 +10,17 @@ export default {
         },
         modalWidth:{
             type:Number,
-            default:850
+            default:80
         },
         modalHeight:{
             type:Number,
-            default:400
+            default(){
+                if(!document.documentElement){
+                    return 400;
+                }
+                let clientHeight=document.documentElement.clientHeight-160;
+                return clientHeight>0?clientHeight:400;
+            }
         }
     },
     data(){

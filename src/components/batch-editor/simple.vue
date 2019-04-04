@@ -6,7 +6,9 @@
         </div>
         <div class="header">
             <div class="header-item">错误信息</div>
-            <div v-for="cm in columnMappings" :key="cm.index" v-text="cm.title" class="header-item"></div>
+            <template v-for="cm in columnMappings">
+                <div  v-if="!ignoreColumns[cm.index]" :key="cm.index" v-text="cm.title" class="header-item"></div>
+            </template>
         </div>
         <div class="body">
             <div v-for="ci in currentItems" :key="ci.index" class="body-item">
@@ -20,7 +22,7 @@
                     <div class="error" v-text="ci.item[ci.item.length-1].e" :title="ci.item[ci.item.length-1].e"></div>
                 </div>
                 <template v-for="(p,idx) in ci.item">
-                    <div :key="idx" class="body-item-input" v-if="idx<ci.item.length-1">
+                    <div :key="idx" class="body-item-input" v-if="idx<ci.item.length-1 && (!ignoreColumns[idx+1])">
                         <input v-model="ci.item[idx]" type="text" class="control">
                     </div>
                 </template>
@@ -70,6 +72,12 @@ export default {
             default: function () {
                 return [50,100];
             }
+        },
+        ignoreColumns:{
+            type:Object,
+            default(){
+                return {};
+            }
         }
     },
     data(){
@@ -98,6 +106,15 @@ export default {
         this.doReload();
     },
     methods:{
+        rebuildModelIgnoreColumns(_model){
+            let _cols=[];
+            _model.columns.forEach(col => {
+                if(!this.ignoreColumns[col.index]){
+                    _cols.push(col);
+                }
+            });
+            _model.columns=_cols;
+        },
         //按批次导入已修正的数据，一个批次出错后续不再导入
         async doImport(){
             if(this.currentItems.length==0){
@@ -130,6 +147,7 @@ export default {
                     columns:this.columnMappings,
                     rows:rows
                 };
+                this.rebuildModelIgnoreColumns(_model);
                 this.beginImport=true;
                 let success=await importService().executeImportRows2({entityName:this.entityName},_model).then(({data})=>{
                     //有失败的数据

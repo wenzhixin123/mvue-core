@@ -155,10 +155,13 @@ export default{
         },
         batchEditorMode:{//是否批量编辑模式
             type:Boolean,
-            defualt:false
+            default:false
         },
         externalLocalPagerData:{//本地分页的外部数据
             type:Array
+        },
+        importTemplateUrl:{//导入模板地址，如果指定了导入模板地址，导入时会提供模板下载按钮
+            type:String
         }
     }
 }

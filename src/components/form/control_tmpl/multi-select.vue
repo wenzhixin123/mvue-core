@@ -66,7 +66,7 @@ export default {
         },
         
         viewModeValue(){
-            if(this.valueObj&&this.valueObj){
+            if(!_.isEmpty(this.valueObj)){
                 let texts=this.getOptionsExData(this.valueObj);
                 return texts.join(",");
             }

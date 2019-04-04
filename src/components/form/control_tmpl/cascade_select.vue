@@ -76,7 +76,7 @@ export default {
             this.$emit('input',emitValue);
         },
         viewModeValue(){
-            if(this.valueObj&&this.valueObj){
+            if(!_.isEmpty(this.valueObj)){
                 let texts=this.getOptionsExData(this.valueObj,true);
                 return texts.join("/");
             }

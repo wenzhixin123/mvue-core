@@ -14,12 +14,13 @@ function accept(componentType){
     return !!types[componentType];
 }
 function formatData(componentType,item,metaField){
-    let fieldName=metaField.name;
-    let origin=item[fieldName];
-    if(_.isUndefined(origin)||_.isNull(origin)||origin===''){
-        return "";
-    }
-    return `<input ${origin?'checked':''} disabled="disabled" type="checkbox">`;
+    // let fieldName=metaField.name;
+    // let origin=item[fieldName];
+    // if(_.isUndefined(origin)||_.isNull(origin)||origin===''){
+    //     return "";
+    // }
+    // return `<input ${origin?'checked':''} disabled="disabled" type="checkbox">`;
+    return formatDataForExport(componentType,item,metaField);
 }
 function formatDataForExport(componentType,item,metaField){
     let fieldName=metaField.name;

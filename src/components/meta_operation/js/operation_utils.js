@@ -104,7 +104,6 @@ var utils = {
       if (_.isFunction(_exportParams)) {
         let _data = _exportParams()
         if (_t.widgetContext) {
-          debugger
           _.extend(_data, _t.widgetContext)//合并行内动态赋予的值
         }
         if (_data.widgetParams && _data.widgetParams[key]) {

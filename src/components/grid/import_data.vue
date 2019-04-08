@@ -31,9 +31,9 @@
                                     @change="handleFileChange"/>
 
                             </i-col>
-                            <i-col span="24" v-if="grid.importTemplateUrl">
+                            <i-col span="24" v-if="importTemplateUrl">
                                 <div style="margin-top:5px;">
-                                    <a :href="grid.importTemplateUrl" target="_blank">下载模板</a>
+                                    <a :href="importTemplateUrl" target="_blank">下载模板</a>
                                 </div>
                             </i-col>
                         </Row>
@@ -136,6 +136,11 @@ export default {
             title:metaEntity.title,
             key:metaEntity.name
         };
+        let importTemplateUrl=false;
+        if(grid.importTemplateUrl){
+            importTemplateUrl=grid.importTemplateUrl.replace(':entityName',metaEntity.name);
+            importTemplateUrl=context.getMvueToolkit().utils.appendParam(importTemplateUrl,'entityName',metaEntity.name);
+        }
         return {
             grid:grid,
             metaEntity:metaEntity,
@@ -160,7 +165,8 @@ export default {
             allImported:false,//数据是否都导入完毕
             importId:null,//当前导入的id
             validColumnMapping:null,//后端api调用的映射关系数据
-            ignoreColumns:{}//忽略映射的列
+            ignoreColumns:{},//忽略映射的列
+            importTemplateUrl:importTemplateUrl
         }
     },
     watch:{

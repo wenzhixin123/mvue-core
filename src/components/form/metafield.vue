@@ -12,7 +12,7 @@
                 :paths="paths"
                 :model="entity"
                 :first-entity-data="firstEntityData"
-                :mode="mode"
+                :mode="innerMode"
                 :context="context"
                 :form-item="formItem"
                 :init-when-create="initWhenCreate"
@@ -50,13 +50,13 @@ export default {
             type:Function,
             required: false
         },
-        context:{//context的附加数据:{mode:"字段显示模式：readonly/invisible/editable"}
+        context:{//context
             type:Object,
             default(){
                 return {};
             }
         },
-        mode:{//组件输入状态控制widgetMode定义：可编辑、不可见、只读、查看
+        mode:{//组件输入状态控制widgetMode定义：可编辑、不可见、只读、查看(readonly/invisible/forceView)
             type:String
         },
         model:{//高级查询model
@@ -203,7 +203,9 @@ export default {
                 formItem.componentType=mapping[formItem.componentType];
             }
         }
+        let _mode=this.getInnerMode(metaField);
         return {
+            innerMode:_mode,
             formItem:formItem,
             form:form,
             metaEntity:metaEntity,
@@ -216,6 +218,23 @@ export default {
         }
     },
     methods:{
+        getInnerMode(metaField){
+            //如果是编辑模式，默认不可更新的字段自动变成只读模式
+            if(this.context.isEdit && 
+            ((!this.mode)||this.mode===widgetMode.editable) &&
+            metaField.updatable===false
+            ){
+                return widgetMode.readonly;
+            }
+            //如果是创建模式，默认不可创建的字段自动变成只读模式
+            if(this.context.isCreate && 
+            ((!this.mode)||this.mode===widgetMode.editable) &&
+            metaField.creatable===false
+            ){
+                return widgetMode.readonly;
+            }
+            return this.mode;
+        },
         //根据组件传递进来的参数，覆盖metaField的属性
         overrideProps(metaField,inBatchEditor){
             if(this.title){

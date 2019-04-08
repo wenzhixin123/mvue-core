@@ -44,6 +44,9 @@ function formatData(context,data){
                         header.push(metaField.title);
                     }
                     let newValue=controlTypeService.formatDataForExport(item, metaField);
+                    if(!_.isEmpty(newValue)){
+                        newValue=escapeForCSV(newValue);
+                    }
                     formattedItem.push(newValue);
                 }
             }
@@ -54,6 +57,10 @@ function formatData(context,data){
         formattedData.push(formattedItem.join(','));
     }
     return formattedData.join('\r\n');
+}
+
+function escapeForCSV(val) {
+    return "\""+val.replace(/"/g,"\"\"")+"\"";
 }
 
 function impl(context,$optInst){

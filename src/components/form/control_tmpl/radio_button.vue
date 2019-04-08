@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div class="form-item-view" v-text="viewModeValue()||emptyText"></div>
+            <div class="form-item-view" v-text="getOptionsExData(valueObj)||emptyText"></div>
         </template>
         <template v-else>
             <RadioGroup v-model="valueObj" @on-change="onChange" >
@@ -57,12 +57,6 @@ export default {
                 return;
             }
             this.$emit('input',val);
-        },
-        viewModeValue(){
-            if(this.valueObj&&this.valueObj){
-                return this.getOptionsExData(this.valueObj);
-            }
-            return "";
         }
     }
 }

@@ -236,11 +236,11 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
         rangeAdded=true;
         if (_.isNumber(params.limitRange.max)) {
             rangeRule.max = params.limitRange.max;
-            rangeRule["message"]=`${fieldTitle}必须小于${params.limitRange.max}`
+            rangeRule["message"]=`${fieldTitle}必须小于等于${params.limitRange.max}`
         }
         if (_.isNumber(params.limitRange.min)) {
             rangeRule.min = params.limitRange.min;
-            rangeRule["message"]=`${fieldTitle}必须大于${params.limitRange.min}`
+            rangeRule["message"]=`${fieldTitle}必须大于等于${params.limitRange.min}`
         }
         if(_.isNumber(params.limitRange.min)&& _.isNumber(params.limitRange.max)){
             rangeRule["message"]=`${fieldTitle}必须在${params.limitRange.min}--${params.limitRange.max}之间`
@@ -251,7 +251,7 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
         //如果最小值没有设置为大于0，设置最小值0
         if(!(_.isNumber(rangeRule.min)&&rangeRule.min>=0)){
             rangeRule.min=0;
-            rangeRule["message"]=`${fieldTitle}必须大于${params.limitRange.min}`;
+            rangeRule["message"]=`${fieldTitle}必须大于等于${params.limitRange.min}`;
             if(!rangeAdded){
                 rules.push(rangeRule);
             }

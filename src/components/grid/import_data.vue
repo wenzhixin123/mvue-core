@@ -29,6 +29,12 @@
                                     :multiple="false"
                                     accept="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet,application/vnd.ms-excel"
                                     @change="handleFileChange"/>
+
+                            </i-col>
+                            <i-col span="24" v-if="importTemplateUrl">
+                                <div style="margin-top:5px;">
+                                    <a :href="importTemplateUrl" target="_blank">下载模板</a>
+                                </div>
                             </i-col>
                         </Row>
                     </div>
@@ -51,6 +57,7 @@
                                 <th></th>
                                 <th>实体</th>
                                 <th>实体属性名</th>
+                                <th>操作</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -68,6 +75,9 @@
                                         <option v-for="field in mappingFields(mapping)" :value="field.name" :key="field.name">{{field.title}}</option>
                                     </select>
                                 </td>
+                                <td>
+                                    <a href="javascript:void(0)" @click="ignoreOrAdd(mapping)">{{mapping.optTitle}}</a>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
@@ -80,6 +90,7 @@
                                     :column-mappings="validColumnMapping"
                                     :import-id="importId"
                                     :items="editorProps.items"
+                                    :ignore-columns="ignoreColumns"
                                     :entity-name="metaEntity.name" 
                                     @on-all-succeessed="handleOnAllSuccessed">
                                 </m-simple-batch-editor>
@@ -125,6 +136,11 @@ export default {
             title:metaEntity.title,
             key:metaEntity.name
         };
+        let importTemplateUrl=false;
+        if(grid.importTemplateUrl){
+            importTemplateUrl=grid.importTemplateUrl.replace(':entityName',metaEntity.name);
+            importTemplateUrl=context.getMvueToolkit().utils.appendParam(importTemplateUrl,'entityName',metaEntity.name);
+        }
         return {
             grid:grid,
             metaEntity:metaEntity,
@@ -148,7 +164,9 @@ export default {
             },
             allImported:false,//数据是否都导入完毕
             importId:null,//当前导入的id
-            validColumnMapping:null//后端api调用的映射关系数据
+            validColumnMapping:null,//后端api调用的映射关系数据
+            ignoreColumns:{},//忽略映射的列
+            importTemplateUrl:importTemplateUrl
         }
     },
     watch:{
@@ -225,7 +243,8 @@ export default {
                     key:this.metaEntity.name,
                     fieldName: null,
                     title:col.title,
-                    relations:null
+                    relations:null,
+                    optTitle:'忽略'
                 };
                 _.each(this.associatedMetaEntities,item=>{
                     if(item.title==_m.title||(item.joinField&&item.joinField.title==_m.title)){
@@ -296,7 +315,7 @@ export default {
             let realMappings=[];
             let validateFailed=false;
             _.each(this.columnMappings,cm => {
-                if(!cm.fieldName||!cm.key){
+                if((!cm.fieldName||!cm.key)&&(!this.ignoreColumns[cm.index])){
                     validateFailed=true;
                     this.$Message.info({content:"实体和实体属性名不能为空"});
                     return false;
@@ -333,6 +352,7 @@ export default {
             this.editorProps.preprocessed=false;
             this.columnMappings=[];
             this.validColumnMapping=[];
+            this.ignoreColumns={};
             this.current=0;
             this.clearFileInput();
             this.model.file=null;
@@ -397,6 +417,12 @@ export default {
                     this.associatedMetaEntities.push(item);
                 }
             });
+        },
+        //忽略映射列
+        ignoreOrAdd(mapping){
+            let index=mapping.index;
+            this.ignoreColumns[index]=!this.ignoreColumns[index];
+            mapping.optTitle= this.ignoreColumns[index]?'添加':'忽略';
         }
     }
 }

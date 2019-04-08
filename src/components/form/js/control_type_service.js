@@ -191,16 +191,16 @@ var columnTypeMapping={
     "date-time":componentTypes.DateTime.id,
     timestamp:componentTypes.DateTime.id,
     boolean:componentTypes.Boolean.id,
-    float:componentTypes.NumberInput.id,
-    double:componentTypes.NumberInput.id,
-    int:componentTypes.NumberInput.id,
-    smalint:componentTypes.NumberInput.id,
-    integer:componentTypes.NumberInput.id,
-    tinyint:componentTypes.NumberInput.id,
-    bigint:componentTypes.NumberInput.id,
-    numeric:componentTypes.NumberInput.id,
-    decimal:componentTypes.NumberInput.id,
-    real:componentTypes.NumberInput.id,
+    float:componentTypes.Number.id,
+    double:componentTypes.Number.id,
+    int:componentTypes.Number.id,
+    smalint:componentTypes.Number.id,
+    integer:componentTypes.Number.id,
+    tinyint:componentTypes.Number.id,
+    bigint:componentTypes.Number.id,
+    numeric:componentTypes.Number.id,
+    decimal:componentTypes.Number.id,
+    real:componentTypes.Number.id,
     clob:componentTypes.MultiLineText.id,
     text:componentTypes.MultiLineText.id,
     bit:componentTypes.Boolean.id
@@ -217,7 +217,7 @@ function getMetaFieldComponentType(metaField){
         inputType= componentTypes.MultiLineText.id;
     }
     //按映射类型
-    if(columnTypeMapping[inputType]){
+    if(columnTypeMapping[columnType]){
         inputType= columnTypeMapping[inputType];
     }
     if(columnTypeMapping[metaField.format]){

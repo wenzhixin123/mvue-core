@@ -76,7 +76,7 @@
                                     </select>
                                 </td>
                                 <td>
-                                    <a href="javascript:void(0)" @click="ignoreOrAdd(mapping)">{{mapping.optTitle}}</a>
+                                    <a href="javascript:void(0)" @click="ignoreOrAdd(mapping)" :class="{'ivu-btn-warning':mapping.optTitle==='忽略'}">{{mapping.optTitle}}</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -104,7 +104,7 @@
                 <Button @click="cancel"><span>关闭</span></button>
                 <Button @click="reImport"><span>重置</span></button>
                 <Button type="primary" v-if="current===0" @click="doMapping"><span>配置映射关系</span></button>
-                <Button v-if="current===1" @click="previous"><span>上一步</span></button>
+                <Button v-if="current===1||(current===2&&!allImported)" @click="previous"><span>上一步</span></button>
                 <Button type="primary" v-if="current===1" @click="prepareBatchEditor"><span>下一步</span></button>
                 <Button type="primary" v-if="current===2" @click="doImport"><span>导入</span></button>
             </div>

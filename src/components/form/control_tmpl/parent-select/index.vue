@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-                <div class="form-item-view" v-text="viewModeValue"></div>
+                <div class="form-item-view" v-text="viewModeValue||emptyText" :title="viewModeValue||emptyText"></div>
         </template>
         <template v-else>
             <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">

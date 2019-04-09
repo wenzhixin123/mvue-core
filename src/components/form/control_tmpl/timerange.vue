@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div class="form-item-view" v-text="valueObj||emptyText"></div>
+            <div class="form-item-view" v-text="valueObj||emptyText" :title="valueObj||emptyText"></div>
         </template>
         <template v-else>
                 <TimePicker transfer

@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div class="form-item-view" v-text="formatValue()"></div>
+            <div class="form-item-view" v-text="formatValue()"  :title="formatValue()"></div>
         </template>
         <template v-else>
             <InputNumber   v-model="valueObj" @on-change="updateValue"  :disabled="disabled"

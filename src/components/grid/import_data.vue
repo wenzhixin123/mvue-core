@@ -1,6 +1,6 @@
 <template>
     <div class="grid-import-data-con">
-        <div @click="showImport" style="width:100%;">
+        <div @click="showImport" class="btn-con" style="width:100%;">
             <slot>
                 <Button v-if="operation.toolbarType=='compact'" type="text"  :icon="operation.icon">{{operation.title}}</Button>
                 <Button v-else type="primary"  :icon="operation.icon">{{operation.title}}</Button>
@@ -432,7 +432,6 @@ export default {
     display:inline-block;
     width:100%;
 }
-
 .highlight-number{
     color:#ff9900;
 }

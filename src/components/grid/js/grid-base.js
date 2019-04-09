@@ -183,7 +183,7 @@ export default{
                 var ctx={
                     grid:this
                 };
-                return btn.show(ctx);
+                return btn.show(ctx,btn);
             }
             return true;
         }

@@ -11,7 +11,7 @@ var operation= {
     security:["update"],
     entitySecurity:true,
     renderComponent:"m-grid-associate",
-    show:function(context){
+    show:function(context,opt){
         return context.grid&&context.grid.ifOneToManyGrid();
     }
 };

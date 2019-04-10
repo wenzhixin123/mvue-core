@@ -148,12 +148,9 @@ export default {
         },
         setCurrentUserIfCreate(userId,users){
             var _this=this;
-            console.log(this.entityResource);
-            /*if(this.entityResource){
-                this.entityResource&&this.entityResource.get({id:userId}).then(({data})=>{
-                    _this.initDefaultForUserOrg(data.userId,data.name,users);
-                });
-            }*/
+            this.entityResource&&this.entityResource.get({id:userId}).then(({data})=>{
+                _this.initDefaultForUserOrg(data.userId,data.name,users);
+            });
         },
         setCurrentOrgIfCreate(orgId,orgs){
             var _this=this;

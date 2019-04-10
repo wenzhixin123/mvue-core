@@ -34,7 +34,7 @@ function installGridAndForm (Vue) {
   Vue.component('MetaMultiOrgSelect', require('./components/form/control_tmpl/multi_org_select'))
   Vue.component('MetaCascadeSelect', require('./components/form/control_tmpl/cascade_select'))
   Vue.component('MetaRefEntity', require('./components/form/control_tmpl/ref_entity'))
-  Vue.component('MetaImportFileUpload', require('./components/form/control_tmpl/import_file_upload'))
+  /*Vue.component('MetaImportFileUpload', require('./components/form/control_tmpl/import_file_upload'))*/
   Vue.component('MetaMultiRefEntity', require('./components/form/control_tmpl/multi_ref_entity'))
   Vue.component('MetaBoolean', require('./components/form/control_tmpl/boolean'))
   Vue.component('MetaGroup', require('./components/form/control_tmpl/group'))

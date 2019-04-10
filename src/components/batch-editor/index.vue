@@ -518,9 +518,13 @@ export default {
         },
          //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据
         ignoreReadonlyFields(_entity,isCreate) {
+            let form=this.$refs.form;
             let _model = {};
             let _this = this;
             _.forIn(_entity, (v, k) => {
+                if(form.ignoreKeys[k]){
+                    return;
+                }
                 let metaField = _this.metaEntity.findField(k);
                 if(!metaField){
                     _model[k] = v;

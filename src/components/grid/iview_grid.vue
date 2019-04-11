@@ -85,6 +85,7 @@
                            v-model="quicksearchKeyword" @on-search="reload"
                            :placeholder="toolbar.quicksearch.placeholder"  />
                     <advance-search ref="advanceSearchRef"
+                            :query-options="queryOptions"
                             :quicksearch-keyword="quicksearchKeyword"
                             :quicksearch="toolbar.quicksearch"
                             :init-model="advanceSearchInitModel"

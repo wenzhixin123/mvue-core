@@ -107,6 +107,10 @@ export default {
         batchField:{
             type:Boolean,
             default:false
+        },
+        ignoreAutoMode:{//是否自动设置组件的readonly模式等，默认自动，高级查询时不自动
+            type:Boolean,
+            default:false
         }
     },
     watch:{
@@ -202,7 +206,10 @@ export default {
                 formItem.componentType=mapping[formItem.componentType];
             }
         }
-        let _mode=this.getInnerMode(metaField);
+        let _mode=this.mode;
+        if(!this.ignoreAutoMode){
+            _mode=this.getInnerMode(metaField);
+        }
         return {
             innerMode:_mode,
             formItem:formItem,

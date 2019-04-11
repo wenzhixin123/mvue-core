@@ -2,9 +2,9 @@
     <div :style="{width:formItem.componentParams.width+'%'}">
         <template v-if="viewMode">
             <m-operation class="form-item-view" v-if="canView" :operation="refEntityViewOpt"  :widget-context="widgetContext">
-                <a href="javascript:void(0)" v-text="viewModeValue"></a>
+                <a href="javascript:void(0)" v-text="viewModeValue" :title="viewModeValue"></a>
             </m-operation>
-            <div v-else class="form-item-view" v-text="viewModeValue||emptyText"></div>
+            <div v-else class="form-item-view" v-text="viewModeValue||emptyText" :title="viewModeValue||emptyText"></div>
         </template>
         <template v-else>
             <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">

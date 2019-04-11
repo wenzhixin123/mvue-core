@@ -1,6 +1,6 @@
 <template>
     <div class="grid-import-data-con">
-        <div @click="showImport" style="width:100%;">
+        <div @click="showImport" class="btn-con" style="width:100%;">
             <slot>
                 <Button v-if="operation.toolbarType=='compact'" type="text"  :icon="operation.icon">{{operation.title}}</Button>
                 <Button v-else type="primary"  :icon="operation.icon">{{operation.title}}</Button>
@@ -66,17 +66,17 @@
                                 <td>{{mapping.title}}</td>
                                 <td>&#x2192;</td>
                                 <td>
-                                    <select v-model="mapping.key">
+                                    <select v-model="mapping.key" @change="handleMappingKeyChanged(mapping)">
                                         <option v-for="item in associatedMetaEntities" :value="item.key" :key="item.key" :data-title="item.key">{{item.title}}</option>
                                     </select>
                                 </td>
                                 <td>
                                     <select v-model="mapping.fieldName">
-                                        <option v-for="field in mappingFields(mapping)" :value="field.name" :key="field.name">{{field.title}}</option>
+                                        <option v-for="field in mapping.mappingFields" :value="field.name" :key="field.name">{{field.title}}</option>
                                     </select>
                                 </td>
                                 <td>
-                                    <a href="javascript:void(0)" @click="ignoreOrAdd(mapping)">{{mapping.optTitle}}</a>
+                                    <a href="javascript:void(0)" @click="ignoreOrAdd(mapping)" :class="{'ivu-btn-warning':mapping.optTitle==='忽略'}">{{mapping.optTitle}}</a>
                                 </td>
                             </tr>
                         </tbody>
@@ -104,7 +104,7 @@
                 <Button @click="cancel"><span>关闭</span></button>
                 <Button @click="reImport"><span>重置</span></button>
                 <Button type="primary" v-if="current===0" @click="doMapping"><span>配置映射关系</span></button>
-                <Button v-if="current===1" @click="previous"><span>上一步</span></button>
+                <Button v-if="current===1||(current===2&&!allImported)" @click="previous"><span>上一步</span></button>
                 <Button type="primary" v-if="current===1" @click="prepareBatchEditor"><span>下一步</span></button>
                 <Button type="primary" v-if="current===2" @click="doImport"><span>导入</span></button>
             </div>
@@ -253,6 +253,7 @@ export default {
                         return false;
                     } 
                 })
+                this.handleMappingKeyChanged(_m);
                 _mappings.push(_m);
             });
             this.columnMappings=_mappings;
@@ -264,14 +265,15 @@ export default {
             this.allImported=true;
         },
         //计算每一列的映射对应的可选字段
-        mappingFields(mapping){
+        handleMappingKeyChanged(mapping){
             let key=mapping.key;
             if(!key){
-                return [];
+                mapping.mappingFields=[];
+                return;
             }
             let item=this.associatedMetaEntitiesMap[key];
             let mEntity=item.metaEntity;
-            let _mappingFields=[];
+            let _mappingFields=[],_fieldName=null;
             for (const key in mEntity.fields) {
                 if (mEntity.fields.hasOwnProperty(key)) {
                     const metaField = mEntity.fields[key];
@@ -280,16 +282,17 @@ export default {
                             ||metaField.semantics=="updatedBy")){
                         _mappingFields.push(metaField);
                         if(metaField.title==mapping.title){
-                            mapping.fieldName=metaField.name;
+                            _fieldName=metaField.name;
                         }
                     }
                 }
             }
             if(!mapping.fieldName&&item.joinField){
                 let tField=item.metaEntity.firstTitleField();
-                mapping.fieldName=tField&&tField.name;
+                _fieldName=tField&&tField.name;
             }
-            return _mappingFields;
+            mapping.mappingFields=_mappingFields;
+            mapping.fieldName=_fieldName;
         },
         //校验文件是否上传
         doValidation:function(callback){
@@ -432,7 +435,6 @@ export default {
     display:inline-block;
     width:100%;
 }
-
 .highlight-number{
     color:#ff9900;
 }

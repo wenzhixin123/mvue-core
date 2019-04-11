@@ -462,18 +462,14 @@ export default {
         },
         //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据
         ignoreReadonlyFields() {
-            const fixIgnoreFields=["__ops__"];
             let _model = {};
             let _this = this;
             _.forIn(_this.entity, (v, k) => {
-                if(fixIgnoreFields.includes(k)){
+                if(this.ignoreKeys[k]){
                     return;
                 }
                 let metaField = _this.metaEntity.findField(k);
                 if(!metaField){
-                    if(_.has(_this.metaEntity.relations,k)){
-                        return;
-                    }
                     _model[k] = v;
                     return;
                 }

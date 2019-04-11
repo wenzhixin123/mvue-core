@@ -1,7 +1,7 @@
 <template>
     <div >
         <template v-if="viewMode">
-            <div class="form-item-view" v-text="viewModeValue()||emptyText"></div>
+            <div class="form-item-view" v-text="viewModeValue()||emptyText" :title="viewModeValue()||emptyText"></div>
         </template>
         <template v-else>
             <Cascader  @on-change="handleChange" :data="optionsData" v-model="valueObj"></Cascader>

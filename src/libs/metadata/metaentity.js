@@ -329,8 +329,8 @@ export default function (options) {
 
     metaEntity.getPage = async function (pageKey) {
         var ui = await this.getUISettings();
-        var page = ui[pageKey];
-        if (page == null && ui.pages != null) {
+        var page = null;
+        if (ui.pages != null) {
             page = ui.pages[pageKey];
         }
         return _.cloneDeep(page);
@@ -352,8 +352,8 @@ export default function (options) {
     metaEntity.getRelationPage = async function (relationName,pageKey) {
         var relationUI=await this.getRelationUI(relationName);
         if(relationUI){
-            var page= relationUI[pageKey];
-            if(!page && relationUI.pages){
+            var page= null;
+            if(relationUI.pages){
                 page=relationUI.pages[pageKey];
             }
             return _.cloneDeep(page);

@@ -157,7 +157,8 @@ export default {
             currentRow:{},
             localListData:null,//{data:[],total:0}
             localDataMap:{},
-            loading:false
+            loading:false,
+            reloadChangedQueue:[]
         };
     },
     methods:{
@@ -176,11 +177,19 @@ export default {
         handleOnRowClick(row,index){
             let id=row[this.idFieldName];
             let realRow=this.$refs.grid.rowMap[id];
-            this.$refs.grid.editRow=id;
             if(this.currentRecordId===id){
                 return;
             }
-            this.handleOnRowEdit(id,realRow);
+            let form=this.$refs.form;
+            if(!form.isCreate){
+                this.validateForm().then(()=>{
+                    this.$refs.grid.editRow=id;
+                    this.handleOnRowEdit(id,realRow);
+                },()=>{});
+            }else{
+                this.$refs.grid.editRow=id;
+                this.handleOnRowEdit(id,realRow);
+            }
         },
         disableSortable(){
             this.columns.forEach(col => {
@@ -232,35 +241,62 @@ export default {
             this.currentRow=row;
             this.currentRecordId=id;
         },
-        handleOnRowCancelEdit(context){
+        validateForm(){
             let form=this.$refs.form;
-            form.$refs["formRef"].validate(valid => {
-                if (valid) {
-                    //恢复到查看模式
-                    context.grid.editRow='';
-                }else{
-                    globalContext.warning({title: "表单验证失败", content: "表单内部分字段验证未通过，请修复"});
-                }
+            if(_.isEmpty(this.currentRow)){
+                return Promise.resolve();
+            }
+            if(form.isCreate){
+                return Promise.resolve();
+            }
+            let id=this.currentRow[this.idFieldName];
+            return new Promise((resolve,reject)=>{
+                form.$refs.formRef.validate(valid => {
+                    if (valid) {
+                        resolve();
+                    }else{
+                        if(this.currentRow.hasOwnProperty(this.idFieldName)){
+                            this.currentRow.__rowStatus__='failed';
+                            this.localDataMap[id]['__rowStatus__']='failed';
+                        }
+                        reject();
+                    }
+                },(ee)=>{
+                    console.log(ee);
+                    reject();
+                });
             });
+        },
+        handleOnRowCancelEdit(context){
+            this.validateForm().then(()=>{
+                this.currentRow={};
+                this.currentRecordId=null;
+                //恢复到查看模式
+                context.grid.editRow='';
+            },()=>{});
         },
         handleOnRowSave(context){
             let form=this.$refs.form;
             let id=this.currentRow[this.idFieldName];
-            form.$refs["formRef"].validate(valid => {
-                if (valid) {
-                    this.singleSave(this.localDataMap[id]).then(()=>{
-                        this.currentRow.__rowStatus__='saved';
-                        this.localDataMap[id]['__rowStatus__']='saved';
-                    },()=>{
-                        this.currentRow.__rowStatus__='failed';
-                        this.localDataMap[id]['__rowStatus__']='failed';
-                    });
-                }else{
+            this.validateForm().then(()=>{
+                this.singleSave(this.localDataMap[id]).then(()=>{
+                    this.currentRow.__rowStatus__='saved';
+                    this.localDataMap[id]['__rowStatus__']='saved';
+                },()=>{
                     this.currentRow.__rowStatus__='failed';
                     this.localDataMap[id]['__rowStatus__']='failed';
-                    globalContext.warning({title: "表单验证失败", content: "表单内部分字段验证未通过，请修复"});
+                });
+            },()=>{});
+        },
+        formatDateTime(fieldName,oldV){
+            if(oldV&&_.isString(oldV)&&oldV.indexOf('T')===10&&oldV.endsWith('Z')){
+                let metaField=this.metaEntity.findField(fieldName);
+                if(metaField.inputType=="DateTime"){
+                    let _d=dayjs(oldV);
+                    oldV=_d.format('YYYY-MM-DD HH:mm:ss');
                 }
-            });
+            }
+            return oldV;
         },
         handleOnFormEntityChanged(entity){
             let formFields=this.buildFormFields();
@@ -269,13 +305,8 @@ export default {
                 let newV=entity[fieldName];
                 let oldV=this.currentRow[fieldName];
                 //2019-02-21T05:46:50.000Z
-                if(oldV&&_.isString(oldV)&&oldV.indexOf('T')===10&&oldV.endsWith('Z')){
-                    let metaField=this.metaEntity.findField(fieldName);
-                    if(metaField.inputType=="DateTime"){
-                        let _d=dayjs(oldV);
-                        oldV=_d.format('YYYY-MM-DD HH:mm:ss');
-                    }
-                }
+                oldV=this.formatDateTime(fieldName,oldV);
+                newV=this.formatDateTime(fieldName,newV);
                 if(!_.isEqual(newV,oldV)){
                     changed=true;
                     return false;
@@ -397,7 +428,7 @@ export default {
             });
         },
         ignoreVirtualFields(_model){
-            let ignores=['perms','__rowStatus__','__virtualId__','__id__','__forceMeta__','__meta__']
+            let ignores=['__rowStatus__','__virtualId__','__id__','__forceMeta__','__meta__','__ops__']
             ignores.forEach(key => {
                 if(_model.hasOwnProperty(key)){
                     delete _model[key];
@@ -448,29 +479,52 @@ export default {
             }
             return false;
         },
-        saveAll(){
+        reloadData(){
+            this.currentRow={};
+            this.currentRecordId=null;
+            globalContext.getMvueToolkit().utils.smartAction(this,"reloadChangedQueue",()=>{
+                this.$refs.grid.reload();
+            },1000);
+        },
+        async doBatchSave(){
             let localListData=this.localListData;
-            let savePromises=[];
+            let savePromises=[],needReload=false;
             for(let i=0;i<localListData.data.length;++i){
                 let item=localListData.data[i];
                 if(this.needSave(item)){
-                    savePromises.push(this.singleSave(item))
+                    needReload=true;
+                    try{
+                        await this.singleSave(item);
+                    }catch(ee){
+                        this.loading=false;
+                        this.$refs.grid.editRow='';
+                        this.reloadData();
+                    }
                 }
             }
-            Promise.all(savePromises).then(()=>{
-                this.loading=false;
+            this.loading=false;
+            if(needReload){
                 this.$refs.grid.editRow='';
-                this.$refs.grid.reload();
+                this.reloadData();
+            }
+        },
+        saveAll(){
+            //批量保存前也验证一下表单
+            this.validateForm().then(()=>{
+                this.doBatchSave();
             },()=>{
-                this.loading=false;
-                this.$refs.grid.reload();
+                this.doBatchSave();
             });
         },
          //对entity数据作筛选，忽略readonly的字段，以便向后端提交数据
         ignoreReadonlyFields(_entity,isCreate) {
+            let form=this.$refs.form;
             let _model = {};
             let _this = this;
             _.forIn(_entity, (v, k) => {
+                if(form.ignoreKeys[k]){
+                    return;
+                }
                 let metaField = _this.metaEntity.findField(k);
                 if(!metaField){
                     _model[k] = v;

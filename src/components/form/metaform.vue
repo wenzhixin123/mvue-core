@@ -113,7 +113,8 @@
                 metaEntity:metaEntity,
                 dataResource:dataResource,
                 entity:entity,
-                firstEntityData:null
+                firstEntityData:null,
+                ignoreKeys:{}//保存从服务端获取的entity数据中，不是当前实体字段的冗余数据key
             };
         },
         mounted:function () {
@@ -213,6 +214,12 @@
                         this.entity[key] = data[key];
                     });*/
                     _.forIn(data, (value, key) => {
+                        //保存从服务端获取的entity数据中，不是当前实体字段的冗余数据key
+                        let mField=this.metaEntity.findField(key);
+                        if(!mField){
+                            this.ignoreKeys[key]=true;
+                        }
+                        //将所有数据项设置到当前entity对象中
                         this.$set(this.entity,key,value);
                     });
                     this.initOthers();

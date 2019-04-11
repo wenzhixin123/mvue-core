@@ -19,16 +19,18 @@
                 @on-ref-selected-changed="handleOnRefSelectedChanged"
                 style="height: calc(100% - 55px); overflow: auto;"
                 :on-inited="handleOnInited">
-                <Row v-for="fieldName in formFields" :key="fieldName">
-                    <i-col :span="12">
-                        <m-field :name="fieldName"></m-field>
-                    </i-col>
-                    <i-col :span="12">
-                        <FormItem class="clear-model-check">
-                            <Checkbox v-model="clearModel[fieldName]">全部置空</Checkbox>
-                        </FormItem>
-                    </i-col>
-                </Row>
+                <template v-for="fieldName in formFields">
+                    <Row :key="fieldName" v-if="editable(fieldName)">
+                        <i-col :span="12">
+                            <m-field :name="fieldName"></m-field>
+                        </i-col>
+                        <i-col :span="12">
+                            <FormItem class="clear-model-check">
+                                <Checkbox v-model="clearModel[fieldName]">全部置空</Checkbox>
+                            </FormItem>
+                        </i-col>
+                    </Row>
+                </template>
             </m-form>
             <div class="drawer-footer">
                 <Button style="margin-right: 8px" @click="showDrawer = false">取消</Button>
@@ -123,6 +125,14 @@ export default {
                 clearModel[fieldName]=false;
             });
             return clearModel;
+        },
+        editable(fieldName){
+            let metaEntity=this.widgetContext.metaEntity;
+            let metaField=metaEntity.findField(fieldName);
+            if(metaField.updatable===false||metaField.readonly){
+                return false;
+            }
+            return true;
         }
     }
 }

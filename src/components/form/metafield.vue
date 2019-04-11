@@ -16,7 +16,6 @@
                 :context="context"
                 :form-item="formItem"
                 :init-when-create="initWhenCreate"
-                v-bind="formItem.componentParams"
                 @input="handleChange"
             >
             </component>

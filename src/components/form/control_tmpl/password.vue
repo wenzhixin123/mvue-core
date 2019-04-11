@@ -1,7 +1,12 @@
 <template>
     <div class="password-con">
         <template v-if="viewMode">
-                <div class="form-item-view">********</div>
+                <div class="form-item-view">
+                    <Icon v-if="textShowed" type="ios-eye-off" slot="suffix" @click="hideText"/>
+                    <Icon v-else type="ios-eye" slot="suffix" @click="showText"/>
+                    <span v-if="textShowed" :title="valueObj">{{valueObj}}</span>
+                    <span v-else>********</span>
+                </div>
         </template>
         <template v-else>
             <template v-if="formItem.componentParams.showBtn">

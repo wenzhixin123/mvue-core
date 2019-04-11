@@ -1,6 +1,5 @@
 <template>
     <div v-if="preprocessed" class="meta-form-panel" :class="{'has-buttons':hasButtons()}">
-        <div>sssssssss</div>
         <div style="height:30px;position:relative;" v-show="loadingFormData">
             <Spin fix>
             </Spin>

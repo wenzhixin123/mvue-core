@@ -37,6 +37,9 @@ function getParentLayout(el) {
  * @returns {*}
  */
 function preparePageSettings(pageSettings,context) {
+    if(pageSettings==null){
+        return;
+    }
     pageSettings[ComConfigKeyName]={};
     processComSettings(pageSettings,context);
     processComRules(pageSettings,context);

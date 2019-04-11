@@ -18,7 +18,7 @@ export default {
                 if(!document.documentElement){
                     return 400;
                 }
-                let clientHeight=document.documentElement.clientHeight-160;
+                let clientHeight=document.documentElement.clientHeight-190;
                 return clientHeight>0?clientHeight:400;
             }
         }

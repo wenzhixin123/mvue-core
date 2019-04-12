@@ -52,11 +52,11 @@ const directive = {
             parentNode.replaceChild(home, el);
             // append to target
             getTarget(value).appendChild(el);
-            el.__transferDomData = Object.assign({}, el.__transferDomData, { hasMovedOut: true, target: getTarget(value) });
+            el.__transferDomData = _.assign({}, el.__transferDomData, { hasMovedOut: true, target: getTarget(value) });
         } else if (hasMovedOut && value === false) {
             // previously moved, coming back home
             parentNode.replaceChild(el, home);
-            el.__transferDomData = Object.assign({}, el.__transferDomData, { hasMovedOut: false, target: getTarget(value) });
+            el.__transferDomData = _.assign({}, el.__transferDomData, { hasMovedOut: false, target: getTarget(value) });
         } else if (value) {
             // already moved, going somewhere else
             getTarget(value).appendChild(el);

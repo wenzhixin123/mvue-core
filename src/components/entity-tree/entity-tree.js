@@ -75,7 +75,7 @@ export default {
             var _data=[];
             var toBeSelected=null;
             _.forEach(items,(item,index)=>{
-                var treeItem=Object.assign({},item,{
+                var treeItem=_.assign({},item,{
                     id:item[this.valueField],
                     title:item[this.labelField],
                     children: [],

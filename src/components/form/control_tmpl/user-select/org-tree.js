@@ -20,7 +20,7 @@ export default {
         toTreeData(items,level=0){
             var _data=[];
             _.each(items,item=>{
-                var treeItem=Object.assign({},item,{
+                var treeItem=_.assign({},item,{
                     id:item[this.orgValueKey||this.valueKey],
                     title:item[this.orgLabelKey||this.labelKey],
                     children: []

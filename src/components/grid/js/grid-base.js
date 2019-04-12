@@ -83,7 +83,7 @@ export default{
                 }
             }
             if(ctx.filters&&ctx.filters.rules){
-                ctx.filters.rules=Object.assign(ctx.filters.rules,this.filtersFromQuery,this.filtersFromColumnHeader);
+                ctx.filters.rules=_.assign(ctx.filters.rules,this.filtersFromQuery,this.filtersFromColumnHeader);
             }
             //保存当前查询的上下文参数对象
             this.currentQueryCtx=ctx;

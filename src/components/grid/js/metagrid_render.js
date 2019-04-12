@@ -128,7 +128,7 @@ export default {
                     _.forEach(context.grid.toolbar.singleBtns,btn=>{
                         if(btn.name=="edit"){
                             btnOpts=btn;
-                            btnOpts=Object.assign(btnOpts,{
+                            btnOpts=_.assign(btnOpts,{
                                 security:""
                             });
                             return false;

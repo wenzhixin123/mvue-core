@@ -49,7 +49,7 @@
             "value":function(newV,oldV){
                 var _issuedObjcet=this.issuedObjcet
                 if(newV){
-                    Object.assign(_issuedObjcet,newV)
+                    _.assign(_issuedObjcet,newV)
                 }
             },
             "formItem.componentParams.standard"(newV){
@@ -72,7 +72,7 @@
         },
         methods: {
             updateValue: function () {
-                let _issuedObjcet = Object.assign({},this.issuedObjcet);
+                let _issuedObjcet = _.assign({},this.issuedObjcet);
                 _issuedObjcet.fullText = "";
                 if(this.formItem.componentParams.standard=="standard2"){
                     _.each(this.formItem.componentParams.options,function(option){

@@ -39,7 +39,7 @@ export  default function () {
         baseServiceRoot=context.getMvueToolkit().config.getApiBaseUrl();
     }
     $resource=context.buildResource('meta_form{/id}',customActions,{root:baseServiceRoot});
-    $resource=Object.assign($resource,{
+    $resource=_.assign($resource,{
         getForm:$resource.get,
         getPage:getPage
     });

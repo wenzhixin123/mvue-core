@@ -72,6 +72,7 @@ import controlTypeService from './components/form/js/control_type_service'
 import constants from './components/form/js/constants'
 import formBase from './components/form/js/form_base'
 import commonOperation from './components/meta_operation/js/common_operation'
+import exportCsv from './components/grid/js/export_csv'
 
 //Vue插件安装入口函数
 const install = function (Vue, opts = {}) {
@@ -99,6 +100,7 @@ let MvueCore = {
   router: mvueToolkit.router,
   config: config,
   propParser: propParser,
+  exportCsv: exportCsv,
   linkplugin,
   formConstants,
   formValidationPattern,

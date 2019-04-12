@@ -73,7 +73,7 @@ function metaFieldToCol(context,metaField,initialCol) {
                         if(initialCol.filterMultiple){
                           _filter={
                             op:'in',
-                            value:selectedValues.join(',')
+                            value:selectedValues
                           };
                         }else{
                           _filter={

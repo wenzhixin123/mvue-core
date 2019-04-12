@@ -27,6 +27,7 @@ export default{
             selectedItems:[],//已经选择的数据
             quicksearchKeyword:"",//内部高级查询提供的快捷搜索词
             advanceSearchFilters:[],//内部高级查询设置的查询条件
+            advanceSearchJoins:'',//由内部高级查询设置的join条件
             changedQueue:[],
             currentQueryCtx:{},//当前查询的所有上下文参数对象
             currentQueryParams:null//通过leap-query-convertor查询的最终拼接条件，{filters:'完整字符串'}不同于currentQueryCtx，是最终查询时完整的filters字符串
@@ -68,6 +69,9 @@ export default{
                     };
                 });
                 ctx.filters=useInnerAdvSearchFilters;
+                if(this.advanceSearchJoins){
+                    ctx.joins=this.advanceSearchJoins;
+                }
             }//外部高级查询的查询条件自动在ctx里边，不需要特殊处理
             //1 如果有来自url查询条件的默认查询参数自动添加进去
             //2 如果有来自列header的查询条件也附加上去
@@ -121,9 +125,10 @@ export default{
             this.selectedItems=[];
         },
         //高级查询
-        doAdvanceSearch(advanceSearchFilters,quicksearchKeyword){
+        doAdvanceSearch(advanceSearchFilters,quicksearchKeyword,joins){
             this.quicksearchKeyword=quicksearchKeyword||"";
             this.advanceSearchFilters=advanceSearchFilters;
+            this.advanceSearchJoins=joins;
             this.reload(true);
         },
         //end 单击行

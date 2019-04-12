@@ -10,12 +10,12 @@
         </slot>
     </div>
     <Modal class="popup-widget-con" v-model="popupWidgetModal"
-            :width="modalWidth"
+            :width="innerModalWidth"
             :title="modalTitle"
             :scrollable="true"
             :mask-closable="false"
             >
-            <div class="modal-inner-widget" :style="{height:modalHeight+'px'}" v-if="popupWidgetModal">
+            <div class="modal-inner-widget" v-if="popupWidgetModal" :style="{height:innerModalHeight+'px',overflow:'auto'}">
                 <component v-if="!isLayout" @popup-close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
                 </component>
                 <meta-layout v-if="isLayout&&layoutSettings" :layout="layoutSettings" @popup-close="close">
@@ -38,14 +38,28 @@ export default {
         operation:{//操作的定义，必传参数
             type:Object,
             required:true
+        },
+        modalWidth:{
+            type:Number,
+            default:80
+        },
+        modalHeight:{
+            type:Number,
+            default(){
+                if(!document.documentElement){
+                    return 400;
+                }
+                let clientHeight=document.documentElement.clientHeight-220;
+                return clientHeight>0?clientHeight:400;
+            }
         }
     },
     data(){
         let footerDomId='footerid-'+uuidv1();
         let isLayout=this.isMetaLayout();
         return {
-            modalWidth:this.operation.modalWidth||750,
-            modalHeight:this.operation.modalHeight||380,
+            innerModalWidth:this.operation.modalWidth||this.modalWidth,
+            innerModalHeight:this.operation.modalHeight||this.modalHeight,
             modalTitle:this.operation.modalTitle||this.operation.title,
             popupWidgetModal:false,
             footerDomId:footerDomId,

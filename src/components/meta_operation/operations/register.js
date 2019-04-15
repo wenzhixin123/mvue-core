@@ -60,6 +60,7 @@ manager.registerByTpl({
     btnType:"primary",
     security:["update"],
     entitySecurity:true,
+    rowSecurity:true,
     url:"./edit",
     type:"routeTo"
 });

@@ -85,7 +85,7 @@
             "formItem.componentParams.standard"(newV){
                 //监听标准切换
                 this.issuedObjcet.code = "";
-                this.$emit('input',"");
+                this.$emit('input',{});
             },
             "formItem.componentParams.options"(newV){
                 //监听选项改变
@@ -96,7 +96,7 @@
             if(!_.isEmpty(this.value)){
                 this.issuedObjcet=_.cloneDeep(this.value);
             }else{
-                this.$emit('input',"");
+                this.$emit('input',{});
                 this.initDefault();
             }
         },

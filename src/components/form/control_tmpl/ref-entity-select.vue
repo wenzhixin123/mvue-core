@@ -14,15 +14,10 @@
     <div style="width:80%;">
         <Row>
             <Col span="24" style="border-right:1px solid #e8e8e8;">
-                <meta-grid ref="gridList"
-                    :toolbar="toolbar"
-                    :highlight-row="!multiple"
-                    :max-columns-size="5"
-                    :show-selection="multiple"
-                    :handle-on-title-click="false"
+                <meta-grid v-if="preprocessed" ref="gridList"
+                    v-bind="layoutSettings"
                     @on-current-change="handleOnCurrentChange"
-                    @on-selection-change="handleOnSelectionChange"
-                    :entity-name="entityName">
+                    @on-selection-change="handleOnSelectionChange">
                 </meta-grid>
             </Col>
         </Row>
@@ -31,6 +26,7 @@
 </template>
 <script>
 import refEntitySelect from '../mixins/ref-entity-select';
+//import metaLayoutConvertor from '../../meta-layout/layout-convertor';
 export default {
     mixins:[refEntitySelect],
     props:{
@@ -44,6 +40,41 @@ export default {
         multiple:{
             type:Boolean,
             default:false
+        }
+    },
+    data(){
+        return {
+            layoutSettings:{
+                toolbar:{
+                    quicksearch:{}
+                },
+                highlightRow:!this.multiple,
+                maxColumnsSize:5,
+                showSelection:this.multiple,
+                handleOnTitleClick:false,
+                entityName:this.formItem.componentParams.entityId
+            },
+            preprocessed:false
+        };
+    },
+    mounted(){
+        this.preprocess();
+    },
+    methods:{
+        async preprocess(){
+            let metaEntity=this.$metaBase.findMetaEntity(this.entityName);
+            let settings=await metaEntity.getPage("select");
+            //这里对于settings先不做metaLayoutConvertor处理
+            if(!_.isEmpty(settings)){
+                // settings= metaLayoutConvertor.convert(settings,this,{isPopup:true});
+                // let _settings=_.extend(this.layoutSettings,settings.layout[0]);
+                // if(_settings.hasOwnProperty('ctype')){
+                //     delete _settings.ctype;
+                // }
+                //this.layoutSettings=_settings;
+                this.layoutSettings=_.extend(this.layoutSettings,settings);
+            }
+            this.preprocessed=true;
         }
     }
 }

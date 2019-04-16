@@ -3,9 +3,6 @@ export default {
         var entityName=this.formItem.componentParams.entityId;
         return {
             entityName:entityName,
-            toolbar:{
-                quicksearch:{},
-            },
             selectedItem:_.cloneDeep(this.value)
         }
     },

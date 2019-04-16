@@ -156,14 +156,23 @@ export default{
             return context;
         },
         wrapBtns(btns) {
-            var ops = {}
+            var ops = {};
             if (this["entityName"]) {
                 ops["entityName"] = this["entityName"]
             }
-
             let _btns = operationManager.batchCreate(btns, ops);
             _btns=_.filter(_btns,btn=>{
                 return this.showBtn(btn);
+            });
+            //特殊处理弹出框列表上的create按钮
+            let popupParent=this.getParentPopup();
+            _.forEach(_btns,btn=>{
+                if(btn.name =="create"||btn.name =="edit"){
+                    if(popupParent){
+                        btn.operationType="popup";
+                        btn.url=btn.url||btn.name;
+                    }
+                }
             });
             return _btns;
         },

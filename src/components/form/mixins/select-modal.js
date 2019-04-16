@@ -25,7 +25,8 @@ export default {
     },
     data(){
         return {
-            popupWidgetModal:false
+            popupWidgetModal:false,
+            isPopup:true//标记弹出的选择框
         };
     },
     methods:{

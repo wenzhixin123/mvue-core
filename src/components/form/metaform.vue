@@ -735,11 +735,3 @@
         }
     }
 </style>
-
-<style>
-    .multiselect{
-        z-index: 10;
-    }
-</style>
-
-

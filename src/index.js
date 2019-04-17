@@ -214,6 +214,8 @@ import operationManager from "./libs/operation/operations";
 import formControlManager from './components/form/control-manager';
 import topEntityService from "./services/store/top-entity";
 
+import ufs from "./libs/ufs";
+
 let MvueCore={
     install:install,
     metaBase:metabase,
@@ -229,6 +231,7 @@ let MvueCore={
     getParent,
     treeService,
     formControlManager,
+    ufs,
     initAfterAppCtxCreated:(appCtx)=>{
         context.initAfterAppCtxCreated(appCtx);
     },

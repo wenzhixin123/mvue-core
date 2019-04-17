@@ -201,3 +201,9 @@ export default {
     height:100%;
 }
 </style>
+<style>
+.ivu-modal-body .meta-layout-con{
+    height:auto;
+}
+</style>
+

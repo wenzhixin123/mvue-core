@@ -179,8 +179,9 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
     if (params.required&&(!ignoreRequiredValidate)) {
         rules.push(buildValidationRuleForRequired(fieldTitle));
     }
+    let isStringType=metaField&&metaField.type=='string';
     //长度验证
-    if (params.limitLength && params.limitLength.limit) {
+    if (isStringType && params.limitLength && params.limitLength.limit) {
         var lenRule = {
             type: "string",
         };
@@ -198,7 +199,7 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
         }
     }
     //验证规则
-    if ((params.validation   && params.validation.validate && params.validation.rule && params.validation.rule.pattern)
+    if (isStringType && (params.validation   && params.validation.validate && params.validation.rule && params.validation.rule.pattern)
         ||  (params.validation && params.validation.pattern)
         ||  (params.validation && params.validation.rules)) {
             if(params.validation.pattern){

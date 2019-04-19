@@ -129,7 +129,8 @@ export default {
                 viewBtns:this.wrapBtns(this.toolbar&&this.toolbar.viewBtns,formStatus)
             },
             createAnother:false,//是否继续创建模式
-            hasEditPerm:true//是否有编辑权限
+            hasEditPerm:true,//是否有编辑权限
+            ignoreKeys:{}//保存从服务端获取的entity数据中，不是当前实体字段的冗余数据key
         };
     },
     computed:{

@@ -113,8 +113,7 @@
                 metaEntity:metaEntity,
                 dataResource:dataResource,
                 entity:entity,
-                firstEntityData:null,
-                ignoreKeys:{}//保存从服务端获取的entity数据中，不是当前实体字段的冗余数据key
+                firstEntityData:null
             };
         },
         mounted:function () {

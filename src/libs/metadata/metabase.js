@@ -6,6 +6,7 @@ import controlTypeService from '../../components/form/js/control_type_service';
 import context from "../context";
 import consts from "../consts";
 import MetaEntityCls from "./metaentity";
+import metaservice from '../../services/meta/metaservice';
 
 var store=require("store2");
 

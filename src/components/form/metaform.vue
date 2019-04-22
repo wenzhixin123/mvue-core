@@ -126,6 +126,14 @@
                     initByMetadata.initModelByQueryParams(this,this.entity);
                     //根据关系填充模型关系字段数据：只考虑多对一关系
                     initByMetadata.initModelByRelation(this,this.entity);
+                    //最后根据前端附加的默认固定值填充表单entity
+                    if(!_.isEmpty(this.defaultValues)){
+                        _.forIn(this.defaultValues, (value, key) => {
+                            if(this.entity.hasOwnProperty(key)){
+                                this.entity[key]=value;
+                            }
+                        });
+                    }
                     this.$store.commit("core/setEntity",{entityName:this.entityName,entity:this.entity});
                     this.initOthers();
                 });

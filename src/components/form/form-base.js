@@ -100,6 +100,10 @@ export default {
         forceViewWhenDeny:{//是否在表单数据没有编辑权限时，自动修改为forceView查看模式
             type:Boolean,
             default:false
+        },
+        defaultValues: {//新建时，设置固定默认值
+            type: Object,
+            require: false
         }
     },
     data(){

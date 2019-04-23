@@ -163,6 +163,25 @@ function buildValidationRuleForRequired(fieldTitle){
         required: true,message:`${fieldTitle}不能为空`
     };
 }
+function buildValidationRuleForJson(){
+    let _rule={
+        validator(rule, value, callback) {
+            if(!value){
+                callback();
+                return;
+            }
+            if(_.isPlainObject(value)&&value.jsonError){
+                callback(rule.message);
+                return;
+            }else{
+                callback();
+            }
+        },
+        message:'JSON格式错误',
+        trigger: 'blur'
+    }
+    return _rule;
+}
 //初始化字段组件的验证规则，async-validator验证时，按rules顺序进行验证
 function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate) {
     if (!formItem.isDataField) {
@@ -180,6 +199,12 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
         rules.push(buildValidationRuleForRequired(fieldTitle));
     }
     let isStringType=metaField&&metaField.type=='string';
+    let isJsonText=metaField&&metaField.inputType==controlTypeService.componentTypes.JsonText.id;
+    if(isJsonText){
+        //添加json校验
+        let jsonRule=buildValidationRuleForJson();
+        rules.push(jsonRule);
+    }
     //长度验证
     if (isStringType && params.limitLength && params.limitLength.limit) {
         var lenRule = {

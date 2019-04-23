@@ -39,6 +39,7 @@ import Group from './components/form/control_tmpl/group'
 
 import SingleLineText from './components/form/control_tmpl/single_line_text';
 import MultiLineText from './components/form/control_tmpl/multi_line_text';
+import JsonText from './components/form/control_tmpl/json-text';
 import RadioButton from './components/form/control_tmpl/radio_button';
 import CheckboxGroup from './components/form/control_tmpl/checkbox_group';
 import SingleSelect from './components/form/control_tmpl/single_select';
@@ -90,6 +91,7 @@ const formComponents={
     Group,
     SingleLineText,
     MultiLineText,
+    JsonText,
     RadioButton,
     CheckboxGroup,
     SingleSelect,

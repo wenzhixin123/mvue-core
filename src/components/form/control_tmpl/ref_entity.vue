@@ -1,5 +1,5 @@
 <template>
-    <div :style="{width:formItem.componentParams.width+'%'}">
+    <div>
         <template v-if="viewMode">
             <m-operation class="form-item-view" v-if="canView" :operation="refEntityViewOpt"  :widget-context="widgetContext">
                 <a href="javascript:void(0)" v-text="viewModeValue" :title="viewModeValue"></a>

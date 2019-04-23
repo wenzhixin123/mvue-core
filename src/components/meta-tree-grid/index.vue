@@ -221,6 +221,7 @@
                 return globalContext.getMvueComponents().leapQueryConvertor.exec(queryResource,ctx,(queryParams)=>{
                     this.$refs.gridList.beforeQuery&&this.$refs.gridList.beforeQuery(queryParams);
                     if(this.selectedTreeNode==null){
+                        this.$refs.gridList.currentQueryParams=_.cloneDeep(queryParams);
                         return ;
                     }
                     var treeFilter=`${this.treeSettings.targetField} eq '${this.selectedTreeNode.id}'`;

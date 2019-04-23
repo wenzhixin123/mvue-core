@@ -182,6 +182,53 @@ function buildValidationRuleForJson(){
     }
     return _rule;
 }
+function buildPatternRules(params,fieldTitle){
+    if ((params.validation   && params.validation.validate && params.validation.rule && params.validation.rule.pattern)
+        ||  (params.validation && params.validation.pattern)
+        ||  (params.validation && params.validation.rules)) {
+        let rules=[];
+        let _msg=`${fieldTitle}格式不符合`;
+        if(params.validation.pattern){
+            rules.push({
+                type: "string",
+                pattern: params.validation.pattern,
+                message: _msg
+            });
+        }else if(params.validation.rules){
+            rules=rules.concat(_.cloneDeep(params.validation.rules));
+            _.forEach(rules,r=>{
+                if(!r.message){
+                    r.message=_msg;
+                }
+            });
+        }else{
+            rules.push({
+                type: "string",
+                pattern: params.validation.rule.pattern,
+                message: _msg
+            });
+        }
+        return rules;
+    }
+    return false;
+}
+function buildValidationRuleForTag(params,fieldTitle){
+    let _vRules=buildPatternRules(params,fieldTitle);
+    if(_vRules){
+        let _rule={
+            type:"array",
+            message: `${fieldTitle}格式不符合`
+        };
+        let _len=params.validation.len||params.validation.length;
+        if(_len&&_len>0){
+            _rule.len=_len;
+            _rule.message=`${_rule.message}，并且至多添加${_rule.len}个`;
+        }
+        _rule.defaultField=_vRules;
+        return _rule;
+    }
+    return false;
+}
 //初始化字段组件的验证规则，async-validator验证时，按rules顺序进行验证
 function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate) {
     if (!formItem.isDataField) {
@@ -200,10 +247,18 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
     }
     let isStringType=metaField&&metaField.type=='string';
     let isJsonText=metaField&&metaField.inputType==controlTypeService.componentTypes.JsonText.id;
+    let isTag=metaField&&metaField.inputType==controlTypeService.componentTypes.Tag.id;
     if(isJsonText){
         //添加json校验
         let jsonRule=buildValidationRuleForJson();
         rules.push(jsonRule);
+    }
+    if(isTag){
+        //添加tag校验
+        let tagRule=buildValidationRuleForTag(params,fieldTitle);
+        if(tagRule){
+            rules.push(tagRule);
+        }
     }
     //长度验证
     if (isStringType && params.limitLength && params.limitLength.limit) {
@@ -224,24 +279,11 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
         }
     }
     //验证规则
-    if (isStringType && (params.validation   && params.validation.validate && params.validation.rule && params.validation.rule.pattern)
-        ||  (params.validation && params.validation.pattern)
-        ||  (params.validation && params.validation.rules)) {
-            if(params.validation.pattern){
-                rules.push({
-                    type: "string",
-                    pattern: params.validation.pattern,
-                    message: `${fieldTitle}格式不符合`
-                });
-            }else if(params.validation.rules){
-                rules=rules.concat(_.cloneDeep(params.validation.rules));
-            }else{
-                rules.push({
-                    type: "string",
-                    pattern: params.validation.rule.pattern,
-                    message: `${fieldTitle}格式不符合`
-                });
-            }
+    if (isStringType) {
+        let _vRules=buildPatternRules(params,fieldTitle);
+        if(_vRules){
+           rules=rules.concat(_vRules);
+        }
     }
     if (params.validation  && params.validation.validate  && params.validation.rule
         && params.validation.rule.type === 'compare'

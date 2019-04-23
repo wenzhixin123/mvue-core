@@ -47,7 +47,7 @@ export default {
                     //如果json格式错误，抛出jsonError错误对象
                     this.$emit('input',this.errorObj);
                 }
-            },500);
+            },200);
             
         },
         strToJson(str){

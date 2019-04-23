@@ -138,7 +138,14 @@ function loadMetaOptions(context,optionsModel) {
     });
     return options;
 }
-
+//计算实体是否开启行级权限
+function rowSecurityEnabled(model){
+  let rs=firstNotNaN(model["x-row-securities"]);
+  if(rs){
+    return rs.enabled;
+  }
+  return false;
+}
 /**
  * 将swagger的model转为MetaEntity
  * @param context
@@ -148,6 +155,7 @@ function loadMetaEntityFromMode(context,modelName,model){
   var opt= {
       name: modelName,
       title: model.title,
+      rowSecurityEnabled:rowSecurityEnabled(model),
       entityPath: _.trim(firstNotNaN(model["x-entity-path"], ("/"+_.snakeCase(modelName)))),
       ui: (firstNotNaN(model["x-entity-ui"], false)?"conf":"none"),
       description: model.description,

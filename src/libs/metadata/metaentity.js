@@ -421,6 +421,9 @@ export default function (options) {
             return;
         }
         _.forIn(ops,(opt,key)=>{
+            if(_.isEmpty(opt)){
+                return ;
+            }
             opt.name=key;
             operationManager.registerByTpl(opt);
         });

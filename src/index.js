@@ -283,6 +283,7 @@ function install(Vue, opts = {}) {
     Vue.prototype.$toolService=toolService();
     Vue.prototype.$http=context.getMvueToolkit().http;
     Vue.prototype.$resource=context.getMvueToolkit().resource;
+    Vue.prototype.$session=context.getMvueToolkit().session;
 
 
     MvueCore["session"]=context.getMvueToolkit().session;

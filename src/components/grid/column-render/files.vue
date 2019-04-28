@@ -11,8 +11,7 @@ export default {
     mixins:[batchEditorSupport],
     props:{
         uploadUrl:{
-            type:String,
-            required:true
+            type:String
         }
     },
     methods:{

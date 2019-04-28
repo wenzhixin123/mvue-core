@@ -245,7 +245,8 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
     if (params.required&&(!ignoreRequiredValidate)) {
         rules.push(buildValidationRuleForRequired(fieldTitle));
     }
-    let isStringType=metaField&&metaField.type=='string';
+    let isOptions=metaField&&controlTypeService.isOptions(metaField.inputType);
+    let isStringType=metaField&&metaField.type=='string'&&(!isOptions);
     let isJsonText=metaField&&metaField.inputType==controlTypeService.componentTypes.JsonText.id;
     let isTag=metaField&&metaField.inputType==controlTypeService.componentTypes.Tag.id;
     if(isJsonText){

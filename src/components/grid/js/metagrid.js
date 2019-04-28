@@ -4,6 +4,7 @@
 import controlTypeService from '../../form/js/control_type_service';
 import renderManager from './metagrid_render';
 import metabase from '../../../libs/metadata/metabase';
+import optionsUtils from '../../../libs/metadata/options-utils';
 /**
  *  将metaField转成ivue需要的col对象
  * @param metaField
@@ -67,32 +68,65 @@ function metaFieldToCol(context,metaField,initialCol) {
   }else if(metaField.autoFilterable&&
     controlTypeService.isOptions(metaField.inputType)){//如果是选项列，自动添加列头过滤相关功能
     col.filterMultiple=false;
+    //let isSingleOption=controlTypeService.isSingleOption(metaField.inputType);
+    let showOthers=metaField.inputTypeParams&&metaField.inputTypeParams.showOthers;
     col.filterRemote=(selectedValues)=>{//远程过滤
                         //修改过滤条件
                         var _filter=null;
                         if(initialCol.filterMultiple){
-                          _filter={
-                            op:'in',
-                            value:selectedValues
-                          };
+                          if(showOthers&&_.includes(selectedValues,optionsUtils.othersTag)){
+                            let _selectedValues=[]; 
+                            _.forEach(selectedValues,sv=>{
+                              _selectedValues.push(`%${sv}%`);
+                            });
+                            _filter={
+                              op:'like',
+                              value:_selectedValues
+                            };
+                          }else{
+                            if(_.isEmpty(selectedValues)){
+                              _filter={
+                                op:'eq',
+                                value:''
+                              };
+                            }else{
+                              _filter={
+                                op:'in',
+                                value:selectedValues
+                              };
+                            }
+                          }
                         }else{
-                          _filter={
-                            op:'eq',
-                            value:selectedValues[0]
-                          };
+                          if(showOthers&&selectedValues[0]==optionsUtils.othersTag){
+                            _filter={
+                              op:'like',
+                              value:`%${selectedValues[0]}%`
+                            };
+                          }else{
+                            _filter={
+                              op:'eq',
+                              value:selectedValues[0]
+                            };
+                          }
                         }
                         context.grid.filtersFromColumnHeader[col.key]=_filter;
                         //重新加载数据
                         context.grid.$refs.listInst.doReload(true);
                     };
-    let options=metaField.inputTypeParams&&
-      metaField.inputTypeParams["options"],_filters=[]; 
+    let options=metaField.inputTypeParams&&metaField.inputTypeParams["options"],_filters=[]; 
     _.each(options,opt=>{
       _filters.push({
         label:opt.text,
         value:opt.id
       });
-    })
+    });
+    if(showOthers){
+      let othersText=metaField.inputTypeParams&&metaField.inputTypeParams.othersText;
+      _filters.push({
+        label:othersText||optionsUtils.othersText,
+        value:optionsUtils.othersTag
+      });
+    }
     col.filters=_filters;
     col.render = renderManager.renderForCommon(context,metaField);
   } else {

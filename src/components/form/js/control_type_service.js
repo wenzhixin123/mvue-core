@@ -19,6 +19,8 @@ import orguserType from './orguser_type'
 import entityType from './entity_type'
 //基础组件：bool组件定义
 import boolType from './bool_type'
+//基础组件：数组类型，如tag组件定义
+import arrayType from './array-type'
 //高级组件：成员组件定义
 import noFieldType from './no_field_type'
 
@@ -40,7 +42,8 @@ var fieldControlsType=[
     uploadType,
     cascadeType,
     boolType,
-    issuedNumberType
+    issuedNumberType,
+    arrayType
 ];
 var fieldControls=[];
 _.each(fieldControlsType,function(type){

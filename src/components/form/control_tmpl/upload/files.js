@@ -6,6 +6,9 @@ function oldFileRealUrl(url,uploadBasePath){
     }
     return `${uploadBasePath}?filePath=${url}`;
 }
+function getUfsEndpoint(){
+    return context.getMvueToolkit().config.getConfigVal('service.ufs.endpoint');
+}
 function pathsJoin(...args){
     let paths=[];
     let firstStartsWithSlash=false;
@@ -33,8 +36,7 @@ function fileRealUrl(item,uploadBasePath){
         if(item.id){
             ufs.getDownloadUrl(item.id,item.name).then(res=>{
                 if(!res.url.startsWith('http')){
-                    //let baseUrl=context.getMvueToolkit().config.getApiBaseUrl();
-                    let baseUrl="./";
+                    let baseUrl=getUfsEndpoint();
                     resolve(pathsJoin(baseUrl,res.url));
                 }else{
                     resolve(res.url);

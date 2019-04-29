@@ -36,24 +36,11 @@ function baseOptions(){
     ];
 }
 //定义选项类型组件的扩展参数
-var optionsBaseInputRules={
-    options:baseOptions(),
-    otherOptions:{
-        addOthers:false,
-        id:"_others",
-        text:"其他",
-        required:false
-    }
-};
 var componentParams={
     RadioButton:{
         options:baseOptions(),
-        otherOptions:{
-            addOthers:false,
-            id:"_others",
-            text:"其他",
-            required:false
-        }
+        showOthers:false,
+        othersText:optionsUtils.othersText
     },
     SingleSelect:{
         options:baseOptions(),
@@ -65,12 +52,8 @@ var componentParams={
     },
     CheckboxGroup:{
         options:baseOptions(),
-        otherOptions:{
-            addOthers:false,
-            id:"_others",
-            text:"其他",
-            required:false
-        }
+        showOthers:false,
+        othersText:optionsUtils.othersText
     },
     BitCode:{
         options:[]

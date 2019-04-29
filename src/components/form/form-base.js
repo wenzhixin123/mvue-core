@@ -100,6 +100,10 @@ export default {
         forceViewWhenDeny:{//是否在表单数据没有编辑权限时，自动修改为forceView查看模式
             type:Boolean,
             default:false
+        },
+        defaultValues: {//新建时，设置固定默认值
+            type: Object,
+            require: false
         }
     },
     data(){
@@ -129,7 +133,8 @@ export default {
                 viewBtns:this.wrapBtns(this.toolbar&&this.toolbar.viewBtns,formStatus)
             },
             createAnother:false,//是否继续创建模式
-            hasEditPerm:true//是否有编辑权限
+            hasEditPerm:true,//是否有编辑权限
+            ignoreKeys:{}//保存从服务端获取的entity数据中，不是当前实体字段的冗余数据key
         };
     },
     computed:{

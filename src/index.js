@@ -39,6 +39,7 @@ import Group from './components/form/control_tmpl/group'
 
 import SingleLineText from './components/form/control_tmpl/single_line_text';
 import MultiLineText from './components/form/control_tmpl/multi_line_text';
+import JsonText from './components/form/control_tmpl/json-text';
 import RadioButton from './components/form/control_tmpl/radio_button';
 import CheckboxGroup from './components/form/control_tmpl/checkbox_group';
 import SingleSelect from './components/form/control_tmpl/single_select';
@@ -71,6 +72,7 @@ import Boolean from './components/form/control_tmpl/boolean';
 import IssuedNumber from './components/form/control_tmpl/issued_number';
 import BitCode from './components/form/control_tmpl/bit-code';
 import Password from './components/form/control_tmpl/password';
+import Tag from './components/form/control_tmpl/tag';
 import mExpand from './components/form/control_tmpl/expand/index';
 import mConfirm from './components/form/control_tmpl/confirm/index';
 import mRelation from './components/form/control_tmpl/relation/index';
@@ -90,6 +92,7 @@ const formComponents={
     Group,
     SingleLineText,
     MultiLineText,
+    JsonText,
     RadioButton,
     CheckboxGroup,
     SingleSelect,
@@ -128,6 +131,7 @@ const formComponents={
     IssuedNumber,
     BitCode,
     Password,
+    Tag,
 
     PclinkSingleUserSelect,
     PclinkSingleOrgSelect,
@@ -214,6 +218,8 @@ import operationManager from "./libs/operation/operations";
 import formControlManager from './components/form/control-manager';
 import topEntityService from "./services/store/top-entity";
 
+import ufs from "./libs/ufs";
+
 let MvueCore={
     install:install,
     metaBase:metabase,
@@ -229,6 +235,7 @@ let MvueCore={
     getParent,
     treeService,
     formControlManager,
+    ufs,
     initAfterAppCtxCreated:(appCtx)=>{
         context.initAfterAppCtxCreated(appCtx);
     },
@@ -276,6 +283,7 @@ function install(Vue, opts = {}) {
     Vue.prototype.$toolService=toolService();
     Vue.prototype.$http=context.getMvueToolkit().http;
     Vue.prototype.$resource=context.getMvueToolkit().resource;
+    Vue.prototype.$session=context.getMvueToolkit().session;
 
 
     MvueCore["session"]=context.getMvueToolkit().session;

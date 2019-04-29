@@ -15,6 +15,11 @@ var textTypes={
         id: "Password", 
         title: "密文", 
         icon:"ivu-icon ivu-icon-ios-lock-outline"
+    },
+    JsonText:{ 
+        id: "JsonText", 
+        title: "JSON文本", 
+        icon:"ivu-icon ivu-icon-logo-javascript" 
     }
 };
 //定义文本类型组件的扩展参数
@@ -51,7 +56,8 @@ function textBaseInputRules(componentType){
 var componentParams={
     SingleLineText:textBaseInputRules(textTypes.SingleLineText.id),
     MultiLineText:textBaseInputRules(textTypes.MultiLineText.id),
-    Password:textBaseInputRules(textTypes.Password.id)
+    Password:textBaseInputRules(textTypes.Password.id),
+    JsonText:textBaseInputRules(textTypes.JsonText.id)
 };
 //判断是否文本组件
 function accept(componentType){

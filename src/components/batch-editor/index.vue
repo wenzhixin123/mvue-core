@@ -178,6 +178,8 @@ export default {
             let id=row[this.idFieldName];
             let realRow=this.$refs.grid.rowMap[id];
             if(this.currentRecordId===id){
+                this.$refs.grid.editRow=id;
+                this.handleOnRowEdit(id,realRow);
                 return;
             }
             let form=this.$refs.form;
@@ -484,6 +486,7 @@ export default {
             this.currentRecordId=null;
             globalContext.getMvueToolkit().utils.smartAction(this,"reloadChangedQueue",()=>{
                 this.$refs.grid.reload();
+                this.$refs.grid.editRow='';
             },1000);
         },
         async doBatchSave(){

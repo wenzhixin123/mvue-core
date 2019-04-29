@@ -5,17 +5,15 @@
                :theme="theme" mode="horizontal"
                :active-name="activeName" @on-select="onMenuSelected">
             <template v-for="level0 in localMenus">
-                <template v-if="level0.children&& level0.children.length>0">
-                    <Submenu v-if="level0.children&& level0.children.length>0" :key="level0.id" :name="level0.id">
-                        <template slot="title">
-                            <Icon v-if="level0.icon" :type="level0.icon"></Icon>
-                            <span>{{level0.title}}</span>
-                        </template>
-                        <MenuItem v-for="level1 in level0.children" :key="level1.id" :name="level1.id">
-                            <span>{{level1.title}}</span>
-                        </MenuItem>
-                    </Submenu>
-                </template>
+                <Submenu v-if="level0.children&& level0.children.length>0" :key="level0.id" :name="level0.id">
+                    <template slot="title">
+                        <Icon v-if="level0.icon" :type="level0.icon"></Icon>
+                        <span>{{level0.title}}</span>
+                    </template>
+                    <MenuItem v-for="level1 in level0.children" :key="level1.id" :name="level1.id">
+                        <span>{{level1.title}}</span>
+                    </MenuItem>
+                </Submenu>
                 <MenuItem v-else :key="level0.id" :name="level0.id">
                     <Icon v-if="level0.icon" :type="level0.icon"></Icon>
                     <span>{{level0.title}}</span>
@@ -27,17 +25,15 @@
                 <Menu ref="leftMenus" width="auto" :theme="theme"
                       :open-names="openNames" :active-name="activeName" @on-select="onMenuSelected">
                     <template v-for="level0 in localMenus">
-                        <template v-if="level0.children&& level0.children.length>0">
-                            <Submenu v-if="level0.children&& level0.children.length>0" :key="level0.id" :name="level0.id">
-                                <template slot="title">
-                                    <Icon v-if="level0.icon" :type="level0.icon"></Icon>
-                                    <span>{{level0.title}}</span>
-                                </template>
-                                <MenuItem v-for="level1 in level0.children" :key="level1.id" :name="level1.id">
-                                    <span>{{level1.title}}</span>
-                                </MenuItem>
-                            </Submenu>
-                        </template>
+                        <Submenu v-if="level0.children&& level0.children.length>0" :key="level0.id" :name="level0.id">
+                            <template slot="title">
+                                <Icon v-if="level0.icon" :type="level0.icon"></Icon>
+                                <span>{{level0.title}}</span>
+                            </template>
+                            <MenuItem v-for="level1 in level0.children" :key="level1.id" :name="level1.id">
+                                <span>{{level1.title}}</span>
+                            </MenuItem>
+                        </Submenu>
                         <MenuItem v-else :key="level0.id" :name="level0.id">
                             <Icon v-if="level0.icon" :type="level0.icon"></Icon>
                             <span>{{level0.title}}</span>

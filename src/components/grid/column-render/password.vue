@@ -13,8 +13,7 @@ export default {
     mixins:[batchEditorSupport],
     props:{
         value:{
-            type:String,
-            required:true
+            type:String
         }
     },
     data(){

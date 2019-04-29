@@ -15,7 +15,7 @@ import getParent from '../mixins/get-parent';
 import context from '../../libs/context';
 import sc from '../../libs/security/permission';
 //操作类型定义
-var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script'};
+var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',group:'group'};
 //将不同的部件操作类型转成实际的操作
 export default {
     mixins:[getParent],
@@ -109,6 +109,7 @@ export default {
         toPageOperation:require('./to_page_operation'),
         popupOperation:require('./popup_operation'),
         scriptOperation:require('./script_operation'),
+        groupOperation:require('./group-operation'),
     }
 }
 </script>

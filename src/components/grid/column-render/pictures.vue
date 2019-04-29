@@ -18,8 +18,7 @@ export default {
     },
     props:{
         uploadUrl:{
-            type:String,
-            required:true
+            type:String
         }
     },
     data:function(){

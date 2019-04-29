@@ -26,6 +26,7 @@
 </template>
 <script>
 import controlTypeService from '../form/js/control_type_service';
+import optionsUtils from '../../libs/metadata/options-utils';
 export default {
     props: {
         "entityName": {
@@ -107,7 +108,12 @@ export default {
             mapping[controlTypeService.componentTypes.SingleSelect.id]=multiSelectId;
 
             var metaField=metaEntity.findField(key);
+            //开启了其他选项的，切换成checkbox
+            let showOthers=metaField.inputTypeParams&&metaField.inputTypeParams.showOthers;
             if(mapping[metaField.inputType]){
+                if(showOthers){
+                    return controlTypeService.componentTypes.CheckboxGroup.id;
+                }
                 return mapping[metaField.inputType];
             }
             return metaField.inputType;
@@ -125,7 +131,7 @@ export default {
         cancel(){
             this.searchModal=false;
         },
-        addFilters(key,value,inputType,advanceSearchFilters){
+        addFilters(key,value,inputType,advanceSearchFilters,metaField){
             //文本类型查询条件用like
             let textMapping={};
             textMapping[controlTypeService.componentTypes.MultiLineText.id]=true;
@@ -162,11 +168,30 @@ export default {
                 });
             }else if(multiSelectMapping[inputType]){
                 if(!_.isEmpty(value)){
-                    advanceSearchFilters.push({
-                        key:key,
-                        op:"in",
-                        value:value
-                    });
+                    //开启了其他选项的，查询用like
+                    let showOthers=metaField.inputTypeParams&&metaField.inputTypeParams.showOthers;
+                    if(showOthers){
+                        let _value=[];
+                        _.forEach(value,v=>{
+                            if(_.startsWith(v,optionsUtils.othersTag)){
+                                let _v=v.substring(optionsUtils.othersTag.length);
+                                _value.push(`%${optionsUtils.othersTag}%${_v}%`);
+                            }else{
+                                _value.push(`%${v}%`);
+                            }
+                        })
+                        advanceSearchFilters.push({
+                            key:key,
+                            op:"like",
+                            value:_value
+                        });
+                    }else{
+                        advanceSearchFilters.push({
+                            key:key,
+                            op:"in",
+                            value:value
+                        });
+                    }
                 }
             }else{
                 advanceSearchFilters.push({
@@ -198,12 +223,14 @@ export default {
                     let joinMapping=this.joinMapping[key];
                     if(!_.isNull(value)&&value!==""&&!_.isUndefined(value)){
                         _joins[joinMapping.relationName]=joinMapping;
-                        let inputType=joinMapping.metaEntity.findField(joinMapping.fieldName).inputType;
-                        this.addFilters(`${joinMapping.alias}.${joinMapping.fieldName}`,value,inputType,advanceSearchFilters);
+                        let metaField=joinMapping.metaEntity.findField(joinMapping.fieldName);
+                        let inputType=metaField.inputType;
+                        this.addFilters(`${joinMapping.alias}.${joinMapping.fieldName}`,value,inputType,advanceSearchFilters,metaField);
                     }
                 }else if(!_.isNull(value)&&value!==""&&!_.isUndefined(value)){//当前实体字段构成的查询条件
-                    let inputType=this.metaEntity.findField(key).inputType;
-                    this.addFilters(key,value,inputType,advanceSearchFilters);
+                    let metaField=this.metaEntity.findField(key);
+                    let inputType=metaField.inputType;
+                    this.addFilters(key,value,inputType,advanceSearchFilters,metaField);
                 }
             });
             let joinsArray=[],joins=null;

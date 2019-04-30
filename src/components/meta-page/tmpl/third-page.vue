@@ -37,7 +37,7 @@
       try {
         var settings = await metaEntity2.getPage(thirdPage);
         if (_.isEmpty(settings)) {
-          this.$router.push({path: this.$route.path + "/list", query: this.$route.query});
+          this.$router.replace({path: this.$route.path + "/list", query: this.$route.query});
           return;
         }
         this.pageSettings = metaLayoutConvertor.convert(settings, self);

@@ -146,7 +146,7 @@
                     lm = lm.children[0];
                 }
                 if (lm) {
-                    this.onMenuSelected(lm.id,true);
+                    this.onMenuSelected(lm.id);
                 }
             }
             this.setActiveMenu(matchedMenu);
@@ -209,7 +209,7 @@
                     this.$store.commit("core/setEntity", {entityName: this.entityName, entity: data});
                 });
             },
-            onMenuSelected: function (name,replace) {
+            onMenuSelected: function (name) {
                 if (name) {
                     var selectedMenu = this.menuMappings[name];
                     if (_.isEmpty(selectedMenu) || _.isEmpty(selectedMenu.url)) {
@@ -221,11 +221,12 @@
                     if(selectedMenu.redirect){
 
                     }
-                    if(replace){
+                    //这里全部修改为replace为true，菜单切换不作为回退历史记录
+                    //if(replace){
                         this.$router.replace({path: toPath, query: this.$route.query});
-                    }else{
-                        this.$router.push({path: toPath, query: this.$route.query});
-                    }
+                    //}else{
+                    //    this.$router.push({path: toPath, query: this.$route.query});
+                    //}
                 }
             },
             prepare: function () {

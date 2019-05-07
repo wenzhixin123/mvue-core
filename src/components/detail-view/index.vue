@@ -1,6 +1,6 @@
 <template>
     <Layout class="detail-view" :class="containerCls">
-        <b-childheader v-if="showHeader" :title="header.title" :back-route="backRoute"></b-childheader>
+        <b-childheader v-if="showHeader" :title="header.title"></b-childheader>
         <Menu  ref="topMenus" v-if="mode=='horizontal'"
                :theme="theme" mode="horizontal"
                :active-name="activeName" @on-select="onMenuSelected">

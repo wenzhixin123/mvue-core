@@ -20,14 +20,14 @@ var metabases={};
 
 /**
  * 根据项目id构建项目元数据访问的key
- * @param {*} projectId 
+ * @param {*} projectId
  */
 function mbCacheKey(projectId){
   return projectId?`${projectId}/_mb_`:`_mb_`;
 }
 /**
  * 根据传入的项目id获取项目元数据
- * @param {*} projectId 
+ * @param {*} projectId
  */
 function getMetabase(projectId){
   var cacheKey=mbCacheKey(projectId);
@@ -74,7 +74,7 @@ function currentSwagger(projectId){
 }
 /**
  * 根据项目id从远程加载项目的元数据信息
- * @param {*} projectId 
+ * @param {*} projectId
  * @param {*} forceReload 为true表示强制从远程更新元数据信息
  */
 function  initMetabase(projectId,forceReload) {
@@ -128,6 +128,7 @@ function loadMetabase(swagger,projectId){
   var cachedKey=mbCacheKey(projectId);
   metabases[cachedKey]=metabase;
   store.set(cachedKey,metabase);
+  buildMessages(entities);
 }
 
 function loadMetaOptions(context,optionsModel) {
@@ -365,6 +366,21 @@ function loadMetaRelationFromProperty(context,propertyName,property){
       metaRelation.joinFields=[property["x-embedded-field"]];
   }
   return metaRelation;
+}
+
+function buildMessages(entities){
+    let messages=context.getConfig("messages");
+    if(messages==null){
+        messages={};
+        context.getConfig()["messages"]=messages;
+    }
+   _.forIn(entities,entity=>{
+       let entityTitleKey=`entity.${entity.name}.title`;
+       if(_.has(messages,entityTitleKey)){
+           return;
+       }
+       messages[entityTitleKey]=entity.title;
+   });
 }
 
 

@@ -30,7 +30,8 @@ function parseProps(layout,curInst){
     let evalContext={
         query:curInst.$route.query,
         path:curInst.$route.params,
-        context:curInst.widgetContext
+        context:curInst.widgetContext,
+        config:contextHelper.getConfig()
     };
     visitObj(layout,(itemNode,parent,indexOrKey)=>{
         let isInMForm=parent&&(parent.ctype=="meta-form"||parent.ctype=="m-form");
@@ -75,7 +76,7 @@ function isViewForm(query) {
 }
 
 function evalTemplate(tpl,evalContext) {
-    let newVal=tpl;
+    let newVal=evalMessage(tpl);
     if(tpl.indexOf("${")>-1 || tpl.indexOf("<%")>-1){
         let compiled=_.template(tpl);
         try{
@@ -96,6 +97,23 @@ function evalTemplate(tpl,evalContext) {
         }
     }
     return newVal;
+}
+
+/**
+ * 国际化处理,语法@{messageKey}
+ * @param tpl
+ * @returns {*}
+ */
+function evalMessage(tpl) {
+    if(!tpl){
+        return tpl;
+    }
+    let messages=contextHelper.getConfig("messages") ||{};
+    let replaced= tpl.replace(/@{([\s\S]+?)}/g,function () {
+        let messageKey=arguments[1];
+        return messages[messageKey];
+    });
+    return replaced;
 }
 
 /**

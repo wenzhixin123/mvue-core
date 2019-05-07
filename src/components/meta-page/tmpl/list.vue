@@ -1,13 +1,13 @@
 <template>
-    <meta-page 
-        :header="header" 
+    <meta-page
+        :header="header"
         :hide-header="!isGrid()"
         :hide-card="!isGrid()"
-        :error-obj="errorObj" 
+        :error-obj="errorObj"
         :lazy="true"
         :preprocessed="isReady"
-        :page-settings="{layout:layout}" 
-        :key="$route.fullPath"  :id="'default-grid-uuid-'+metaEntity.name">
+        :page-settings="{layout:layout}"
+        :id="'default-grid-uuid-'+metaEntity.name">
     </meta-page>
 </template>
 <script>

@@ -1,13 +1,13 @@
 <template>
-  <meta-page 
-    :header="header" 
+  <meta-page
+    :header="header"
     :hide-header="!isForm()"
     :hide-card="!isForm()"
-    :error-obj="errorObj" 
+    :error-obj="errorObj"
     :lazy="true"
     :preprocessed="isReady"
-    :page-settings="{layout:layout}" 
-    :key="$route.fullPath"  :id="'default-form-uuid-'+metaEntity.name">
+    :page-settings="{layout:layout}"
+    :id="'default-form-uuid-'+metaEntity.name">
   </meta-page>
 </template>
 <script>

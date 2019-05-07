@@ -98,7 +98,7 @@
             <template slot="header-right">
                 <slot name="header-right">
                 </slot>
-                <top-entity-select v-if="topEntitySelect&&topEntitySelect.entityName" 
+                <top-entity-select v-if="topEntitySelect&&topEntitySelect.entityName"
                     v-bind="topEntitySelect" @on-top-entity-change="handleTopEntityChange">
                 </top-entity-select>
             </template>
@@ -281,7 +281,7 @@ export default {
                 let r=relationField.manyToOneRelation;
                 targetEntity=r.targetEntity.toLowerCase();
             }else if(this.fromRelation){
-                targetEntity = this.fromRelation.entityName.toLowerCase(); 
+                targetEntity = this.fromRelation.entityName.toLowerCase();
             }
             if(targetEntity){
                 let refEntity=this.$store.state.core.currentRouteData[targetEntity];

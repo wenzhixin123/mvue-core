@@ -91,7 +91,6 @@
             }
         },
         data: function () {
-            this.setEntityToContext();
             let opens=[];
             _.forEach(this.menus,menu=>{
                 opens.push(menu.id);
@@ -105,6 +104,7 @@
                 header: {
                     title: this.title
                 },
+                entity:null,
                 basePath: ""
             }
         },
@@ -128,11 +128,17 @@
                 return ""
             },
             backRoute() {
-                return '';
+                return null;
                 //return {path: paths.relativeToAbsolute(this.basePath, "../../list")}
             }
         },
+        watch: {
+            '$route' (to, from) {
+                this.setEntityToContext();
+            }
+        },
         mounted() {
+            this.setEntityToContext();
             this.localMenus = _.cloneDeep(this.menus);
             if (this.localMenus.length < 1) {
                 return;
@@ -198,15 +204,24 @@
                 }
             },
             setEntityToContext() {
-                if (_.isEmpty(this.entityName) || _.isEmpty(this.recordId)) {
-                    return;
+                if(this.entity!=null){
+                    this.$store.commit("core/setEntity",
+                        {entityName: this.entityName, entity: this.entity});
+                    return ;
                 }
-                var metaEntity = this.$metaBase.findMetaEntity(this.entityName);
-                var dataResource = metaEntity.dataResource();
-                dataResource.get({id: this.recordId}).then(({data}) => {
+                if (_.isEmpty(this.entityName) || _.isEmpty(this.recordId)) {
+                    return Promise.resolve(null);
+                }
+
+                let metaEntity = this.$metaBase.findMetaEntity(this.entityName);
+                let dataResource = metaEntity.dataResource();
+                return dataResource.get({id: this.recordId}).then(({data}) => {
                     let titleField = metaEntity.firstTitleField();
                     this.header.title = (titleField == null ? metaEntity.title : data[titleField.name]);
-                    this.$store.commit("core/setEntity", {entityName: this.entityName, entity: data});
+                    this.entity=data;
+                    this.$store.commit("core/setEntity",
+                        {entityName: this.entityName, entity: data});
+                    return data;
                 });
             },
             onMenuSelected: function (name,replace) {

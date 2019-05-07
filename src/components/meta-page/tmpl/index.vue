@@ -1,7 +1,9 @@
 <template>
-    <component :is="tmplType"></component>
+    <component :is="tmplType" :key="pageKey()"></component>
 </template>
 <script>
+    import context from "../../../libs/context";
+    var pathToRegexp = require('path-to-regexp');
 export default {
     props:{
         type:{//可取值范围：['form','list','sub-page','sub-page-relation','third-page','third-page-relation','dync-page']
@@ -16,11 +18,22 @@ export default {
                 return 'm-page-default';
             }
         }
+
     },
     data(){
         return {
 
         };
+    },
+    methods:{
+        pageKey(){
+            let routeInfo = context.componentInRouteInfo(this);
+            let url=this.$route.path;
+            if (routeInfo) {
+                url = pathToRegexp.compile(routeInfo.route.path)(this.$route.params);
+            }
+            return url;
+        }
     },
     components:{
         'm-page-default':require('./default'),

@@ -128,7 +128,8 @@
                 return ""
             },
             backRoute() {
-                return {path: paths.relativeToAbsolute(this.basePath, "../../list")}
+                return '';
+                //return {path: paths.relativeToAbsolute(this.basePath, "../../list")}
             }
         },
         mounted() {
@@ -145,7 +146,7 @@
                     lm = lm.children[0];
                 }
                 if (lm) {
-                    this.onMenuSelected(lm.id);
+                    this.onMenuSelected(lm.id,true);
                 }
             }
             this.setActiveMenu(matchedMenu);
@@ -208,7 +209,7 @@
                     this.$store.commit("core/setEntity", {entityName: this.entityName, entity: data});
                 });
             },
-            onMenuSelected: function (name) {
+            onMenuSelected: function (name,replace) {
                 if (name) {
                     var selectedMenu = this.menuMappings[name];
                     if (_.isEmpty(selectedMenu) || _.isEmpty(selectedMenu.url)) {
@@ -220,7 +221,11 @@
                     if(selectedMenu.redirect){
 
                     }
-                    this.$router.push({path: toPath, query: this.$route.query});
+                    if(replace){
+                        this.$router.replace({path: toPath, query: this.$route.query});
+                    }else{
+                        this.$router.push({path: toPath, query: this.$route.query});
+                    }
                 }
             },
             prepare: function () {

@@ -34,7 +34,7 @@
             settings=await metaEntity.getPage(subPage);
           }
           if(_.isEmpty(settings)){
-            this.$router.push({path:this.$route.path+"/list",query:this.$route.query});
+            this.$router.replace({path:this.$route.path+"/list",query:this.$route.query});
             return;
             //settings=await metaEntity.getRelationPage(subPage,"list");
           }

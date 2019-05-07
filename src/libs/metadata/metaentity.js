@@ -1,5 +1,4 @@
 import context from "../context";
-import consts from "../consts";
 import operationManager from "../operation/operations";
 
 export default function (options) {

@@ -99,7 +99,7 @@ export default {
                         treeItem.loading=false;
                     }
                 }
-                if(this.maxLevel>0 && level>=this.maxLevel){
+                if(this.maxLevel>0 && this.maxLevel<=level){
                     delete treeItem.loading;
                 }
                 if(this.mustSelect && level==1){

@@ -45,7 +45,11 @@ export default{
         var idField=metaEntity.getIdField();
         return {
             queryRoot() {
-                var queryOptions=buildQueryOptions(opts.queryOptions,`${opts.parentField} is null `);
+                let parentFilter="";
+                if(opts.parentField){
+                    parentFilter=`${opts.parentField} is null `;
+                }
+                var queryOptions=buildQueryOptions(opts.queryOptions,parentFilter);
                 if(opts.parentField==null){
                     var queryOptions=buildQueryOptions(opts.queryOptions,null);
                 }
@@ -86,14 +90,19 @@ export default{
         }
     },
     build:function (entityName,opts,defaultVal) {
+        opts=_.assign({},defaultVal,opts);
         var metaEntity=metabase.findMetaEntity(entityName);
         var titleField=metaEntity.firstTitleField();
         var idField=metaEntity.getIdField();
         var dataResource=this.buildDataResource(entityName,opts);
+        let parentField=metaEntity.findField(opts.parentField || "parentId");
+        if(parentField==null){
+            opts.maxLevel=1;
+        }
         return _.extend({
             labelField:titleField&&titleField.name,
             valueField:idField&&idField.name,
             dataResource:dataResource
-        },defaultVal||opts);
+        },opts);
     }
 }

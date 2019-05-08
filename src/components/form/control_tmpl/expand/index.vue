@@ -3,8 +3,8 @@
         <template v-if="showLabel" slot="label">
             <slot name="label">{{innerTitle}}<info-tip v-if="description" :content="description"></info-tip></slot>
         </template>
-        <div class="form-item-view" v-if="entity&&entity[refField]">
-            <item-render :render="fieldRender" :meta-field="metaField" :entity="entity"></item-render>
+        <div class="form-item-view" v-if="preprocessed&&metaField">
+            <item-render :render="fieldRender" :meta-field="metaField" :entity="rebuiltRefEntity"></item-render>
         </div>
         <div class="form-item-view" v-else>
             {{emptyText}}
@@ -67,14 +67,24 @@ export default {
             innerTitle=targetEntityMetaField.title;
         }
         return {
-            expandField:metaField.name,    
+            expandField:metaField.name, 
             refField:targetEntityMetaField.name,
             innerTitle:innerTitle,
-            metaField:targetEntityMetaField
+            metaField:targetEntityMetaField,
+            targetMetaEntity:targetEntity,
+            rebuiltRefEntity:{},
+            preprocessed:false
         };
     },
     computed:{
-        entity(){
+        emptyText(){
+            let metaForm=this.getParentForm();
+            if(metaForm){
+                return metaForm.emptyText;
+            }
+            return '';
+        },
+        refEntity(){
             let metaForm=this.getParentForm();
             if(!metaForm){
                 return '';
@@ -83,14 +93,16 @@ export default {
             let id=metaForm.id||this.$store.state.core.defaultFormId;
             let curFormRefEntities=refEntities[id]||{};
             let refEntity=curFormRefEntities[this.expandField];
-            return refEntity||{};
-        },
-        emptyText(){
-            let metaForm=this.getParentForm();
-            if(metaForm){
-                return metaForm.emptyText;
+            return refEntity;
+        }
+    },
+    watch:{
+        refEntity:{//这里监听vuex里边引用数据的变化，重建引用数据
+            handler:function(){
+                if(!_.isEmpty(this.refEntity)){
+                    this.rebuildRefEntity();
+                }
             }
-            return '';
         }
     },
     methods:{
@@ -105,6 +117,28 @@ export default {
                 render = renderManager.renderForCommon({},metaField);
             }
             return render(h,params);
+        },
+        rebuildRefEntity(){
+            //如果关系字段没有展开，从后端获取
+            let metaEntity=this.targetMetaEntity;
+            let metaField=metaEntity.findField(this.refField);
+            let refField=this.refField;
+            let refRelation=metaField.manyToOneRelation;
+            let refRelationName=refRelation&&refRelation.name;
+            let refEntity=this.refEntity;
+            if(refRelationName&&(!_.isEmpty(refEntity))&&(!refEntity[refRelationName])){
+                refEntity[refRelationName]={};
+                let refTargetMetaEntity=this.$metaBase.findMetaEntity(refRelation.targetEntity);
+                let ds=refTargetMetaEntity.dataResource();
+                ds.get({id:refEntity[refField]}).then(({data})=>{
+                    refEntity[refRelationName]=data;
+                    this.rebuiltRefEntity=refEntity;
+                    this.preprocessed=true;
+                });
+            }else{
+                this.rebuiltRefEntity=refEntity;
+                this.preprocessed=true;
+            }
         }
     }
 }

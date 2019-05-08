@@ -1,6 +1,7 @@
 const rowMetaKey='__meta__';
 const rowMetaIdKey='id';
 const rowMetaTitleKey='title';
+const rowMetaFakeKey='__fake__';
 function getRowMetaData(rowData,fieldName){
     let metaData=rowData[rowMetaKey];
     if(metaData&&metaData.fields){
@@ -41,6 +42,7 @@ function rebuildRefData(vals,rowData,fieldName,refValField,refTitleField){
                 let _fake={};
                 _fake[refValField]=val;
                 _fake[refTitleField]=val;
+                _fake[rowMetaFakeKey]=true;
                 refData.push(_fake);
             }
         });
@@ -75,5 +77,6 @@ export default {
     rebuildRefData,
     title,
     setRowMeta,
-    has
+    has,
+    rowMetaFakeKey
 }

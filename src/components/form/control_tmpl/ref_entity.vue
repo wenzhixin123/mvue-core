@@ -65,6 +65,7 @@ import sc from '../../../libs/security/permission';
 import controlBase from '../js/control_base';
 import entitySelect from '../mixins/entity-select';
 import selectModel from '../mixins/select-modal';
+import rowMeta from '../../form/js/row-meta';
 
 export default {
     mixins: [controlBase,entitySelect,selectModel],
@@ -101,8 +102,8 @@ export default {
             if(baseOk){
                 this.buildRefEntityViewOpts();
             }
-            //如果viewModeValue和id是一样的，证明引用数据有问题，不可点击弹出查看
-            if(this.viewModeValue===this.selectedItem[this.getIdField()]){
+            //如果引用数据有问题，不可点击弹出查看
+            if(this.selectedItem[rowMeta.rowMetaFakeKey]){
                 return false;
             }
             return baseOk;

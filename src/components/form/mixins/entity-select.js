@@ -80,27 +80,62 @@ export default{
             this.notifySelectedItemChanged(selectedOption);
         },
         firstInit(){
-            this.firstSearch();
-            this.doSearchForCache((items) => {
-                this.ensureHistoryItems(items);
-                if(this.selectedItem==null && this.preselectFirst
-                    && items && items.length>0){
-                    this.selectedItem=items[0];
-                    this.commitRefData(this.selectedItem);
-                }
-                if(this.onEntitySelectInited){
-                    this.onEntitySelectInited(this.selectedItem);
-                }
-            });
+            let needInit=true;
+            //查看模式，如果有冗余数据不用初始化引用组件，所以相关请求不需要，引用数据通过冗余数据设置
             if(this.viewMode){
-                this.getViewModeValue()
+                let metaEntity=this.context.metaEntity;
+                if(metaEntity){
+                    let metaField=metaEntity.findField(this.formItem.dataField);
+                    if(metaField.manyToOneRelation){
+                        //多对一关系
+                        let relationName=metaField.manyToOneRelation.name;
+                        let refData=this.model[relationName];
+                        if(refData){
+                            //多对一关系由于要给m-span组件使用引用数据
+                            this.commitRefData(refData);
+                            this.selectedItem=refData;
+                            needInit=false;
+                        }
+                    }else if(metaField.embeddedRelation){
+                        //嵌入关系
+                        let relationName=metaField.embeddedRelation.name;
+                        let refData=this.model[relationName];
+                        if(refData){
+                            this.selectedItem=refData;
+                            needInit=false;
+                        }
+                    }
+                }
+                if(needInit){
+                    let iv= this.getInitialValue();
+                    if(_.isNil(iv)||_.isEmpty(iv)){
+                        needInit=false;
+                    }
+                }
+            }
+            if(needInit){
+                this.firstSearch();
+                this.doSearchForCache((items) => {
+                    this.ensureHistoryItems(items);
+                    if(this.selectedItem==null && this.preselectFirst
+                        && items && items.length>0){
+                        this.selectedItem=items[0];
+                        this.commitRefData(this.selectedItem);
+                    }
+                    if(this.onEntitySelectInited){
+                        this.onEntitySelectInited(this.selectedItem);
+                    }
+                });
+            }
+            if(this.viewMode){
+                this.getViewModeValue();
             }
         },
         //第一次进入页面时执行初始化
         firstSearch(){
             let _this=this;
             var initValue=this.getInitialValue();
-            if(initValue){
+            if(!_.isNil(initValue)){
                 _this.initSelectedItemByFirstValue(initValue);
                 return;
             }
@@ -118,7 +153,7 @@ export default{
         getInitialValue(){
             //如果外部传入了value值，用外部的值
             var initValue=this.value;
-            if(initValue){
+            if(!_.isNil(initValue)){
                 return initValue;
             }
             //如果当前引用实体，与topEntity设置的一致，则自动设置为topEntity的值
@@ -128,7 +163,7 @@ export default{
                     initValue=topEntity.value;
                 }
             }
-            if(initValue){
+            if(!_.isNil(initValue)){
                 return initValue;
             }
             //top-entity-select和树列表控件，设置了默认的选中值

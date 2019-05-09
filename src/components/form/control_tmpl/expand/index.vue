@@ -98,8 +98,8 @@ export default {
     },
     watch:{
         refEntity:{//这里监听vuex里边引用数据的变化，重建引用数据
-            handler:function(){
-                if(!_.isEmpty(this.refEntity)){
+            handler:function(newV,oldV){
+                if((!_.isEmpty(this.refEntity))&&(!_.isEqual(newV,oldV))){
                     this.rebuildRefEntity();
                 }
             }

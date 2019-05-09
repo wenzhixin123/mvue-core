@@ -92,7 +92,9 @@ export default{
                         let refData=this.model[relationName];
                         if(refData){
                             //多对一关系由于要给m-span组件使用引用数据
-                            this.commitRefData(refData);
+                            if(!_.isArray(refData)){
+                                this.commitRefData(refData);
+                            }
                             this.selectedItem=refData;
                             needInit=false;
                         }

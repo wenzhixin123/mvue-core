@@ -1,8 +1,8 @@
 {
   "name": "mvue-core",
-  "version": "2.0.131",
+  "version": "2.0.132",
   "description": "mvue project core components",
-  "main": "src/index.js",
+  "main": "dist/lib/index.js",
   "scripts": {
     "build": "node build/build-lib.js",
     "prepublish": "npm run build"

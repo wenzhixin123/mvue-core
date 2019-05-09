@@ -77,6 +77,10 @@ function isViewForm(query) {
 
 function evalTemplate(tpl,evalContext) {
     let newVal=evalMessage(tpl);
+    let isFunc=evalFunc(newVal);
+    if(typeof isFunc=="function"){
+        return isFunc;
+    }
     if(tpl.indexOf("${")>-1 || tpl.indexOf("<%")>-1){
         let compiled=_.template(tpl);
         try{
@@ -114,6 +118,18 @@ function evalMessage(tpl) {
         return messages[messageKey];
     });
     return replaced;
+}
+
+/**
+ * 判断当前内容是否为函数，如果是，则转换为函数对象返回
+ * @param tpl
+ */
+function evalFunc(tpl) {
+   if(tpl && tpl.indexOf("function(")==0){
+       let func=eval("("+tpl+")");
+       return func;
+   }
+   return tpl;
 }
 
 /**

@@ -99,20 +99,27 @@ export default {
     methods: {
         buildQueryOptions(params,keyword){
             var encodeKeyword=context.getMvueToolkit().utils.leapQueryValueEncode(keyword);
-            var filters= `status eq 1 and (${this.getTitleField()} like '%${encodeKeyword}%')`;
+            let defaultFilters=this.getFilters();
+            var filters= `(${this.getTitleField()} like '%${encodeKeyword}%')`;
+            if(defaultFilters){
+                filters=`${defaultFilters} and ${filters}`;
+            }
             params.filters=filters;
         },
         buildSelectFields(){
             return `${this.getIdField()},${this.getTitleField()}`;
         },
+        getFilters(){
+            return context.getSettings().control.orgSelect.filters;
+        },
         getEntityName(){
-            return context.getConsts().org.entityName;
+            return context.getSettings().control.orgSelect.entityName;
         },
         getIdField:function(){
-            return context.getConsts().org.idField;
+            return context.getSettings().control.orgSelect.idField;
         },
         getTitleField:function(){
-            return context.getConsts().org.nameField;
+            return context.getSettings().control.orgSelect.nameField;
         },
         //从选择列表选择数据确认后，反应到多选组件
         confirmSelect(){

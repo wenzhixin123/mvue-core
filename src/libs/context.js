@@ -5,7 +5,7 @@ import coreStore from '../store/core';
 import mvueCore from '../index';
 import userEx from './security/user-ex';
 import topEntityService from "../services/store/top-entity";
-
+import settings from './settings';
 
 var cachedContext={
   mvueComponents:null,  
@@ -29,22 +29,7 @@ var cachedContext={
     },
     store:null
   },
-  consts:{
-      user:{
-          entityName:"user",
-          idField:"id",
-          nameField:"name",
-          loginField:"userName",
-          detailFields:"mobile,email",
-          orgField:"orgId"
-      },
-      org:{
-          entityName:"organization",
-          idField:"id",
-          nameField:"name",
-          parentField:"parentId"
-      }
-  }
+  settings:settings
 }
 
 function initWebContext(location) {
@@ -202,11 +187,11 @@ export default {
             }
         }
     },
-    setConsts(cmap){
-        cachedContext.consts=_.extend(cachedContext.consts,cmap);
+    setSettings(cmap){
+        cachedContext.settings=_.merge(cachedContext.settings,cmap);
     },
-    getConsts(){
-        return cachedContext.consts;
+    getSettings(){
+        return cachedContext.settings;
     },
     setStore(store,appCtx){
         store.registerModule('core',coreStore);

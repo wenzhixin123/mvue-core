@@ -25,10 +25,10 @@ export default{
             return `${item[titleField]}-${this.buildUserDesc(item)}`;
         },
         orgValueKey:function(){
-            return context.getConsts().org.idField;
+            return context.getSettings().control.orgSelect.idField;
         },
         orgLabelKey:function(){
-            return context.getConsts().org.nameField;
+            return context.getSettings().control.orgSelect.nameField;
         } 
     }
 }

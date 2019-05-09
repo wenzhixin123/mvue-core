@@ -1,22 +1,22 @@
 import constants from '../../js/constants';
 import context from '../../../../libs/context';
 function getUserIdField(){
-    return context.getConsts().user.idField;
+    return context.getSettings().control.userSelect.idField;
 };
 function getUserTitleField(){
-    return context.getConsts().user.nameField;
+    return context.getSettings().control.userSelect.nameField;
 };
 function getUserOrgField(){
-    return context.getConsts().user.orgField;
+    return context.getSettings().control.userSelect.orgField;
 };
 function getOrgIdField(){
-    return context.getConsts().org.idField;
+    return context.getSettings().control.orgSelect.idField;
 };
 function getOrgParentField(){
-    return context.getConsts().org.parentField;
+    return context.getSettings().control.orgSelect.parentField;
 };
 function getOrgTitleField(){
-    return context.getConsts().org.nameField;
+    return context.getSettings().control.orgSelect.nameField;
 };
 var orgResource=null;
 function orgService(){

@@ -104,23 +104,30 @@ export default {
     methods: {
         buildQueryOptions(params,keyword){
             var encodeKeyword=context.getMvueToolkit().utils.leapQueryValueEncode(keyword);
-            var filters= `status eq 1 and (${this.getTitleField()} like '%${encodeKeyword}%' or ${this.getLoginField()}  like '%${encodeKeyword}%')`;
+            let defaultFilters=this.getFilters();
+            var filters= `(${this.getTitleField()} like '%${encodeKeyword}%' or ${this.getLoginField()}  like '%${encodeKeyword}%')`;
+            if(defaultFilters){
+                filters=`${defaultFilters} and ${filters}`;
+            }
             params.filters=filters;
         },
         buildSelectFields(){
-            return `${this.getIdField()},${this.getTitleField()},${this.getLoginField()},${context.getConsts().user.detailFields}`;
+            return `${this.getIdField()},${this.getTitleField()},${this.getLoginField()},${context.getSettings().control.userSelect.detailFields}`;
+        },
+        getFilters(){
+            return context.getSettings().control.userSelect.filters;
         },
         getEntityName(){
-            return context.getConsts().user.entityName;
+            return context.getSettings().control.userSelect.entityName;
         },
         getIdField:function(){
-            return context.getConsts().user.idField;
+            return context.getSettings().control.userSelect.idField;
         },
         getTitleField:function(){
-            return context.getConsts().user.nameField;
+            return context.getSettings().control.userSelect.nameField;
         },
         getLoginField(){
-            return context.getConsts().user.loginField;
+            return context.getSettings().control.userSelect.loginField;
         },
         //从选择列表选择数据确认后，反应到多选组件
         confirmSelect(){

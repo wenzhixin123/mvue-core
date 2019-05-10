@@ -1,5 +1,7 @@
 import metabase from '../../../libs/metadata/metabase';
+import context from '../../../libs/context';
 import rowMeta from './row-meta';
+const deletedFlag='__#deletedFlag#__';
 var types={
     RefEntity:{ 
         id: "RefEntity", 
@@ -57,14 +59,45 @@ function formatData(componentType,item,metaField){
     var expandData=item[relation.name];
     let targetEntity=metabase.findMetaEntity(relation.targetEntity);
     let titleField=targetEntity.firstTitleField().name;
+    let hideDeleted=context.getSettings().control.refEntity.hideDeleted;
     //__forceMeta__用在批量编辑grid，标记使用__meta__冗余数据，因为此时expand数据不正确
     if(!titleField || ((item.__forceMeta__&&rowMeta.has(item,fieldName))||!expandData)){
-        return rowMeta.title(item,fieldName)||origin;
+        let rowMetaTitle= rowMeta.title(item,fieldName);
+        if(!_.isNil(rowMetaTitle)){//冗余字段中有数据
+            return rowMetaTitle;
+        }else{//冗余字段中无数据，代表数据已经被删除
+            if(hideDeleted){
+                return "";
+            }
+            let res=null;
+            if(_.isArray(origin)){
+                let _a=[];
+                _.forEach(origin,key=>{
+                    _a.push(`${deletedFlag}${key}`);
+                });
+                res=_a.join(',');
+            }else{
+                res=`${deletedFlag}${origin}`;
+            }
+            return res;
+        }
     }
+    //有 expand Data 从expand中读取
     if(_.isArray(origin)){
+        let idField=targetEntity.getIdField().name;
+        let expandDataMap=_.keyBy(expandData,o=>{
+            return o[idField];
+        });
         let titleArray=[];
-        _.each(expandData,ed=>{
-            titleArray.push(ed[titleField]);
+        _.each(origin,itemId=>{
+            let ed=expandDataMap[itemId];
+            if(ed){
+                titleArray.push(ed[titleField]);
+            }else{//expand数据没有，表示已经删除
+                if(!hideDeleted){
+                    titleArray.push(`${deletedFlag}${itemId}`);
+                }
+            }
         });
         return titleArray.join(',');
     }else{
@@ -103,5 +136,6 @@ export default{
     componentParams:componentParams,
     formatData:formatData,
     formatDataForExport,
-    fillComponentParams:fillComponentParams
+    fillComponentParams:fillComponentParams,
+    deletedFlag:deletedFlag
 }

@@ -1,7 +1,11 @@
 <template>
     <div :style="{width:formItem.componentParams.width+'%'}">
         <template v-if="viewMode">
-            <div class="form-item-view" v-text="viewModeValue||emptyText" :title="viewModeValue||emptyText"></div>
+            <div class="form-item-view" :title="realViewModeValue()||emptyText">
+                <template v-for="(val,index) in multiRefDeletedValue()">
+                    <span :key="index" :class="{'deleted-ref':val.deleted}" v-text="(index<multiRefDeletedValue().length-1)?(val.text+','):val.text"></span>
+                </template>
+            </div>
         </template>
         <template v-else>
             <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">

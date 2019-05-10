@@ -120,14 +120,14 @@ export default {
             }
             var metaEntity=this.context.metaEntity;
             var targetTitleField=this.getTitleField();
-            //先在expand的关系数据中取
+            //有元数据信息的，在expand的关系数据中取
             if(metaEntity){
                 let metaField=metaEntity.findField(this.formItem.dataField);
                 if (metaField) {
                     let formattedData=entityType.formatData(this.formItem.componentType,this.firstEntityData,metaField);
                     return Promise.resolve(_.isArray(id)?[formattedData]:formattedData);
                 }
-            }else if(this.entityResource){
+            }else if(this.entityResource){//没有元数据信息的，远程获取
                 if(!_.isArray(id)){
                     return this.entityResource.get({id:id}).then(({data})=>{
                         return data[targetTitleField];

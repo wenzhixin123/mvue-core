@@ -1,5 +1,6 @@
 import context from '../../../libs/context';
 import rowMeta from '../js/row-meta';
+import entityType from '../js/entity_type';
 import topEntityService from "../../../services/store/top-entity";
 
 export default{
@@ -400,6 +401,42 @@ export default{
                 orderby =`${updatedAtField.name} desc`;
             }
             return orderby;
+        },
+        isRefDeleted(){
+            let value=this.viewModeValue;
+            return value&&value.indexOf&&value.indexOf(entityType.deletedFlag)>-1;
+        },
+        realViewModeValue(){
+            if(this.isRefDeleted()){
+                let reg=new RegExp(entityType.deletedFlag,'g');
+                return this.viewModeValue.replace(reg,'');
+            }
+            return this.viewModeValue;
+        },
+        multiRefDeletedValue(){
+            if(this.isRefDeleted()){
+                let t=[];
+                let titles=this.viewModeValue.split(',');
+                let reg=new RegExp(entityType.deletedFlag,'g');
+                _.forEach(titles,title=>{
+                    if(_.startsWith(title,entityType.deletedFlag)){
+                        t.push({
+                            deleted:true,
+                            text:title.replace(reg,'')
+                        });
+                    }else{
+                        t.push({
+                            text:title
+                        });
+                    }
+                });
+                return t;
+            }
+            return [
+                {
+                    text:this.viewModeValue||this.emptyText
+                }
+            ];
         }
     }
 }

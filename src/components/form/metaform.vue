@@ -225,6 +225,11 @@
       getWidgetContext () {
         //获取操作需要的一些参数
         let _self = this, context
+        let is_data = this.metaEntity.findField("_data");
+        if(!is_data){
+          //实体模式上不存在_data字段;
+          delete _self.entity["_data"];
+        }
         context = {
           selectedId: _self.entityId,
           selectedItem: _self.entity,

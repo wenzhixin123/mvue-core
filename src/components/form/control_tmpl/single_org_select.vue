@@ -30,6 +30,9 @@
                     <template slot="noOptions">
                         无部门数据
                     </template>
+                    <template slot="singleLabel" slot-scope="{option}">
+                        <span :class="{'deleted-ref':!!option[rowMetaFakeKey]}">{{option[getTitleField()]}}</span>
+                    </template>
                 </Multiselect>
                 <div class="ivu-btn ivu-btn-primary bvue-select-group-append" :disabled="disabled" @click="toggleModal">
                     <Icon :type="btnIcon"></Icon>

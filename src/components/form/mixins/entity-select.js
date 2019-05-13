@@ -15,7 +15,9 @@ export default{
             cachedDataItems:null,//默认提示的可选数据
             viewModeValue:"",
             preselectFirst:false,
-            searchChangedQueue:[]
+            searchChangedQueue:[],
+            rowMetaFakeKey:rowMeta.rowMetaFakeKey,
+            hideDeleted:context.getSettings().control.refEntity.hideDeleted
         };
     },
     computed:{
@@ -210,6 +212,7 @@ export default{
                 valLen=val.length;
             }
             this.searchByIds(val,(items) =>{
+                let hasFake=false;
                 //后端数据不完整
                 if(items.length<valLen){
                     //构造已删除的
@@ -232,7 +235,17 @@ export default{
                     if(form){
                         let rowData=form.firstEntityData;
                         let fakeItems=rowMeta.rebuildRefData(fakeVals,rowData,this.formItem.dataField,this.getIdField(),this.getTitleField());
-                        items=items.concat(fakeItems);
+                        let _fakeItems=[];
+                        _.each(fakeItems,fi=>{
+                            //如果全局设置了，不显示已删除的数据，隐藏
+                            if(this.hideDeleted&&fi[this.rowMetaFakeKey]){
+                                hasFake=true;
+                            }else{
+                                _fakeItems.push(fi);
+                            }
+                        });
+
+                        items=items.concat(_fakeItems);
                     }
                 }
                 if(items.length>0){
@@ -243,6 +256,10 @@ export default{
                         _this.selectedItem=items[0];
                         _this.commitRefData(_this.selectedItem);
                     }
+
+                }
+                if(hasFake){
+                    this.handleOnSelectChange(_this.selectedItem,null);
                 }
             });
         },

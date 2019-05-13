@@ -35,6 +35,12 @@
                     <template slot="noOptions">
                         无数据
                     </template>
+                    <template slot="tag" slot-scope="{option,search,remove}">
+                        <span class="multiselect__tag" :key="option[getIdField()]">
+                            <span :class="{'deleted-ref':!!option[rowMetaFakeKey]}" v-text="option[getTitleField()]"></span>
+                            <i aria-hidden="true" tabindex="1" @keypress.enter.prevent="remove(option)"  @mousedown.prevent="remove(option)" class="multiselect__tag-icon"></i>
+                        </span>
+                    </template>
                 </Multiselect>
                 <div class="ivu-btn ivu-btn-primary bvue-select-group-append" :disabled="disabled" @click="toggleModal">
                     <Icon :type="btnIcon"></Icon>

@@ -2,7 +2,7 @@
     <FormItem  :prop="innerPropName"  :label-for="labelFor" v-if="!isHidden()"
         :rules="rules" :show-message="showMessage">
         <template v-if="showLabel" slot="label">
-            <slot name="label">{{ metaField.title}}<info-tip v-if="description" :content="description"></info-tip></slot>
+            <slot name="label">{{ metaField.title}}<info-tip v-if="description&&descLevel=='info'" :content="description"></info-tip></slot>
         </template>
         <slot v-if="formItem"
             :model="entity" :metaField="metaField"  :formItem="formItem">
@@ -19,6 +19,7 @@
                 @input="handleChange"
             >
             </component>
+            <div v-if="description&&descLevel=='warn'" v-text="description"></div>
         </slot>
     </FormItem>
 </template>
@@ -111,6 +112,13 @@ export default {
         ignoreAutoMode:{//是否自动设置组件的readonly模式等，默认自动，高级查询时不自动
             type:Boolean,
             default:false
+        },
+        descLevel:{//指定description出现的位置，info在label旁边提示，warn在控件下边提示
+            type:String,
+            default:'info',
+            validator(v){
+                return v=='info'||v=='warn';
+            }
         }
     },
     watch:{

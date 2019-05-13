@@ -1,6 +1,6 @@
 <template>
     <Layout class="detail-view" :class="containerCls">
-        <b-childheader v-if="showHeader" :title="header.title"></b-childheader>
+        <b-childheader v-if="showHeader" :title="innerHeader.title" :show-back="innerHeader.showBack" :back-route="innerHeader.backRoute"></b-childheader>
         <Menu  ref="topMenus" v-if="mode=='horizontal'"
                :theme="theme" mode="horizontal"
                :active-name="activeName" @on-select="onMenuSelected">
@@ -88,6 +88,9 @@
             title:{
                 type:String,
                 default:"-"
+            },
+            header:{
+                type:Object
             }
         },
         data: function () {
@@ -101,9 +104,9 @@
                 openNames: opens,
                 activeName: "",
                 menuMappings: {},
-                header: {
+                innerHeader: _.merge({
                     title: this.title
-                },
+                },this.header),
                 entity:null,
                 basePath: ""
             }
@@ -217,7 +220,9 @@
                 let dataResource = metaEntity.dataResource();
                 return dataResource.get({id: this.recordId}).then(({data}) => {
                     let titleField = metaEntity.firstTitleField();
-                    this.header.title = (titleField == null ? metaEntity.title : data[titleField.name]);
+                    if(!this.innerHeader.title){
+                        this.innerHeader.title = (titleField == null ? metaEntity.title : data[titleField.name]);
+                    }
                     this.entity=data;
                     this.$store.commit("core/setEntity",
                         {entityName: this.entityName, entity: data});

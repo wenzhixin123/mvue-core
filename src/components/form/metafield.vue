@@ -1,6 +1,6 @@
 <template>
     <FormItem  :prop="innerPropName"  :label-for="labelFor" v-if="!isHidden()"
-        :rules="rules" :show-message="showMessage">
+        :rules="rules" :show-message="showMessage" :class="{'has-warn-desc':description&&descLevel=='warn'}">
         <template v-if="showLabel" slot="label">
             <slot name="label">{{ metaField.title}}<info-tip v-if="description&&descLevel=='info'" :content="description"></info-tip></slot>
         </template>

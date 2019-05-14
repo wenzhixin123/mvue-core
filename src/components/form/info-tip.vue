@@ -1,6 +1,6 @@
 <template>
   <div class="info-tip">
-    <Poptip trigger="hover" title="提示" placement="right">
+    <Poptip trigger="hover" placement="bottom-start">
       <Icon type="ios-information-circle-outline" color="#2db7f5"/>
       <div slot="content" style="width: 400px;white-space: normal">
         <p>{{content}}</p>

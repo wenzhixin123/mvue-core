@@ -112,13 +112,6 @@ export default {
         ignoreAutoMode:{//是否自动设置组件的readonly模式等，默认自动，高级查询时不自动
             type:Boolean,
             default:false
-        },
-        descLevel:{//指定description出现的位置，info在label旁边提示，warn在控件下边提示
-            type:String,
-            default:'info',
-            validator(v){
-                return v=='info'||v=='warn';
-            }
         }
     },
     watch:{
@@ -182,6 +175,7 @@ export default {
         if(formItem.componentParams.description){
             description=formItem.componentParams.description;
         }
+        let descLevel=formItem.componentParams.descLevel||'info';
         if(this.preprocessor){
             this.preprocessor(formItem,this);
         }
@@ -228,6 +222,7 @@ export default {
             firstEntityData:firstEntityData,
             paths:constants.paths(),
             description:description,
+            descLevel:descLevel,//指定description出现的位置，info在label旁边提示，warn在控件下边提示
             innerPropName:innerPropName
         }
     },

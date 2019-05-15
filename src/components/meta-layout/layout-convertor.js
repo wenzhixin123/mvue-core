@@ -30,6 +30,7 @@ function convertSettings(_settings,curInst,options){
 
 function parseProps(layout,curInst){
     let evalContext={
+        "$route":curInst.$route,
         query:curInst.$route.query,
         path:curInst.$route.params,
         context:curInst.widgetContext,

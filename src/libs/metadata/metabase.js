@@ -487,10 +487,10 @@ export default {
             return null;
         }
         let metabase = getMetabase(currentProjectId);
-        let optionSet = metabase.entities[name.toLowerCase()];
+        let optionSet = metabase.options[name.toLowerCase()];
         if (_.isEmpty(optionSet)) {
             return null;
         }
-        return _.assign({},optionSet);
+        return optionSet;
     }
 }

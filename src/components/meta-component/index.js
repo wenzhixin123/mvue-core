@@ -15,7 +15,8 @@ export default {
         let dataVal={
             parentPage:parentPage,
             comConfig:comConfig,
-            visible:null
+            visible:null,
+            innerSettings:this.settings
         }
         return dataVal;
     },
@@ -43,7 +44,7 @@ export default {
         }
         let params = {
             attrs: this.$attrs,
-            props: this.settings,
+            props: this.innerSettings,
             on: this.$listeners,
         };
 
@@ -88,7 +89,7 @@ export default {
                 comId = _.camelCase(this.settings["name"]);
             }
             if (comId == null) {
-                comId = _.camelCase(this.settings["ctype"]);
+                comId = this.settings["ctype"];
             }
             return comId;
         },

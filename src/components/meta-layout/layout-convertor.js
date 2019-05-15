@@ -10,7 +10,9 @@ function convertSettings(_settings,curInst,options){
             temp=_settings;
         }else{
             temp = {
-                layout:[_settings]
+                layout:[_settings],
+                propSettings:_settings["propSettings"],
+                rules:_settings["rules"]
             };
         }
     }else if(_settings.layout&&_settings.layout.ctype){//只有一个组件，并且用layout套起来的

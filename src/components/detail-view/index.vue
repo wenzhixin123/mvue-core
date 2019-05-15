@@ -86,8 +86,7 @@
                 default:160
             },
             title:{
-                type:String,
-                default:"-"
+                type:String
             },
             header:{
                 type:Object

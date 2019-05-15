@@ -390,6 +390,13 @@ function buildPageContext(page) {
         },
         enumerable: true
     });
+    //当前路由对象
+    Object.defineProperty(pageContext,"$route",{
+        get: function () {
+            return page.$route;
+        },
+        enumerable: true
+    });
     return pageContext;
 }
 

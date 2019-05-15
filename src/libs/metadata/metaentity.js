@@ -107,7 +107,7 @@ module.exports=function (options) {
   metaEntity.getDefaultModel=function(){
     var model={};
     _.forEach(this.fields,function (metaField,key) {
-      if(!metaField.identity&&!_.includes(["createdAt","updatedAt"/*,"createdBy"*/,"updatedBy"],metaField.semantics)){
+      if(!metaField.identity&&!_.includes(["createdAt","updatedAt","createdBy","updatedBy"],metaField.semantics)){
         if(metaField.inputTypeParams["options"]){//选项类型默认值由options的checked属性指定
           model[key]=null;
         }else{

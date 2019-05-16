@@ -236,6 +236,7 @@ let MvueCore={
     treeService,
     formControlManager,
     ufs,
+    topEntityService,
     initAfterAppCtxCreated:(appCtx)=>{
         context.initAfterAppCtxCreated(appCtx);
     },

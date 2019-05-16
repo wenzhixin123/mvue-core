@@ -119,6 +119,13 @@ export default {
             if(newVal){
                 this.metaField.title=newVal;
             }
+        },
+        mode:function (newVal,oldVal) {
+            let _mode=newVal;
+            if(_mode==null &&!this.ignoreAutoMode){
+                _mode=this.getInnerMode(this.metaField);
+            }
+            this.innerMode= _mode;
         }
     },
     data:function(){
@@ -229,14 +236,14 @@ export default {
     methods:{
         getInnerMode(metaField){
             //如果是编辑模式，默认不可更新的字段自动变成只读模式
-            if(this.context.isEdit && 
+            if(this.context.isEdit &&
             ((!this.mode)||this.mode===widgetMode.editable) &&
             metaField.updatable===false
             ){
                 return widgetMode.readonly;
             }
             //如果是创建模式，默认不可创建的字段自动变成只读模式
-            if(this.context.isCreate && 
+            if(this.context.isCreate &&
             ((!this.mode)||this.mode===widgetMode.editable) &&
             metaField.creatable===false
             ){
@@ -283,6 +290,9 @@ export default {
         },
         handleChange(event){
             this.$emit("on-change",event);
+            if(this.form){
+                this.form.handleFormItemChange(event,this);
+            }
         }
     },
     components:{

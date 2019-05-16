@@ -182,6 +182,7 @@
                 if(this.onInited){
                     this.onInited(this);
                 }
+                this.$emit("on-inited",this);
                 //TODO 如何保证entity变化后激发，而不是初始化是也激发
                 if(this.isEdit){
                     this.$nextTick(()=>{
@@ -287,6 +288,12 @@
                     _item.ctype='m-relation';
                 }
                 return _item;
+            },
+            handleFormItemChange(itemEvent,formItem){
+                this.$emit("on-change",itemEvent,{
+                    form:this,
+                    formItem:formItem
+                });
             }
         }
     }

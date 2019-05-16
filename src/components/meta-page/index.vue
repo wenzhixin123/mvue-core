@@ -120,6 +120,15 @@ export default {
       pageContext:pageContext
     };
   },
+  mounted(){
+    let pageSettings = pageHelper.getComConfig(this.pageSettings,"$page");
+    if(pageSettings){
+      let initEvent=pageSettings.events["on-inited"];
+      if(initEvent){
+        initEvent.apply(this);
+      }
+    }
+  },
   methods: {
     getPageContext() {
       return this.pageContext;

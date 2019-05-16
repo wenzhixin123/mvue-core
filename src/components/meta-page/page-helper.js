@@ -2,6 +2,7 @@ import expr from "../../libs/evaluate/expr"
 import  contextHelper from  "../../libs/context";
 
 const ComConfigKeyName="$config";
+const PageSelfKey="$page";
 let actions={};
 //向上找到当前控件所属的Page对象
 function getParentPage(el) {
@@ -69,7 +70,7 @@ function getComConfig(pageSettings, cId) {
  * @returns {*}
  */
 function processComSettings(pageSettings,context) {
-    let settings = pageSettings.setProps;
+    let settings = pageSettings.propSettings;
     let comConfigs = pageSettings[ComConfigKeyName];
     if (!settings) {
         return null;
@@ -109,10 +110,14 @@ function processComRules(pageSettings,context) {
     }
     _.forIn(rules,(val,key)=>{
         let keyInfo=resolveRuleKey(key);
-        let comConfig=comConfigs[keyInfo.comId];
+        let comId=keyInfo.comId;
+        if(comId==""){
+            comId=PageSelfKey;
+        }
+        let comConfig=comConfigs[comId];
         if(comConfig==null){
             comConfig=defaultComConfig();
-            comConfigs[keyInfo.comId]=comConfig;
+            comConfigs[comId]=comConfig;
         }
         if(keyInfo.eventName==null){
             return;
@@ -308,7 +313,6 @@ actions["setProps"]=function actionForShow(action,context,event) {
     if(target.$parent && target.$parent.settings){
         obj=target.$parent.settings;
     }
-
     _.forIn(action.props,(propValExpr,prop)=>{
         let propVal = evalExpr(propValExpr, context, null);
         this.$set(obj,prop,propVal);
@@ -383,6 +387,13 @@ function buildPageContext(page) {
     Object.defineProperty(pageContext,"$user", {
         get: function () {
             return contextHelper.getSession().getCurrentUser();
+        },
+        enumerable: true
+    });
+    //当前路由对象
+    Object.defineProperty(pageContext,"$route",{
+        get: function () {
+            return page.$route;
         },
         enumerable: true
     });

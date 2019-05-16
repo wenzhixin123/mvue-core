@@ -481,5 +481,16 @@ export default {
             return;
         }
         router.params["entityName"] = entityName;
+    },
+    findOptions(name){
+        if (!name) {
+            return null;
+        }
+        let metabase = getMetabase(currentProjectId);
+        let optionSet = metabase.options[name.toLowerCase()];
+        if (_.isEmpty(optionSet)) {
+            return null;
+        }
+        return optionSet;
     }
 }

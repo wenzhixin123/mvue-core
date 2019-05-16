@@ -3,7 +3,7 @@
           :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="itemLabelWidth"
           :show-message="showMessage" :autocomplete="autocomplete">
         <slot>
-            <meta-layout :layout="layout" :itemProcessor="layoutProcessor"></meta-layout>
+            <meta-layout :layout="layout" :itemProcessor="itemProcessor"></meta-layout>
         </slot>
         <FormItem v-if="hasButtons() || $slots.toolbar" class="form-toolbar"
                 v-transfer-dom="toolbarTransferDomId" :data-transfer="transfer">
@@ -113,8 +113,14 @@
                 metaEntity:metaEntity,
                 dataResource:dataResource,
                 entity:entity,
-                firstEntityData:null
+                firstEntityData:null,
+                isLayout:true
             };
+        },
+        computed:{
+            itemProcessor(){
+                return this.layoutProcessor;
+            }
         },
         mounted:function () {
             //创建模式，继续初始化，因为初始模型数据已经存在了

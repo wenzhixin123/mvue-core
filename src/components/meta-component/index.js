@@ -62,6 +62,7 @@ export default {
 
         let comId=this.getComId();
         let comConfig = this.comConfig;
+        //处理动态属性
         if (comConfig && comConfig.props) {
             if(comConfig.props){
                 _.forIn(comConfig.props,(val,prop)=>{
@@ -75,6 +76,24 @@ export default {
             }
             params.on = _.extend(params.on, comConfig.events);
         }
+        //处理slots
+        if(this.innerSettings.slots){
+            let slotDefs=this.innerSettings.slots;
+            let scopedSlots={};
+            params["scopedSlots"]=scopedSlots;
+            if(slotDefs.ctype){
+                scopedSlots["default"]= (subProps)=> {
+                    return createElement("m-component",{props:{settings:slotDefs}});
+                }
+            }else{
+                _.forIn(slotDefs,(slotDef,slotName)=>{
+                    scopedSlots["slotName"]=(subProps)=> {
+                        return createElement("m-component",{props:{settings:slotDef}});
+                    }
+                });
+            }
+        }
+
         let el = createElement(comType, params);
         parentPage.registerComponent(comId, el);
         return el;

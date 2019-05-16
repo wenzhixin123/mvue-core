@@ -1,6 +1,7 @@
 import propParser from '../../services/tool/prop_parser';
 import attachPropsProcessor from './attach-props-processor';
 import contextHelper from "../../libs/context";
+import  pageHelper from "../meta-page/page-helper";
 
 function convertSettings(_settings,curInst,options){
     var temp=null;
@@ -85,22 +86,32 @@ function evalTemplate(tpl,evalContext) {
         return isFunc;
     }
     if(tpl.indexOf("${")>-1 || tpl.indexOf("<%")>-1){
-        let compiled=_.template(tpl);
-        try{
-            newVal=compiled(evalContext);
-        }catch(e){
-            console.log(e);
+        let tplContent=tpl.substring(2,tpl.length-1);
+        if(tpl.charAt(tpl.length-1)=="}" && tplContent.indexOf("${")<0){
+            newVal=pageHelper.evalExpr(tplContent,evalContext);
+        } else{
+            let compiled=_.template(tpl);
+            try{
+                newVal=compiled(evalContext);
+            }catch(e){
+                console.log(e);
+            }
         }
     }else if(tpl.indexOf("{{")>-1){
-        let bak=_.templateSettings.interpolate;
-        try{
-            _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
-            let compiled=_.template(tpl);
-            newVal=compiled(evalContext);
-        }catch(e){
-            console.log(e);
-        }finally {
-            _.templateSettings.interpolate=bak;
+        let tplContent=tpl.substring(2,tpl.length-2);
+        if(tpl.charAt(tpl.length-1)=="}" && tplContent.indexOf("${")<0){
+            newVal=pageHelper.evalExpr(tplContent,evalContext);
+        }else{
+            let bak=_.templateSettings.interpolate;
+            try{
+                _.templateSettings.interpolate = /{{([\s\S]+?)}}/g;
+                let compiled=_.template(tpl);
+                newVal=compiled(evalContext);
+            }catch(e){
+                console.log(e);
+            }finally {
+                _.templateSettings.interpolate=bak;
+            }
         }
     }
     return newVal;

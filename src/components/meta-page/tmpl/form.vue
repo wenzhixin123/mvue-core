@@ -68,6 +68,9 @@
             com["entityName"]=this.metaEntity.name;
             com["recordId"]=this.recordId;
           }
+          if(com.ctype=="m-detail-view"){
+            this.bindProps.showHeader=false;
+          }
         });
         if(st.ctype=="m-page" && pageSettings.layout){
           this.bindProps.pageSettings.layout=_.cloneDeep(pageSettings.layout);

@@ -42,9 +42,10 @@
                 </Menu>
             </Sider>
             <Content>
-                <Card :bordered="false" :class="marginCls">
+                <Card v-if="showCard" :bordered="false" :class="marginCls">
                     <router-view></router-view>
                 </Card>
+                <router-view v-else :class="marginCls"></router-view>
             </Content>
         </Layout>
     </Layout>
@@ -78,6 +79,10 @@
                 type: String
             },
             showHeader: {
+                type: Boolean,
+                default: true
+            },
+            showCard: {
                 type: Boolean,
                 default: true
             },

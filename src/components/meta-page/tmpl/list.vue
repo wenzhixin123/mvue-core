@@ -1,12 +1,6 @@
 <template>
     <meta-page
-        :header="header"
-        :hide-header="!isGrid()"
-        :hide-card="!isGrid()"
-        :error-obj="errorObj"
-        :lazy="true"
-        :preprocessed="isReady"
-        :page-settings="{layout:layout}"
+        v-bind="bindProps"
         :id="'default-grid-uuid-'+metaEntity.name">
     </meta-page>
 </template>
@@ -35,48 +29,46 @@
         }
       }
       return {
-        isReady:false,
-        errorObj:errorObj,
-        header:{
-          title:`${metaEntity.title || metaEntity.name}列表`,
-          description:metaEntity.description,
-          showBack:false
-        },
         metaEntity:metaEntity,
-        grid:{
-          entityName:metaEntity.name
-        },
-        layout:[]
+        bindProps:{//需要绑定的所有属性
+          lazy:true,
+          preprocessed:false,
+          showCard:true,
+          showHeader:true,
+          header:{
+            title:`${metaEntity.title || metaEntity.name}列表`,
+            description:metaEntity.description,
+            showBack:false
+          },
+          errorObj:errorObj,
+          pageSettings:{layout:[]}
+        }
       }
     },
     mounted:function () {
-      if(this.errorObj.has){
+      if(this.bindProps.errorObj.has){
         return;
       }
       this.metaEntity.getPage("list").then((st)=>{
         if(st==null){
-          this.errorObj.has=true;
-          this.errorObj.message=`[${this.metaEntity.title}]列表，已被禁止访问，请通过配置启用该页面后，再重试！`;
+          this.bindProps.errorObj.has=true;
+          this.bindProps.errorObj.message=`[${this.metaEntity.title}]列表，已被禁止访问，请通过配置启用该页面后，再重试！`;
           return;
         }
-        this.grid=this.metaEntity.extendUISettings(this.grid,st);
-        if(this.grid && this.grid.title){
-          this.header.title=this.grid.title;
+        if(st.title){
+          this.bindProps.header.title=st.title;
+          delete st.title;
         }
-        this.layout=this.buildLayout();
-        this.isReady=true;
+        let pageSettings = metaLayoutConvertor.convert(st, this);
+        if(st.ctype=="m-page" && pageSettings.layout){
+          this.bindProps.pageSettings.layout=_.cloneDeep(pageSettings.layout);
+          delete pageSettings.layout;
+          _.assign(this.bindProps,pageSettings);
+        }else{
+          this.bindProps.pageSettings=pageSettings;
+        }
+        this.bindProps.preprocessed=true;
       });
-    },
-    methods:{
-        buildLayout(){
-            var self=this;
-            var pageSettings = metaLayoutConvertor.convert(this.grid, self);
-            var layout=pageSettings.layout;
-            return layout;
-        },
-        isGrid(){
-            return this.grid.ctype=="m-grid" || this.grid.ctype=="m-tree-grid";
-        }
     }
   };
 </script>

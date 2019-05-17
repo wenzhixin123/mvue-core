@@ -1,12 +1,6 @@
 <template>
   <meta-page
-    :header="header"
-    :hide-header="!isForm()"
-    :hide-card="!isForm()"
-    :error-obj="errorObj"
-    :lazy="true"
-    :preprocessed="isReady"
-    :page-settings="{layout:layout}"
+    v-bind="bindProps"
     :id="'default-form-uuid-'+metaEntity.name">
   </meta-page>
 </template>
@@ -36,43 +30,38 @@
         }
       }
       return {
-        isReady:false,
-        errorObj:errorObj,
-        header:{
-          title:"",
-        },
         recordId:id,
         metaEntity:metaEntity,
-        form:{
-          entityName:metaEntity.name,
-          recordId:id,
-        },
-        layout:[]
+        bindProps:{//需要绑定的所有属性
+          lazy:true,
+          preprocessed:false,
+          showCard:true,
+          showHeader:true,
+          header:{
+            title:'',
+            showBack:false
+          },
+          errorObj:errorObj,
+          pageSettings:{layout:[]}
+        }
       }
     },
     mounted(){
       var action=this.$route.params.action;
-      if(this.errorObj.has){
+      if(this.bindProps.errorObj.has){
         return;
       }
       this.metaEntity.getPage(action).then(st=>{
         if(st==null){
-          this.errorObj.has=true;
-          this.errorObj.message=`[${this.metaEntity.title}]编辑表单，已被禁止访问，请通过配置启用该页面后，再重试！`;
+          this.bindProps.errorObj.has=true;
+          this.bindProps.errorObj.message=`[${this.metaEntity.title}]编辑表单，已被禁止访问，请通过配置启用该页面后，再重试！`;
           return;
         }
-        this.form=this.metaEntity.extendUISettings(this.form,st || {});
         if(this.form && this.form.title){
-          this.header.title=this.form.title;
+          this.bindProps.header.title=this.form.title;
+          delete st.title;
         }
-        this.layout=this.buildLayout();
-        this.isReady=true;
-      });
-    },
-    methods:{
-      buildLayout(){
-        var self=this;
-        var pageSettings = metaLayoutConvertor.convert(this.form, self);
+        var pageSettings = metaLayoutConvertor.convert(st, this);
         var layout=pageSettings.layout;
         _.forEach(layout,com=>{
           if(com.ctype=="m-form" || com.ctype=="m-detail-view"){
@@ -80,20 +69,15 @@
             com["recordId"]=this.recordId;
           }
         });
-        return layout;
-      },
-      isForm(){
-        let matched= this.form.ctype=="m-form";
-        if(!matched && this.form.layout){
-          _.forEach(this.form.layout,(c,index)=>{
-            if(c.ctype=="m-form"){
-              matched=true;
-              return false;
-            }
-          });
+        if(st.ctype=="m-page" && pageSettings.layout){
+          this.bindProps.pageSettings.layout=_.cloneDeep(pageSettings.layout);
+          delete pageSettings.layout;
+          _.assign(this.bindProps,pageSettings);
+        }else{
+          this.bindProps.pageSettings=pageSettings;
         }
-        return matched;
-      }
+        this.bindProps.preprocessed=true;
+      });
     }
   }
 </script>

@@ -1,8 +1,8 @@
 <template>
   <div class="bvue-page" v-if="!noPage">
-    <b-childheader v-if="innerTitle && !hideHeader" :title="innerTitle" :subtitle="header.description" :showBack="header.showBack" ></b-childheader>
+    <b-childheader v-if="innerTitle && showHeader" :title="innerTitle" :subtitle="header.description" :show-back="header.showBack" :back-route="header.backRoute"></b-childheader>
     <div class="bvue-page-body" v-if="renderLayout">
-        <meta-layout v-if="hideCard" :layout="pageSettings.layout"></meta-layout>
+        <meta-layout v-if="!showCard" :layout="pageSettings.layout"></meta-layout>
         <Card v-else>
             <meta-layout :layout="pageSettings.layout"></meta-layout>
         </Card>
@@ -58,13 +58,13 @@ export default {
         }
       }
     },
-    hideCard: {
+    showCard: {
       type: Boolean,
-      default: false
+      default: true
     },
-    hideHeader: {
+    showHeader: {
       type: Boolean,
-      default: false
+      default: true
     },
     lazy: {//是否开启延迟加载，开启后通过preprocessed控制布局渲染
       type: Boolean,
@@ -84,19 +84,23 @@ export default {
       return this.$store.state.core.pageTitle;
     },
     renderLayout() {//是否开始渲染布局
+      let canRender=false;
       if (!this.lazy) {//非延迟渲染模式，即时渲染
-        return true;
+        canRender = true;
       } else {//延迟渲染模式，预处理完毕后渲染
-        return this.lazy && this.preprocessed;
+        canRender = this.lazy && this.preprocessed;
       }
+      //pageSettings完整后才做一下预备设置
+      if(canRender){
+        this.prepare();
+      }
+      return canRender;
     }
   },
   created() {
     if (this.noPage) {
       return;
     }
-    pageHelper.preparePageSettings(this.pageSettings,this.pageContext);
-
     //每次进到页面都重置页面标题
     this.$store.commit('core/setPageTitleCoercively', '');
     var sourceId = this.title && this.title.source;
@@ -121,15 +125,21 @@ export default {
     };
   },
   mounted(){
-    let pageSettings = pageHelper.getComConfig(this.pageSettings,"$page");
-    if(pageSettings){
-      let initEvent=pageSettings.events["on-inited"];
-      if(initEvent){
-        initEvent.apply(this);
-      }
-    }
+    
   },
   methods: {
+    prepare(){
+      //解析组件相关的事件和相关动态属性
+      pageHelper.preparePageSettings(this.pageSettings,this.pageContext);
+      //页面初始化事件调用
+      let pageSettings = pageHelper.getComConfig(this.pageSettings,"$page");
+      if(pageSettings){
+        let initEvent=pageSettings.events["on-inited"];
+        if(initEvent){
+          initEvent.apply(this);
+        }
+      }
+    },
     getPageContext() {
       return this.pageContext;
     },

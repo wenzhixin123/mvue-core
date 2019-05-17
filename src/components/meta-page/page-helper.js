@@ -3,6 +3,7 @@ import  contextHelper from  "../../libs/context";
 
 const ComConfigKeyName="$config";
 const PageSelfKey="$page";
+const PageEventsKey="events";
 let actions={};
 //向上找到当前控件所属的Page对象
 function getParentPage(el) {
@@ -103,7 +104,7 @@ function processComSettings(pageSettings,context) {
  * @returns {null}
  */
 function processComRules(pageSettings,context) {
-    let rules=pageSettings.rules;
+    let rules=pageSettings[PageEventsKey];
     let comConfigs=pageSettings[ComConfigKeyName];
     if(!rules){
         return null;
@@ -406,5 +407,6 @@ export default {
     getParentPage,
     getParentLayout,
     evalExpr,
-    buildPageContext
+    buildPageContext,
+    PageEventsKey
 }

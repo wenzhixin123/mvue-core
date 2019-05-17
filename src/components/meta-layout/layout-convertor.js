@@ -12,9 +12,9 @@ function convertSettings(_settings,curInst,options){
         }else{
             temp = {
                 layout:[_settings],
-                propSettings:_settings["propSettings"],
-                rules:_settings["rules"]
+                propSettings:_settings["propSettings"]
             };
+            temp[pageHelper.PageEventsKey]=_settings[pageHelper.PageEventsKey];
         }
     }else if(_settings.layout&&_settings.layout.ctype){//只有一个组件，并且用layout套起来的
         temp = {

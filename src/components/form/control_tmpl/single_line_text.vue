@@ -39,7 +39,7 @@ export default {
     },
     watch:{
       "value":function (newV,oldV) {
-          if(_.isEqual(newV,oldV)){
+          if(!_.isEqual(newV,oldV)){
             let {valueObj,prependVal,appendVal}=this.convertedValue();
             this.valueObj=valueObj;
             this.prependVal=prependVal;

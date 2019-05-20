@@ -2,7 +2,7 @@
     <FormItem  :prop="innerPropName"  :label-for="labelFor" v-if="!isHidden()"
         :rules="rules" :show-message="showMessage" :class="{'has-warn-desc':description&&descLevel=='warn'}">
         <template v-if="showLabel" slot="label">
-            <slot name="label">{{ metaField.title}}<info-tip v-if="description&&descLevel=='info'" :content="description"></info-tip></slot>
+            <slot name="label">{{ metaField.title}}<info-tip v-if="description&&descLevel=='info'&&!ignoreDescription" :content="description"></info-tip></slot>
         </template>
         <slot v-if="formItem"
             :model="entity" :metaField="metaField"  :formItem="formItem">
@@ -19,7 +19,7 @@
                 @input="handleChange"
             >
             </component>
-            <div v-if="description&&descLevel=='warn'" v-text="description"></div>
+            <div v-if="description&&descLevel=='warn'&&!ignoreDescription" v-text="description"></div>
         </slot>
     </FormItem>
 </template>
@@ -110,6 +110,10 @@ export default {
             default:false
         },
         ignoreAutoMode:{//是否自动设置组件的readonly模式等，默认自动，高级查询时不自动
+            type:Boolean,
+            default:false
+        },
+        ignoreDescription:{//是否忽略字段描述，高级查询时不需要显示描述
             type:Boolean,
             default:false
         }

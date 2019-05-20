@@ -80,7 +80,7 @@
                         v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0" 
                         :entity-name="entityName"
                         :advance-search-fields="innerToolbar.advanceSearchFields" 
-                        @do-advance-search="doAdvanceSearch"></advance-search>
+                        @on-advance-search="doAdvanceSearch"></advance-search>
                 </slot>
             </template>
     </b-list>

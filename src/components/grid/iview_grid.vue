@@ -22,7 +22,7 @@
              :no-data-text="noDataText"
              :no-filtered-data-text="noFilteredDataText"
              :id="id"
-             :load-data-when-mount="loadDataWhenMount"
+             :load-data-when-mount="innerLoadDataWhenMount"
              :show-refresh-btn="showRefreshBtn"
              :show-config-columns-btn="showConfigColumnsBtn"
              :operation-column-fixed="operationColumnFixed"
@@ -42,6 +42,35 @@
              <template slot="top">
                 <slot name="top">
                     <!-- 高级搜索区 -->
+                    <!--嵌入式高级搜索-->
+                    <div class="adv-from-embedded">
+                        <adv-form ref="advFormRef"
+                            v-if="innerToolbar.advanceSearchFields 
+                                && innerToolbar.advanceSearchFields.length>0
+                                && !innerToolbar.advFormPopup"
+                            v-show="showAdvForm"
+                            :query-options="queryOptions"
+                            :quicksearch-keyword="quicksearchKeyword"
+                            :quicksearch="toolbar.quicksearch"
+                            :init-model="advanceSearchInitModel"
+                            :entity-name="entityName"
+                            :advance-search-fields="innerToolbar.advanceSearchFields"
+                            :search-when-mounted="hasAdvFormDefault()"
+                            @on-advance-search="doAdvanceSearch">
+                            <Row slot="footer" class='footer-bar'>
+                                <i-col span="8">&nbsp;</i-col>
+                                <i-col span="8">
+                                    <Button @click="handleAdvFormSearch" size="small" type="primary">
+                                        搜索
+                                    </Button> 
+                                    <Button @click="handleAdvFormReset" size="small" type="default">
+                                        重置
+                                    </Button> 
+                                </i-col>
+                                <i-col span="8">&nbsp;</i-col>
+                            </Row>
+                        </adv-form>
+                    </div>
                 </slot>
              </template>
              <template slot="header-left">
@@ -84,15 +113,26 @@
                     <Input class="quicksearch-input" search  v-if="toolbar.quicksearch&&toolbar.quicksearch.fields"
                            v-model="quicksearchKeyword" @on-search="reload"
                            :placeholder="toolbar.quicksearch.placeholder"  />
+                    <Button v-if="innerToolbar.advanceSearchFields 
+                            && innerToolbar.advanceSearchFields.length>0
+                            && !innerToolbar.advFormEmbedded"
+                        @click="showAdvForm=!showAdvForm" type="default">
+                        高级搜索
+                    </Button>       
+                    <!--弹出式高级搜索-->
                     <advance-search ref="advanceSearchRef"
+                            v-if="innerToolbar.advanceSearchFields 
+                            && innerToolbar.advanceSearchFields.length>0
+                            && innerToolbar.advFormEmbedded"
                             :query-options="queryOptions"
                             :quicksearch-keyword="quicksearchKeyword"
                             :quicksearch="toolbar.quicksearch"
                             :init-model="advanceSearchInitModel"
-                            v-if="innerToolbar.advanceSearchFields&&innerToolbar.advanceSearchFields.length>0"
                             :entity-name="entityName"
                             :advance-search-fields="innerToolbar.advanceSearchFields"
-                            @do-advance-search="doAdvanceSearch"></advance-search>
+                            :search-when-mounted="hasAdvFormDefault()"
+                            :connect-keyword="true"
+                            @on-advance-search="doAdvanceSearch"></advance-search>
                 </slot>
              </template>
             <template slot="header-right">
@@ -124,7 +164,8 @@ export default {
         }
     },
     components:{
-        topEntitySelect:require('./top-entity-select')
+        topEntitySelect:require('./top-entity-select'),
+        advForm:require('./adv-search/form')
     },
     data:function(){
         this.setAccessModeIfNecessary();
@@ -140,10 +181,11 @@ export default {
             curPage:ctx.currentPage||1,
             quicksearchKeyword:ctx.quicksearchKeyword||'',
             saveStatusKey:saveStatusKey,
-            advanceSearchInitModel:ctx.advModel||null,
+            advanceSearchInitModel:ctx.advModel||(this.toolbar&&this.toolbar.advFormDefault)||null,
             advanceSearchFilters:ctx.advanceSearchFilters||[],
             editRow:'',//当前行是否开启了编辑模式
-            rowMap:{}//m-batch-editor模式，用来存储所有行的引用数据
+            rowMap:{},//m-batch-editor模式，用来存储所有行的引用数据
+            showAdvForm:false//嵌入式高级查询框，默认隐藏
         };
     },
     //保存一下当前grid的状态到vuex，页码、快捷查询条件、排序等

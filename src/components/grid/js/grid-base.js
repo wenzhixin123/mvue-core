@@ -22,7 +22,8 @@ export default{
                     fields: null,
                     placeholder: ""
                 },
-                advanceSearchFields:(this.toolbar&&this.toolbar.advanceSearchFields)||[]
+                advanceSearchFields:(this.toolbar&&this.toolbar.advanceSearchFields)||[],
+                advFormPopup:(this.toolbar&&this.toolbar.advFormPopup)?true:false//高级查询表单是否弹出，否则嵌入在列表上部
             },
             selectedItems:[],//已经选择的数据
             quicksearchKeyword:"",//内部高级查询提供的快捷搜索词
@@ -30,7 +31,9 @@ export default{
             advanceSearchJoins:'',//由内部高级查询设置的join条件
             changedQueue:[],
             currentQueryCtx:{},//当前查询的所有上下文参数对象
-            currentQueryParams:null//通过leap-query-convertor查询的最终拼接条件，{filters:'完整字符串'}不同于currentQueryCtx，是最终查询时完整的filters字符串
+            currentQueryParams:null,//通过leap-query-convertor查询的最终拼接条件，{filters:'完整字符串'}不同于currentQueryCtx，是最终查询时完整的filters字符串
+            //如果有默认高级查询条件，由默认条件激发查询
+            innerLoadDataWhenMount:this.hasAdvFormDefault()?false:this.loadDataWhenMount
         }
     },
     computed:{
@@ -47,6 +50,9 @@ export default{
         }
     },
     methods:{
+        hasAdvFormDefault(){
+            return !_.isEmpty(this.toolbar&&this.toolbar.advFormDefault);
+        },
         innerQuery(ctx){
             ctx.quicksearchKeyword=this.quicksearchKeyword;
             //外部高级查询和内部高级查询只能二选一，如果同时出现，这里不会合并
@@ -125,11 +131,20 @@ export default{
             this.selectedItems=[];
         },
         //高级查询
-        doAdvanceSearch(advanceSearchFilters,quicksearchKeyword,joins){
-            this.quicksearchKeyword=quicksearchKeyword||"";
+        doAdvanceSearch(advanceSearchFilters,quicksearchKeyword,joins,connectKeyword){
+            //如果关键字需要传递过来才修正
+            if(connectKeyword){
+                this.quicksearchKeyword=quicksearchKeyword||"";
+            }
             this.advanceSearchFilters=advanceSearchFilters;
             this.advanceSearchJoins=joins;
             this.reload(true);
+        },
+        handleAdvFormSearch(){
+            this.$refs.advFormRef.doSearch();
+        },
+        handleAdvFormReset(){
+            this.$refs.advFormRef.doReset();
         },
         //end 单击行
         getWidgetContext(){

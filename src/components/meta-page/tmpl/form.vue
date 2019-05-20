@@ -38,8 +38,7 @@
           showCard:true,
           showHeader:true,
           header:{
-            title:'',
-            showBack:false
+            title:''
           },
           errorObj:errorObj,
           pageSettings:{layout:[]}

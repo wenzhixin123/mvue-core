@@ -1,13 +1,13 @@
 <template>
     <div>
-      <Input ref="focusInput" v-model="valueObj.value" 
-          @input="updateValue" 
-          :disabled="disabled" type="text"  
-          :placeholder="'[范围]填写格式，空格分隔最小、最大值'">
-          <Select @on-change="updateValue" v-model="valueObj.op" slot="prepend" style="width:60px;" title="[范围]填写格式，空格分隔最小、最大值">
+        <Input ref="focusInput" v-model="valueObj.value" 
+            @input="updateValue" 
+            :disabled="disabled" type="text"  
+            :placeholder="rangeHelp">
+            <Select @on-change="updateValue" v-model="valueObj.op" slot="prepend" style="width:60px;" :title="rangeHelp">
               <Option v-for="(text,value) in prependOptions" :value="value" :key="value">{{text}}</Option>
-          </Select>
-      </Input>
+            </Select>
+        </Input>
     </div>
 </template>
 <script>
@@ -27,11 +27,12 @@ export default {
             value:value
           },
           prependOptions:{
-            le:'小于',
-            ge:'大于',
+            lt:'小于',
+            gt:'大于',
             eq:'等于',
             range:'范围',
-          }
+          },
+          rangeHelp:'[范围]填写格式，空格分隔最小、最大值'
       };
     },
     watch:{

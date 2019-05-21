@@ -73,6 +73,7 @@ import IssuedNumber from './components/form/control_tmpl/issued_number';
 import BitCode from './components/form/control_tmpl/bit-code';
 import Password from './components/form/control_tmpl/password';
 import Tag from './components/form/control_tmpl/tag';
+import AdvNumber from './components/form/control_tmpl/advance-search/number';
 import mExpand from './components/form/control_tmpl/expand/index';
 import mConfirm from './components/form/control_tmpl/confirm/index';
 import mRelation from './components/form/control_tmpl/relation/index';
@@ -107,6 +108,7 @@ const formComponents={
 
     NumberInput,
     Number:NumberInput,
+    AdvNumber,
 
     FileUpload,
     MultiFileUpload:FileUpload,

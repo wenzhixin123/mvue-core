@@ -66,6 +66,10 @@ export default {
         let multiSelectId=controlTypeService.componentTypes.MultiSelect.id;
         mapping[controlTypeService.componentTypes.RadioButton.id]=multiSelectId;
         mapping[controlTypeService.componentTypes.SingleSelect.id]=multiSelectId;
+        //数字都变成可选比较运算符的组件
+        let advNumberId=controlTypeService.componentTypes.AdvNumber.id;
+        mapping[controlTypeService.componentTypes.Number.id]=advNumberId;
+        mapping[controlTypeService.componentTypes.NumberInput.id]=advNumberId;
 
         var metaField=metaEntity.findField(key);
         //开启了其他选项的，切换成checkbox
@@ -146,6 +150,40 @@ export default {
                         value:value
                     });
                 }
+            }
+        }else if(_.isPlainObject(value)
+            && value.hasOwnProperty('op')
+            && value.hasOwnProperty('value')){//数字转范围查询
+            if(value.op==='range'){
+              let valueArray=_.split(value.value,/[\s|,]/);
+              if(valueArray){
+                if(valueArray.length>1){
+                    advanceSearchFilters.push({
+                        key:key+'1',
+                        mappingKey:key,
+                        op:'ge',
+                        value:_.toNumber(valueArray[0])
+                    });
+                    advanceSearchFilters.push({
+                        key:key+'2',
+                        mappingKey:key,
+                        op:'le',
+                        value:_.toNumber(valueArray[1])
+                    });
+                }else if(valueArray.length===1){
+                    advanceSearchFilters.push({
+                        key:key,
+                        op:'ge',
+                        value:_.toNumber(valueArray[0])
+                    });
+                }
+              }
+            }else{
+              advanceSearchFilters.push({
+                  key:key,
+                  op:value.op,
+                  value:_.toNumber(value.value)
+              });
             }
         }else{
             advanceSearchFilters.push({

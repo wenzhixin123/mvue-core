@@ -3,7 +3,7 @@
       <Input ref="focusInput" v-model="valueObj.value" 
           @input="updateValue" 
           :disabled="disabled" type="text"  
-          :placeholder="formItem.componentParams.placeholder">
+          :placeholder="'[范围]填写格式，空格分隔最小、最大值'">
           <Select @on-change="updateValue" v-model="valueObj.op" slot="prepend" style="width:60px;" title="[范围]填写格式，空格分隔最小、最大值">
               <Option v-for="(text,value) in prependOptions" :value="value" :key="value">{{text}}</Option>
           </Select>

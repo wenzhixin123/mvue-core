@@ -346,25 +346,19 @@ function firstNotNaN(){
 
 //转换实体名称规则
 function lowerUnderscore(str){
-  if(str == null || str === '')
-    return str;
-  var strArray = str.split("");
-  var result = [];
-
-  for(var i = 1; i < strArray.length - 1; i++){
-    var previous = strArray[i-1];
-    result.push(previous);
-    if ((!/[A-Z]/.test(previous) || !isNaN(previous)) &&
-        /[A-Z]/.test(strArray[i]) &&
-        !/[A-Z]/.test(strArray[i+1])) {
-      result.push("_");
+    if(str == null || str === '') return str;
+    var strArray = str.split("");
+    var result = [];
+    for(var i = 1; i < strArray.length - 1; i++){
+        var previous = strArray[i-1]; result.push(previous);
+        if ((!/[A-Z]/.test(previous) || !isNaN(previous)) && /[A-Z]/.test(strArray[i])) {
+            result.push("_");
+        }
     }
-  }
-  result.push(strArray[strArray.length - 2]);
-  result.push(strArray[strArray.length - 1]);
-  return result.join("").toLocaleLowerCase();
+    result.push(strArray[strArray.length - 2]);
+    result.push(strArray[strArray.length - 1]);
+    return result.join("").toLocaleLowerCase();
 }
-
 
 export default{
   /**

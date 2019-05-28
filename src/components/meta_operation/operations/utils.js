@@ -9,28 +9,17 @@ import metabase from '../../../libs/metadata/metabase';
  */
 function buildQuery(context){
     let _query={};
-    if(context.grid){
-        var routeQuery=context.grid.$route.query;
-        let formShortId=context.grid.formShortId||'';
-        let viewShortId=context.grid.viewShortId||'';
-        _query= _.extend({},routeQuery);
-        if(formShortId){
-            _query.formShortId=formShortId;
-        }
-        if(viewShortId){
-            _query.viewShortId=viewShortId;
-        }
-        //关系字段过滤条件附加到url
-        if(context.grid&&context.grid.getRefField){
-            var refField=context.grid.getRefField();
-            if(refField){
-                _query[refField]=context.grid.refEntityId();
-            }
-        }
-        if(context.grid&&context.grid.createParams){
-            _query= _.extend(_query,context.grid.createParams);
+    //关系字段过滤条件附加到url
+    if(context.grid&&context.grid.getRefField){
+        var refField=context.grid.getRefField();
+        if(refField){
+            _query[refField]=context.grid.refEntityId();
         }
     }
+    if(context.grid&&context.grid.createParams){
+        _query= _.extend(_query,context.grid.createParams);
+    }
+    
     return _query;
 }
 

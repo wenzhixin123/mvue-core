@@ -110,12 +110,6 @@
                 }
                 return "请输入关键字搜索";
             },
-            loadDataWhenMount(){
-              if(this.isCategoryEnable() && this.category.mustSelect){
-                  return false;
-              }
-              return true;
-            },
             createParams(){
                 let params={};
                 if(this.selectedTreeNode){
@@ -125,9 +119,6 @@
             },
             gridSettings(){
                 let loadDataWhenMount=this.loadDataWhenMount;
-                if(this.treeSettings.mustSelect){
-                    loadDataWhenMount=false;
-                }
                 return _.assign(this.$props,{
                     loadDataWhenMount:loadDataWhenMount
                 });
@@ -150,6 +141,7 @@
                 entitySelectInited=true;
             }
             return {
+                loadDataWhenMount:false,//grid加载时默认不查询
                 processed:false,
                 entitySelectInited:entitySelectInited,
                 selectedTreeNode:null,
@@ -189,8 +181,8 @@
                     if(topEntity){
                         if(this.category.topEntity){
                             topEntityService.set(topEntity.entityName,topEntity.value);
+                            return topEntity.value;
                         }
-                        return topEntity.value;
                     }
                 }
                 return null;
@@ -340,8 +332,8 @@
                             }else{
                                 topEntityService.remove();
                             }
-                            this.$refs["gridList"].reload();
                         }
+                        this.$refs["gridList"].reload();
                     }
                 });
             }

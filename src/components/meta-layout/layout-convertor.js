@@ -25,7 +25,7 @@ function convertSettings(_settings,curInst,options){
     }
     //预处理，添加一些默认的组件配置属性，如meta-form的recordId来源
     attachPropsProcessor.process(temp.layout,options);
-    parseProps(temp.layout,curInst);
+    parseProps(temp,curInst);
     return temp;
 }
 
@@ -99,7 +99,7 @@ function evalTemplate(tpl,evalContext) {
         }
     }else if(tpl.indexOf("{{")>-1){
         let tplContent=tpl.substring(2,tpl.length-2);
-        if(tpl.charAt(tpl.length-1)=="}" && tplContent.indexOf("${")<0){
+        if(tpl.charAt(tpl.length-1)=="}" && tplContent.indexOf("{{")<0){
             newVal=pageHelper.evalExpr(tplContent,evalContext);
         }else{
             let bak=_.templateSettings.interpolate;

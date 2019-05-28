@@ -158,6 +158,13 @@ export default {
                 var spliced=args.splice(1);
                 var params=minimist(spliced);
                 _.forIn(params,(val,key)=>{
+                    //将字符串true和false转换成boolean
+                    if(val==='false'){
+                        val=false;
+                    }
+                    if(val==='true'){
+                        val=true;
+                    }
                     if(key=="_"){
                         _.forEach(val,(sKey,index)=>{
                             if(index==0){

@@ -124,6 +124,9 @@
         },
         mounted() {
             this.buildRootOrg();
+            if(this.initialValue==null || this.initialValue.length==0){
+                this.pageQueryUserByOrg();
+            }
         },
         methods: {
             //选择部门树节点后，查询此部门的用户数据

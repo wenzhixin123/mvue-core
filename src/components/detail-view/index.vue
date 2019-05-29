@@ -166,12 +166,12 @@
         },
         methods: {
             calComponentInRoute() {
-                var routeInfo = context.componentInRouteInfo(this);
-                if (!routeInfo) {
+                let routeInfo = context.componentInRouteInfo(this);
+                if (routeInfo) {
+                    this.basePath= pathToRegexp.compile(routeInfo.route.path)(this.$route.params);
+                }else{
                     this.basePath = this.$route.path;
                 }
-                var url = pathToRegexp.compile(routeInfo.route.path)(this.$route.params);
-                this.basePath = url;
                 return routeInfo;
             },
             setActiveMenu(matched) {//设置导航菜单选中

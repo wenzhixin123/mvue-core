@@ -6,9 +6,10 @@ import mvueCore from '../index';
 import userEx from './security/user-ex';
 import topEntityService from "../services/store/top-entity";
 import settings from './settings';
+let pathToRegexp = require('path-to-regexp');
 
 var cachedContext={
-  mvueComponents:null,  
+  mvueComponents:null,
   currentVue:null,
   Vue:null,
   eventBus:null,
@@ -299,6 +300,16 @@ export default {
             return null;
         }
         return routeInfo.route;
+    },
+    pathForComponent(component){
+        let url="";
+        let routeInfo = this.componentInRouteInfo(component);
+        if (routeInfo) {
+            url= pathToRegexp.compile(routeInfo.route.path)(component.$route.params);
+        }else{
+            url = component.$route.path;
+        }
+        return url;
     },
     visitComponents(com,process){
         if(com){

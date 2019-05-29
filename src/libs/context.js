@@ -187,8 +187,11 @@ export default {
             }
         }
     },
+    //这个方法在web引用mvue-core之后调用一次
     setSettings(cmap){
         cachedContext.settings=_.merge(cachedContext.settings,cmap);
+        //每次启动时清理过期的topEntity数据
+        topEntityService.deleteExpired();
     },
     getSettings(){
         return cachedContext.settings;

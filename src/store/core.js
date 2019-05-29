@@ -1,5 +1,5 @@
 import topEntityService from "../services/store/top-entity";
-
+const sidKey="sid";
 const state = {
   currentRouteData:{},//当前路由的公共数据
   autoPageConfs:{},//当前系统所有动态页面组件的配置集合
@@ -9,7 +9,7 @@ const state = {
   defaultFormId:'default-form-id',
   formStatus:{refEntities:{}},//存储表单的状态数据，key为表单id
   accessMode:'',//当前页面执行权限模式：可由菜单的url参数指定、m-grid的属性控制
-  topEntityRow:''//格式：{entityName}/{recordId}，当前页面开启上下文模式，后续所有实体如果和{entityName}实体有多对一关系，查询此实体则自动附加{recordId}过滤
+  //topEntityRow:''//格式：{entityName}/{recordId}，当前页面开启上下文模式，后续所有实体如果和{entityName}实体有多对一关系，查询此实体则自动附加{recordId}过滤
 }
 //公共的计算属性
 const getters = {
@@ -23,6 +23,9 @@ const getters = {
   },
   gridStatus:(state)=>{
     return state.gridStatus;
+  },
+  getSid:(state, getters) => () =>{
+    return state.currentRouteData[sidKey];
   }
 }
 //通过dispatch调用，与mutations不同的是：可以执行任意异步操作
@@ -35,6 +38,12 @@ const mutations = {
     var key=entityName.toLowerCase();
     state.currentRouteData[key]=state.currentRouteData[key]||{};
     state.currentRouteData[key]=entity;
+    state.currentRouteData=_.cloneDeep(state.currentRouteData);
+  },
+  setSid (state, sid) {
+    var key=sidKey;
+    state.currentRouteData[key]=state.currentRouteData[key]||{};
+    state.currentRouteData[key]=sid;
     state.currentRouteData=_.cloneDeep(state.currentRouteData);
   },
   setAutoPageConfs (state, autoPageConfs) {
@@ -78,13 +87,13 @@ const mutations = {
   },
   setAccessMode(state,accessMode){
     state.accessMode=accessMode;
-  },
+  }/*,
   setTopEntityRow(state,topEntityRow){
     state.topEntityRow=topEntityRow;
     if(_.isEmpty(topEntityRow) && topEntityService.get()){
-      topEntityService.clear();
+      topEntityService.remove();
     }
-  }
+  }*/
 }
 
 export default {

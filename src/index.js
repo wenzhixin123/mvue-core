@@ -87,6 +87,10 @@ import PclinkMultiUserSelect from './components/form/pclink/multi_user_select';
 import PclinkMultiOrgSelect from './components/form/pclink/multi_org_select';
 import simpleTree from './components/simple-tree/tree';
 
+//通用控件
+import UserSelector from "./components/form/control_tmpl/user-select/select-user"
+import OrgSelector from "./components/form/control_tmpl/org-select/select-org"
+
 const formComponents={
     Description,
     DivisionLine,
@@ -138,7 +142,10 @@ const formComponents={
     PclinkSingleUserSelect,
     PclinkSingleOrgSelect,
     PclinkMultiUserSelect,
-    PclinkMultiOrgSelect
+    PclinkMultiOrgSelect,
+
+    UserSelector,
+    OrgSelector
 };
 const gridInnerComponents={
     'm-grid-render-html':gridRenderHtml,
@@ -271,7 +278,7 @@ let MvueCore={
 function install(Vue, opts = {}) {
     if (install.installed) return;
     context.init(Vue,opts);
-    
+
     //注册组件到vue
     Object.keys(allComponents).forEach(key => {
         Vue.component(key, allComponents[key]);

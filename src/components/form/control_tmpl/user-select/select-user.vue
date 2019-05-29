@@ -21,6 +21,7 @@
 <script>
     import context from '../../../../libs/context';
     import orgTree from './org-tree';
+    import queryMethods from './query-methods';
     export default {
         mixins: [orgTree],
         props: {
@@ -32,29 +33,48 @@
             },
             queryMethods: {
                 type: Object,
-                required: true
+                default(){
+                    return queryMethods;
+                }
             },
             multiple: {
                 type: Boolean,
                 default: false
             },
             labelKey: {
-                type: String
+                type: String,
+                default() {
+                    return context.getSettings().control.userSelect.nameField;
+                }
             },
             valueKey: {
-                type: String
+                type: String,
+                default(){
+                    return context.getSettings().control.userSelect.idField;
+                }
             },
             orgLabelKey: {
-                type: String
+                type: String,
+                default(){
+                    return context.getSettings().control.orgSelect.nameField;
+                }
             },
             orgValueKey: {
-                type: String
+                type: String,
+                default(){
+                    return context.getSettings().control.orgSelect.idField;
+                }
             },
             renderFormat: {
-                type: Function
+                type: Function,
+                default:(item)=> {
+                        let titleField = context.getSettings().control.userSelect.nameField;
+                        return `${item[titleField]}`;
+                }
             },
             queryPlaceholder: {
-                type: String
+                type: String,
+                default:"请输入用户姓名"
             }
         },
         watch: {
@@ -98,7 +118,7 @@
                 currentPage: 1,
                 pageSize: 10,
                 total: 0,
-
+                selectedUsers:[],
                 queryKeyword: ''
             };
         },
@@ -125,6 +145,7 @@
                           user.key = user[this.valueKey];
                       })
                       this.sourceUsers = users;
+                      this.updateSelectedUsers();
                   });
                 }, "changedQueue");
             },
@@ -146,6 +167,7 @@
                 } else {
                     this.selectedIds = targetKeys;
                 }
+                this.updateSelectedUsers();
             },
             handleTransferSelectedChange(sourceSelected,targetSelected){
                 //单选自动移到右边已选
@@ -161,6 +183,24 @@
             },
             handleQueryChange(val) {
                 this.queryKeyword = val;
+            },
+            updateSelectedUsers() {
+                let users = {};
+                _.forEach(this.selectedIds, (selectedId) => {
+                    let user = this.selectedUsers[selectedId];
+                    if (_.isEmpty(user)) {
+                        _.forEach(this.sourceUsers, u => {
+                            if (selectedId == u[this.valueKey]) {
+                                user = u;
+                                return false;
+                            }
+                        });
+                    }
+                    if (user) {
+                        users[selectedId] = user;
+                    }
+                });
+                this.selectedUsers=users;
             }
         },
         components: {

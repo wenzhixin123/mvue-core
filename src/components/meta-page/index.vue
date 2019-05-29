@@ -1,6 +1,6 @@
 <template>
   <div class="bvue-page" v-if="!noPage">
-    <b-childheader v-if="innerTitle && showHeader" :title="innerTitle" :subtitle="header.description" :show-back="header.showBack" :back-route="header.backRoute"></b-childheader>
+    <b-childheader v-if="showHeader" :title="innerTitle" :subtitle="header.description" :show-back="header.showBack" :back-route="header.backRoute"></b-childheader>
     <div class="bvue-page-body" v-if="renderLayout">
         <meta-layout v-if="!showCard" :layout="pageSettings.layout"></meta-layout>
         <Card v-else>
@@ -77,6 +77,9 @@ export default {
     noPage: {//是否在bvue-page布局下
       type: Boolean,
       default: false
+    },
+    title: {
+      type: [String,Object]
     }
   },
   computed: {
@@ -97,18 +100,27 @@ export default {
       return canRender;
     }
   },
+  watch:{
+    header:{
+      handler(){
+        var sourceId = this.title && this.title.source;
+        //如果定义了title是来源于某个组件，则注册这个组件id到全局
+        //如果sourceId为空，也要清除
+        this.$store.commit('core/setPageTitleSourceId', sourceId)
+        let _title=this.header && this.header.title;
+        if(!_title){
+          _title=this.title;
+        }
+        if (_title && _.isString(_title)) {//如果自定义了title，强制设置进去
+          this.$store.commit('core/setPageTitleCoercively', _title);
+        }
+      },
+      immediate:true
+    }
+  },
   created() {
     if (this.noPage) {
       return;
-    }
-    //每次进到页面都重置页面标题
-    this.$store.commit('core/setPageTitleCoercively', '');
-    var sourceId = this.title && this.title.source;
-    //如果定义了title是来源于某个组件，则注册这个组件id到全局
-    //如果sourceId为空，也要清除
-    this.$store.commit('core/setPageTitleSourceId', sourceId)
-    if (this.title && _.isString(this.title)) {//如果自定义了title，强制设置进去
-      this.$store.commit('core/setPageTitleCoercively', this.title);
     }
   },
   data: function () {
@@ -119,7 +131,6 @@ export default {
     //定义page的运行Context
     let pageContext=pageHelper.buildPageContext(self);
     return {
-      title: this.header && this.header.title,
       isPage: true,
       pageContext:pageContext
     };

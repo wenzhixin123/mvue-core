@@ -27,6 +27,12 @@ export default{
         },
         multiple(){
             return _.isArray(this.selectedItem);
+        },
+        queryOptions(){
+            if(this.formItem && this.formItem.componentParams){
+                return this.formItem.componentParams.queryOptions;
+            }
+            return null;
         }
     },
     watch:{
@@ -295,7 +301,7 @@ export default{
         },
         //必须由具体选择组件重写
         buildQueryOptions(params,keyword){
-            
+
         },
 
         //根据已选ids查询数据
@@ -328,15 +334,17 @@ export default{
             if(!this.multiple){
                 params.expand=this.buildQueryExpand();
             }
-            params.limit=this.queryLimit+1;
+            let limit=this.getQueryLimit();
+            params.limit=limit+1;
             //如果是关键字查询，附加查询条件查询
             this.buildQueryOptions(params,"");
+            this.mergeQueryOptions(params);
             if(this.entityResource){
                 context.getMvueToolkit().utils.smartSearch(_this,function(){
                     _this.entityResource.query(params)
                     .then(function({data}){
                         var valData=data;
-                        if(valData.length>_this.queryLimit){
+                        if(valData.length>limit){
                             var lastItem=valData[valData.length-1];
                             _.forIn(lastItem,(val,key)=>{
                                 lastItem[key]="...";
@@ -348,6 +356,32 @@ export default{
                     });
                 });
             }
+        },
+        getQueryLimit(){
+            let limit=this.queryLimit;
+            if(this.queryOptions && _.has(this.queryOptions,"limit")){
+                limit=this.queryOptions.limit;
+            }
+            return limit;
+        },
+        mergeQueryOptions(params){
+            if(_.isEmpty(this.queryOptions)){
+                return;
+            }
+            _.forIn(this.queryOptions,(val,key)=>{
+                if(!_.has(params,key)){
+                    params[key]=val;
+                    return;
+                }
+                switch (key) {
+                    case "filters":
+                        params.filters=`(${params.filters}) and (${val})`;
+                        break;
+                    case "orderby","select":
+                        params[key]=val;
+                        break;
+                }
+            });
         },
         //当输入关键字搜索时会执行此查询
         doSearch:function(keyword,callback){

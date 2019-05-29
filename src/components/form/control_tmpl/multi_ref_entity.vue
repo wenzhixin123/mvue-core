@@ -54,7 +54,7 @@
                         <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">
                             <ref-entity-select ref="selectRef" v-if="popupWidgetModal"
                                 :form-item="formItem"
-                                :value="selectedItem"
+                                :value="selectedItem" :queryOptions="queryOptions"
                                 :multiple="true"
                             ></ref-entity-select>
                         </div>

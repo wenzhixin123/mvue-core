@@ -19,6 +19,7 @@ const settings={
       refEntity:{
         hideDeleted:false//引用数据被删除后，是否默认不显示出来
       }
-  }
+  },
+  sidExpired:1//指定sid存储的topEntity数据过期天数
 };
 export default settings;

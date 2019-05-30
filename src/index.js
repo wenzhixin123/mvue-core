@@ -262,14 +262,16 @@ let MvueCore={
                 let needRedirect=false;
                 let newRoute={
                     query:_.cloneDeep(to.query),
-                    hash:_.cloneDeep(to.hash)
+                    hash:_.cloneDeep(to.hash),
+                    path:to.path
                 }
-                if(to.name){
+                //TODO 后续再优化，先全部通过path跳转
+                /*if(to.name){
                     newRoute.name=to.name;
                     newRoute.params=_.cloneDeep(to.params);
                 }else if(to.path){
                     newRoute.path=to.path;
-                }
+                }*/
                 if(store){
                     //用来标记不同的页面会话
                     let sid=store.getters['core/getSid']();

@@ -19,7 +19,7 @@
                             deselect-label="按enter键取消选择"
                             :show-no-results="true"
                             :internal-search="false"
-                             :closeOnSelect="false"
+                             :closeOnSelect="formItem.componentParams.closeOnSelect || false"
                             :label="getTitleField()"
                             @search-change="searchChange"
                             @input="handleOnSelectChange"

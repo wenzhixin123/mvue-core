@@ -121,6 +121,8 @@ export default {
                     toBeSelected.checked=true;
                 }
                 this.$emit("on-select-change",[toBeSelected]);
+            }else if(this.loadDataWhenMount){
+                this.$emit("on-select-change",null);
             }
             return _data;
         },

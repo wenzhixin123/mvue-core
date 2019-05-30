@@ -6,9 +6,9 @@
         </div>
         <div class="ref-entity-list-body">
             <template v-if="multiple&&selectedItem">
-                <Tag color="success" v-for="item in selectedItem" :key="item[getIdField()]" :title="title(item)">{{title(item)}}</Tag>   
+                <Tag color="success" v-for="item in selectedItem" :key="item[getIdField()]" :title="title(item)">{{title(item)}}</Tag>
             </template>
-            <Tag color="success" v-if="(!multiple)&&selectedItem" :title="title(selectedItem)">{{title(selectedItem)}}</Tag>   
+            <Tag color="success" v-if="(!multiple)&&selectedItem" :title="title(selectedItem)">{{title(selectedItem)}}</Tag>
         </div>
     </div>
     <div style="width:80%;">
@@ -40,20 +40,37 @@ export default {
         multiple:{
             type:Boolean,
             default:false
+        },
+        queryOptions: {
+            type:Object
         }
     },
     data(){
-        return {
-            layoutSettings:{
-                toolbar:{
-                    quicksearch:{}
-                },
-                highlightRow:!this.multiple,
+        let layoutSettings={
+            toolbar:{
+                quicksearch:{}
+            },
+            highlightRow:!this.multiple,
                 maxColumnsSize:5,
                 showSelection:this.multiple,
                 handleOnTitleClick:false,
                 entityName:this.formItem.componentParams.entityId
-            },
+        };
+        if(this.queryOptions && this.queryOptions.select){
+            let op=_.assign({},this.queryOptions);
+            delete op.limit;
+            layoutSettings["queryOptions"]=op;
+            if(op.select){
+                let selectArray=op.select.split(",");
+                let columns=[];
+                _.forEach(selectArray,(column)=>{
+                    columns.push({key:column});
+                });
+                layoutSettings["columns"]=columns;
+            }
+        }
+        return {
+            layoutSettings,
             preprocessed:false
         };
     },

@@ -29,7 +29,7 @@ export default {
         pageKey(){
             let routeInfo = context.componentInRouteInfo(this);
             let url=this.$route.path;
-            if (routeInfo) {
+            if (routeInfo&&routeInfo.route.path) {
                 url = pathToRegexp.compile(routeInfo.route.path)(this.$route.params);
             }
             return url;

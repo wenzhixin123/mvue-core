@@ -28,7 +28,7 @@ export default{
         multiple(){
             return _.isArray(this.selectedItem);
         },
-        queryOptions(){
+        innerQueryOptions(){
             if(this.formItem && this.formItem.componentParams){
                 return this.formItem.componentParams.queryOptions;
             }
@@ -359,16 +359,16 @@ export default{
         },
         getQueryLimit(){
             let limit=this.queryLimit;
-            if(this.queryOptions && _.has(this.queryOptions,"limit")){
-                limit=this.queryOptions.limit;
+            if(this.innerQueryOptions && _.has(this.innerQueryOptions,"limit")){
+                limit=this.innerQueryOptions.limit;
             }
             return limit;
         },
         mergeQueryOptions(params){
-            if(_.isEmpty(this.queryOptions)){
+            if(_.isEmpty(this.innerQueryOptions)){
                 return;
             }
-            _.forIn(this.queryOptions,(val,key)=>{
+            _.forIn(this.innerQueryOptions,(val,key)=>{
                 if(!_.has(params,key)){
                     params[key]=val;
                     return;

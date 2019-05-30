@@ -6,6 +6,9 @@
             </m-operation>
             <div v-else class="form-item-view" :class="{'deleted-ref':isRefDeleted()}" v-text="realViewModeValue()||emptyText" :title="realViewModeValue()||emptyText"></div>
         </template>
+        <template v-else-if="!hasReadPerm">
+            <Input readonly type="text" :value="realViewModeValue()"></Input>
+        </template>
         <template v-else>
             <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">
                 <Multiselect v-model="selectedItem"
@@ -81,7 +84,9 @@ export default {
             entityResource= context.buildResource(this.formItem.componentParams.entityResourceUrl);
         }
         let metaEntity=this.$metaBase.findMetaEntity(this.formItem.componentParams.entityId);
+        let hasReadPerm=sc.hasReadPerm(this.formItem.componentParams.entityId);
         return {
+            hasReadPerm:hasReadPerm,
             metaEntity:metaEntity,
             selectedItem:null,//已经选择的项
             entityResource:entityResource,//获取实体数据的操作resource
@@ -93,6 +98,10 @@ export default {
     computed:{
         canView(){
             if(!this.selectedItem){
+                return false;
+            }
+            //对当前实体是否有read权限
+            if(!this.hasReadPerm){
                 return false;
             }
             //对当前行是否有find权限
@@ -162,7 +171,7 @@ export default {
         buildRefEntityViewOpts(){
             this.refEntityViewOpt={
                 operationType: 'popup',
-                title: this.viewModeValue,
+                title: '详情',
                 url: 'view'
             }
             this.widgetContext={

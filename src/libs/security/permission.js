@@ -62,6 +62,18 @@ export  default {
     init:function () {
        return init();
     },
+    //判断实体是否有read权限
+    hasReadPerm:function(entityName){
+        let has=hasPerm('find',entityName);
+        if(!has){
+            return false;
+        }
+        has=hasPerm('query',entityName);
+        if(!has){
+            return false;
+        }
+        return true;
+    },
     //实体操作权限判断
     hasPerm:function (op,metaEntity) {
         if(!_.isArray(op)){

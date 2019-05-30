@@ -1,11 +1,14 @@
 <template>
-    <div :style="{width:formItem.componentParams.width+'%'}">
+    <div>
         <template v-if="viewMode">
             <div class="form-item-view" :title="realViewModeValue()||emptyText">
                 <template v-for="(val,index) in multiRefDeletedValue()">
                     <span :key="index" :class="{'deleted-ref':val.deleted}" v-text="(index<multiRefDeletedValue().length-1)?(val.text+','):val.text"></span>
                 </template>
             </div>
+        </template>
+        <template v-else-if="!hasReadPerm">
+            <Input readonly type="text" :value="realViewModeValue()"></Input>
         </template>
         <template v-else>
             <div class="bvue-select-wrapper bvue-select-group bvue-select-with-append">
@@ -68,6 +71,7 @@
     </div>
 </template>
 <script>
+import sc from '../../../libs/security/permission';
 import context from '../../../libs/context';
 import controlBase from '../js/control_base';
 import entitySelect from '../mixins/entity-select';
@@ -87,7 +91,9 @@ export default {
         if(this.formItem.componentParams&&this.formItem.componentParams.entityResourceUrl){
             entityResource= context.buildResource(this.formItem.componentParams.entityResourceUrl);
         }
+        let hasReadPerm=sc.hasReadPerm(this.formItem.componentParams.entityId);
         return {
+            hasReadPerm:hasReadPerm,
             selectedItem:[],//已经选择的项
             entityResource:entityResource//获取实体数据的操作resource
         };

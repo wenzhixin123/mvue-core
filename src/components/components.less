@@ -391,3 +391,14 @@
 input[readonly]{
     cursor: not-allowed;
 }
+//修正选择实体组件按钮如果外部包含div时的样式
+.bvue-select-group{
+    .bvue-select-group-append{
+        vertical-align: top;
+        >.ivu-btn{
+          border-top-left-radius: 0;
+          border-bottom-left-radius: 0;
+          vertical-align: top;
+        }
+    }
+}

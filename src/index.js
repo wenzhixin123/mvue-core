@@ -90,6 +90,7 @@ import simpleTree from './components/simple-tree/tree';
 //通用控件
 import UserSelector from "./components/form/control_tmpl/user-select/select-user"
 import OrgSelector from "./components/form/control_tmpl/org-select/select-org"
+import EntitySelect from './components/entity-select/index'
 
 const formComponents={
     Description,
@@ -202,7 +203,8 @@ const mComponents={
     'm-detail-view':detailView,
     'm-relation':mRelation,
     'm-batch-editor':batchEditor,
-    'm-simple-batch-editor':simpleBatchEditor
+    'm-simple-batch-editor':simpleBatchEditor,
+    'm-entity-select':EntitySelect
 };
 const allComponents=_.extend({},gridInnerComponents,oldFasionComponents,mComponents);
 //全局组件样式在这里引入，避免在内部重复引用

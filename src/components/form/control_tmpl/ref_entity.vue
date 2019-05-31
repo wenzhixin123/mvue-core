@@ -40,27 +40,14 @@
                         <span :class="{'deleted-ref':!!option[rowMetaFakeKey]}">{{option[getTitleField()]}}</span>
                     </template>
                 </Multiselect>
-                <div class="ivu-btn ivu-btn-primary bvue-select-group-append" :disabled="disabled" @click="toggleModal">
-                    <Icon :type="btnIcon"></Icon>
-                </div>
-                <Modal class="bvue-select-modal" v-model="popupWidgetModal"
-                        :width="modalWidth"
-                        :title="modalTitle"
-                        :scrollable="true"
-                        transfer
-                        :mask-closable="false"
-                        >
-                    <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">
-                        <ref-entity-select ref="selectRef" v-if="popupWidgetModal"
-                            :form-item="formItem"
-                            :value="selectedItem" :queryOptions="queryOptions"
-                        ></ref-entity-select>
-                    </div>
-                    <div slot="footer">
-                        <Button type="default" @click="close">取消</Button>
-                        <Button type="primary" @click="confirmSelect">确定</Button>
-                    </div>
-                </Modal>
+                <m-entity-select 
+                    :entity-name="formItem.componentParams.entityId"
+                    :value="selectedItem" 
+                    :append="true"
+                    :disabled="disabled"
+                    :query-options="innerQueryOptions"
+                    @on-select-change="confirmSelect">
+                </m-entity-select>
             </div>
         </template>
     </div>
@@ -70,11 +57,10 @@ import context from '../../../libs/context';
 import sc from '../../../libs/security/permission';
 import controlBase from '../js/control_base';
 import entitySelect from '../mixins/entity-select';
-import selectModel from '../mixins/select-modal';
 import rowMeta from '../../form/js/row-meta';
 
 export default {
-    mixins: [controlBase,entitySelect,selectModel],
+    mixins: [controlBase,entitySelect],
     props: {
         "value":{type:[String,Number],default:null}
     },
@@ -156,17 +142,8 @@ export default {
             return this.formItem.componentParams.titleField;
         },
         //从选择列表选择数据确认后，反应到多选组件
-        confirmSelect(){
-            var selectedItem=this.$refs.selectRef.selectedItem;
-            if(!selectedItem){
-                this.$Modal.info({
-                    content:"请选择一行数据"
-                });
-                return;
-            }
-            this.selectedItem=selectedItem;
+        confirmSelect(selectedItem){
             this.handleOnSelectChange(selectedItem,null);
-            this.close();
         },
         buildRefEntityViewOpts(){
             this.refEntityViewOpt={
@@ -180,9 +157,6 @@ export default {
                 selectedItems:[this.selectedItem]
             };
         }
-    },
-    components:{
-        refEntitySelect:require('./ref-entity-select')
     }
 }
 </script>

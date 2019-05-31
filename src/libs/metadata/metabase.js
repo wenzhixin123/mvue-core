@@ -159,6 +159,7 @@ function loadMetaEntityFromMode(context,modelName,model){
       rowSecurityEnabled:rowSecurityEnabled(model),
       entityPath: _.trim(firstNotNaN(model["x-entity-path"], ("/"+_.snakeCase(modelName)))),
       ui: (firstNotNaN(model["x-entity-ui"], false)?"conf":"none"),
+      remote:firstNotNaN(model["x-remote"], false),
       description: model.description,
       _model: model,
       engineUrl: _.trim(currentEngineUrl, '/'),

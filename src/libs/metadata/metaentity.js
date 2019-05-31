@@ -7,7 +7,7 @@ export default function (options) {
         title: "",
         entityPath: "",
         description: "",
-        isRemote: false,
+        remote: false,
         tableDroppable: false,
         tableFieldAddable: false,
         fields: {},

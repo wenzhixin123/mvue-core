@@ -138,7 +138,7 @@ export default{
                     }
                 });
             }
-            if(this.viewMode||!this.hasReadPerm){
+            if(this.viewMode||this.hasReadPerm===false){
                 this.getViewModeValue();
             }
         },

@@ -412,6 +412,9 @@ export default{
         },
         //获取查看模式的显示数据
         getViewModeValue(){
+            if(!this.getEntityExData){
+                return;
+            }
             if(_.isArray(this.value)){
                 let textsPromise=this.getEntityExData(this.value);
                 textsPromise.then(texts=>{

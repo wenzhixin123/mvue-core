@@ -16,7 +16,9 @@
             <ref-entity-select ref="selectRef" v-if="popupWidgetModal"
                 :form-item="formItem"
                 :multiple="multiple"
-                :value="value" :queryOptions="queryOptions"
+                :value="value" 
+                :grid-settings="gridSettings"
+                :queryOptions="queryOptions"
             ></ref-entity-select>
         </div>
         <div slot="footer">
@@ -42,7 +44,10 @@ export default {
       type:Boolean,
       default:false
     },
-    queryOptions: {//默认插叙条件
+    queryOptions: {//默认查询条件
+      type:Object
+    },
+    gridSettings:{//grid的配置
       type:Object
     },
     showBtn:{//是否显示按钮，显示后点击按钮可以弹出和关闭选择框，否则需要调用组件的toggleModal()控制弹出框隐藏和关闭

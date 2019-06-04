@@ -4,6 +4,7 @@
     :query-options="operation.queryOptions"
     :grid-settings="operation.gridSettings"
     :btn-title="operation.title"
+    :modal-title="operation.modalTitle"
     :btn-type="operation.btnType"
     :btn-icon="operation.btnIcon"
     @on-select-change="confirmSelect">

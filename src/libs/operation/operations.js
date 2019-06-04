@@ -150,7 +150,12 @@ export  default {
             if(_.isString(btn)){
                 opts={name:btn}
             }
-            if(ops){
+            //entityName以操作btn上定义的优先，opts上定义的不覆盖
+            if(opts.entityName&&ops&&ops.entityName){
+                let __ops=_.cloneDeep(ops);
+                delete __ops.entityName;
+                opts=_.assign(opts,__ops);
+            }else if(ops){
                 opts=_.assign(opts,ops);
             }
             if(beforeCreate){

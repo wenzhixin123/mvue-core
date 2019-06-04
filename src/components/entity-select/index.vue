@@ -1,8 +1,9 @@
 <template>
   <div :class="{'bvue-select-group-append':showBtn&&append}">
     <slot name="btn" v-if="showBtn">
-      <Button type="primary" :disabled="disabled" @click="toggleModal">
+      <Button :type="btnType||'primary'" :disabled="disabled" @click="toggleModal">
           <Icon :type="btnIcon"></Icon>
+          {{btnTitle}}
       </Button>
     </slot>
     <Modal class="bvue-select-modal" v-model="popupWidgetModal"
@@ -35,7 +36,7 @@ export default {
   props:{
     entityName:{//实体名称
       type:String,
-      required:true
+      //required:true
     },
     value:{//初始值
       type:[Array,Object]
@@ -66,6 +67,12 @@ export default {
       type:String
     },
     titleField:{
+      type:String
+    },
+    btnTitle:{
+      type:String
+    },
+    btnType:{
       type:String
     }
   },

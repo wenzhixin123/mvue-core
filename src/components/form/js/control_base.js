@@ -259,6 +259,10 @@ export default {
             return false;
         },
         calcField(){//调用后端的api计算含有表达式的默认值或者固定字段
+            let metaForm=this.getParentForm();
+            if(metaForm&metaForm.calc===false){
+                return Promise.resolve(null);
+            }
             let _this=this;
             let _model={};
             let name=this.formItem.dataField;

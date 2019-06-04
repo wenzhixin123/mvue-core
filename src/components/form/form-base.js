@@ -104,6 +104,10 @@ export default {
         defaultValues: {//新建时，设置固定默认值
             type: Object,
             require: false
+        },
+        calc: {//后端不提供calc接口，可设置calc为false，这样表单控件就不会调用calc接口获取默认值
+            type: Boolean,
+            default:true
         }
     },
     data(){

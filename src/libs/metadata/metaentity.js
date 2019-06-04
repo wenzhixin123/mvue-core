@@ -157,7 +157,10 @@ export default function (options) {
     /**
      * 根据传入的model，从后台填充所有属性定义的默认值
      */
-    metaEntity.fillDefault = function (model) {
+    metaEntity.fillDefault = function (model,calc) {
+        if(calc===false){
+            return Promise.resolve(model);
+        }
         var ds = this.dataResource();
         return ds.calc(model).then(function ({data}) {
             return data;

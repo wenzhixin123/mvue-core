@@ -7,7 +7,7 @@ export default {
         }
     },
     methods:{
-        //单选
+        //单选时生效
         handleOnCurrentChange(currentRow,oldCurrentRow){
             //多选不走这里
             if(this.multiple){
@@ -15,9 +15,37 @@ export default {
             }
             this.selectedItem=currentRow;
         },
-        //多选
+        //多选时生效
         handleOnSelectionChange(selection){
-            this.selectedItem=selection;
+            if(_.isEmpty(this.selectedItem)){
+                this.selectedItem=selection;
+            }else if(!_.isEmpty(selection)){
+                let idField=this.getIdField();
+                let siMap=_.keyBy(this.selectedItem,si=>{
+                    return si[idField];
+                });
+                _.forEach(selection,sel=>{
+                    let id=sel[idField];
+                    if(!siMap[id]){
+                        this.selectedItem.push(sel);
+                    }
+                });
+            }
+        },
+        //多选时生效，取消选择
+        handleOnSelectCancel(selection,row){
+            this.handleTagClose(row);
+        },
+        //点击tab删除
+        handleTagClose(item){
+            let idField=this.getIdField();
+            let newSelectedItem=[];
+            _.forEach(this.selectedItem,si=>{
+                if(si[idField]!==item[idField]){
+                    newSelectedItem.push(si);
+                }
+            });
+            this.selectedItem=newSelectedItem;
         },
         getIdField:function(){
             return this.formItem.componentParams.idField;

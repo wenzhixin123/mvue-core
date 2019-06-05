@@ -6,7 +6,7 @@
         </div>
         <div class="ref-entity-list-body">
             <template v-if="multiple&&selectedItem">
-                <Tag color="success" v-for="item in selectedItem" :key="item[getIdField()]" :title="title(item)">{{title(item)}}</Tag>
+                <Tag color="success" v-for="item in selectedItem" :key="item[getIdField()]" :title="title(item)" closable @on-close="handleTagClose(item)">{{title(item)}}</Tag>
             </template>
             <Tag color="success" v-if="(!multiple)&&selectedItem" :title="title(selectedItem)">{{title(selectedItem)}}</Tag>
         </div>
@@ -16,6 +16,7 @@
             <Col span="24" style="border-right:1px solid #e8e8e8;">
                 <meta-grid v-if="preprocessed" ref="gridList"
                     v-bind="layoutSettings"
+                    @on-select-cancel="handleOnSelectCancel"
                     @on-current-change="handleOnCurrentChange"
                     @on-selection-change="handleOnSelectionChange">
                 </meta-grid>

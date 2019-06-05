@@ -241,7 +241,7 @@ export default {
    */
   renderForCommon: function (context, metaField,initialCol) {
     return function (h, params) {
-      var value = controlTypeService.formatData(params.row, metaField);
+      var value = controlTypeService.formatData(params.row, metaField,'grid');
       return h("m-grid-render-html", {
         props: {
           value: value,

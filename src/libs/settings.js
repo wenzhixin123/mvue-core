@@ -18,6 +18,9 @@ const settings={
       },
       refEntity:{
         hideDeleted:false//引用数据被删除后，是否默认不显示出来
+      },
+      dateTime:{
+        gridFormatter:''//日期时间在grid显示时使用的格式化字符串，支持simple和标准格式化串，如：YYYY-MM-DD HH:mm:ss
       }
   },
   sidExpired:1//指定sid存储的topEntity数据过期天数

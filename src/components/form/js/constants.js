@@ -6,5 +6,6 @@ export default {
             userApiUrl:context.getConfig().getUserApiUrl()+"{/id}",
             orgApiUrl:context.getConfig().getOrgApiUrl()+"{/id}"
         };
-    }
+    },
+    TitleSplitKey:'__##titleSplitKey##__'
 }

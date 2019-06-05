@@ -1,3 +1,5 @@
+import context from '../../../libs/context';
+import constants from './constants';
 var dayjs = require("dayjs");
 //定义基础组件:日期和时间类型
 var dateTypes={
@@ -122,7 +124,7 @@ function formatDateTime(value,precision){
     }
     return _valueValidPart;
 }
-function formatData(componentType,item,metaField){
+function formatData(componentType,item,metaField,from){
     let fieldName=metaField.name;
     let origin=item[fieldName];
     if(_.isUndefined(origin)||_.isNull(origin)||origin===''){
@@ -138,6 +140,23 @@ function formatData(componentType,item,metaField){
     }else if(isDateTime(componentType)){
         let timePrecision=metaField.inputTypeParams&&metaField.inputTypeParams.timePrecision;
         result= formatDateTime(origin,timePrecision);
+        //如果是grid的日期时间渲染，根据gridFormatter作格式化
+        if(from==='grid'&&origin){
+            let gridFormatter=metaField.inputTypeParams&&metaField.inputTypeParams.gridFormatter;
+            if(!gridFormatter){
+                gridFormatter=context.getSettings().control.dateTime.gridFormatter;
+            }
+            if(gridFormatter){
+                let realValue=result;
+                let _d=dayjs(origin);
+                if(gridFormatter==='simple'){
+                    result=_d.format('MM/DD HH:mm');
+                }else{
+                    result=_d.format(gridFormatter);
+                }
+                result=`${result}${constants.TitleSplitKey}${realValue}`
+            }
+        }
     }
     return result;
 }

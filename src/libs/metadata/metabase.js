@@ -274,15 +274,17 @@ function loadMetaFieldFromProperty(context,propertyName,property){
 function optionsConvert(options,metaField){
   let _options=[];
   _.each(options,function (item,index) {
-    _options.push({
+    let _opt={
       id:item.value,
       text:item.title,
       checked:false
-    });
+    };
+    //子选项转换
+    if(item.children||item.items){
+      _opt.children=optionsConvert(item.children||item.items,metaField);
+    }
+    _options.push(_opt);
   });
-  if(options.children){
-    _options.children=optionsConvert(options.children,metaField);
-  }
   return _options;
 }
 /**

@@ -109,6 +109,11 @@ export default {
     },
     mounted(){
         if(this.viewMode){
+            this.judgeViewPage();
+        }
+    },
+    methods: {
+        judgeViewPage(){
             //首先判断对引用的实体是否配置了view页面
             let isUIEnable=this.metaEntity.isUIEnable();
             //如果实体没有ui配置，不用远程获取了
@@ -121,9 +126,7 @@ export default {
                     }
                 });
             }
-        }
-    },
-    methods: {
+        },
         buildQueryOptions(params,keyword){
             var encodeKeyword=context.getMvueToolkit().utils.leapQueryValueEncode(keyword);
             var filters=`${this.getTitleField()} like '%${encodeKeyword}%'`;

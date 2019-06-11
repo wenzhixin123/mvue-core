@@ -88,10 +88,6 @@ export default {
         labelFor:{
             type:String
         },
-        labelWidth:{
-            type:Number,
-            default:0
-        },
         initWhenCreate:{
             type:Boolean,
             default:false

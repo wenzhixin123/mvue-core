@@ -22,8 +22,6 @@ import operation from './components/meta_operation/operation';
 import grid from './components/grid/iview_grid.vue';
 import entityTree from './components/entity-tree/index';
 import treeGrid from './components/meta-tree-grid/index';
-import vgrid from './components/v-grid/index';
-import vform from './components/v-form/index';
 import layout from './components/meta-layout/index';
 import page from './components/meta-page/index';
 import pageTmpl from './components/meta-page/tmpl/index';
@@ -177,8 +175,6 @@ const oldFasionComponents={
     'meta-grid':grid,
     'meta-entity-tree':entityTree,
     'meta-tree-grid':treeGrid,
-    'meta-v-grid':vgrid,
-    'meta-v-form':vform,
     'meta-layout':layout,
     'meta-page':page,
 };
@@ -192,8 +188,6 @@ const mComponents={
     'm-grid':grid,
     'm-entity-tree':entityTree,
     'm-tree-grid':treeGrid,
-    'm-v-grid':vgrid,
-    'm-v-form':vform,
     'm-layout':layout,
     'm-page':page,
     'm-page-tmpl':pageTmpl,

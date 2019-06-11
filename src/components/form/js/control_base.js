@@ -73,15 +73,15 @@ export default {
         }
     },
     computed:{
-        labelWidth:function(){
-            let lwidth=this.formItem.componentParams.horizontalLayoutLabelWidth;
-            return lwidth+"%";
-        },
-        controlWidth:function(){
-            let lwidth=this.formItem.componentParams.horizontalLayoutLabelWidth;
-            let rwidth=100-_.toInteger(lwidth);
-            return rwidth+"%";
-        },
+        // labelWidth:function(){
+        //     let lwidth=this.formItem.componentParams.horizontalLayoutLabelWidth;
+        //     return lwidth+"%";
+        // },
+        // controlWidth:function(){
+        //     let lwidth=this.formItem.componentParams.horizontalLayoutLabelWidth;
+        //     let rwidth=100-_.toInteger(lwidth);
+        //     return rwidth+"%";
+        // },
         disabled:function(){
             return this.isReadonly();
         },

@@ -27,7 +27,7 @@
 import controlTypeService from './js/control_type_service';
 import metaformUtils from './js/metaform_utils';
 import constants from './js/constants';
-import context from "../../libs/context";
+import globalContext from "../../libs/context";
 import getParent from '../mixins/get-parent';
 import widgetMode from './js/widget-mode';
 export default {
@@ -137,7 +137,7 @@ export default {
         var form=this.getParentForm();
         if(!entityName){
             if(!form){
-                context.error({
+                globalContext.error({
                     title:"错误",
                     content:`必须定义父组件m-form`
                 });
@@ -146,7 +146,7 @@ export default {
             entityName=form.entityName;
         }
         if(!entityName){
-            context.error({
+            globalContext.error({
                 title:"错误",
                 content:`实体名称无法确定`
             });
@@ -154,7 +154,7 @@ export default {
         }
         var metaEntity=this.$metaBase.findMetaEntity(entityName);
         if(!metaEntity){
-            context.error({
+            globalContext.error({
                 title:"错误",
                 content:`实体${entityName}不存在`
             });
@@ -162,7 +162,7 @@ export default {
         }
         var metaField=_.cloneDeep(metaEntity.findField(this.name));
         if(!metaField){
-            context.error({
+            globalContext.error({
                 title:"错误",
                 content:`字段${this.name}不存在`
             });

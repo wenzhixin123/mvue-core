@@ -24,7 +24,6 @@
 import context from '../../../libs/context';
 import sc from '../../../libs/security/permission';
 import controlBase from '../js/control_base';
-import { titleRender } from '../../../../../../00-bingoee-cloud/mvue-components/src';
 const PermField='__ops__';
 export default {
     mixins: [controlBase],

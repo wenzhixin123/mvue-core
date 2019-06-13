@@ -47,7 +47,12 @@ export default{
             queryRoot() {
                 let parentFilter="";
                 if(opts.parentField){
-                    parentFilter=`${opts.parentField} is null `;
+                    //如果外部指定了父级查询的条件，用外部指定的代替
+                    if(opts.rootFilters){
+                        parentFilter=opts.rootFilters;
+                    }else{
+                        parentFilter=`${opts.parentField} is null `;
+                    }
                 }
                 var queryOptions=buildQueryOptions(opts.queryOptions,parentFilter);
                 if(opts.parentField==null){

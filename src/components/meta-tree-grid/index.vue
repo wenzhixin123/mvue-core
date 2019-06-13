@@ -82,6 +82,7 @@
                     return {
                         entityName:"",
                         mustSelect: false,
+                        rootFilter:'',//可以重写顶级树节点查询的过滤条件
                         topEntity: false    //支持将选中值设置成topEntity
                     }
                 }

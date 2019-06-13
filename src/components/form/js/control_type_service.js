@@ -21,6 +21,8 @@ import entityType from './entity_type'
 import boolType from './bool_type'
 //基础组件：数组类型，如tag组件定义
 import arrayType from './array-type'
+//基础组件：内嵌JSON类型
+import objectType from './object-type'
 //高级组件：成员组件定义
 import noFieldType from './no_field_type'
 
@@ -43,7 +45,8 @@ var fieldControlsType=[
     cascadeType,
     boolType,
     issuedNumberType,
-    arrayType
+    arrayType,
+    objectType
 ];
 var fieldControls=[];
 _.each(fieldControlsType,function(type){

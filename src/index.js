@@ -90,6 +90,8 @@ import UserSelector from "./components/form/control_tmpl/user-select/select-user
 import OrgSelector from "./components/form/control_tmpl/org-select/select-org"
 import EntitySelect from './components/entity-select/index'
 
+import ObjectEditor from './components/form/control_tmpl/object-editor/index';
+
 const formComponents={
     Description,
     DivisionLine,
@@ -144,7 +146,9 @@ const formComponents={
     PclinkMultiOrgSelect,
 
     UserSelector,
-    OrgSelector
+    OrgSelector,
+
+    ObjectEditor
 };
 const gridInnerComponents={
     'm-grid-render-html':gridRenderHtml,

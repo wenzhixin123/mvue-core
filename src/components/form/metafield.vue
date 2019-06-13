@@ -1,12 +1,12 @@
 <template>
     <FormItem  :prop="innerPropName"  :label-for="labelFor" v-if="!isHidden()"
-        :rules="rules" :show-message="showMessage" :class="{'has-warn-desc':description&&descLevel=='warn'}">
+        :rules="innerRules" :show-message="showMessage" :class="itemClass">
         <template v-if="showLabel" slot="label">
             <slot name="label">{{ metaField.title}}<info-tip v-if="description&&descLevel=='info'&&!ignoreDescription" :content="description"></info-tip></slot>
         </template>
         <slot v-if="formItem"
             :model="entity" :metaField="metaField"  :formItem="formItem">
-            <component
+            <component ref="controlRef"
                 v-model="entity[innerPropName]"
                 :is="componentName(formItem)"
                 :paths="paths"
@@ -112,6 +112,24 @@ export default {
         ignoreDescription:{//是否忽略字段描述，高级查询时不需要显示描述
             type:Boolean,
             default:false
+        },
+        zeroMarginBottom:{//是否将当前控件的下边距设置为0
+            type:Boolean,
+            default:false
+        }
+    },
+    computed:{
+        itemClass(){
+            let comTypeDef=controlTypeService.componentTypes[this.formItem.componentType];
+            let _class={
+                'has-warn-desc':this.description&&this.descLevel=='warn',
+                'zero-content-margin-left':!this.showLabel,
+                'zero-margin-bottom':this.zeroMarginBottom
+            };
+            if(comTypeDef.class){
+                _class[comTypeDef.class]=true;
+            }
+            return _class;
         }
     },
     watch:{
@@ -219,7 +237,9 @@ export default {
         if(!this.ignoreAutoMode){
             _mode=this.getInnerMode(metaField);
         }
+        let innerRules=this.buildInnerRules(formItem);
         return {
+            innerRules:innerRules,
             innerMode:_mode,
             formItem:formItem,
             form:form,
@@ -234,6 +254,39 @@ export default {
         }
     },
     methods:{
+        buildMethodRule(validateMethod){
+            let refs=this.$refs;
+            let _rule={
+                validator(rule, value, callback) {
+                    let controlRef=refs&&refs.controlRef;
+                    if(controlRef&&_.isFunction(controlRef[validateMethod])){
+                        controlRef[validateMethod](rule, value, callback);
+                    }else{
+                        callback(); 
+                    }
+                },
+                trigger: 'change'
+            }
+            return _rule;
+        },
+        buildInnerRules(formItem){
+            let comTypeDef=controlTypeService.componentTypes[formItem.componentType];
+            let validateMethod=comTypeDef.validateMethod;
+            if(validateMethod){
+                validateMethod=validateMethod===true?'validate':validateMethod;
+                let _rule=this.buildMethodRule(validateMethod);
+                let _rules=this.rules||[];
+                if(_.isEmpty(_rules)){
+                    _rules = [_rule];
+                }else if(_.isArray(_rules)){
+                    _rules.push(_rule);
+                }else{
+                    _rules=[_rules,_rule];
+                }
+                return _rules;
+            }
+            return this.rules;
+        },
         getInnerMode(metaField){
             //如果是编辑模式，默认不可更新的字段自动变成只读模式
             if(this.context.isEdit &&

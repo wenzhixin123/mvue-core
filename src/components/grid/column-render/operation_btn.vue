@@ -1,12 +1,8 @@
 <template>
 <div class="operation-btn-con">
-    <!-- <a v-for="(btn,index) in permedBtns()" :key="index" @click.stop.prevent="handleClick(btn)"
-    href="javascript:void(0)" class="btn" :title="btn.title" >
-      <Icon :type="btn.icon"></Icon>
-    </a> -->
     <meta-operation v-for="(btn,index) in permedBtns()" v-show="showBtn(btn)" :key="index" :operation="btn" :widget-context="getWidgetContext()">
         <a href="javascript:void(0)" class="btn" :title="btn.title" >
-            <Icon :type="btn.icon"></Icon>
+            <m-icon :type="btn.icon"></m-icon>
         </a>
     </meta-operation>
 </div>

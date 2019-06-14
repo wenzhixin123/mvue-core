@@ -9,20 +9,24 @@
                 v-transfer-dom="toolbarTransferDomId" :data-transfer="transfer">
             <slot name="toolbar" >
                 <template v-if="isView">
-                    <meta-operation v-for="btn in innerToolbar.viewBtns" v-if="!btnIsHidden(btn)" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                        <Button slot-scope="{operation}" :disabled="btnIsDisabled(operation)" :type="operation.btnType||'primary'"  :title="operation.title">
-                            <Icon :type="operation.icon" v-if="operation.icon"></Icon>
-                            {{operation.title}}
-                        </Button>
-                    </meta-operation>
+                    <template v-for="btn in innerToolbar.viewBtns">
+                        <meta-operation v-if="!btnIsHidden(btn)" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                            <Button slot-scope="{operation}" :disabled="btnIsDisabled(operation)" :type="operation.btnType||'primary'"  :title="operation.title">
+                                <m-icon :type="operation.icon" v-if="operation.icon"></m-icon>
+                                {{operation.title}}
+                            </Button>
+                        </meta-operation>
+                    </template>
                 </template>
                 <template v-if="!isView">
-                    <meta-operation v-for="btn in innerToolbar.editBtns" v-if="!btnIsHidden(btn)" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
-                        <Button slot-scope="{operation}" :disabled="btnIsDisabled(operation)" :type="operation.btnType||'primary'"  :title="operation.title">
-                            <Icon :type="operation.icon" v-if="operation.icon"></Icon>
-                            {{operation.title}}
-                        </Button>
-                    </meta-operation>
+                    <template v-for="btn in innerToolbar.editBtns">
+                        <meta-operation  v-if="!btnIsHidden(btn)" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                            <Button slot-scope="{operation}" :disabled="btnIsDisabled(operation)" :type="operation.btnType||'primary'"  :title="operation.title">
+                                <m-icon :type="operation.icon" v-if="operation.icon"></m-icon>
+                                {{operation.title}}
+                            </Button>
+                        </meta-operation>
+                    </template>
                     <Checkbox v-if="showCreateAnother()" v-model="createAnother">继续创建</Checkbox>
                 </template>
             </slot>

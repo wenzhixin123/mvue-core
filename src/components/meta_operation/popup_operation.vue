@@ -4,7 +4,7 @@
         <slot>
             <Button type="primary" size="small" 
                 :title="operation.title" >
-                <Icon :type="operation.icon"></Icon>
+                <m-icon :type="operation.icon"></m-icon>
                 {{operation.title}}
             </Button>
         </slot>

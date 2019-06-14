@@ -30,6 +30,7 @@ import mform from './components/form/metaform';
 import detailView from "./components/detail-view/index";
 import batchEditor from "./components/batch-editor/index";
 import simpleBatchEditor from "./components/batch-editor/simple";
+import mIcon from "./components/m-icon/index";
 
 import Description from './components/form/control_tmpl/description';
 import DivisionLine from './components/form/control_tmpl/division_line';
@@ -202,7 +203,8 @@ const mComponents={
     'm-relation':mRelation,
     'm-batch-editor':batchEditor,
     'm-simple-batch-editor':simpleBatchEditor,
-    'm-entity-select':EntitySelect
+    'm-entity-select':EntitySelect,
+    'm-icon':mIcon
 };
 const allComponents=_.extend({},gridInnerComponents,oldFasionComponents,mComponents);
 //全局组件样式在这里引入，避免在内部重复引用

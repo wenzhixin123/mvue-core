@@ -81,9 +81,12 @@
                  <template v-for="(btn,index) in innerToolbar.btns">
                     <meta-operation  v-if="index<btnSizeBeforeMore" :key="index"
                             :operation="btn"  :widget-context="getWidgetContext()" class="grid-primary-btn">
-                            <Button slot-scope="{operation}" class="normal-btn"
-                                    :disabled="btnIsDisabled(operation)"
-                                    :type="operation.btnType||'primary'"  :icon="operation.icon">{{operation.title}}</Button>
+                        <Button slot-scope="{operation}" class="normal-btn"
+                                :disabled="btnIsDisabled(operation)"
+                                :type="operation.btnType||'primary'">
+                            <m-icon :type="operation.icon"></m-icon>
+                            {{operation.title}}
+                        </Button>
                     </meta-operation>
                  </template>
                 <Dropdown v-if="innerToolbar.btns.length>btnSizeBeforeMore" >

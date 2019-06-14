@@ -46,6 +46,7 @@ export default {
             attrs: this.$attrs,
             props: this.innerSettings,
             on: this.$listeners,
+            nativeOn:{}
         };
 
         let parentPage = this.parentPage;
@@ -74,7 +75,17 @@ export default {
                     });
                 });
             }
-            params.on = _.extend(params.on, comConfig.events);
+            //需要区分自定义事件$emit抛出的，和native浏览器原生事件
+            let nativeEvents={},customEvents={};
+            _.forIn(comConfig.events,(evt,key)=>{
+                if(_.endsWith(key,'.native')||_.endsWith(key,'-native')){
+                    nativeEvents[key.substring(0,key.length-7)]=evt;
+                }else{
+                    customEvents[key]=evt;
+                }
+            });
+            params.on = _.extend(params.on, customEvents);
+            params.nativeOn=nativeEvents;
         }
         //处理slots
         if(this.innerSettings.slots){

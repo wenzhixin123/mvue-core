@@ -351,9 +351,14 @@ function evalExpr(expression,context,defaultVal) {
     return evalVal
 }
 
-function execScript(script,context,) {
-    let func=new Function(Object.keys(context),script);
-    func.apply(context.page,Object.keys(context).map(key=>context[key]));
+function execScript(script,context) {
+    let topVars=["page", "$set", "model", "$user", "$route"];
+    let newContext={context:context};
+    _.each(topVars,v=>{
+        newContext[v]=context[v];
+    });
+    let func=new Function(Object.keys(newContext),script);
+    func.apply(context.page,Object.keys(newContext).map(key=>newContext[key]));
 }
 
 function buildPageContext(page) {

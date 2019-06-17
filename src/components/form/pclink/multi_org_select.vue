@@ -105,6 +105,17 @@ export default {
                         name:exData,
                         type:1
                     });
+                }else{
+                    //不能从_data上获取
+                    _this.entityResource&&_this.entityResource.get({id:v}).then(({data})=>{
+                        innerTextArray.push(data.name);
+                        _this.selectedOrgs.push({
+                            id:v,
+                            name:data.name,
+                            type:1
+                        });
+                        _this.innerText=innerTextArray.join(",");
+                    });
                 }
             });
             this.innerText=innerTextArray.join(",");

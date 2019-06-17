@@ -120,14 +120,14 @@ export default {
                 _selectedItem[idField]=id;
                 _selectedItem[titleField]=title;
                 //内置选择控件属性
-                if(this.dataItems){
+                /*if(this.dataItems){
                     let has=_.find(this.dataItems, function(o) { return o[id] ===id; });
                     if(!has){//如果当前值不在缓存中，则附加到缓存数据后边
                         let _dataItems=_.cloneDeep(this.dataItems);
                         _dataItems.push(_selectedItem);
                         this.dataItems=_dataItems;
                     }
-                }
+                }*/
                 if(user_orgs){
                     //传入了多选对象
                     try{

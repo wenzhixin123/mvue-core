@@ -90,6 +90,11 @@ export default {
             let exData=this.getExData(this.innerValue);
             if(exData){
                 this.innerText=exData;
+            }else{
+                //不能从_data上获取
+                this.entityResource&&this.entityResource.get({id:this.innerValue}).then(({data})=>{
+                    this.innerText=data.name;
+                });
             }
             //如果id为空，显示文本也应该清空
             if(!this.innerValue){

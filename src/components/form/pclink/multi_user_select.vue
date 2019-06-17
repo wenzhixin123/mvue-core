@@ -98,12 +98,23 @@ export default {
             _this.selectedUsers = [];//清空下数据
             _.each(this.innerValue,function(v){
                 let exData=_this.getExData(v);
-                if(exData){
+                if(exData) {
                     innerTextArray.push(exData);
                     _this.selectedUsers.push({
-                        id:v,
-                        name:exData,
-                        type:1
+                        id: v,
+                        name: exData,
+                        type: 1
+                    });
+                }else{
+                    //不能从_data上获取
+                    _this.entityResource&&_this.entityResource.get({id:v}).then(({data})=>{
+                        innerTextArray.push(data.name);
+                        _this.selectedUsers.push({
+                            id:v,
+                            name:data.name,
+                            type:1
+                        });
+                        _this.innerText=innerTextArray.join(",");
                     });
                 }
             });

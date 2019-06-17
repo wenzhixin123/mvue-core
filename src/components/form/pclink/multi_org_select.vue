@@ -96,9 +96,11 @@ export default {
             let innerTextArray=[];
             let _this=this;
             _this.selectedOrgs = [];//清空下数据
+            let _exData={};//记录
             _.each(this.innerValue,function(v){
                 let exData=_this.getExData(v);
                 if(exData){
+                    _exData[v] = exData;
                     innerTextArray.push(exData);
                     _this.selectedOrgs.push({
                         id:v,
@@ -115,6 +117,8 @@ export default {
                             type:1
                         });
                         _this.innerText=innerTextArray.join(",");
+                        _exData[v]=_this.buildExData(data.name);
+                        _this.$emit("exDataChanged",_exData,_this.formItem.dataField);
                     });
                 }
             });

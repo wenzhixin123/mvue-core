@@ -94,6 +94,9 @@ export default {
                 //不能从_data上获取
                 this.entityResource&&this.entityResource.get({id:this.innerValue}).then(({data})=>{
                     this.innerText=data.name;
+                    var _exData={};
+                    _exData[id]=data.name;
+                    this.$emit("exDataChanged",_exData,this.formItem.dataField);
                 });
             }
             //如果id为空，显示文本也应该清空

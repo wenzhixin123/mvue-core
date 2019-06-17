@@ -21,7 +21,7 @@
                     {{formItem.componentParams.otherOptions.text}}
                     <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
                 </label>
-                <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" type="text" class="form-control form-control-inline">
+                <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" v-model="inputText" type="text" class="form-control form-control-inline">
             </div>
             <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
             <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
@@ -42,7 +42,7 @@
                             {{formItem.componentParams.otherOptions.text}}
                             <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
                         </label>
-                        <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" type="text" class="form-control form-control-inline">
+                        <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" v-model="inputText" type="text" class="form-control form-control-inline">
                     </div>
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
                     <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
@@ -62,7 +62,8 @@ export default {
     data: function(){
         return {
             valueObj:null,
-            isNumber:false
+            isNumber:false,
+            inputText:""
         };
     },
     watch:{
@@ -89,6 +90,13 @@ export default {
                 this.isNumber=true;
             }
             this.valueObj=_.toString(this.value);
+            if(this.valueObj=="_others"){
+                //其他
+                this.inputText=this.getExData(this.valueObj);
+                this.isNumber = false;
+            }else{
+                this.inputText = "";
+            }
         },
         initDefault:function(){
             var _this=this;

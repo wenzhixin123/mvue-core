@@ -70,6 +70,8 @@ export default{
                 let metaField=metaForm.metaEntity.findField(this.formItem.dataField);
                 if(metaField && metaField.manyToOneRelation){
                     let metaRelation=metaField.manyToOneRelation;
+                    //告诉form提交时，过滤掉这个关系数据
+                    metaForm.ignoreKeys[metaRelation.name]=true;
                     this.$set(metaForm.entity,metaRelation.name,newSelectedItem);
                 }
             }

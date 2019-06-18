@@ -3,7 +3,7 @@ const rowMetaIdKey='id';
 const rowMetaTitleKey='title';
 const rowMetaFakeKey='__fake__';
 function getRowMetaData(rowData,fieldName){
-    let metaData=rowData[rowMetaKey];
+    let metaData=rowData&&rowData[rowMetaKey];
     if(metaData&&metaData.fields){
         let fieldsMeta=metaData.fields;
         let rowMetaData=fieldsMeta[fieldName];
@@ -51,7 +51,7 @@ function rebuildRefData(vals,rowData,fieldName,refValField,refTitleField){
 }
 //rowData是否包含fieldName的冗余数据
 function has(rowData,fieldName){
-    let metaData=rowData[rowMetaKey];
+    let metaData=rowData&&rowData[rowMetaKey];
     return metaData&&metaData.fields&&metaData.fields.hasOwnProperty(fieldName);
 }
 function title(rowData,fieldName){

@@ -30,9 +30,9 @@
   </div>
 </template>
 <script>
-import selectModel from '../form/mixins/select-modal';
+import selectModal from '../form/mixins/select-modal';
 export default {
-  mixins: [selectModel],
+  mixins: [selectModal],
   props:{
     entityName:{//实体名称
       type:String,
@@ -79,7 +79,11 @@ export default {
   data(){
     let metaEntity=this.$metaBase.findMetaEntity(this.entityName);
     let defaultIdField=metaEntity.getIdField().name;
-    let defaultTitleField=metaEntity.firstTitleField().name;
+    let titleField=metaEntity.firstTitleField();
+    if(!titleField){
+      console.error(`实体${this.entityName}标题字段不存在`);
+    }
+    let defaultTitleField=titleField?titleField.name:defaultIdField;
     return {
       formItem:{
         componentParams:{

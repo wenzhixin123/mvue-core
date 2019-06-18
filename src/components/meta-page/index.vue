@@ -78,12 +78,21 @@ export default {
       type: Boolean,
       default: false
     },
-    title: {
+    title: {//指定页面标题来自某个组件：{source:'来源组件id'}
       type: [String,Object]
     }
   },
   computed: {
     innerTitle() {
+      let _title=this.header && this.header.title;
+      if(!_title){
+        if(_.isString(this.title)){
+          _title=this.title;
+        }
+      }
+      if(_title){
+        return _title;
+      }
       return this.$store.state.core.pageTitle;
     },
     renderLayout() {//是否开始渲染布局
@@ -98,24 +107,6 @@ export default {
         this.prepare();
       }
       return canRender;
-    }
-  },
-  watch:{
-    header:{
-      handler(){
-        var sourceId = this.title && this.title.source;
-        //如果定义了title是来源于某个组件，则注册这个组件id到全局
-        //如果sourceId为空，也要清除
-        this.$store.commit('core/setPageTitleSourceId', sourceId)
-        let _title=this.header && this.header.title;
-        if(!_title){
-          _title=this.title;
-        }
-        if (_title && _.isString(_title)) {//如果自定义了title，强制设置进去
-          this.$store.commit('core/setPageTitleCoercively', _title);
-        }
-      },
-      immediate:true
     }
   },
   created() {
@@ -139,7 +130,14 @@ export default {
     
   },
   methods: {
+    setTitleSource(){
+      //如果定义了title是来源于某个组件，则注册这个组件id到全局
+      var sourceId = this.title && this.title.source;
+      //如果sourceId为空，也要清除
+      this.$store.commit('core/setPageTitleSourceId', sourceId);
+    },
     prepare(){
+      this.setTitleSource();
       //解析组件相关的事件和相关动态属性
       pageHelper.preparePageSettings(this.pageSettings,this.pageContext);
       //页面初始化事件调用

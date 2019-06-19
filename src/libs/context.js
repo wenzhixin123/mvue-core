@@ -331,6 +331,18 @@ export default {
                 return result;
             }
         }
+    },
+    /**
+     * @param bias 减去的高度
+     */
+    modalHeight(bias){//获取模式对话框的合适高度
+        if(!document.documentElement){
+            return 400;
+        }
+        let clientHeight=document.documentElement.clientHeight-190;
+        if(bias){
+            clientHeight=clientHeight-bias;
+        }
+        return clientHeight>0?clientHeight:400;
     }
-
 }

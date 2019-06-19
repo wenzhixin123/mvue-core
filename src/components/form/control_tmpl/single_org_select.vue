@@ -43,7 +43,7 @@
                         :scrollable="true"
                         :mask-closable="false"
                         >
-                        <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">
+                        <div class="bvue-select-modal" :style="{height:innerModalHeight+'px',overflow:'auto'}">
                             <select-org ref="selectRef" v-if="popupWidgetModal"
                             :initial-value="value"
                             :multiple="false"

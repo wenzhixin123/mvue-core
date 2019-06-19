@@ -15,7 +15,7 @@
                         :scrollable="true"
                         :mask-closable="false"
                         >
-                        <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">
+                        <div class="bvue-select-modal" :style="{height:innerModalHeight+'px',overflow:'auto'}">
                             <entity-select-tree ref="selectRef"
                                 v-if="popupWidgetModal"
                                 :record-id="recordId"
@@ -41,11 +41,11 @@
 <script>
 import context from '../../../../libs/context';
 import controlBase from '../../js/control_base';
-import selectModel from '../../mixins/select-modal';
+import selectModal from '../../mixins/select-modal';
 import entitySelect from '../../mixins/entity-select';
 import queryMethodsBuilder from './query-methods';
 export default {
-    mixins: [controlBase,selectModel,entitySelect],
+    mixins: [controlBase,selectModal,entitySelect],
     components:{
         'entity-select-tree':require('./entity-select-tree')
     },

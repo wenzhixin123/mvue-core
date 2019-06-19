@@ -13,7 +13,7 @@
             transfer
             :mask-closable="false"
             >
-        <div class="bvue-select-modal" :style="{height:modalHeight+'px',overflow:'auto'}">
+        <div class="bvue-select-modal" :style="{height:innerModalHeight+'px',overflow:'auto'}">
             <ref-entity-select ref="selectRef" v-if="popupWidgetModal"
                 :form-item="formItem"
                 :multiple="multiple"

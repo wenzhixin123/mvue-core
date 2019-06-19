@@ -46,11 +46,7 @@ export default {
         modalHeight:{
             type:Number,
             default(){
-                if(!document.documentElement){
-                    return 400;
-                }
-                let clientHeight=document.documentElement.clientHeight-220;
-                return clientHeight>0?clientHeight:400;
+                return context.modalHeight(30);
             }
         }
     },
@@ -67,6 +63,13 @@ export default {
             isLayout:isLayout,
             layoutSettings:null
         };
+    },
+    watch:{
+        popupWidgetModal(){
+            if(this.popupWidgetModal){
+                this.innerModalHeight=context.modalHeight(30);
+            }
+        }
     },
     mounted(){
         this.getLayoutSettings();

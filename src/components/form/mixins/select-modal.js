@@ -1,3 +1,4 @@
+import context from '../../../libs/context'
 export default {
     props:{
         btnIcon:{
@@ -15,18 +16,22 @@ export default {
         modalHeight:{
             type:Number,
             default(){
-                if(!document.documentElement){
-                    return 400;
-                }
-                let clientHeight=document.documentElement.clientHeight-190;
-                return clientHeight>0?clientHeight:400;
+                return context.modalHeight();
+            }
+        }
+    },
+    watch:{
+        popupWidgetModal(){
+            if(this.popupWidgetModal){
+                this.innerModalHeight=context.modalHeight();
             }
         }
     },
     data(){
         return {
             popupWidgetModal:false,
-            isPopup:true//标记弹出的选择框
+            isPopup:true,//标记弹出的选择框
+            innerModalHeight:this.modalHeight
         };
     },
     methods:{

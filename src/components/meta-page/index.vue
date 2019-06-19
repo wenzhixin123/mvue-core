@@ -110,6 +110,8 @@ export default {
     }
   },
   created() {
+    //清空页面标题
+    this.$store.commit('core/setPageTitleCoercively', null);
     if (this.noPage) {
       return;
     }

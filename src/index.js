@@ -225,6 +225,7 @@ import commonOperation from './components/meta_operation/js/common_operation';
 
 import  context from "./libs/context";
 import getParent from './components/mixins/get-parent';
+import TransferDom from './components/form/js/transfer_dom';
 import operationManager from "./libs/operation/operations";
 import formControlManager from './components/form/control-manager';
 import topEntityService from "./services/store/top-entity";
@@ -247,6 +248,7 @@ let MvueCore={
     context,
     metaLayoutConvertor,
     getParent,
+    TransferDom,
     treeService,
     formControlManager,
     ufs,

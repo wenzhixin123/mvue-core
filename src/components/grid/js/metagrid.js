@@ -245,7 +245,7 @@ function  initColumns(grid) {
   if(!grid.operationsWithTitleColumn&&!_.isEmpty(grid.innerToolbar.singleBtns)){
     var colWidth=Math.max(grid.innerToolbar.singleBtns.length*45,95);
     let operationCol={
-      title:"具体操作",
+      title:"操作",
       key:"__operation_column__",
       width:colWidth,
       align:"center",

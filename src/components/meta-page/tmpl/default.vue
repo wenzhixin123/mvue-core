@@ -1,5 +1,5 @@
 <template>
-  <meta-page :header="header" :page-settings="pageSettings"></meta-page>
+  <meta-page v-bind="bindProps"></meta-page>
 </template>
 <script>
   import context from '../../../libs/context';
@@ -15,13 +15,8 @@
         let key=this.$route.matched[this.$route.matched.length-1].path;
         let confs=context.appCtx.getAutoPageConfs();
         var pageSettings=metaLayoutConvertor.convert(_.cloneDeep(confs[key]),self);
-        var header={
-          title:pageSettings.title,
-          description:pageSettings.description
-        };
         return {
-          pageSettings:pageSettings,
-          header:header
+          bindProps:pageSettings
         };
       }
     }

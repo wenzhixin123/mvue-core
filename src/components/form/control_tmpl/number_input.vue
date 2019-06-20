@@ -39,12 +39,14 @@ export default {
     },
     methods: {
         updateValue: function (value) {
-            var _num=_.toNumber(this.valueObj);
-            if(_.isNaN(_num)){
-                _num=value;
-            }
-            if(value===""){
+            let _num=null;
+            if(_.isNil(value)){
                 _num=null;
+            }else{
+                _num=_.toNumber(this.valueObj);
+                if(_.isNaN(_num)){
+                    _num=value;
+                }
             }
             this.$emit('input',_num);
         },

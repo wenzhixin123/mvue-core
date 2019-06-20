@@ -649,7 +649,7 @@ export default {
                     if (opt.name == "save"
                         && formStatus == contextHelper.getMvueToolkit().utils.formActions.edit
                         && _.isEmpty(opt.security)) {
-                        opt.security = ["edit"];
+                        opt.security = ["update"];
                     }
                     return opt;
                 }

@@ -18,6 +18,11 @@ var types={
         title: "父选择器", 
         icon:"ivu-icon ivu-icon-pound"
     },
+    OrderedMultiRefEntity:{ 
+        id: "OrderedMultiRefEntity", 
+        title: "有序多选引用实体", 
+        icon:"ivu-icon ivu-icon-pound"
+    }
 };
 var componentParams={
     RefEntity:{
@@ -44,6 +49,14 @@ var componentParams={
         orderbyType:"asc",//排序规则
         entityResourceUrl:"",//后端自动生成
         selectLevel:0//控制只能选到第几层,selectLevel大于0才有意义，否则不限制
+    },
+    OrderedMultiRefEntity:{
+        entityId:"",//必填
+        idField:"",//必填
+        titleField:"",//必填
+        orderbyField:"",//排序字段
+        orderbyType:"asc",//排序规则
+        entityResourceUrl:""//后端自动生成
     }
 };
 function accept(componentType){

@@ -65,6 +65,7 @@ import CascadeSelect from './components/form/control_tmpl/cascade_select';
 
 import RefEntity from './components/form/control_tmpl/ref_entity';
 import MultiRefEntity from './components/form/control_tmpl/multi_ref_entity';
+import OrderedMultiRefEntity from './components/form/control_tmpl/ordered/multi-ref-entity';
 import ParentSelect from './components/form/control_tmpl/parent-select/index';
 
 import Boolean from './components/form/control_tmpl/boolean';
@@ -134,6 +135,7 @@ const formComponents={
     CascadeSelect,
     RefEntity,
     MultiRefEntity,
+    OrderedMultiRefEntity,
     ParentSelect,
     Boolean,
     IssuedNumber,

@@ -65,7 +65,7 @@ export default {
         var metaForm=this.getParentForm();
         let queryMethods=null;
         let entityResource=context.buildResource(this.formItem.componentParams.entityResourceUrl);
-        queryMethods=queryMethodsBuilder.build(entityResource,this.getIdField(),this.getTitleField(),this.formItem.dataField)
+        queryMethods=queryMethodsBuilder.build(entityResource,this.getIdField(),this.getTitleField(),this.formItem.dataField,this.formItem.componentParams);
         return {
             entityResource:entityResource,
             queryMethods:queryMethods,

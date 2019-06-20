@@ -12,10 +12,14 @@ function concatIgnoreDuplicated(firstArray,secondArray,key){
     });
     return firstArray;
 }
-function build(entityResource,idField,titleField,parentField){
+function build(entityResource,idField,titleField,parentField,comParams){
     return {
         queryRootEntity(){//查询根实体数据
-            return entityResource.query({filters:`${parentField} is null`}).then(({data})=>{
+            let qParams={filters:`${parentField} is null`};
+            if(comParams.rootFilters){
+                qParams.filters=comParams.rootFilters;
+            }
+            return entityResource.query(qParams).then(({data})=>{
                 return data;
             });
         },

@@ -91,7 +91,10 @@
 
 
     <div class="data-table-list">
-        <Table :loading="loadingData"
+        <Table
+            class="mytable"
+            :border="showBorder"
+            :loading="loadingData"
             :columns="innerColumns"
             :data="filteredData"
             :highlight-row="highlightRow"
@@ -230,6 +233,10 @@ export default {
       "showIndex":{//是否显示序号列
           type:Boolean,
           default:true
+      },
+      "showBorder":{//显示表格边线框
+          type: Boolean,
+          default:false
       },
       "widgetMode":{
          /** 是否部件模式，默认false对应普通模式，true则对应部件模式
@@ -767,6 +774,10 @@ export default {
         margin-top:10px;
         margin-bottom: 20px;
         width:100%;
+    }
+    .mytable table{
+        table-layout: auto;
+        /*width: 100%;*/
     }
     .grid-con{
         /*overflow: hidden;*/

@@ -69,6 +69,7 @@
           }
           if(com.ctype=="m-detail-view"){
             this.bindProps.showHeader=false;
+            this.bindProps.showCard=false;
           }
         });
         if(st.ctype=="m-page" && pageSettings.layout){

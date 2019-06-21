@@ -3,6 +3,10 @@
  */
 import  manager from "../../../libs/operation/operations"
 
+//默认自定义操作
+import custom from "./common/custom";
+manager.register(custom);
+
 //模板操作
 import  routeTo from "./template/routeTo";
 manager.register(routeTo);
@@ -10,6 +14,8 @@ manager.register(routeTo);
 //通用操作
 import goBackOp from "./goback";
 manager.register(goBackOp);
+
+
 
 //列表操作
 import  batchDelete from "./grid/batchDelete";

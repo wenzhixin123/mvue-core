@@ -34,8 +34,8 @@ function create(opts) {
     }
     var name=opts.name;
     if(_.isNil(name)){
-        console.log("hasn't name ,can't create it ,opts:"+JSON.stringify(opts));
-        return opts;
+        console.log("hasn't name ,use default template");
+        name="custom";
     }
     var template=operations[name];
     if(_.isEmpty(template)){

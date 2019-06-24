@@ -15,7 +15,7 @@
         </div>
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.horizontal" class="form-horizontal">
             <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
-                <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
+                <label v-text="formItem.componentParams.title" class="ivu-form-item-label text-left control-label col-md-2" :style="{width:labelWidth}"></label>
                 <div class="col-md-10" :style="{width:controlWidth}">
                     <input :value="value" @input="updateValue($event.target.value)" :disabled="disabled" type="text" class="form-control" :placeholder="formItem.componentParams.placeholder">
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
@@ -51,7 +51,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-
+.text-left{text-align: left !important;}
 </style>
 
 

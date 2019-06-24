@@ -70,7 +70,7 @@ var utils = {
         if (_.isFunction(cw.getWidgetContext)) {
           let _data = cw.getWidgetContext()//部件自身暴露的参数
           if (_t.widgetContext) {
-            _.extend(_data, _t.widgetContext)//合并行内动态赋予的值
+            _.extend(_data, _t.widgetContext,{"widgetParams":_data.widgetParams})//合并行内动态赋予的值-并且合并下部件参数的值--用于参数查找
           }
           if ((widgetCode && widgetCode == cw.widgetParams.widgetCode) || widgetCode == '') {
             if (_data.widgetParams && _data.widgetParams[key]) {

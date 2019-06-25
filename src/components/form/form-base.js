@@ -223,7 +223,12 @@ export default {
                             reject();
                         }
                     } else {
-                        contextHelper.warning({title: "表单验证失败", content: "表单内部分字段验证未通过，请修复后再重新提交"});
+                        this.$Message.error({
+                            content: "表单内部分字段验证未通过，请修复后再重新提交",
+                            duration: 2.5,
+                            closable: true
+                        });
+                        //contextHelper.warning({title: "表单验证失败", content: "表单内部分字段验证未通过，请修复后再重新提交"});
                         reject();
                     }
                 });

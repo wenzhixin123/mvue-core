@@ -41,6 +41,7 @@ function installGridAndForm (Vue) {
   Vue.component('meta-field', require('./components/form/metafield'))
   Vue.component('meta-form', require('./components/form/metaform'))
   Vue.component('MetaIssuedNumber', require('./components/form/control_tmpl/issued_number'))
+  Vue.component('MetaDynamicPage', require('./components/form/control_tmpl/dynamic_page'))
 
   //begin new added for pclink
   Vue.component('MetaPclinkSingleUserSelect', require('./components/form/pclink/single_user_select'))

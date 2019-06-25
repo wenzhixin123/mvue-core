@@ -58,6 +58,16 @@ export default {
             let rwidth=100-_.toInteger(lwidth);
             return rwidth+"%";
         },
+        controlWidthIcon:function(){
+            let lwidth=this.formItem.componentParams.horizontalLayoutLabelWidth;
+            let rwidth=100;
+            return rwidth+"%";
+        },
+        controlWidthInput:function(){
+            let lwidth=this.formItem.componentParams.horizontalLayoutLabelWidth;
+            let rwidth=100-_.toInteger(lwidth)-3;
+            return rwidth+"%";
+        },
         disabled:function(){
             return this.isReadonly();
         },
@@ -106,7 +116,7 @@ export default {
             return this.formItem.componentParams.valueType===controlTypeService.valueTypes.fixedValue.id;
         },
         //begin 用户组织默认值相关的基础方法
-        /** 
+        /**
          * 设置默认值，需要根据默认值初始化引用数据
          * @param id  必须传入
          * @param title  必须传入
@@ -160,7 +170,7 @@ export default {
         },//end 用户组织默认值相关的基础方法
         /**
          * 根据表单数据从后台计算某个字段的值：默认值或者计算属性
-         * @param {*} _model 
+         * @param {*} _model
          */
         calc(_model){
             var ds=this.context.metaEntity.dataResource();

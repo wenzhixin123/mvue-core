@@ -89,11 +89,16 @@ export default {
             this.uploaded=true;
             let _uploadList=[];
             _.each(this.$refs.upload.fileList,function(uploadFile){
-                _uploadList.push({
+                let _file={
                     name:uploadFile.name,
                     id:uploadFile.id,
                     size:uploadFile.size
-                });
+                };
+                //如果是ufs地址永不过期，保存url地址
+                if(uploadFile.url){
+                    _file.url=uploadFile.url;
+                }
+                _uploadList.push(_file);
             });
             //分别调用single-upload或者multi-upload的emitByType
             this.emitByType(_uploadList);
@@ -105,14 +110,35 @@ export default {
                 this.currentUploadFileSum=this.currentUploadFileSum-1;
             }
         },
+        getUfsEndpoint(){
+            return contextHelper.getMvueToolkit().config.getConfigVal('service.ufs.endpoint');
+        },
         handleSuccess (res, file) {
             file.id =  res.id;
-            //单文件上传，直接覆盖旧的文件
-            if(!this.formItem.componentParams.multiple.isAllowed){
-                this.$refs.upload.fileList=[file];
+            //如果配置了ufs上传的文件永不过期，直接获取绝对地址
+            let filePromise=Promise.resolve(file);
+            if(this.formItem.componentParams.ufsNeverExpires){
+                filePromise=new Promise((resolve,reject)=>{
+                    //加上这里，会两次调用sign，因为ufs-image会异步渲染
+                    //expires:-1，表示ufs地址永不过期，取一次就可以了
+                    ufs.getDownloadUrl(file.id,file.name,{expires:-1}).then(res=>{
+                        file.url=res.url;
+                        resolve(file);
+                    },(err)=>{
+                        console.error(err);
+                        reject(file);
+                    });
+                })
             }
-            this.minusCurrentFileSum();
-            this.emitValue();
+            filePromise.then(file=>{
+                //单文件上传，直接覆盖旧的文件
+                if(!this.formItem.componentParams.multiple.isAllowed){
+                    //TODO 这一行好像去掉也可以，有待验证
+                    this.$refs.upload.fileList=[file];
+                }
+                this.minusCurrentFileSum();
+                this.emitValue();
+            });
         },
         handleExceededSize:function(file,fileList){
             this.$refs.upload.fileList=_.cloneDeep(this.oldFileList);

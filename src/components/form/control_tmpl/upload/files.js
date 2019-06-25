@@ -1,11 +1,5 @@
 import ufs from "../../../../libs/ufs";
 import context from "../../../../libs/context";
-function oldFileRealUrl(url,uploadBasePath){
-    if(_.startsWith(url,"http://")||_.startsWith(url,"https://")){
-        return url;
-    }
-    return `${uploadBasePath}?filePath=${url}`;
-}
 function getUfsEndpoint(){
     return context.getMvueToolkit().config.getConfigVal('service.ufs.endpoint');
 }
@@ -27,13 +21,27 @@ function pathsJoin(...args){
     let _path= paths.join('/');
     return firstStartsWithSlash?`/${_path}`:_path;
 }
+function oldFileRealUrl(url,uploadBasePath){
+    if(_.startsWith(url,"http://")||_.startsWith(url,"https://")){
+        return url;
+    }
+    //如果配置了ufs基础地址，出现相对路径时应该使用ufs提供的基础地址
+    let baseUrl=getUfsEndpoint();
+    if(baseUrl){
+        return pathsJoin(baseUrl,url);
+    }
+    return `${uploadBasePath}?filePath=${url}`;
+}
 function fileRealUrl(item,uploadBasePath){
     return new Promise((resolve,reject)=>{
         if(!item){
             reject();
             return;
         }
-        if(item.id){
+        if(item.url){
+            let url=oldFileRealUrl(item.url,uploadBasePath);
+            resolve(url);
+        }else if(item.id){
             ufs.getDownloadUrl(item.id,item.name).then(res=>{
                 if(!res.url.startsWith('http')){
                     let baseUrl=getUfsEndpoint();
@@ -42,9 +50,6 @@ function fileRealUrl(item,uploadBasePath){
                     resolve(res.url);
                 }
             },(err)=>{reject(err);});
-        }else if(item.url){
-            let url=oldFileRealUrl(item.url,uploadBasePath);
-            resolve(url);
         }
     });
 }

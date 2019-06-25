@@ -17,7 +17,7 @@ function getStorageClient(){
 function upload(file,options){
     let storageClient=getStorageClient();
     let apiBaseUrl=getUfsEndpoint();
-    options=options||{baseUrl:apiBaseUrl};
+    options=_.assign({baseUrl:apiBaseUrl},options);
     return new Promise((resolve,reject)=>{
         //执行上传
         storageClient.upload({
@@ -29,11 +29,9 @@ function upload(file,options){
         });
     });
 }
-function getDownloadUrl(fileId,fileName){
+function getDownloadUrl(fileId,fileName,options){
     let storageClient=getStorageClient();
-    let params={
-        fileId: fileId
-    };
+    let params=_.assign({fileId: fileId},options);
     if(fileName){
         params.responseHeaderOverrides={'Content-Disposition':`attachment; filename=${fileName}`};
     }

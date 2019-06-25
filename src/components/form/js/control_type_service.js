@@ -94,9 +94,9 @@ var componentLayout = {
 var baseComponentParams = {
   title: '',//标题，相当于表单label显示文字
   description: '',//描述，相当于input下的提示说明文字
-  layout: componentLayout.vertical,//组件的布局方式
+  layout: componentLayout.horizontal,//组件的布局方式
   width: '100',//组件所占的宽度，是百分比
-  horizontalLayoutLabelWidth: '20',//左右布局时，组件label占的百分比
+  horizontalLayoutLabelWidth: '10',//左右布局时，组件label占的百分比
   required: false,//是否必填
   semantics: '',//语义设置
   placeholder: '',

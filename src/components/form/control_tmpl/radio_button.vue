@@ -86,8 +86,12 @@ export default {
         if(!this.valueObj){
             this.initDefault();
         }
-        this.radiosWidth = document.getElementsByClassName('radios')[0].clientWidth + 'px';
-        this.radiosWidth =   "calc(100% - "+this.radiosWidth+")"
+
+        if(this.formItem.componentParams.layout===this.controlTypeService.componentLayout.horizontal){
+            this.radiosWidth = document.getElementsByClassName('radios')[0].clientWidth + 'px';
+            this.radiosWidth =   "calc(100% - "+this.radiosWidth+")"
+        }
+
     },
     methods:{
         valueToString(){

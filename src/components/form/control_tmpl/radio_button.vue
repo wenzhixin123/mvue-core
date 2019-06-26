@@ -30,19 +30,21 @@
             <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
                 <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
                 <div class="col-md-10" :style="{width:controlWidth}">
-                    <div class="radio" v-for="item in formItem.componentParams.options" :key="item.id">
-                        <label>
-                            <input @change="updateValue($event.target,item.text)" v-model="valueObj" type="radio" :disabled="disabled" :name="formItem.dataField" :value="item.id">
-                            {{item.text}}
-                        </label>
+                    <div class="radios" style="float: left" ref="radios">
+                        <div class="radio line-style" v-for="item in formItem.componentParams.options" :key="item.id">
+                            <label>
+                                <input @change="updateValue($event.target,item.text)" v-model="valueObj" type="radio" :disabled="disabled" :name="formItem.dataField" :value="item.id">
+                                {{item.text}}
+                            </label>
+                        </div>
                     </div>
-                    <div class="radio" v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}">
+                    <div class="radio" style="float: right;" :style="{width:radiosWidth}" v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}">
                         <label style="width:70px;">
                             <input @change="updateValue($event.target)" v-model="valueObj" type="radio" :disabled="disabled" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
                             {{formItem.componentParams.otherOptions.text}}
                             <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
                         </label>
-                        <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" v-model="inputText" type="text" class="form-control form-control-inline">
+                        <input @change="emitOthersValue($event.target.value)" style="width:92%;right:0px;top:0px;position:absolute;" :disabled="disabled" v-model="inputText" type="text" class="form-control form-control-inline new-style">
                     </div>
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
                     <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
@@ -63,7 +65,8 @@ export default {
         return {
             valueObj:null,
             isNumber:false,
-            inputText:""
+            inputText:"",
+            radiosWidth:""
         };
     },
     watch:{
@@ -83,6 +86,8 @@ export default {
         if(!this.valueObj){
             this.initDefault();
         }
+        this.radiosWidth = document.getElementsByClassName('radios')[0].clientWidth + 'px';
+        this.radiosWidth =   "calc(100% - "+this.radiosWidth+")"
     },
     methods:{
         valueToString(){
@@ -135,6 +140,11 @@ export default {
     .form-control.form-control-inline{
         display: inline-block;
     }
+    .line-style{
+        float: left;
+        margin-right: 10px;
+    }
+
 </style>
 
 

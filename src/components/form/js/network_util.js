@@ -41,13 +41,13 @@ var getPages4Operation = function (projectId, operationId, success, fail) {
 
   var params = {
     'orderby': 'updatedAt desc',
-    // 'filters': 'projectId eq ' + projectId + ' and operation.id eq ' + operationId,
-    'filters': 'projectId eq ' + projectId + ' and operationId eq ' + operationId,
+    'filters': 'projectId eq ' + projectId + ' and operation.id eq ' + operationId,
+    // 'filters': 'projectId eq ' + projectId + ' and operationId eq ' + operationId,
     'expand': 'updatedByUser(name)',
     'page': 1,
     'page_size': 1000,
-    'total': true
-    // 'joins':'metaOperations operation'
+    'total': true,
+    'joins': 'metaOperations operation'
   }
 
   ax.get(`${baseUrl}/mp_page`, params, function (res) {
@@ -82,6 +82,7 @@ var getListData = function (baseUrl, entityName, filters, success, fail) {
     }
   })
 }
+
 
 exports.getOperations = getOperations
 exports.getPages4Operation = getPages4Operation

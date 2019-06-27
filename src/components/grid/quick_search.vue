@@ -3,7 +3,7 @@
         <div class="layout_l" style="padding-left: 0px;padding-right: 0px;">
                 <div class="field" v-if="isKey">
                     <div class="form-group">
-                        <label class="ivu-form-item-label">关键字</label>
+                        <label class="ivu-form-item-label key_label">关键字</label>
                         <input type="text" class="form-control" placeholder="请输入关键字搜索" v-model="innerQuicksearchKeyword">
                     </div>
                 </div>
@@ -141,9 +141,11 @@
         padding: 15px 5px 0;
         border: 1px #f1f1f1 solid;
         display: flex;
+        .key_label{ padding-top: 7px;}
         .layout_l{ flex: 3;
+            display: flex;
             .form-group{ display: flex;}
-            label{display: inline-block; width: 100px; line-height: 30px; text-align: center;}
+            label{display: inline-block; width: 100px !important; text-align: center;}
             .field{ width: 30% !important; display: inline-block; margin-right: 2%;}
             .form-control{ display: inline-block;}
         }

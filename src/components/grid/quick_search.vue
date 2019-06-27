@@ -144,6 +144,7 @@
         .key_label{ padding-top: 7px;}
         .layout_l{ flex: 3;
             display: flex;
+            flex-wrap: wrap;
             .form-group{ display: flex;}
             label{display: inline-block; width: 100px !important; text-align: center;}
             .field{ width: 30% !important; display: inline-block; margin-right: 2%;}

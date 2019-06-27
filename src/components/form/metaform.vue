@@ -2,9 +2,11 @@
     <Form @submit.native.prevent v-if="preprocessed" :ref="'formRef'" :model="entity"
           :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="itemLabelWidth"
           :show-message="showMessage" :autocomplete="autocomplete">
+        <slot name="prepend"></slot>
         <slot>
             <meta-layout :layout="layout" :itemProcessor="itemProcessor"></meta-layout>
         </slot>
+        <slot name="append"></slot>
         <FormItem v-if="hasButtons() || $slots.toolbar" class="form-toolbar"
                 v-transfer-dom="toolbarTransferDomId" :data-transfer="transfer">
             <slot name="toolbar" >

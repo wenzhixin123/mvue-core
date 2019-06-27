@@ -67,16 +67,25 @@
                 :title="windowTitle"
                 @on-ok="onOK"
                 @on-cancel="onCancel"
+                scrollable
                 width="80">
+            <!--            <div>========================================================</div>-->
+            <!--            <div>{{page}}</div>-->
+            <!--            <div>========================================================</div>-->
             <meta-widget-page
                     v-if="page && page.id"
-                    :widget-params='{pageId:page.id}'/>
+                    :widget-params='{pageId:page.id}'
+                    ref="dynamicPage"
+                    :query="getQuery()"
+            >
+            </meta-widget-page>
         </Modal>
     </div>
 </template>
 <script>
   import controlBase from '../js/control_base'
   import networkUtil from '../js/network_util'
+  import dynamicUtil from '../js/dynamic_page_util'
   import metabase from '../../../libs/metadata/metabase'
 
   export default {
@@ -88,7 +97,7 @@
       },
       operationCode: {
         type: String,
-        default: 'manage'
+        default: 'choose'
       }
     },
     data: function () {
@@ -161,7 +170,33 @@
     mounted: function () {
     },
     methods: {
+      getWidgetContext () {
+        var _this = this
+        var widgetContext = {
+          formItem: _this.formItem
+        }
+      },
       onControlTargetItemDelete (index) {
+        this.selectedItems.splice(index, 1)
+        this.exchangeDataAndEmit()
+      },
+      exchangeDataAndEmit () {
+        var data = {}
+        var ids = []
+        for (var i in this.selectedItems) {
+          var id = this.selectedItems[i]
+          data[id.id] = {
+            id: id.id,
+            title: id.title,
+            entityId: id.entityId
+          }
+          ids.push(id.id)
+        }
+        // this.model[this.formItem.dataField] = ids
+        this.$emit('exDataChanged', data, this.formItem.dataField)
+
+        // this.$emit('exDataChanged', this.dataCommit, this.formItem.dataField)
+        this.$emit('input', ids)
       },
       getTitleField: function (formItem) {
         return formItem.titleField
@@ -196,14 +231,24 @@
             }
           },
           function (error) {
-            debugger
           })
       },
       onOK () {
+        var ids = dynamicUtil.findIds(this.$refs)
+        this.selectedItems = ids
+        this.exchangeDataAndEmit()
         this.showWindow = false
       },
       onCancel () {
         this.showWindow = false
+      },
+      getQuery () {
+        var query = {
+          titleField: this.formItem.componentParams.titleField,
+          metaEntityId: this.formItem.componentParams.entityId,
+          parentField: this.formItem.componentParams.parentField
+        }
+        return query
       }
     }
   }

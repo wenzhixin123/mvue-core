@@ -34,7 +34,6 @@ function create(opts) {
     }
     var name=opts.name;
     if(_.isNil(name)){
-        console.log("hasn't name ,use default template");
         name="custom";
     }
     var template=operations[name];

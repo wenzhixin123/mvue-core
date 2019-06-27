@@ -37,27 +37,29 @@
                 <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
                     <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2"
                            :style="{width:labelWidth}"></label>
-                    <div class="form-control form-control-w col-md-10" :style="{width:controlWidthInput}">
-                        <div class="col-md-10" :style="{width:'100%'}">
-                            <div v-if="selectedItems && selectedItems.length>0">
-                                <Tag closable
-                                     @on-close="onControlTargetItemDelete(index)"
-                                     color="blue"
-                                     v-for="(item,index) in selectedItems">
-                                    {{item.title}}
+                    <div class="col-md-10" :style="{width:controlWidth}">
+                        <div class="form-control form-control-w" :placeholder="formItem.componentParams.placeholder">
+                            <div class="_input">
+                                <Tag closable @on-close="onControlTargetItemDelete(index)" color="blue"
+                                     v-for="(item,index) in selectedItems">{{item.title}}
                                 </Tag>
+                                <input v-if="formItem.componentParams.supportInput"
+                                       v-model="idInput"
+                                       type="text" value="" :placeholder="placeholder"
+                                       @keyup.enter="onInputEnter()"
+                                       @focus="onControlTargetItemInputFocus()"
+                                       @blur="onControlTargetItemInputNotFocus()"
+                                       style="border-width: 0px; width: 300px; "/>
                             </div>
-                            <div v-else>{{formItem.componentParams.placeholder}}</div>
+                            <Icon size="20" type="ios-list-outline" @click="onDataSelectWindowBtnClicked"
+                                  style="margin-top: 4px"></Icon>
                         </div>
-                        <Icon size="20" type="ios-list-outline" @click="onDataSelectWindowBtnClicked"
-                              style="margin-top: 4px"></Icon>
-
+                        <span class="colorRed"
+                              v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
+                        <p class="colorGrey" v-show="formItem.componentParams.description"
+                           v-text="formItem.componentParams.description"></p>
                     </div>
                 </div>
-                <p class="colorGrey"
-                   style="margin-left: 0.5rem"
-                   v-show="formItem.componentParams.description"
-                   v-text="formItem.componentParams.description"></p>
             </div>
         </template>
 

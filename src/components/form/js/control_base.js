@@ -6,6 +6,8 @@ import getParent from '../../mixins/get-parent';
 import globalContext from '../../../libs/context';
 import optionsUtils from '../../../libs/metadata/options-utils';
 import entityType from './entity_type';
+import expr from '../../../libs/evaluate/expr';
+
 export default {
     mixins:[emitter,getParent],
     props:{
@@ -60,6 +62,8 @@ export default {
         if(this.design){
             return;
         }
+        //如果是计算字段，增加计算字段的监听逻辑
+        this.emitFixedValueIfNeeded();
         //创建模式时，组件默认值初始化：如果组件定义了默认值，调用具体组件的默认值初始化函数
         if(this.shouldInitDefault()&&this.initDefaultByType){
             this.initDefaultByType();
@@ -267,22 +271,75 @@ export default {
             let _model={};
             let name=this.formItem.dataField;
             //如果是计算字段，则需要传入依赖字段
-            let dependOn=this.formItem.componentParams.dependOn;
-            if(dependOn&&dependOn.length>0){
-                _.each(dependOn,function(dep){
-                    _model[dep]=_this.model[dep];
+            let dependOn=this.parseDependOn();
+            //前端计算
+            let evalVal=null;
+            if(dependOn.justModelFields){
+                try{
+                    evalVal=expr.compile(dependOn.valueExpr)(metaForm.entity);
+                }catch (e) {
+                    if(e.name=="TypeError"){
+                        console.warn( `expression ${dependOn.valueExpr} eval has typeError:${e}`);
+                    }else{
+                        console.error( `expression ${dependOn.valueExpr} eval error:${e}`);
+                    }
+                }
+                return Promise.resolve(evalVal);
+            }else{
+                if(!_.isEmpty(dependOn.dependOn)){
+                    _.forIn(dependOn.dependOn,function(value,dep){
+                        _model[dep]=_this.model[dep];
+                    });
+                }
+                _model[name]=null;
+                return this.calc(_model,null).then((data)=>{
+                    return data[name];
                 });
             }
-            _model[name]=null;
-            return this.calc(_model,null).then((data)=>{
-                return data[name];
+        },
+        extractIdentifier(ast,dependOn,metaEntity){
+            if(!ast){
+                return;
+            }
+            _.forIn(ast,(value,key)=>{
+                if(value&&value.type==='Identifier'){
+                    let name=value.name;
+                    if((!dependOn.dependOn[name])){
+                        if(metaEntity.findField(name)){
+                            dependOn.dependOn[name]=true;
+                        }else{
+                            dependOn.justModelFields=false;
+                        }
+                    }
+                }
+                if(key==='left'||key==='right'){
+                    this.extractIdentifier(value,dependOn,metaEntity);
+                }
             });
+        },
+        parseDependOn(){
+            let metaEntity=this.context.metaEntity;
+            let metaField=metaEntity.findField(this.formItem.dataField);
+            //固定值表达式，如果字段都在前端，直接调用前端引擎计算
+            let valueExpr=metaField.default||metaField.value;
+            //TODO 测试用
+            //valueExpr='${singleLineText+numberInput+(singleLineText+numberInput)}';
+            if(!valueExpr){
+                console.error(`实体${metaEntity.name}的字段${metaField.name}动态值表达式为空`);
+                return {};
+            }
+            let tplContent=valueExpr.substring(2,valueExpr.length-1);
+            let ast=expr.parse(tplContent);
+            //justModelFields表示依赖的变量是否都是表单模型的数据，全是表单模型数据可以前端计算，不用调后端calc接口计算
+            let dependOn={dependOn:{},justModelFields:true,valueExpr:tplContent};
+            this.extractIdentifier(ast,dependOn,metaEntity);
+            return dependOn;
         },
         initFixedField(callback){//初始化计算字段的监听逻辑，当依赖的字段变化时，重新计算
             if(this.isFixedValue()){
                 let _this=this;
-                let dependOn=this.formItem.componentParams.dependOn;
-                _.each(dependOn,function(dep){
+                let dependOn=this.parseDependOn();
+                _.forIn(dependOn.dependOn,function(value,dep){
                     _this.$watch(`model.${dep}`,function(){
                         _this.calcField().then((data)=>{
                             callback&&callback(data);
@@ -290,6 +347,11 @@ export default {
                     });
                 })
             }
+        },
+        emitFixedValueIfNeeded(){
+            this.initFixedField(data=>{
+                this.$emit('input',data);
+            });
         },
         isNotEmpty(value){//判断当前控件的值是否不为空
             if(value===false||value===true||_.isNumber(value)){

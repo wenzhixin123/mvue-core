@@ -48,12 +48,7 @@ export default {
       }
     },
     mounted:function(){
-        if(this.isFixedValue()){
-            let _this=this;
-            this.initFixedField(function(data){
-                _this.$emit('input',data);
-            });
-        }
+        
     },
     methods: {
         convertedValue(){

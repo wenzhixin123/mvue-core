@@ -234,7 +234,8 @@ function loadMetaFieldFromProperty(context,propertyName,property){
       published: true,
       summary: property["description"],
       description: property["description"],
-      default: property["default"] || null,
+      default: property["default"],
+      value: property["value"],
       hasDefault: firstNotNaN(property["x-has-default"], false),
       isSystem: true,
       isDisplay: true,
@@ -339,7 +340,7 @@ function fillInputTypeParams(context,metaField,property) {
         }
     }
     if(fieldOption){
-        if(metaField.default==fieldOption.value){
+        if(metaField.default===fieldOption.value){
             fieldOption.checked=true;
         }
         metaField.inputTypeParams["options"]=fieldOption;

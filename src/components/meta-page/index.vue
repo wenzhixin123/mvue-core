@@ -122,6 +122,8 @@ export default {
       this.pageSettings.layout = this.layout;
     }
     //定义page的运行Context
+    //包括model、$user、$route
+    //model是第一个表单的entity数据
     let pageContext=pageHelper.buildPageContext(self);
     return {
       isPage: true,
@@ -141,6 +143,7 @@ export default {
     prepare(){
       this.setTitleSource();
       //解析组件相关的事件和相关动态属性
+      //将propSettings和events配置，解析到$config属性中
       pageHelper.preparePageSettings(this.pageSettings,this.pageContext);
       //页面初始化事件调用
       let pageSettings = pageHelper.getComConfig(this.pageSettings,"$page");
@@ -154,6 +157,7 @@ export default {
     getPageContext() {
       return this.pageContext;
     },
+    //每个m-component组件会将自己注册到页面的上下文中，作为可响应的m-page组件的data属性
     registerComponent(id,com){
       this.pageContext.vNodes[id]=com;
       Object.defineProperty(this.pageContext,id, {

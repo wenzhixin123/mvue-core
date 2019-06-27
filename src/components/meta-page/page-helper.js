@@ -334,12 +334,21 @@ actions["script"]=function actionForShow(action,context,event) {
     }
     execScript(script, context);
 }
-
+//构造新的函数或者表达式上下文，避免不合法变量直接作为第一级上下文报错
+function buildNewContext(context){
+    let topVars=["page", "$set", "model", "$user", "$route"];
+    let newContext={context:context};
+    _.each(topVars,v=>{
+        newContext[v]=context[v];
+    });
+    return newContext;
+}
 
 function evalExpr(expression,context,defaultVal) {
+    let newContext=buildNewContext(context);
     let evalVal=null;
     try{
-        evalVal=expr.compile(expression)(context);
+        evalVal=expr.compile(expression)(newContext);
     }catch (e) {
         if(e.name=="TypeError"){
             console.warn( `expression ${expression} eval has typeError:${e}`);
@@ -352,11 +361,7 @@ function evalExpr(expression,context,defaultVal) {
 }
 
 function execScript(script,context) {
-    let topVars=["page", "$set", "model", "$user", "$route"];
-    let newContext={context:context};
-    _.each(topVars,v=>{
-        newContext[v]=context[v];
-    });
+    let newContext=buildNewContext(context);
     let func=new Function(Object.keys(newContext),script);
     func.apply(context.page,Object.keys(newContext).map(key=>newContext[key]));
 }

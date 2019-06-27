@@ -129,6 +129,10 @@ export default{
             if(needInit){
                 this.firstSearch();
                 this.doSearchForCache((items) => {
+                    //如果组件定义了initOnFirstLoaded方法，执行它
+                    if(_.isFunction(this.initOnFirstLoaded)){
+                        this.initOnFirstLoaded(items);
+                    }
                     this.ensureHistoryItems(items);
                     if(this.selectedItem==null && this.preselectFirst
                         && items && items.length>0){

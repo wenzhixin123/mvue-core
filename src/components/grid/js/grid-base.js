@@ -33,7 +33,7 @@ export default{
             currentQueryCtx:{},//当前查询的所有上下文参数对象
             currentQueryParams:null,//通过leap-query-convertor查询的最终拼接条件，{filters:'完整字符串'}不同于currentQueryCtx，是最终查询时完整的filters字符串
             //如果有默认高级查询条件，由默认条件激发查询
-            innerLoadDataWhenMount:this.hasAdvFormDefault()?false:this.loadDataWhenMount
+            innerLoadDataWhenMount:(this.hasAdvFormDefault()||(this.topEntitySelect&&this.topEntitySelect.mustSelect))?false:this.loadDataWhenMount
         }
     },
     computed:{

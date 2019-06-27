@@ -6,7 +6,7 @@
         :loading="isLoading"
         select-label="按enter键选择"
         selected-label="已选"
-        deselect-label="按enter键取消选择"
+        :deselect-label="mustSelect?'':'按enter键取消选择'"
         :show-no-results="true"
         :internal-search="false"
         :label="getTitleField()"
@@ -119,6 +119,14 @@ export default {
                 topEntityService.remove();
             }
             this.$emit('on-top-entity-change');
+        },
+        initOnFirstLoaded(items){
+            if(this.mustSelect&&_.isEmpty(this.selectedItem)&&!_.isEmpty(items)){
+                this.selectedItem=items[0];
+                this.handleOnChange();
+            }else if(this.mustSelect&&!_.isEmpty(this.selectedItem)){
+                this.handleOnChange();
+            }
         }
     }
 }

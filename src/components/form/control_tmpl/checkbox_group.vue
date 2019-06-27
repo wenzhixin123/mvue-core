@@ -29,21 +29,22 @@
         <div v-if="formItem.componentParams.layout===controlTypeService.componentLayout.horizontal" class="form-horizontal">
             <div class="form-group" :class="{'ivu-form-item-required':formItem.componentParams.required}">
                 <label v-text="formItem.componentParams.title" class="ivu-form-item-label control-label col-md-2" :style="{width:labelWidth}"></label>
-                <div class="col-md-10" :style="{width:controlWidth}">
-                    <div class="checkbox" v-for="item in formItem.componentParams.options" :key="item.id">
+                <div class="col-md-10 parentBox" :style="{width:controlWidth}">
+                    <div class="checkbox" style="margin-right: 8px;" v-for="item in formItem.componentParams.options" :key="item.id">
                         <label>
                             <input @change="updateValue()" v-model="valueObj" type="checkbox" :disabled="disabled" :name="formItem.dataField" :checked="item.checked" :value="item.id">
                             {{item.text}}
                         </label>
                     </div>
-                    <div class="checkbox" v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}">
+                    <div class="checkbox" style="margin-right: 8px;" v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}">
                         <label style="width:70px;">
                             <input type="checkbox" :disabled="disabled" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
                             {{formItem.componentParams.otherOptions.text}}
                             <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
                         </label>
-                        <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" type="text" class="form-control form-control-inline">
+                        <!--<input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" type="text" class="form-control form-control-inline">-->
                     </div>
+                    <input @change="emitOthersValue($event.target.value)" :disabled="disabled" type="text" class="form-control form-control-inline otherInput">
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
                     <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
                 </div>
@@ -144,6 +145,13 @@ export default {
 <style lang="scss" scoped>
     .form-control.form-control-inline{
         display: inline-block;
+    }
+    .parentBox{
+        display: flex;
+        flex-shrink: 0;
+    }
+    .otherInput{
+        flex: 1;
     }
 </style>
 

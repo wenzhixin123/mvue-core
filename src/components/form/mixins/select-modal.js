@@ -14,16 +14,13 @@ export default {
             default:80
         },
         modalHeight:{
-            type:Number,
-            default(){
-                return context.modalHeight();
-            }
+            type:Number
         }
     },
     watch:{
         popupWidgetModal(){
             if(this.popupWidgetModal){
-                this.innerModalHeight=context.modalHeight();
+                this.innerModalHeight=this.modalHeight||context.modalHeight();
             }
         }
     },

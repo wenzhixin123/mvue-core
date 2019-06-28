@@ -44,10 +44,7 @@ export default {
             default:80
         },
         modalHeight:{
-            type:Number,
-            default(){
-                return context.modalHeight(30);
-            }
+            type:Number
         }
     },
     data(){
@@ -67,7 +64,7 @@ export default {
     watch:{
         popupWidgetModal(){
             if(this.popupWidgetModal){
-                this.innerModalHeight=context.modalHeight(30);
+                this.innerModalHeight=this.operation.modalHeight||context.modalHeight(30);
             }
         }
     },

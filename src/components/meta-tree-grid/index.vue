@@ -30,11 +30,13 @@
                 </template>
             </Multiselect>
             <div class="menu-title" v-if="treeSettings && treeSettings.title">{{treeSettings.title}}</div>
-            <meta-entity-tree ref="categoryTree"
-                              v-bind="realTreeSettings"
-                              :load-data-when-mount="isCategoryEnable()?false:true"
-                              @on-select-change="onTreeSelectChange"
-            ></meta-entity-tree>
+            <div class="entity-tree-con">
+                <meta-entity-tree ref="categoryTree"
+                                v-bind="realTreeSettings"
+                                :load-data-when-mount="isCategoryEnable()?false:true"
+                                @on-select-change="onTreeSelectChange"
+                ></meta-entity-tree>
+            </div>
         </Sider>
         <Content>
             <meta-grid ref="gridList"

@@ -243,7 +243,7 @@ export default {
             if (!isContinue) {
                 return false;
             }
-            return true;
+            return isContinue;
         },
         //doSaveModel调用时，会先校验表单，然后执行外部定义的onSubmit如果成功再继续执行这里的doSave
         doSave() {

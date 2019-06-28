@@ -2,7 +2,7 @@ var types={
     Boolean:{ 
         id: "Boolean", 
         title: "布尔值", 
-        icon:"ivu-icon ivu-icon-android-checkbox"
+        icon:"md-checkbox"
     }
 };
 var componentParams={

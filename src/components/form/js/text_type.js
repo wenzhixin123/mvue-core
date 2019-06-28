@@ -4,22 +4,22 @@ var textTypes={
     SingleLineText:{ 
         id: "SingleLineText", 
         title: "单行文本", 
-        icon:"ivu-icon ivu-icon-ios-compose-outline"
+        icon:"md-remove"
     },
     MultiLineText:{ 
         id: "MultiLineText", 
         title: "多行文本", 
-        icon:"ivu-icon ivu-icon-ios-list-outline" 
+        icon:"md-list" 
     },
     Password:{ 
         id: "Password", 
         title: "密文", 
-        icon:"ivu-icon ivu-icon-ios-lock-outline"
+        icon:"ios-eye-off"
     },
     JsonText:{ 
         id: "JsonText", 
         title: "JSON文本", 
-        icon:"ivu-icon ivu-icon-logo-javascript" 
+        icon:"logo-javascript" 
     }
 };
 //定义文本类型组件的扩展参数

@@ -4,7 +4,7 @@ var types={
     Group:{
         id: "Group", 
         title: "分组", 
-        icon:"ivu-icon ivu-icon-navicon-round"
+        icon:"ios-apps-outline"
     }
 };
 //辅助类型的相关组件扩展参数定义

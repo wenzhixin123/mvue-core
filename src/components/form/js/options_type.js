@@ -5,27 +5,27 @@ var optionsTypes={
     RadioButton:{ 
         id: "RadioButton", 
         title: "单选按钮组", 
-        icon:"ivu-icon ivu-icon-ios-circle-filled"
+        icon:"md-radio-button-on"
     },
     SingleSelect:{ 
         id: "SingleSelect", 
         title: "单选下拉框", 
-        icon:"ivu-icon ivu-icon-arrow-down-b"
+        icon:"md-arrow-dropdown"
     },
     MultiSelect:{ 
         id: "MultiSelect", 
         title: "多选下拉框",
-        icon:"ivu-icon ivu-icon-ios-checkmark-circle-outline"
+        icon:"md-arrow-dropdown-circle"
     },
     CheckboxGroup:{ 
         id: "CheckboxGroup", 
         title: "复选框", 
-        icon:"ivu-icon ivu-icon-android-checkbox-outline"
+        icon:"ios-checkbox-outline"
     },
     BitCode:{
         id: "BitCode",
-        title: "权限集",
-        icon:"ivu-icon ivu-icon-ios-checkbox-outline"
+        title: "二进制编码",
+        icon:"md-disc"
     }
 };
 function baseOptions(){

@@ -24,7 +24,7 @@ var types={
     CascadeSelect:{
         id: "CascadeSelect", 
         title: "级联下拉", 
-        icon:"ivu-icon ivu-icon-ios-more-outline"
+        icon:"ios-more-outline"
     },
 };
 var componentParams={

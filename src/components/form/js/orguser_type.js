@@ -3,23 +3,21 @@ var orgUserTypes={
     SingleUserSelect:{ 
         id: "SingleUserSelect", 
         title: "用户选择", 
-        icon:"ivu-icon ivu-icon-ios-people"
+        icon:"ios-people"
     },
     SingleOrgSelect:{ 
         id: "SingleOrgSelect", 
         title: "部门选择", 
-        icon:"ivu-icon ivu-icon-network" 
+        icon:"ios-git-network" 
     },
     MultiUserSelect:{ 
         id: "MultiUserSelect", 
         title: "用户多选", 
-        icon:"ivu-icon ivu-icon-ios-people",
         hidden:true
     },
     MultiOrgSelect:{ 
         id: "MultiOrgSelect", 
         title: "部门多选", 
-        icon:"ivu-icon ivu-icon-network",
         hidden:true 
     }
 };

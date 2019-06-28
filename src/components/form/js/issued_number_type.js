@@ -5,7 +5,7 @@ var issuedNumberTypes={
     IssuedNumber:{
         id: "IssuedNumber",
         title: "发文字号",
-        icon:"ivu-icon ivu-icon-ios-list-outline"
+        icon:"ios-albums-outline"
     }
 };
 //定义文本类型组件的扩展参数

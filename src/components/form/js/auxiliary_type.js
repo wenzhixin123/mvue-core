@@ -4,12 +4,12 @@ var auxiliaryTypes={
     Description:{
         id: "Description", 
         title: "文本描述", 
-        icon:"ivu-icon ivu-icon-document-text"
+        icon:"ios-document-outline"
     },
     DivisionLine:{
         id: "DivisionLine", 
         title: "分割线", 
-        icon:"ivu-icon ivu-icon-minus"
+        icon:"ios-remove"
     }
 };
 //辅助类型的相关组件扩展参数定义

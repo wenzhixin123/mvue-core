@@ -49,8 +49,8 @@ var fieldControlsType=[
     objectType
 ];
 var fieldControls=[];
-_.each(fieldControlsType,function(type){
-    _.each(type.types,function(_t){
+_.forEach(fieldControlsType,function(type){
+    _.forIn(type.types,function(_t){
         if(!_t.hidden){
             fieldControls.push(_t);
         }
@@ -65,7 +65,7 @@ var entityControlsType=[
 ];
 var entityControls=[];
 _.each(entityControlsType,function(type){
-    _.each(type.types,function(_t){
+    _.forIn(type.types,function(_t){
         if(!_t.hidden){//用户多选、部门多选默认不显示出来
             entityControls.push(_t);
         }
@@ -85,6 +85,31 @@ initAllType();
 function registerFieldControls(controlDef){
     fieldControlsType.push(controlDef);
     initAllType();
+}
+//合并设计器模式组件的定义
+//这里只合并designerId、title和icon属性，并且这些控件的原始定义需要先注册到componentTypes中
+function mergeDef(control,def){
+    if(control){
+        control.designerId=def.designerId||control.id;
+        control.icon=def.icon||control.icon;
+        control.title=def.title||control.title;
+    }
+}
+function mergeFieldControlDesignerDef(designerDef){
+    if(!_.isEmpty(designerDef)){
+        _.forIn(designerDef,(def,controlId)=>{
+            let control=componentTypes[controlId];
+            if(control){
+                mergeDef(control,def);
+            }
+            _.forEach(fieldControlsType,function(type){
+                let control=type.types[controlId];
+                if(control){
+                    mergeDef(control,def);
+                }
+            });
+        });
+    }
 }
 //所有支持的辅助组件
 var auxiliaryControls=[
@@ -357,7 +382,8 @@ var valueTypes={
     defaultValue:{id:"defaultValue",title:"默认值"},
     fixedValue:{id:"fixedValue",title:"固定值"},
 };
-export default{
+export default {
+    mergeFieldControlDesignerDef:mergeFieldControlDesignerDef,
     registerFieldControls:registerFieldControls,
     componentTypes:componentTypes,
     switchableComponents:switchableComponents,

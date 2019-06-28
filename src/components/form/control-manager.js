@@ -14,6 +14,7 @@ function registerSingle(controlDef){
         }
     });
 }
+//注册自定义的表单控件
 function register(controlDef){
     if(!controlDef){
         return;
@@ -26,7 +27,15 @@ function register(controlDef){
         registerSingle(controlDef);
     }
 }
-export default{
+//合并设计器模式的表单控件定义
+function mergeDesignerDef(designerDef){
+    if(!designerDef){
+        return;
+    }
+    controlTypeService.mergeFieldControlDesignerDef(designerDef);
+}
+export default {
+    mergeDesignerDef,
     register:register,
     controlBase:controlBase
 }

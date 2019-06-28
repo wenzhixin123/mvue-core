@@ -4,18 +4,16 @@ var numberTypes={
     NumberInput:{//过时的，先隐藏
         id: "NumberInput", 
         title: "数字", 
-        icon:"ivu-icon ivu-icon-ios-compose-outline",
         hidden:true 
     },
     Number:{ 
         id: "Number", 
         title: "数字", 
-        icon:"ivu-icon ivu-icon-ios-compose-outline"
+        icon:"ios-calculator"
     },
     AdvNumber:{//仅在高级查询表单使用，隐藏 
         id: "AdvNumber", 
         title: "数字", 
-        icon:"ivu-icon ivu-icon-ios-compose-outline",
         hidden:true 
     }
 };

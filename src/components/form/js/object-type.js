@@ -2,7 +2,7 @@ var types={
     ObjectEditor:{ 
         id: "ObjectEditor", 
         title: "内嵌JSON", 
-        icon:"ivu-icon ivu-icon-ios-compose-outline",
+        icon:"md-list-box",
         validateMethod:true,
         class:"has-form-item"//附加到form-item的class样式，has-form-item会对form-item内嵌form-item的标红样式作修正，避免所有控件标红
     }

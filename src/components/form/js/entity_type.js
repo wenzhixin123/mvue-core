@@ -6,22 +6,22 @@ var types={
     RefEntity:{ 
         id: "RefEntity", 
         title: "引用实体", 
-        icon:"ivu-icon ivu-icon-pound"
+        icon:"ios-grid-outline"
     },
     MultiRefEntity:{ 
         id: "MultiRefEntity", 
         title: "多选引用实体", 
-        icon:"ivu-icon ivu-icon-pound"
+        icon:"md-menu"
     },
     ParentSelect:{ 
         id: "ParentSelect", 
         title: "父选择器", 
-        icon:"ivu-icon ivu-icon-pound"
+        icon:"ios-grid-outline"
     },
     OrderedMultiRefEntity:{ 
         id: "OrderedMultiRefEntity", 
         title: "有序多选引用实体", 
-        icon:"ivu-icon ivu-icon-pound"
+        icon:"ios-list"
     }
 };
 var componentParams={

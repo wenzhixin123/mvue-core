@@ -4,45 +4,42 @@ var uploadTypes={
     FileUpload:{ 
         id: "FileUpload", 
         title: "文件上传", 
-        icon:"ivu-icon ivu-icon-ios-upload-outline",
         hidden:true 
     },
     PictureUpload:{ 
         id: "PictureUpload", 
         title: "图片上传", 
-        icon:"ivu-icon ivu-icon-image",
         hidden:true 
     },
     Portrait:{ 
         id: "Portrait", 
         title: "头像", 
-        icon:"ios-person-add-outline",
         hidden:true 
     },
     SingleFileUpload:{ 
         id: "SingleFileUpload", 
         title: "单文件上传", 
-        icon:"ivu-icon ivu-icon-ios-upload-outline"
+        icon:"ios-cloud-upload"
     },
     SingleImageUpload:{ 
         id: "SingleImageUpload", 
         title: "单图片上传", 
-        icon:"ivu-icon ivu-icon-image"
+        icon:"md-image"
     },
     MultiFileUpload:{ 
         id: "MultiFileUpload", 
         title: "多文件上传", 
-        icon:"ivu-icon ivu-icon-ios-upload-outline"
+        icon:"ios-cloud-upload-outline"
     },
     MultiImageUpload:{ 
         id: "MultiImageUpload", 
         title: "多图片上传", 
-        icon:"ivu-icon ivu-icon-image"
+        icon:"md-images"
     },
     Avatar:{ 
         id: "Avatar", 
         title: "头像", 
-        icon:"ios-person-add-outline"
+        icon:"ios-contact-outline"
     }
 };
 var maxSize={

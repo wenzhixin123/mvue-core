@@ -345,10 +345,9 @@ function buildNewContext(context){
 }
 
 function evalExpr(expression,context,defaultVal) {
-    let newContext=buildNewContext(context);
     let evalVal=null;
     try{
-        evalVal=expr.compile(expression)(newContext);
+        evalVal=expr.compile(expression)(context);
     }catch (e) {
         if(e.name=="TypeError"){
             console.warn( `expression ${expression} eval has typeError:${e}`);

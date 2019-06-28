@@ -7,9 +7,18 @@ var findIds = function (refs) {
   for (var i in refs) {
     var ref = refs[i]
     var widgetContext = ref.getWidgetContext()
-    if (widgetContext.selectedIds) {
-      for (var j in widgetContext.selectedIds) {
-        ids.push(widgetContext.selectedIds[j])
+    if (widgetContext.selectedItems) {
+      for (var j in widgetContext.selectedItems) {
+        var has = false
+        for (var z in ids) {
+          if (ids[z].id == widgetContext.selectedItems[j].id) {
+            has = true
+            break
+          }
+        }
+        if (!has) {
+          ids.push(widgetContext.selectedItems[j])
+        }
       }
     }
   }
@@ -44,7 +53,7 @@ var findProOrFun = function (key, refs, res) {
       res.push(ref)
     }
     if (ref.$refs) {
-      this.findProOrFun(key, ref.$refs)
+      this.findProOrFun(key, ref.$refs, res)
     }
   }
 }

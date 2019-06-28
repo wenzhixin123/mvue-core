@@ -71,15 +71,11 @@
                 @on-cancel="onCancel"
                 scrollable
                 width="80">
-            <!--            <div>========================================================</div>-->
-            <!--            <div>{{page}}</div>-->
-            <!--            <div>========================================================</div>-->
             <meta-widget-page
                     v-if="page && page.id"
                     :widget-params='{pageId:page.id}'
                     ref="dynamicPage"
-                    :query="getQuery()"
-            >
+                    :query="getQuery()">
             </meta-widget-page>
         </Modal>
     </div>
@@ -248,7 +244,8 @@
         var query = {
           titleField: this.formItem.componentParams.titleField,
           metaEntityId: this.formItem.componentParams.entityId,
-          parentField: this.formItem.componentParams.parentField
+          parentField: this.formItem.componentParams.parentField,
+          views: this.formItem.componentParams.views
         }
         return query
       }

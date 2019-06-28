@@ -339,7 +339,6 @@
         this.placeholder = ''
       },
       emitData () {
-        debugger
         this.$emit('exDataChanged', this.dataCommit, this.formItem.dataField)
         this.$emit('input', this.sIds)
       },

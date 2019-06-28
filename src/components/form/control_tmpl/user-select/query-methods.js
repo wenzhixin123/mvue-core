@@ -18,6 +18,12 @@ function getOrgParentField(){
 function getOrgTitleField(){
     return context.getSettings().control.orgSelect.nameField;
 };
+function getUserFilters(){
+    return context.getSettings().control.userSelect.filters;
+}
+function getOrgFilters(){
+    return context.getSettings().control.orgSelect.filters;
+}
 var orgResource=null;
 function orgService(){
     if(!orgResource){
@@ -34,21 +40,35 @@ function userService(){
     }
     return userResource;
 };
+function rebuildOrgFilters(_filters){
+    let orgFilters=getOrgFilters();
+    if(orgFilters){
+        if(_filters){
+            _filters=`${_filters} and (${orgFilters})`;
+        }else{
+            return orgFilters;
+        }
+    }
+    return _filters;
+}
 //查询根部门
 function queryRootOrg(){
-    return orgService().query({filters:`${getOrgParentField()} is null`}).then(({data})=>{
+    let _filters=rebuildOrgFilters(`${getOrgParentField()} is null`);
+    return orgService().query({filters:_filters}).then(({data})=>{
         return data;
     });
 }
 //查询子部门
 function queryOrgByParent(parentId){
-    return orgService().query({filters:`${getOrgParentField()} eq ${parentId}`}).then(({data})=>{
+    let _filters=rebuildOrgFilters(`${getOrgParentField()} eq ${parentId}`);
+    return orgService().query({filters:_filters}).then(({data})=>{
         return data;
     });
 }
 //关键字查询部门
 function queryOrgByKeyword(keyword,orgIds){
-    var one = orgService().query({filters:`${getOrgTitleField()} like '%${keyword}%'`});
+    let _filters=rebuildOrgFilters(`${getOrgTitleField()} like '%${keyword}%'`);
+    var one = orgService().query({filters:_filters});
     return new Promise((resolve,reject)=>{
         one.then(({data:dataOne})=>{
             if(!_.isEmpty(orgIds)){
@@ -86,9 +106,21 @@ function concatIgnoreDuplicated(firstArray,secondArray,key){
     });
     return firstArray;
 }
+function rebuildUserFilters(_filters){
+    let userFilters=getUserFilters();
+    if(userFilters){
+        if(_filters){
+            _filters=`${_filters} and (${userFilters})`;
+        }else{
+            return userFilters;
+        }
+    }
+    return _filters;
+}
 //关键字查询用户,如果userIds不为空，需要附加userIds代表的用户
 function queryUserByKeyword(keyword,userIds){
-    var one = userService().query({filters:`${getUserTitleField()} like '%${keyword}%'`});
+    let _filters=rebuildUserFilters(`${getUserTitleField()} like '%${keyword}%'`);
+    var one = userService().query({filters:_filters});
     return new Promise((resolve,reject)=>{
         one.then(({data:usersOne})=>{
             if(!_.isEmpty(userIds)){
@@ -118,6 +150,7 @@ function pageQueryUserByOrg(orgIds,userIds,pageParams){//{page:1,pageSize:10}
     if(!_.isEmpty(orgIds)){
         filters=`${getUserOrgField()} in '${orgIds.join(',')}'`;
     }
+    filters=rebuildUserFilters(filters);
     var one = userService().query({total:true,page:pageParams.page,page_size:pageParams.pageSize,filters:filters});
     return new Promise((resolve,reject)=>{
         one.then(res=>{
@@ -147,6 +180,7 @@ function pageQueryUserByOrg(orgIds,userIds,pageParams){//{page:1,pageSize:10}
 //关键字分页搜索用户
 function pageQueryUserByKeyword(queryKeyword,userIds,pageParams){//{page:1,pageSize:10}
     var filters=`${getUserTitleField()} like '%${queryKeyword}%'`;
+    filters=rebuildUserFilters(filters);
     var one = userService().query({total:true,page:pageParams.page,page_size:pageParams.pageSize,filters:filters});
     return new Promise((resolve,reject)=>{
         one.then(res=>{

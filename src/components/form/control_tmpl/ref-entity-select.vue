@@ -1,14 +1,14 @@
 <template>
 <div>
-    <div style="width:20%;position:absolute;z-index:1;right:0px;">
+    <div style="width:20%;position:absolute;z-index:1;right:1px;" :style="{height:modalHeight?(modalHeight+'px'):'100px',overflow:'auto'}">
         <div class="ref-entity-list-header">
             <h4>已选</h4>
         </div>
         <div class="ref-entity-list-body">
             <template v-if="multiple&&selectedItem">
-                <Tag color="success" v-for="item in selectedItem" :key="item[getIdField()]" :title="title(item)" closable @on-close="handleTagClose(item)">{{title(item)}}</Tag>
+                <Tag color="success" v-for="item in selectedItem" :key="item[getIdField()]" :title="title(item)" closable @on-close="handleTagClose(item)">{{shortTitle(item)}}</Tag>
             </template>
-            <Tag color="success" v-if="(!multiple)&&selectedItem" :title="title(selectedItem)">{{title(selectedItem)}}</Tag>
+            <Tag color="success" v-if="(!multiple)&&selectedItem" :title="title(selectedItem)">{{shortTitle(selectedItem)}}</Tag>
         </div>
     </div>
     <div style="width:80%;">
@@ -47,6 +47,9 @@ export default {
         },
         gridSettings:{//grid的配置
             type:Object
+        },
+        modalHeight:{
+            type:Number
         }
     },
     data(){

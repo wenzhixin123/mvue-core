@@ -66,6 +66,13 @@ export default {
                 }
             }
             return item[titleFieldName];
+        },
+        shortTitle(item){
+            let title=this.title(item);
+            if(title.length>10){
+                return title.substring(0,10)+'...';
+            }
+            return title;
         }
     }
 }

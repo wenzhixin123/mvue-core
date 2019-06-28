@@ -18,6 +18,7 @@
                 :form-item="formItem"
                 :multiple="multiple"
                 :value="value" 
+                :modal-height="innerModalHeight"
                 :grid-settings="gridSettings"
                 :queryOptions="queryOptions"
             ></ref-entity-select>

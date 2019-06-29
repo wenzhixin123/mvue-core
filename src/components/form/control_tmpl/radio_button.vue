@@ -22,6 +22,7 @@
                     <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
                 </label>
                 <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" v-model="inputText" type="text" class="form-control form-control-inline">
+                <span class="colorRed othertips" v-show="validTag&&formItem.componentParams.otherOptions.required">必填项.</span>
             </div>
             <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
             <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
@@ -46,7 +47,7 @@
                     </div>
                     <div class="otherInput">
                         <input v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}" @change="emitOthersValue($event.target.value)" :disabled="disabled" v-model="inputText" type="text" class="form-control form-control-inline ">
-                        <span class="colorRed othertips" v-show="validTag">必填项.</span>
+                        <span class="colorRed othertips" v-show="validTag&&formItem.componentParams.otherOptions.required">必填项.</span>
                     </div>
 
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>

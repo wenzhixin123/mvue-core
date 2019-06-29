@@ -38,13 +38,17 @@
                     </div>
                     <div class="checkbox" style="margin-right: 8px;" v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}">
                         <label style="width:70px;">
-                            <input type="checkbox" :disabled="disabled" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
+                            <input type="checkbox" :disabled="disabled" v-model="checkOthers" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
                             {{formItem.componentParams.otherOptions.text}}
                             <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
                         </label>
                         <!--<input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" type="text" class="form-control form-control-inline">-->
                     </div>
-                    <input v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}" @change="emitOthersValue($event.target.value)" :disabled="disabled" type="text" class="form-control form-control-inline otherInput">
+                    <div class="otherInput">
+                        <input v-if="formItem.componentParams.otherOptions.addOthers" v-model="othersVal" @change="emitOthersValue($event.target.value)" :disabled="disabled" type="text" class="form-control form-control-inline">
+                        <span class="colorRed othertips" v-show="validTag">必填项.</span>
+                    </div>
+
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
                     <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
                 </div>
@@ -64,7 +68,10 @@ export default {
     },
     data: function(){
         return {
-            valueObj:null
+            valueObj:null,
+            othersVal:null,
+            validTag:false,
+            checkOthers:null
         };
     },
     watch:{
@@ -78,6 +85,16 @@ export default {
                 this.initDefault();
             },
             deep:true
+        },
+        "othersVal":function (newV,oldV) {
+            if(newV.trim() == ""){
+                this.validTag = true
+            }else {
+                this.validTag = false
+            }
+        },
+        "checkOthers":function (newV,oldV) {
+            this.validTag = ! this.validTag;
         }
     },
     mounted:function(){
@@ -111,6 +128,7 @@ export default {
         },
         emitOthersValue:function(othersValue){
             this.emitExData(othersValue);
+            this.othersVal = othersValue;
         },
         emitExData:function(othersValue){
             var _this=this;
@@ -152,6 +170,10 @@ export default {
     }
     .otherInput{
         flex: 1;
+    }
+    .othertips{
+        position: absolute;
+        top: 34px;
     }
 </style>
 

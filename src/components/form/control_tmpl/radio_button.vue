@@ -44,7 +44,11 @@
                         </label>
                         <!--<input @change="emitOthersValue($event.target.value)" style="width:92%;right:0px;top:0px;position:absolute;" :disabled="disabled" v-model="inputText" type="text" class="form-control form-control-inline new-style">-->
                     </div>
-                    <input v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}" @change="emitOthersValue($event.target.value)" :disabled="disabled" v-model="inputText" type="text" class="form-control form-control-inline otherInput">
+                    <div class="otherInput">
+                        <input v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}" @change="emitOthersValue($event.target.value)" :disabled="disabled" v-model="inputText" type="text" class="form-control form-control-inline ">
+                        <span class="colorRed othertips" v-show="validTag">必填项.</span>
+                    </div>
+
                     <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
                     <p class="colorGrey" v-show="formItem.componentParams.description" v-text="formItem.componentParams.description"></p>
                 </div>
@@ -65,6 +69,8 @@ export default {
             valueObj:null,
             isNumber:false,
             inputText:"",
+            validTag:false,
+            isSelectOthers:""
         };
     },
     watch:{
@@ -76,6 +82,15 @@ export default {
                 this.initDefault();
             },
             deep:true
+        },
+        "inputText":function (newV,oldV) {
+            if(newV !==undefined){
+                if(newV.trim() == "" && this.isSelectOthers){
+                    this.validTag = true
+                }else {
+                    this.validTag = false
+                }
+            }
         }
     },
     mounted:function(){
@@ -95,8 +110,12 @@ export default {
                 //其他
                 this.inputText=this.getExData(this.valueObj);
                 this.isNumber = false;
+
+                this.isSelectOthers = true;
             }else{
                 this.inputText = "";
+
+                this.isSelectOthers = false;
             }
         },
         initDefault:function(){
@@ -119,6 +138,13 @@ export default {
             if(text){
                 this.emitExData(_value,text);
             }
+
+            if(_value == "_others"){
+                this.validTag = true;
+            }else {
+                this.validTag = false;
+            }
+
         },
         emitOthersValue:function(othersValue){
             var othersId=this.formItem.componentParams.otherOptions.id;
@@ -142,6 +168,10 @@ export default {
     }
     .otherInput{
         flex: 1;
+    }
+    .othertips{
+        position: absolute;
+        top: 34px;
     }
 
 </style>

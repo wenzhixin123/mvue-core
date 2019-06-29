@@ -53,6 +53,7 @@ var parsers={
     "text":baseParser,
     "date":baseParser,
     "number":baseParser,
+    "array":baseParser,
     "map":function(initPropValue,curInst,toRoute){
         var value=initPropValue.value;
         var _query={};

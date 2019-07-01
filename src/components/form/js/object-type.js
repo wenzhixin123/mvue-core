@@ -4,6 +4,7 @@ var types={
         title: "内嵌JSON", 
         icon:"md-list-box",
         validateMethod:true,
+        hidden:true,
         class:"has-form-item"//附加到form-item的class样式，has-form-item会对form-item内嵌form-item的标红样式作修正，避免所有控件标红
     }
 };

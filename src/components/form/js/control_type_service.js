@@ -39,14 +39,14 @@ var containerTypes=containerType.types;
 var fieldControlsType=[
     textType,
     optionsType,
+    cascadeType,
     dateType,
     numberType,
     uploadType,
-    cascadeType,
     boolType,
-    issuedNumberType,
     arrayType,
-    objectType
+    objectType,
+    issuedNumberType
 ];
 var fieldControls=[];
 _.forEach(fieldControlsType,function(type){

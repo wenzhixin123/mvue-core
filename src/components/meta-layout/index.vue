@@ -142,7 +142,7 @@ export default {
             }
             if(_.isEmpty(item)){
                 return {
-                    ctype:"b-text",
+                    ctype:"m-text",
                     value:""
                 };
             }

@@ -19,17 +19,17 @@ var uploadTypes={
     SingleFileUpload:{ 
         id: "SingleFileUpload", 
         title: "单文件上传", 
-        icon:"ios-cloud-upload"
+        icon:"ios-document-outline"
+    },
+    MultiFileUpload:{ 
+        id: "MultiFileUpload", 
+        title: "多文件上传", 
+        icon:"ios-paper-outline"
     },
     SingleImageUpload:{ 
         id: "SingleImageUpload", 
         title: "单图片上传", 
         icon:"md-image"
-    },
-    MultiFileUpload:{ 
-        id: "MultiFileUpload", 
-        title: "多文件上传", 
-        icon:"ios-cloud-upload-outline"
     },
     MultiImageUpload:{ 
         id: "MultiImageUpload", 

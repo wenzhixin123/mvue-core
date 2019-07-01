@@ -17,11 +17,11 @@
             </div>
             <div class="checkbox" v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}">
                 <label style="width:70px;">
-                    <input type="checkbox" :disabled="disabled" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
+                    <input type="checkbox" @change="updateValue()" :disabled="disabled" v-model="valueObj" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
                     {{formItem.componentParams.otherOptions.text}}
                     <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
                 </label>
-                <input @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" type="text" class="form-control form-control-inline">
+                <input v-model="othersVal" @change="emitOthersValue($event.target.value)" style="width:70%;left:70px;position:absolute;" :disabled="disabled" type="text" class="form-control form-control-inline">
                 <span class="colorRed othertips" v-show="validTag&&formItem.componentParams.otherOptions.required">必填项.</span>
             </div>
             <span class="colorRed" v-show="validator&&validator.errorBag&&validator.errorBag.has(formItem.dataField)">{{ validator&&validator.errorBag&&validator.errorBag.first(formItem.dataField) }}</span>
@@ -39,7 +39,7 @@
                     </div>
                     <div class="checkbox" style="margin-right: 8px;" v-if="formItem.componentParams.otherOptions.addOthers" :class="{'ivu-form-item-required':formItem.componentParams.otherOptions.required}">
                         <label style="width:70px;">
-                            <input type="checkbox" :disabled="disabled" v-model="checkOthers" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
+                            <input type="checkbox" @change="updateValue()"  :disabled="disabled" v-model="valueObj" :name="formItem.dataField" :value="formItem.componentParams.otherOptions.id">
                             {{formItem.componentParams.otherOptions.text}}
                             <span :class="{'ivu-form-item-label':formItem.componentParams.otherOptions.required}"></span>
                         </label>
@@ -104,6 +104,13 @@ export default {
         if((!this.valueObj)||this.valueObj.length===0){
             this.initDefault();
         }
+
+        _.each(this.valueObj,function (val) {
+            if(val == "_others"){
+                _this.othersVal=_this.getExData(val);
+            }
+        })
+
     },
     methods:{
         initDefault:function(){
@@ -126,6 +133,10 @@ export default {
             var emitValue=_.cloneDeep(this.valueObj);
             this.$emit('input',emitValue);
             this.emitExData();
+
+            if(this.valueObj.indexOf('_others') == -1){
+                this.othersVal = ""; //清空其它的输入值
+            }
         },
         emitOthersValue:function(othersValue){
             this.emitExData(othersValue);

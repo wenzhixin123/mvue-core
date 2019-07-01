@@ -22,7 +22,9 @@ export default {
     }
     hr{
         margin-top:10px;
-        margin-bottom:5px;
+        margin-bottom:20px;
+        border-width: 2px;
+        border-color: #dddee1;
     }
 }
 </style>

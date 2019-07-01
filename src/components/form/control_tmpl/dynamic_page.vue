@@ -241,12 +241,15 @@
         this.showWindow = false
       },
       getQuery () {
+        var views = _.cloneDeep(this.formItem.componentParams.views)
         var query = {
           titleField: this.formItem.componentParams.titleField,
           metaEntityId: this.formItem.componentParams.entityId,
           parentField: this.formItem.componentParams.parentField,
-          views: this.formItem.componentParams.views
+          views: views,
+          needCheckbox: true
         }
+        // commonOperations: []
         return query
       }
     }

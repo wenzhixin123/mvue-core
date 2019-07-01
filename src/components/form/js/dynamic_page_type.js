@@ -37,7 +37,15 @@ function formatData (componentType, item, metaField) {
   let rkey = constants.entityModelRedundantKey
   let titleKey = constants.entityModelTitleKey
   var $data = (item[rkey] && item[rkey][fieldName]) || {}
-  var result = $data[origin] && $data[origin][titleKey]
+  var result = ''
+  if (origin instanceof Array) {
+    _.each(origin, function (originItem) {
+      result += $data[originItem].title + ','
+    })
+    result = result.substring(0,result.length-1)
+  } else {
+    result = $data[origin] && $data[origin][titleKey]
+  }
   result = result || origin
   return result
 }

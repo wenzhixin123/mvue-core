@@ -158,6 +158,10 @@
                         float: left!important;
                         label{ width: auto!important;}
                     }
+                    .checkbox{
+                        float: left;
+                        label{ width: auto!important;}
+                    }
                 }
             }
             .form-control{ display: inline-block;}

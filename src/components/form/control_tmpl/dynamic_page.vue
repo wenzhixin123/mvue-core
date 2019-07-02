@@ -46,9 +46,6 @@
                                 <input v-if="formItem.componentParams.supportInput"
                                        v-model="idInput"
                                        type="text" value="" :placeholder="placeholder"
-                                       @keyup.enter="onInputEnter()"
-                                       @focus="onControlTargetItemInputFocus()"
-                                       @blur="onControlTargetItemInputNotFocus()"
                                        style="border-width: 0px; width: 300px; "/>
                             </div>
                             <Icon size="20" type="ios-list-outline" @click="onDataSelectWindowBtnClicked"
@@ -90,7 +87,7 @@
     mixins: [controlBase],
     props: {
       value: {
-        type: String,
+        type: Array,
         default: null
       },
       operationCode: {
@@ -103,15 +100,7 @@
       var entityId = this.formItem.componentParams.entityId
       return {
         // 选中的数据
-        selectedItems: [
-          // {title: 'aaaaa'},
-          // {title: 'bbbbbbb'},
-          // {title: 'ccccc'},
-          // {title: 'ddddddddd'},
-          // {title: 'e'},
-          // {title: 'ffffffffffffff'},
-          // {title: 'ggggggggg'}
-        ],
+        selectedItems: [],
         projectId: proId,
         entityId: entityId,
         page: null,
@@ -120,25 +109,32 @@
       }
     },
     computed: {
-      dataItemsMap: function () {
-        var idField = this.getIdField()
-        return _.keyBy(this.dataItems, idField)
-      },
       windowTitle () {
         return (this.page && this.page.title) ? this.page.title : ''
       }
     },
     watch: {
-      value: function (newV, oldV) {
-        if (newV) {
-          this.selectedItem = this.dataItemsMap[newV] || null
-        } else {
-          this.selectedItem = null
-        }
-      },
-      dataItems: function () {
-        if (this.value) {
-          this.selectedItem = this.dataItemsMap[this.value] || null
+      value: {
+        immediate: true,
+        handler (newV, oldV) {
+          var _this = this
+          if (newV && (!this.selectedItems || this.selectedItems.length == 0) && this.model._data) {
+            //这个是本Item的name
+            this.formItem.dataField
+            this.model
+            if (this.formItem.dataField && this.model._data[this.formItem.dataField]) {
+              _this.selectedItems = []
+              var data = this.model._data[this.formItem.dataField]
+              _.each(data, function (item) {
+                for (var i in _this.value) {
+                  if (item.id == _this.value[i]) {
+                    _this.selectedItems.push(item)
+                    break
+                  }
+                }
+              })
+            }
+          }
         }
       },
       entityId: {
@@ -190,10 +186,10 @@
           }
           ids.push(id.id)
         }
+
         // this.model[this.formItem.dataField] = ids
         this.$emit('exDataChanged', data, this.formItem.dataField)
 
-        // this.$emit('exDataChanged', this.dataCommit, this.formItem.dataField)
         this.$emit('input', ids)
       },
       getTitleField: function (formItem) {

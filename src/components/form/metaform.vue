@@ -203,8 +203,14 @@
         deep: true
       },
       entity: {
-        handler: function () {
-          if (this.preprocessed && this.formValidation) {
+        handler: function (val) {
+          //首次进入不进行立即校验
+          if(!this.changeStart){
+            this.changeStart = 1
+          }else{
+            this.changeStart++;
+          }
+          if (this.preprocessed && this.formValidation && this.changeStart>2) {
             this.doValidation()
           }
         },

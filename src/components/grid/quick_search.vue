@@ -147,7 +147,19 @@
             flex-wrap: wrap;
             .form-group{ display: flex;}
             label{display: inline-block; width: 100px !important; text-align: center;}
-            .field{ width: 30% !important; display: inline-block; margin-right: 2%;}
+            .field{
+                width: 30% !important;
+                display: inline-block;
+                margin-right: 2%;
+                .parentBox{
+                    display: block !important;
+                    flex-shrink: unset !important;
+                    .radio{
+                        float: left!important;
+                        label{ width: auto!important;}
+                    }
+                }
+            }
             .form-control{ display: inline-block;}
         }
         .layout_r{ /*flex: 1*/ width:140px;}

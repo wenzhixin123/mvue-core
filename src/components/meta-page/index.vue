@@ -38,6 +38,12 @@ export default {
         return {};
       }
     },
+    propSettings:{//前端配置的界面propSettings和events属性添加，否则将不会生效
+      type: Object
+    },
+    events:{
+      type: Object
+    },
     pageSettings: {
       type: Object,
       default() {
@@ -118,8 +124,14 @@ export default {
   },
   data: function () {
     let self=this;
-    if (this.layout != null && this.layout.length > 0) {
+    if (!_.isEmpty(this.layout)) {
       this.pageSettings.layout = this.layout;
+    }
+    if(!_.isEmpty(this.propSettings)){
+      this.pageSettings.propSettings=this.propSettings;
+    }
+    if(!_.isEmpty(this.events)){
+      this.pageSettings.events=this.events;
     }
     //定义page的运行Context
     //包括model、$user、$route

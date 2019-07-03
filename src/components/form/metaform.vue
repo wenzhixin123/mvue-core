@@ -205,12 +205,7 @@
       entity: {
         handler: function (val) {
           //首次进入不进行立即校验
-          if(!this.changeStart){
-            this.changeStart = 1
-          }else{
-            this.changeStart++;
-          }
-          if (this.preprocessed && this.formValidation && this.changeStart>2) {
+          if (this.preprocessed && this.formValidation && this.changeStart) {
             this.doValidation()
           }
         },
@@ -225,7 +220,11 @@
     },
     mounted: function () {
       //初始化表单相关逻辑
+      let _this = this;
       this.initForm()
+      window.setTimeout(function(){
+        _this.changeStart = true;
+      },2000);//延迟2秒后才开始校验
     },
     methods: {
       getWidgetContext () {

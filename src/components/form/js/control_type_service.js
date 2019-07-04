@@ -146,7 +146,7 @@ var baseComponentParams={
 };
 var fieldIndex=0;
 //根据组件类型构造对应的表单布局
-function buildFormItemByComponentType(componentType){
+function buildFormItemByComponentType(componentType,ignoreDataField){
     if(!componentType){
         console.log("componentType为空");
         return;
@@ -171,7 +171,10 @@ function buildFormItemByComponentType(componentType){
         componentParams.title=componentTypes[componentType].title;
     }else{
         formItem.isDataField=true;
-        formItem.dataField="field"+fieldIndex++;//如果是field类型，对应实体的字段名
+        //不需要自动生成字段名的，不执行附加dataField属性
+        if(!ignoreDataField){
+            formItem.dataField="field"+fieldIndex++;//如果是field类型，对应实体的字段名
+        }
         let accept=false;
         for(let type of allType){
             if(type.accept(componentType)){
@@ -280,7 +283,7 @@ function buildFormLayoutByMetaFields(metaFields){
     var layout=[];
     _.each(metaFields,function(metaField){
         var componentType=getMetaFieldComponentType(metaField);
-        var formItem=buildFormItemByComponentType(componentType);
+        var formItem=buildFormItemByComponentType(componentType,true);
         formItem.id=metaField.id;
         formItem.dataField=metaField.name;
         formItem.componentParams.title=metaField.title||metaField.name;
@@ -291,7 +294,7 @@ function buildFormLayoutByMetaFields(metaFields){
 //根据元数据字段构造表单组件所需的模型
 function buildFormItemByMetaField(metaField){
     var componentType=getMetaFieldComponentType(metaField);
-    var formItem=buildFormItemByComponentType(componentType);
+    var formItem=buildFormItemByComponentType(componentType,true);
     formItem.id=metaField.id;
     formItem.dataField=metaField.name;
     formItem.componentParams=_.extend(formItem.componentParams,metaField.inputTypeParams);

@@ -105,7 +105,8 @@
         entityId: entityId,
         page: null,
         showWindow: false,
-        entity: {}
+        entity: {},
+        isMetaForm:true//弹窗内若是引入了grid组件会调用metafield 它会不断查找上级这个标记,碰巧遇到表单的话会改变表单的对象
       }
     },
     computed: {

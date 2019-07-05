@@ -45,7 +45,7 @@
                     <!--嵌入式高级搜索-->
                     <div class="adv-from-embedded">
                         <adv-form ref="advFormRef"
-                            v-if="innerToolbar.advanceSearchFields 
+                            v-if="innerToolbar.advanceSearchFields
                                 && innerToolbar.advanceSearchFields.length>0
                                 && !innerToolbar.advFormPopup"
                             v-show="showAdvForm"
@@ -62,10 +62,10 @@
                                 <i-col span="8">
                                     <Button @click="handleAdvFormSearch" size="small" type="primary">
                                         搜索
-                                    </Button> 
+                                    </Button>
                                     <Button @click="handleAdvFormReset" size="small" type="default">
                                         重置
-                                    </Button> 
+                                    </Button>
                                 </i-col>
                                 <i-col span="8">&nbsp;</i-col>
                             </Row>
@@ -116,15 +116,15 @@
                     <Input class="quicksearch-input" search  v-if="toolbar.quicksearch&&toolbar.quicksearch.fields"
                            v-model="quicksearchKeyword" @on-search="reload"
                            :placeholder="toolbar.quicksearch.placeholder"  />
-                    <Button v-if="innerToolbar.advanceSearchFields 
+                    <Button v-if="innerToolbar.advanceSearchFields
                             && innerToolbar.advanceSearchFields.length>0
                             && !innerToolbar.advFormEmbedded"
                         @click="showAdvForm=!showAdvForm" type="default">
                         高级搜索
-                    </Button>       
+                    </Button>
                     <!--弹出式高级搜索-->
                     <advance-search ref="advanceSearchRef"
-                            v-if="innerToolbar.advanceSearchFields 
+                            v-if="innerToolbar.advanceSearchFields
                             && innerToolbar.advanceSearchFields.length>0
                             && innerToolbar.advFormEmbedded"
                             :query-options="queryOptions"
@@ -293,25 +293,19 @@ export default {
         },
         //对于多对一关系和多对多关系，自动添加相关查询参数
         fillParamsWithRelation(params){
-            if(this.ifOneToManyGrid()){
-                let sourceEntityName=this.fromRelation.entityName;
-                let sourceMetaEntity=this.$metaBase.findMetaEntity(sourceEntityName);
-                //父实体的数据
-                let refEntity=this.$store.state.core.currentRouteData[sourceEntityName.toLowerCase()];
-                let idField=sourceMetaEntity.getIdField().name;
-                params['parentEntityId']=refEntity[idField];
-            }else if(this.refField){//多对一关系，根据指定的字段找到关系过滤条件
+            if(this.ifOneToManyGrid() || this.refField){
                 let relationFilters=this.buildRelationFilters();
                 if(relationFilters){
                     params.filters=params.filters?`(${params.filters}) and ${relationFilters}`:`${relationFilters}`
                 }
+                params['parentEntityId']=this.refEntityId();
             }
         },
         //暂时只处理多对一关系
         buildRelationFilters(){
             var _filters='';
             if(this.refEntityId()){
-                _filters=`${this.refField} eq ${this.refEntityId()}`;
+                _filters=`${this.getRefField()} eq ${this.refEntityId()}`;
             }
             return _filters;
         },
@@ -319,6 +313,9 @@ export default {
             let refField=this.getRefField();
             if(!refField){
                 return null;
+            }
+            if(this.$route.query[refField]){
+                return this.$route.query[refField]
             }
             let relationField=this.metaEntity.findField(refField);
             let targetEntity=null;
@@ -354,12 +351,7 @@ export default {
         canRender(){
             //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
             if(this.fromRelation||this.refField){
-                if(this.ifOneToManyGrid()){
-                    var entityName=this.fromRelation.entityName.toLowerCase();
-                    return this.$store.state.core.currentRouteData[entityName]&&this.preprocessed;
-                }else{
-                    return this.refEntityId()&&this.preprocessed;
-                }
+                return this.refEntityId()&&this.preprocessed;
             }else{
                 return this.preprocessed;
             }

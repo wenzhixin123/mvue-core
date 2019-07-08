@@ -38,10 +38,10 @@ var containerTypes=containerType.types;
 //添加新组件(基础组件)时 step1-1 需要先import再加到这里
 var fieldControlsType=[
     textType,
+    numberType,
     optionsType,
     cascadeType,
     dateType,
-    numberType,
     uploadType,
     boolType,
     arrayType,

@@ -16,30 +16,30 @@ var uploadTypes={
         title: "头像", 
         hidden:true 
     },
-    SingleFileUpload:{ 
-        id: "SingleFileUpload", 
-        title: "单文件上传", 
-        icon:"ios-document-outline"
-    },
-    MultiFileUpload:{ 
-        id: "MultiFileUpload", 
-        title: "多文件上传", 
-        icon:"ios-paper-outline"
+    Avatar:{ 
+        id: "Avatar", 
+        title: "头像", 
+        icon:"ios-contact-outline"
     },
     SingleImageUpload:{ 
         id: "SingleImageUpload", 
         title: "单图片上传", 
         icon:"md-image"
     },
+    SingleFileUpload:{ 
+        id: "SingleFileUpload", 
+        title: "单文件上传", 
+        icon:"ios-document-outline"
+    },
     MultiImageUpload:{ 
         id: "MultiImageUpload", 
         title: "多图片上传", 
         icon:"md-images"
     },
-    Avatar:{ 
-        id: "Avatar", 
-        title: "头像", 
-        icon:"ios-contact-outline"
+    MultiFileUpload:{ 
+        id: "MultiFileUpload", 
+        title: "多文件上传", 
+        icon:"ios-paper-outline"
     }
 };
 var maxSize={

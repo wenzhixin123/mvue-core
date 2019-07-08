@@ -6,7 +6,7 @@ var types={
     RefEntity:{ 
         id: "RefEntity", 
         title: "引用实体", 
-        icon:"ios-grid-outline"
+        icon:"ios-search"
     },
     MultiRefEntity:{ 
         id: "MultiRefEntity", 
@@ -16,7 +16,7 @@ var types={
     ParentSelect:{ 
         id: "ParentSelect", 
         title: "父选择器", 
-        icon:"ios-grid-outline"
+        icon:"ios-search-outline"
     },
     OrderedMultiRefEntity:{ 
         id: "OrderedMultiRefEntity", 

@@ -7,6 +7,7 @@ import globalContext from '../../../libs/context';
 import optionsUtils from '../../../libs/metadata/options-utils';
 import entityType from './entity_type';
 import expr from '../../../libs/evaluate/expr';
+import numberType from './number_type';
 
 export default {
     mixins:[emitter,getParent],
@@ -262,6 +263,15 @@ export default {
             }
             return false;
         },
+        //根据字段的数据类型转换已经计算的字段值
+        convertCalcValue(evalVal){
+            let componentType=this.formItem.componentType;
+            //非数字控件，并且算出来的值是数字，转成字符串
+            if(_.isNumber(evalVal)&&!numberType.accept(componentType)){
+                return new Number(evalVal).toString();
+            }
+            return evalVal;
+        },
         calcField(){//调用后端的api计算含有表达式的默认值或者固定字段
             let metaForm=this.getParentForm();
             if(metaForm&metaForm.calc===false){
@@ -276,7 +286,12 @@ export default {
             let evalVal=null;
             if(dependOn.justModelFields){
                 try{
-                    evalVal=expr.compile(dependOn.valueExpr)(metaForm.entity);
+                    let context={};
+                    _.forIn(dependOn.dependOn,(value,dep)=>{
+                        context[dep]=_this.model[dep]||'';
+                    });
+                    evalVal=expr.compile(dependOn.valueExpr)(context);
+                    evalVal=this.convertCalcValue(evalVal);
                 }catch (e) {
                     if(e.name=="TypeError"){
                         console.warn( `expression ${dependOn.valueExpr} eval has typeError:${e}`);
@@ -321,9 +336,7 @@ export default {
             let metaEntity=this.context.metaEntity;
             let metaField=metaEntity.findField(this.formItem.dataField);
             //固定值表达式，如果字段都在前端，直接调用前端引擎计算
-            let valueExpr=metaField.default||metaField.value;
-            //TODO 测试用
-            //valueExpr='${singleLineText+numberInput+(singleLineText+numberInput)}';
+            let valueExpr=metaField.defaultExpr||metaField.valueExpr;
             if(!valueExpr){
                 console.error(`实体${metaEntity.name}的字段${metaField.name}动态值表达式为空`);
                 return {};

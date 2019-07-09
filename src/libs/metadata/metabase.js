@@ -236,6 +236,8 @@ function loadMetaFieldFromProperty(context,propertyName,property){
       description: property["description"],
       default: property["default"],
       value: property["value"],
+      defaultExpr:property["x-default-expr"],
+      valueExpr:property["x-value-expr"],
       hasDefault: firstNotNaN(property["x-has-default"], false),
       isSystem: true,
       isDisplay: true,

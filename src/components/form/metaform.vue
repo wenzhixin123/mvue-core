@@ -100,7 +100,7 @@
             var dataResource=metaEntity.dataResource();
             //构造实体数据操作的基本数据模型，会包含需要提交到后台的所有字段：会过滤掉主键、创建时间等维护字段
             //这里提前初始化entity数据，保证字段的存在性，对于双向绑定和表单验证是必须的
-            var entity=metaEntity.getDefaultModel();
+               var entity=metaEntity.getDefaultModel();
             //初始化自动生成的批量字段
             this.initBatchFields(entity);
             if(this.layout.length==0){

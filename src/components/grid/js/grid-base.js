@@ -1,9 +1,11 @@
 import globalContext from '../../../libs/context';
 import operationManager from "../../../libs/operation/operations";
 import  gridProps from "./grid-props";
+import entityResource from "../../../libs/metadata/entity-resource";
 export default{
     mixins:[gridProps],
     data(){
+
         return {
             metaEntity: null,
             preprocessed: false,
@@ -58,7 +60,7 @@ export default{
             //外部高级查询和内部高级查询只能二选一，如果同时出现，这里不会合并
             //外部高级查询:可通过设置组件的top slot区模板和属性filters
             //内部高级查询:如果组件属性toolbar.advanceSearchFields的有值，则内部默认的高级查询条件需要合并到ctx的filters和quicksearchKeyword中
-            var useInnerAdvSearch=this.toolbar && 
+            var useInnerAdvSearch=this.toolbar &&
                 this.toolbar.advanceSearchFields &&
                 this.toolbar.advanceSearchFields.length>0
             if(useInnerAdvSearch){//内部高级查询
@@ -168,6 +170,12 @@ export default{
                     context.selectedItem=_self.selectedItems[0];
                 }
             }
+            Object.defineProperty(context,"parentItem", {
+                get: function () {
+                    return _self.getParentRecord();
+                },
+                enumerable: true
+            });
             return context;
         },
         wrapBtns(btns) {
@@ -216,6 +224,79 @@ export default{
                 return btn.show(ctx,btn);
             }
             return true;
+        },
+        refEntityId(){
+            let refField=this.getRefField();
+            if(!refField || !this.metaEntity){
+                return null;
+            }
+            if(this.$route.query[refField]){
+                return this.$route.query[refField]
+            }
+            let relationField=this.metaEntity.findField(refField);
+            let targetEntity=null;
+            if(relationField&&relationField.manyToOneRelation){
+                let r=relationField.manyToOneRelation;
+                targetEntity=r.targetEntity.toLowerCase();
+            }else if(this.fromRelation){
+                targetEntity = this.fromRelation.entityName.toLowerCase();
+            }
+            if(targetEntity){
+                let refEntity=this.$store.state.core.currentRouteData[targetEntity];
+                if(refEntity){
+                    let idField=this.$metaBase.findMetaEntity(targetEntity).getIdField().name;
+                    return refEntity[idField];
+                }
+            }
+            return null;
+        },
+        getRefField(){
+            if(this.refField){
+                return this.refField;
+            }
+            if(this.fromRelation) {
+                var targetEntity = this.$metaBase.findMetaEntity(this.fromRelation.entityName);
+                var relation = targetEntity.relations[this.fromRelation.name];
+                if (relation && relation.joinFields && relation.joinFields.length>0) {
+                    let jf=relation.joinFields;
+                    return jf[0];
+                }
+            }
+            return null;
+        },
+        resolveRelationInfo(){
+            let relationName=this.fromRelation&&this.fromRelation.name;
+            if(relationName){
+                let sourceEntityName=this.fromRelation.entityName;
+                if(!sourceEntityName){
+                    return false;
+                }
+                let sourceMetaEntity=this.$metaBase.findMetaEntity(sourceEntityName);
+                let relation=sourceMetaEntity.relations[relationName];
+                if(relation.type=="one-to-many"){
+                    return {
+                        name:relationName,
+                        entity:sourceMetaEntity,
+                        relation:relation
+                    }
+                }
+                return null;
+            }
+            return null;
+        },
+        getParentRecord(){
+            let oneToManyRelation=this.resolveRelationInfo();
+            if(oneToManyRelation==null){
+                return null;
+            }
+            let refEntity=this.$store.state.core.currentRouteData[oneToManyRelation.entity];
+            if(refEntity){
+                return Promise.resolve(refEntity);
+            }
+            let refId=this.refEntityId();
+            return entityResource.find(oneToManyRelation.entity,refId).then((data)=>{
+               return  data;
+            });
         }
     },
     components:{

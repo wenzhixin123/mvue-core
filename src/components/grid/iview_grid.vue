@@ -215,17 +215,9 @@ export default {
             return sourceMetaEntity.dataResource()[this.fromRelation.name];
         },
         ifOneToManyGrid(){//是否一对多关系列表
-            var relationName=this.fromRelation&&this.fromRelation.name;
-            if(relationName){
-                let sourceEntityName=this.fromRelation.entityName;
-                if(!sourceEntityName){
-                    return false;
-                }
-                let sourceMetaEntity=this.$metaBase.findMetaEntity(sourceEntityName);
-                let relation=sourceMetaEntity.relations[relationName];
-                if(relation.type=="one-to-many"){
-                    return true;
-                }
+            let relationInfo=this.resolveRelationInfo();
+            if(relationInfo){
+                return true;
             }
             return false;
         },
@@ -309,45 +301,7 @@ export default {
             }
             return _filters;
         },
-        refEntityId(){
-            let refField=this.getRefField();
-            if(!refField){
-                return null;
-            }
-            if(this.$route.query[refField]){
-                return this.$route.query[refField]
-            }
-            let relationField=this.metaEntity.findField(refField);
-            let targetEntity=null;
-            if(relationField&&relationField.manyToOneRelation){
-                let r=relationField.manyToOneRelation;
-                targetEntity=r.targetEntity.toLowerCase();
-            }else if(this.fromRelation){
-                targetEntity = this.fromRelation.entityName.toLowerCase();
-            }
-            if(targetEntity){
-                let refEntity=this.$store.state.core.currentRouteData[targetEntity];
-                if(refEntity){
-                    let idField=this.$metaBase.findMetaEntity(targetEntity).getIdField().name;
-                    return refEntity[idField];
-                }
-            }
-            return null;
-        },
-        getRefField(){
-            if(this.refField){
-                return this.refField;
-            }
-            if(this.fromRelation) {
-                var targetEntity = metabase.findMetaEntity(this.fromRelation.entityName);
-                var relation = targetEntity.relations[this.fromRelation.name];
-                if (relation && relation.joinFields && relation.joinFields.length>0) {
-                    let jf=relation.joinFields;
-                    return jf[0];
-                }
-            }
-            return null;
-        },
+
         canRender(){
             //如果是关系列表，必须等待关联实体的数据写入core模块的store后才算初始化完成
             if(this.fromRelation||this.refField){

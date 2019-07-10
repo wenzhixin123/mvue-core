@@ -55,18 +55,20 @@ export default {
             });
             return _.extend(this.widgetContext,params);
         },
-        hasPermission:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
-            var operation=OperationUtils.expandOperation(this.operation,this);
-            var optPermValue=operation.security;
-            if(_.isEmpty(optPermValue)){
-                return true;
-            }
-            var hasPermission=this.chkPermission(operation,this.widgetContext);
-            return hasPermission;
-        }
     },
     data(){
-        return {};
+        return {
+            hasPermission:false
+        };
+    },
+    mounted(){
+        let operation=OperationUtils.expandOperation(this.operation,this);
+        let optPermValue=operation.security;
+        if(_.isEmpty(optPermValue)){
+            this.hasPermission=true;
+        }else{
+            this.hasPermission=this.chkPermission(operation,this.widgetContext);
+        }
     },
     methods:{
         triggered(optType){
@@ -76,11 +78,11 @@ export default {
             this.$emit("successed",optType);
         },
         chkPermission(opt,ctx){
-            var hasPermission=false;
+            var hasPerm=false;
             var optNeedPerm=opt.security;
             if(_.isEmpty(optNeedPerm)){
-                hasPermission=true;
-                return hasPermission;
+                hasPerm=true;
+                return hasPerm;
             }
             if(!_.isArray(optNeedPerm)){
                 optNeedPerm=[optNeedPerm];
@@ -93,14 +95,26 @@ export default {
                 }
             }
             let selectedItem=ctx.selectedItem;
-            if(opt.rowSecurity===true &&
-                selectedItem && selectedItem["__ops__"]){
-                hasPermission=sc.hasRowPerm(selectedItem,optNeedPerm);
+            if(!selectedItem){
+                selectedItem=ctx.parentItem;
+            }
+            if(opt.rowSecurity===true && selectedItem){
+                if(!selectedItem.then){
+                    selectedItem=Promise.resolve(selectedItem);
+                }
+                selectedItem.then(item=>{
+                    if(item && item["__ops__"]){
+                        this.hasPermission=sc.hasRowPerm(item,optNeedPerm);
+                    }else{
+                        this.hasPermission=sc.hasPerm(optNeedPerm);
+                    }
+                });
+                return false;
             }else{
                 //功能级权限数据判断
-                hasPermission=sc.hasPerm(optNeedPerm);
+                hasPerm=sc.hasPerm(optNeedPerm);
             }
-            return hasPermission;
+            return hasPerm;
         }
     },
     components:{

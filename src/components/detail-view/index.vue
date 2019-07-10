@@ -54,6 +54,7 @@
 <script>
     import context from "../../libs/context";
     import  paths from "../../libs/paths";
+    import entityResource from "../../libs/metadata/entity-resource";
     var pathToRegexp = require('path-to-regexp');
 
     export default {
@@ -221,8 +222,7 @@
                 }
 
                 let metaEntity = this.$metaBase.findMetaEntity(this.entityName);
-                let dataResource = metaEntity.dataResource();
-                return dataResource.get({id: this.recordId}).then(({data}) => {
+                entityResource.find(metaEntity,this.recordId).then((data) => {
                     let titleField = metaEntity.firstTitleField();
                     if(!this.innerHeader.title){
                         this.innerHeader.title = (titleField == null ? metaEntity.title : data[titleField.name]);

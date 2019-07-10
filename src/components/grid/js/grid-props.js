@@ -162,6 +162,14 @@ export default{
         },
         importTemplateUrl:{//导入模板地址，如果指定了导入模板地址，导入时会提供模板下载按钮
             type:String
-        }
+        },
+        refField:{//多对一关系列表自动过滤的字段
+            type:String,
+            required:false
+        },
+        fromRelation:{//关联列表会提供关系配置，如{entityName:'organization',name:"users"}，多对多关系：{entityName:'organization',name:"users"}
+            type:Object,
+            required:false
+        },
     }
 }

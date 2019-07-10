@@ -20,14 +20,6 @@ export default{
             default:undefined,
             required:false
         },
-        refField:{//多对一关系列表自动过滤的字段
-            type:String,
-            required:false
-        },
-        fromRelation:{//关联列表会提供关系配置，如{entityName:'organization',name:"users"}，多对多关系：{entityName:'organization',name:"users"}
-            type:Object,
-            required:false
-        },
         maxColumnsSize:{//默认生成列时，列表最多显示的列数
             type:Number,
             required:false

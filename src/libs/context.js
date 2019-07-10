@@ -7,6 +7,7 @@ import userEx from './security/user-ex';
 import topEntityService from "../services/store/top-entity";
 import settings from './settings';
 let pathToRegexp = require('path-to-regexp');
+let pageCache={};
 
 var cachedContext={
   mvueComponents:null,
@@ -344,5 +345,11 @@ export default {
             clientHeight=clientHeight-bias;
         }
         return clientHeight>0?clientHeight:400;
+    },
+    getPageCache(){
+        return pageCache;
+    },
+    resetPageCache(){
+      pageCache={};
     }
 }

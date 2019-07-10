@@ -99,6 +99,7 @@ export default {
           if(this.operation.submit.success){
             context.success({content:this.operation.submit.success});
           }
+          this.widgetContext.grid&&this.widgetContext.grid.reload();
         },(err)=>{
           console.error(err);
           if(this.operation.submit.error){

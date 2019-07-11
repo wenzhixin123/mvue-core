@@ -289,7 +289,7 @@ export default{
             if(oneToManyRelation==null){
                 return null;
             }
-            let refEntity=this.$store.state.core.currentRouteData[oneToManyRelation.entity];
+            let refEntity=this.$store.state.core.currentRouteData[oneToManyRelation.entity.name.toLowerCase()];
             if(refEntity){
                 return Promise.resolve(refEntity);
             }

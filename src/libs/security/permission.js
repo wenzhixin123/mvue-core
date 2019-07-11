@@ -28,35 +28,69 @@ function init() {
     });
 }
 
+/**
+ * entityOp格式：entityName:operationName
+ * @param entityOp
+ */
+function resolveOpInfo(entityOp) {
+    let indexOfSplit=entityOp.indexOf(":");
+    if(indexOfSplit<=0){
+        return {metaEntity:null,op:entityOp};
+    }
+    let entityName=entityOp.substring(0,indexOfSplit);
+    let op=entityOp.substring(indexOfSplit+1);
+    let metaEntity=metabase.findMetaEntity(entityName);
+    if(metaEntity==null){
+        return {metaEntity:null,op:op};
+    }
+    return {metaEntity:metaEntity,op:op}
+}
+
 function hasPerm(op,metaEntityName) {
-    if(_.isEmpty(op)){
+    if (_.isEmpty(op)) {
         return true;
     }
-    var indexOfSplit=op.indexOf(":");
-    if(indexOfSplit>0){
-        if(_.isEmpty(metaEntityName)){
-            metaEntityName=op.substring(0,indexOfSplit);
-        }
-        op=op.substring(indexOfSplit+1);
+    let metaEntity = metabase.findMetaEntity(metaEntityName);
+    let opInfo = resolveOpInfo(op);
+    if (metaEntity == null) {
+        metaEntity = opInfo.metaEntity;
+    }
+    if (metaEntity == null) {
+        return _.has(ops, opInfo.op);
     }
 
-    if(_.isEmpty(metaEntityName)){
-        return _.has(ops,op);
+    let entityOps = ops["entities"] && ops["entities"][metaEntity.name];
+    if (entityOps == null) {
+        return false;
     }
-
-    var metaEntity=metabase.findMetaEntity(metaEntityName);
-    if(metaEntity){
-        var entityOps=ops["entities"] && ops["entities"][metaEntity.name];
-        if(entityOps==null){
-            return false;
-        }
-        if(_.has(entityOps,"*")){
-            return true;
-        }
-        return _.has(entityOps,op);
+    if (_.has(entityOps, "*")) {
+        return true;
     }
-    return false;
+    return _.has(entityOps, opInfo.op);
 }
+
+/**
+ * entityOp格式：entityName:operationName
+ */
+function resolveNeedRowPerm(entityOp) {
+    let opInfo=resolveOpInfo(entityOp);
+    let needPerm=[opInfo.op];
+    if(opInfo.metaEntity==null){
+        return needPerm;
+    }
+
+    let entityOps=ops["entities"] && ops["entities"][opInfo.metaEntity.name];
+    if(entityOps==null || !_.has(entityOps,"__row_ops__")){
+        return needPerm;
+    }
+    //获取行级权限定义
+    let rowOpsDefine=entityOps["__row_ops__"];
+    if(!_.has(rowOpsDefine,opInfo.op)){
+        return needPerm;
+    }
+    return rowOpsDefine[opInfo.op];
+}
+
 
 export  default {
     init:function () {
@@ -91,23 +125,26 @@ export  default {
     },
     /** 行级数据权限判断
      *  @param entityData 实体的一条数据记录
-     *  @param permsArray 单个权限或者权限数组，需要判断的权限 'edit' 或者 ['edit','create']
+     *  @param ops 需要判断操作名称，如：'edit' 或者 ['edit','create']
      */
-    hasRowPerm(entityData,permsArray){
+    hasRowPerm(entityData,ops){
         let hasPermission=false;
         //
-        if(!_.isArray(permsArray)){
-            permsArray=[permsArray];
+        if(!_.isArray(ops)){
+            ops=[ops];
         }
+        let permsArray=[];
+        _.forEach(ops,op=>{
+            let opNeedPerms=resolveNeedRowPerm(op);
+            permsArray=permsArray.concat(opNeedPerms);
+        });
+
         if(entityData && entityData["__ops__"]){
             //进行行级数据权限判断
             var itemPermOps=entityData["__ops__"];
             var matched=true;
             _.forEach(permsArray,(needPerm)=>{
-                var opMatch=false;
-                if(needPerm.indexOf(":")>0){
-                    needPerm=needPerm.substring(needPerm.indexOf(":")+1);
-                }
+                let opMatch=false;
                 _.forEach(itemPermOps,(permOp)=>{
                     if(permOp=="*" ||needPerm.toLowerCase()==permOp.toLowerCase()){
                         opMatch=true;

@@ -95,8 +95,6 @@ export default {
                     return reVal;
                 }
             }
-            debugger;
-
             let rowSecurity=opt.rowSecurity;
             if(!_.isPlainObject(rowSecurity)){
                 rowSecurity={

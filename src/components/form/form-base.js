@@ -221,7 +221,7 @@ export default {
             //优先从query中解析父实体信息
             _.forIn(this.$route.query,(val,field)=>{
                 let metaField=this.metaEntity.findField(field);
-                if(metaField==null && metaField.manyToOneRelation==null){
+                if(metaField==null || metaField.manyToOneRelation==null){
                     return ;
                 }
                 matched={

@@ -1,4 +1,6 @@
 import  context from "../context";
+import  metabase from "./metabase";
+
 let CacheKeyForFind="__entity_cache_key_for_find";
 let CacheKeyForQueue="__entity_cache_key_for_queue";
 
@@ -32,6 +34,9 @@ function addOrCreateTask(key,handler) {
 }
 
 function findByEntity(metaEntity,id) {
+    if(_.isString(metaEntity)){
+        metaEntity=metabase.findMetaEntity(metaEntity);
+    }
     let entityCache=getCacheForFind();
     let itemCacheKey=metaEntity.name+"_"+id;
     if(_.has(entityCache,itemCacheKey)){

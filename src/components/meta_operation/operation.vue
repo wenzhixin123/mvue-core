@@ -14,6 +14,7 @@ import  operationManager from "../../libs/operation/operations";
 import getParent from '../mixins/get-parent';
 import context from '../../libs/context';
 import sc from '../../libs/security/permission';
+import entityResource from '../../libs/metadata/entity-resource';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',group:'group',selectEntity:'selectEntity'};
 //将不同的部件操作类型转成实际的操作
@@ -94,11 +95,27 @@ export default {
                     return reVal;
                 }
             }
-            let selectedItem=ctx.selectedItem;
-            if(!selectedItem || !selectedItem["__ops__"]){
-                selectedItem=ctx.parentItem;
+            debugger;
+
+            let rowSecurity=opt.rowSecurity;
+            if(!_.isPlainObject(rowSecurity)){
+                rowSecurity={
+                    enabled:opt.rowSecurity,
+                    entityName:null,
+                    rowId:null
+                }
             }
-            if(opt.rowSecurity===true && selectedItem){
+            let selectedItem=null;
+            if(rowSecurity.rowId && rowSecurity.entityName){
+                selectedItem=entityResource.find(rowSecurity.entityName,rowSecurity.rowId);
+            }else{
+                selectedItem=ctx.selectedItem;
+                if(!selectedItem || !selectedItem["__ops__"]){
+                    selectedItem=ctx.parentItem;
+                }
+            }
+
+            if(rowSecurity.enabled===true && selectedItem){
                 if(!selectedItem.then){
                     selectedItem=Promise.resolve(selectedItem);
                 }

@@ -94,7 +94,6 @@ export default {
                     return reVal;
                 }
             }
-            debugger;
             let selectedItem=ctx.selectedItem;
             if(!selectedItem || !selectedItem["__ops__"]){
                 selectedItem=ctx.parentItem;

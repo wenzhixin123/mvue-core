@@ -309,16 +309,16 @@ export default{
         buildQueryOptions(params,keyword){
 
         },
-
         //根据已选ids查询数据
         searchByIds(ids,callback){
             let idField=this.getIdField();
-            let filters=ids;
-            if(_.isArray(ids)){
-                filters=ids.join(",");
+            let queryOptions={
+                filters:null
             }
-            var queryOptions={
-                filters:`${idField} in ${filters}`
+            if(_.isArray(ids)){
+                queryOptions.filters=`${idField} in ${ids.join(",")}`;
+            }else{
+                queryOptions.id=ids;
             }
             if(!this.multiple){
                 queryOptions.expand=this.buildQueryExpand();

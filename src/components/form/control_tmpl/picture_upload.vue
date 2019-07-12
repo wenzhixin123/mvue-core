@@ -6,11 +6,11 @@
                     <div>
                         <ufs-image :item='item' :paths='paths'></ufs-image>
                         <div class="demo-upload-list-cover">
-                            <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item)"></i> 
+                            <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item)"></i>
                         </div>
                     </div>
                 </div>
-                <Modal title="查看图片" v-model="visible">
+                <Modal title="查看图片" v-model="visible" :cancel-text="''">
                     <img class="preview-img" :src="previewImgSrc" v-if="visible">
                 </Modal>
             </div>
@@ -22,7 +22,7 @@
                     <div v-if="item.status === 'finished'">
                         <ufs-image :item='item' :paths='paths'></ufs-image>
                         <div class="demo-upload-list-cover">
-                            <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item)"></i> 
+                            <i class="ivu-icon ivu-icon-ios-eye-outline" @click="handleView(item)"></i>
                             <i class="ivu-icon ivu-icon-ios-trash-outline" @click="handleRemove(item)"></i>
                         </div>
                     </div>
@@ -49,7 +49,7 @@
                         <Icon type="ios-camera-outline" size="20"/>
                     </div>
                 </Upload>
-                <Modal title="查看图片" v-model="visible">
+                <Modal title="查看图片" v-model="visible" :cancel-text="''">
                     <ufs-image class="preview-img" v-if="visible" :item='previewItem' :paths='paths'></ufs-image>
                 </Modal>
             </div>

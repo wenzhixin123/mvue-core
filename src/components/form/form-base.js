@@ -4,9 +4,10 @@ import widgetMode from './js/widget-mode';
 import contextHelper from "../../libs/context";
 import globalConsts from "../../libs/consts";
 import cartesian from "../../libs/cartesian";
-import metaformUtils from './js/metaform_utils';
 import operationManager from "../../libs/operation/operations";
 import getParent from '../mixins/get-parent';
+import entityResource from "../../libs/metadata/entity-resource";
+import consts from "../../libs/consts";
 var co = require('co');
 export default {
     mixins:[getParent],
@@ -185,12 +186,65 @@ export default {
     methods: {
         //表单操作需要的上下文数据
         getWidgetContext() {
-            return {
+            let context= {
                 selectedId: this.entityId,
                 selectedItem: this.entity,
                 metaEntity: this.metaEntity,
                 form: this
             };
+            let _self=this;
+            Object.defineProperty(context,"parentItem", {
+                get: function () {
+                    return _self.getParentRecord();
+                },
+                enumerable: true
+            });
+            return context;
+        },
+        getParentRecord(){
+            let oneToManyRelation=this.resolveParentRelation();
+            if(oneToManyRelation==null){
+                return null;
+            }
+            let refEntity=this.$store.state.core.currentRouteData[oneToManyRelation.entity.toLowerCase()];
+            if(refEntity){
+                return Promise.resolve(refEntity);
+            }
+            let refId=oneToManyRelation.refFieldId;
+            let targetMetaEntity=this.$metaBase.findMetaEntity(oneToManyRelation.entity);
+            return entityResource.find(oneToManyRelation.entity,refId).then((data)=>{
+                return  data;
+            });
+        },
+        resolveParentRelation(){
+            let matched=null;
+            //优先从query中解析父实体信息
+            _.forIn(this.$route.query,(val,field)=>{
+                let metaField=this.metaEntity.findField(field);
+                if(metaField==null || metaField.manyToOneRelation==null){
+                    return ;
+                }
+                matched={
+                    entity:metaField.manyToOneRelation.targetEntity,
+                    refFieldId:val
+                }
+            });
+            if(matched!=null){
+                return matched;
+            }
+            _.forEach(this.metaEntity.relations,relation=>{
+                if(relation.type!=consts.manyToOne){
+                    return ;
+                }
+                let targetMetaEntity=relation.targetEntity;
+                let parentEntity=this.$store.state.core.currentRouteData[targetMetaEntity.name.toLowerCase()];
+                if(parentEntity!=null){
+                    matched={
+                        entity:targetMetaEntity
+                    }
+                    return false;
+                }
+            });
         },
         //表单的默认保存操作为调用表单示例的doSaveModel保存实体数据
         doSaveModel: function () {

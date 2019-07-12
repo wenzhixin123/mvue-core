@@ -200,7 +200,7 @@ export default {
         return false;
       }
     });
-    
+
     return function(h,params){
       if(batchEditor){
         let idFieldName=context.grid.metaEntity.getIdField().name;

@@ -14,6 +14,7 @@ import  operationManager from "../../libs/operation/operations";
 import getParent from '../mixins/get-parent';
 import context from '../../libs/context';
 import sc from '../../libs/security/permission';
+import entityResource from '../../libs/metadata/entity-resource';
 //操作类型定义
 var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',group:'group',selectEntity:'selectEntity'};
 //将不同的部件操作类型转成实际的操作
@@ -55,18 +56,20 @@ export default {
             });
             return _.extend(this.widgetContext,params);
         },
-        hasPermission:function(){//根据自定义操作权限表达式计算操作是否需要隐藏
-            var operation=OperationUtils.expandOperation(this.operation,this);
-            var optPermValue=operation.security;
-            if(_.isEmpty(optPermValue)){
-                return true;
-            }
-            var hasPermission=this.chkPermission(operation,this.widgetContext);
-            return hasPermission;
-        }
     },
     data(){
-        return {};
+        return {
+            hasPermission:false
+        };
+    },
+    mounted(){
+        let operation=OperationUtils.expandOperation(this.operation,this);
+        let optPermValue=operation.security;
+        if(_.isEmpty(optPermValue)){
+            this.hasPermission=true;
+        }else{
+            this.hasPermission=this.chkPermission(operation,this.widgetContext);
+        }
     },
     methods:{
         triggered(optType){
@@ -76,11 +79,11 @@ export default {
             this.$emit("successed",optType);
         },
         chkPermission(opt,ctx){
-            var hasPermission=false;
+            var hasPerm=false;
             var optNeedPerm=opt.security;
             if(_.isEmpty(optNeedPerm)){
-                hasPermission=true;
-                return hasPermission;
+                hasPerm=true;
+                return hasPerm;
             }
             if(!_.isArray(optNeedPerm)){
                 optNeedPerm=[optNeedPerm];
@@ -92,15 +95,41 @@ export default {
                     return reVal;
                 }
             }
-            let selectedItem=ctx.selectedItem;
-            if(opt.rowSecurity===true &&
-                selectedItem && selectedItem["__ops__"]){
-                hasPermission=sc.hasRowPerm(selectedItem,optNeedPerm);
+            let rowSecurity=opt.rowSecurity;
+            if(!_.isPlainObject(rowSecurity)){
+                rowSecurity={
+                    enabled:opt.rowSecurity,
+                    entityName:null,
+                    rowId:null
+                }
+            }
+            let selectedItem=null;
+            if(rowSecurity.rowId && rowSecurity.entityName){
+                selectedItem=entityResource.find(rowSecurity.entityName,rowSecurity.rowId);
+            }else{
+                selectedItem=ctx.selectedItem;
+                if(!selectedItem || !selectedItem["__ops__"]){
+                    selectedItem=ctx.parentItem;
+                }
+            }
+
+            if(rowSecurity.enabled===true && selectedItem){
+                if(!selectedItem.then){
+                    selectedItem=Promise.resolve(selectedItem);
+                }
+                selectedItem.then(item=>{
+                    if(item && item["__ops__"]){
+                        this.hasPermission=sc.hasRowPerm(item,optNeedPerm);
+                    }else{
+                        this.hasPermission=sc.hasPerm(optNeedPerm);
+                    }
+                });
+                return false;
             }else{
                 //功能级权限数据判断
-                hasPermission=sc.hasPerm(optNeedPerm);
+                hasPerm=sc.hasPerm(optNeedPerm);
             }
-            return hasPermission;
+            return hasPerm;
         }
     },
     components:{

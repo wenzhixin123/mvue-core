@@ -1,3 +1,6 @@
+//所有控件属性定义的相关工具包
+import propTypes from './_types';
+
 const uuidv1 = require('uuid/v1');
 //定义基础组件：选项类型
 import optionsType from './options_type'
@@ -120,30 +123,7 @@ var auxiliaryControls=[
 var containerControls=[
     containerTypes.Group
 ];
-//组件布局定义
-var componentLayout={
-    horizontal:"horizontal",//左右布局
-    vertical:"vertical"//上下布局
-}
-//定义所有基础组件类型的基础参数
-var baseComponentParams={
-    title:"",//标题，相当于表单label显示文字
-    description:"",//描述，相当于input下的提示说明文字
-    layout:componentLayout.vertical,//组件的布局方式
-    width:"100",//组件所占的宽度，是百分比
-    horizontalLayoutLabelWidth:"20",//左右布局时，组件label占的百分比
-    required:false,//是否必填
-    semantics:"",//语义设置
-    placeholder:"",
-    validation:{
-        validate:false,
-        rule:{
-            type:"",
-            brief:"",
-            pattern:""
-        }
-    }
-};
+
 var fieldIndex=0;
 //根据组件类型构造对应的表单布局
 function buildFormItemByComponentType(componentType,ignoreDataField){
@@ -167,7 +147,7 @@ function buildFormItemByComponentType(componentType,ignoreDataField){
     }else if(noFieldType.accept(componentType)){
         //不是字段类型的组件：如成员、子列表等
         formItem.isExternal=true;
-        componentParams=_.extend({},baseComponentParams,noFieldType.componentParams[componentType]);
+        componentParams=_.extend({},noFieldType.componentParams[componentType]);
         componentParams.title=componentTypes[componentType].title;
     }else{
         formItem.isDataField=true;
@@ -179,13 +159,13 @@ function buildFormItemByComponentType(componentType,ignoreDataField){
         for(let type of allType){
             if(type.accept(componentType)){
                 let typeComponentParams=type.componentParams&&type.componentParams[componentType];
-                componentParams=_.extend({},baseComponentParams,typeComponentParams||{});
+                componentParams=_.extend({},typeComponentParams||{});
                 accept=true;
                 break;
             }
         }
         if(!accept){
-            componentParams=_.extend({},baseComponentParams);
+            componentParams={};
         }
         componentParams.title=componentTypes[componentType].title;
     }
@@ -374,12 +354,6 @@ function defaultValueTypes(formItem){
     }
     return null;
 };
-//可设置的语义
-var semantics=[
-    {id:"title",title:"标题"},
-    {id:"member",title:"成员"},
-    {id:"manager",title:"管理员"}
-];
 //值可设置的类型：默认值和固定值
 var valueTypes={
     defaultValue:{id:"defaultValue",title:"默认值"},
@@ -392,7 +366,6 @@ export default {
     switchableComponents:switchableComponents,
     toggleComponent:toggleComponent,
     buildFormItemByComponentType:buildFormItemByComponentType,
-    buildOptionsItem:optionsType.buildOptionsItem,
     nextDataFieldName:nextDataFieldName,
     fieldControls:fieldControls,
     auxiliaryControls:auxiliaryControls,
@@ -422,7 +395,6 @@ export default {
     isContainer:containerType.accept,
     isNoFieldType:noFieldType.accept,
     isIssuedNumber:issuedNumberType.isIssuedNumber,
-    componentLayout:componentLayout,
     datePrecision:dateType.datePrecision,
     timePrecision:dateType.timePrecision,
     uploadFilters:uploadType.uploadFilters,
@@ -433,7 +405,6 @@ export default {
     formatDataForExport:formatDataForExport,
     getMetaFieldComponentType:getMetaFieldComponentType,
     defaultValueTypes:defaultValueTypes,
-    semantics:semantics,
     valueTypes:valueTypes,
     //type definition
     textType,
@@ -447,5 +418,6 @@ export default {
     entityType,
     noFieldType,
     containerType,
-    issuedNumberType
+    issuedNumberType,
+    propTypes
 };

@@ -1,6 +1,8 @@
 import controlTypeService from './js/control_type_service';
 import controlBase from './js/control_base';
-import context from '../../libs/context'
+import context from '../../libs/context';
+//所有控件属性定义的相关工具包
+import propTypes from './js/_types';
 function registerSingle(controlDef){
     //注册表单字段组件到controlTypeService
     controlTypeService.registerFieldControls(controlDef);
@@ -35,6 +37,7 @@ function mergeDesignerDef(designerDef){
     controlTypeService.mergeFieldControlDesignerDef(designerDef);
 }
 export default {
+    propTypes,
     mergeDesignerDef,
     register:register,
     controlBase:controlBase

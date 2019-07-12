@@ -1,5 +1,55 @@
+import _types from './_types';
+function limitLength(max){
+    return {
+        id:'limitLength',
+        inputType:_types.inputType.LimitRange,
+        default:{
+            limit:true,
+            max:max,
+            min:0
+        },
+        store:_types.store.MetaFieldInputParams,
+        title:'长度限制'
+    };
+}
+//控件属性定义
+const props={
+    SingleLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,limitLength(200)),
+    MultiLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,limitLength(2000),
+        {
+            id:'rows',
+            inputType:_types.inputType.Number,
+            default:3,
+            store:_types.store.MetaFieldInputParams,
+            title:'默认行数'
+        },
+        {
+            id:'autosize',
+            inputType:_types.inputType.AutoSize,
+            default:{minRows: 3, maxRows: 10},
+            store:_types.store.MetaFieldInputParams,
+            title:'行自适应设置'
+        }
+    ),
+    Password:_types.merge(_types.placeholder,limitLength(20),
+        {
+            id:'showBtn',
+            inputType:_types.inputType.Boolean,
+            default:false,
+            store:_types.store.MetaFieldInputParams,
+            title:'显示自动生成按钮'
+        },
+        {
+            id:'encrypt',
+            inputType:_types.inputType.Boolean,
+            default:false,
+            store:_types.store.MetaFieldInputParams,
+            title:'是否加密'
+        }
+    ),
+    JsonText:_types.merge(_types.placeholder)
+};
 //文本控件相关定义
-//定义基础组件:文本类型
 var textTypes={
     SingleLineText:{ 
         id: "SingleLineText", 
@@ -22,36 +72,13 @@ var textTypes={
         icon:"logo-javascript" 
     }
 };
+//设置控件属性定义，到控件基础定义上
+_.forIn(textTypes,(value,key)=>{
+    value.props=props[key];
+});
 //定义文本类型组件的扩展参数
 function textBaseInputRules(componentType){
-    var base={
-        placeholder:"",
-        unique:false,
-        limitLength:{
-            limit:true,
-            max:200,
-            min:0
-        },
-        validation:{
-            validate:false,
-            rule:{
-                type:"",
-                brief:"",
-                pattern:""
-            }
-        }
-    };
-    if(componentType===textTypes.MultiLineText.id){
-        base.limitLength.max=2000;
-        base.rows=3;//默认三行
-        base.autosize={minRows: 3, maxRows: 10 };
-    }
-    if(componentType===textTypes.Password.id){
-        base.limitLength.max=20;
-        base.showBtn=false;
-        base.encrypt=false;//表示后端是否会加密，此时前端表单不会提交密码到后端，必须通过特殊的接口修改密码
-    }
-    return base;
+    return _types.getPropsDefault(props[componentType]);
 };
 var componentParams={
     SingleLineText:textBaseInputRules(textTypes.SingleLineText.id),

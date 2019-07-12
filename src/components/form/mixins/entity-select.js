@@ -325,6 +325,9 @@ export default{
             }
             if(this.entityResource){
                 this.entityResource.query(queryOptions).then(({data})=>{
+                    if(!_.isArray(data)){
+                        data=[data];
+                    }
                     callback&&callback(data);
                 });
             }
@@ -337,9 +340,9 @@ export default{
             }
             var _this=this;
             var params={select:_this.queryFields};
-            if(!this.multiple){
+            /*if(!this.multiple){
                 params.expand=this.buildQueryExpand();
-            }
+            }*/
             let limit=this.getQueryLimit();
             params.limit=limit+1;
             //如果是关键字查询，附加查询条件查询
@@ -393,9 +396,9 @@ export default{
         doSearch:function(keyword,callback){
             var _this=this;
             var params={select:_this.queryFields};
-            if(!this.multiple){
+            /*if(!this.multiple){
                 params.expand=this.buildQueryExpand();
-            }
+            }*/
             if(!keyword){
                 _this.doSearchForCache(items=>{
                     this.ensureHistoryItems(items);

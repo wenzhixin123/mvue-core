@@ -4,7 +4,7 @@
                 <div class="form-item-view" v-text="getOptionsExData(valueObj)||emptyText" :title="getOptionsExData(valueObj)||emptyText"></div>
         </template>
         <template v-else>
-            <Select transfer v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.selectText" @on-change="onChange">
+            <Select transfer v-model="valueObj" :disabled="disabled" :placeholder="formItem.componentParams.placeholder||formItem.componentParams.selectText" @on-change="onChange">
                 <Option v-for="item in formItem.componentParams.options" :key="item.id" :value="item.id">{{ item.text }}</Option>
             </Select>
         </template>

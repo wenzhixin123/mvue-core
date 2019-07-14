@@ -174,7 +174,9 @@ export default{
                 return initValue;
             }
             //如果当前引用实体，与topEntity设置的一致，则自动设置为topEntity的值
-            if(this.formItem && this.isCreate() &&  this.formItem.componentParams){
+            if(this.formItem && this.isCreate()
+                && this.formItem.componentParams
+                && this.formItem.componentParams.entityId){
                 let topEntity=topEntityService.get(this.formItem.componentParams.entityId);
                 if(topEntity){
                     initValue=topEntity.value;

@@ -174,7 +174,9 @@ export default{
                 return initValue;
             }
             //如果当前引用实体，与topEntity设置的一致，则自动设置为topEntity的值
-            if(this.formItem && this.isCreate() &&  this.formItem.componentParams){
+            if(this.formItem && this.isCreate()
+                && this.formItem.componentParams
+                && this.formItem.componentParams.entityId){
                 let topEntity=topEntityService.get(this.formItem.componentParams.entityId);
                 if(topEntity){
                     initValue=topEntity.value;
@@ -325,6 +327,9 @@ export default{
             }
             if(this.entityResource){
                 this.entityResource.query(queryOptions).then(({data})=>{
+                    if(!_.isArray(data)){
+                        data=[data];
+                    }
                     callback&&callback(data);
                 });
             }
@@ -337,9 +342,9 @@ export default{
             }
             var _this=this;
             var params={select:_this.queryFields};
-            if(!this.multiple){
+            /*if(!this.multiple){
                 params.expand=this.buildQueryExpand();
-            }
+            }*/
             let limit=this.getQueryLimit();
             params.limit=limit+1;
             //如果是关键字查询，附加查询条件查询
@@ -393,9 +398,9 @@ export default{
         doSearch:function(keyword,callback){
             var _this=this;
             var params={select:_this.queryFields};
-            if(!this.multiple){
+            /*if(!this.multiple){
                 params.expand=this.buildQueryExpand();
-            }
+            }*/
             if(!keyword){
                 _this.doSearchForCache(items=>{
                     this.ensureHistoryItems(items);

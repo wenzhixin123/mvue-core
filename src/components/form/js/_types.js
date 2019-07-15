@@ -23,7 +23,7 @@ const store={
  */
 let inputTypeArray=[
   'Boolean','SingleLineText','MultiLineText','Number','SingleSelect','SingleSelectWithInput',
-  'Rules','LimitRange','AutoSize','Decimal','OptionsEditor'
+  'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json'
 ]; 
 let inputType={};
 inputTypeArray.forEach(t => {

@@ -7,6 +7,7 @@ var filesize = require('file-size');
 export default {
     data:function(){
         return {
+            multiple:false,
             uploadAction:"",
             defaultList:[],
             uploaded:false,//表示用户是否操作过上传组件
@@ -24,10 +25,8 @@ export default {
                 });
                 return fileTypes;
             }
-            if(this.formItem.componentParams.limitFileType
-                &&this.formItem.componentParams.limitFileType.limit
-                &&this.formItem.componentParams.limitFileType.fileTypes){
-                return this.formItem.componentParams.limitFileType.fileTypes;
+            if(this.formItem.componentParams.allowedFormats){
+                return this.formItem.componentParams.allowedFormats;
             }
             return [];
         },
@@ -38,10 +37,8 @@ export default {
             }else{
                 max=uploadType.maxSize.file;
             }
-            if(this.formItem.componentParams.limitSize.limit
-                &&this.formItem.componentParams.limitSize.max
-                &&this.formItem.componentParams.limitSize.max<max){
-                    max=this.formItem.componentParams.limitSize.max;
+            if(this.formItem.componentParams.maxSize<max){
+                    max=this.formItem.componentParams.maxSize;
             }
             return max;
         }
@@ -106,7 +103,7 @@ export default {
         },
         minusCurrentFileSum:function(){
             //多文件上传，上传完后，当前待上传的总数减一
-            if(this.formItem.componentParams.multiple.isAllowed){
+            if(this.multiple){
                 this.currentUploadFileSum=this.currentUploadFileSum-1;
             }
         },
@@ -132,7 +129,7 @@ export default {
             }
             filePromise.then(file=>{
                 //单文件上传，直接覆盖旧的文件
-                if(!this.formItem.componentParams.multiple.isAllowed){
+                if(!this.multiple){
                     //TODO 这一行好像去掉也可以，有待验证
                     this.$refs.upload.fileList=[file];
                 }
@@ -166,12 +163,12 @@ export default {
             var ok=true;
             this.oldFileList=_.cloneDeep(this.$refs.upload.fileList);
             //单文件上传，直接覆盖旧的图片
-            if(!this.formItem.componentParams.multiple.isAllowed){
+            if(!this.multiple){
                 this.$refs.upload.fileList=[];
             }else{
                 //多文件上传，校验图片个数
-                let _max=this.formItem.componentParams.multiple.max;
-                if(this.formItem.componentParams.multiple.isAllowed&&_max){
+                let _max=this.formItem.componentParams.uploadMax;
+                if(this.multiple&&_max){
                     let check = (this.$refs.upload.fileList.length+this.currentUploadFileSum) <= _max;
                     if (!check) {
                         this.minusCurrentFileSum();

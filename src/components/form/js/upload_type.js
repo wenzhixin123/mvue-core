@@ -1,4 +1,79 @@
 //上传组件的相关定义
+import _types from './_types';
+
+//定义上传的基本文件后缀类型
+var uploadFilters={
+    documents:[
+        {id:"text",value:["text"]},
+        {id:"doc/docx",value:["doc","docx"]},
+        {id:"xls/xlsx",value:["xls","xlsx"]},
+        {id:"ppt/pptx",value:["ppt","pptx"]},
+        {id:"html/htm",value:["html","htm"]},
+        {id:"pdf",value:["pdf"]}
+    ],
+    pictures:[
+        {id:"jpg",value:["jpg","jpeg"]},
+        {id:"png",value:["png"]},
+        {id:"gif",value:["gif"]},
+        {id:"bmp",value:["bmp"]},
+        {id:"ico",value:["ico"]},
+    ],
+    zips:[
+        {id:"zip",value:["zip"]},
+        {id:"rar",value:["rar"]},
+        {id:"7z",value:["7z"]},
+    ]
+};
+
+const uploadMax={
+    id:'uploadMax',
+    inputType:_types.inputType.Number,
+    default:null,
+    store:_types.store.MetaFieldInputParams,
+    title:'最大文件个数'
+};
+const allowedFormats={
+    id:'allowedFormats',
+    inputType:_types.inputType.Json,
+    default:[],//允许的文件后缀列表，由documentsIds和zipsIds定义的类型id转换而来
+    store:_types.store.MetaFieldInputParams,
+    title:'文件类型'
+};
+const Size={
+    picture:50,//图片最大50M这里以兆(M)为单位
+    file:1024//文件最大1024M这里以兆(M)为单位
+};
+const maxSize={
+    id:'maxSize',
+    inputType:_types.inputType.Number,
+    min:0,
+    default:Size.file,
+    store:_types.store.MetaFieldInputParams,
+    title:'文件最大(M)'
+};
+const width={
+    id:'width',
+    inputType:_types.inputType.Number,
+    default:130,
+    min:1,
+    store:_types.store.MetaFieldInputParams,
+    title:'宽(px)'
+};
+const height={
+    id:'height',
+    inputType:_types.inputType.Number,
+    default:150,
+    min:1,
+    store:_types.store.MetaFieldInputParams,
+    title:'高(px)'
+};
+const props={
+    Avatar:_types.merge(Object.assign({},maxSize,{default:Size.picture}),width,height),
+    SingleImageUpload:_types.merge(Object.assign({},maxSize,{default:Size.picture}),width,height),
+    MultiImageUpload:_types.merge(Object.assign({},maxSize,{default:Size.picture})),
+    SingleFileUpload:_types.merge(maxSize,allowedFormats),
+    MultiFileUpload:_types.merge(maxSize,allowedFormats)
+};
 //定义基础组件:上传类型基础组件定义
 var uploadTypes={
     FileUpload:{ 
@@ -42,139 +117,20 @@ var uploadTypes={
         icon:"ios-paper-outline"
     }
 };
-var maxSize={
-    picture:50,//图片最大50M这里以兆(M)为单位
-    file:1024//文件最大1024M这里以兆(M)为单位
-};
-//定义上传的基本文件后缀类型
-var uploadFilters={
-    documents:[
-        {id:"text",value:["text"]},
-        {id:"doc/docx",value:["doc","docx"]},
-        {id:"xls/xlsx",value:["xls","xlsx"]},
-        {id:"ppt/pptx",value:["ppt","pptx"]},
-        {id:"html/htm",value:["html","htm"]},
-        {id:"pdf",value:["pdf"]}
-    ],
-    pictures:[
-        {id:"jpg",value:["jpg","jpeg"]},
-        {id:"png",value:["png"]},
-        {id:"gif",value:["gif"]},
-        {id:"bmp",value:["bmp"]},
-        {id:"ico",value:["ico"]},
-    ],
-    zips:[
-        {id:"zip",value:["zip"]},
-        {id:"rar",value:["rar"]},
-        {id:"7z",value:["7z"]},
-    ]
-};
+//设置控件属性定义，到控件基础定义上
+_.forIn(uploadTypes,(value,key)=>{
+    value.props=props[key];
+});
 //上传相关组件的扩展参数定义
 var componentParams={
-    FileUpload:{
-        multiple:{
-            isAllowed:true,//是否允许上传多个文件
-            max:null//最大文件个数，为空不限制
-        },
-        limitFileType:{
-            limit:false,
-            documentsIds:[],//文档类型允许的文件后缀列表id，为空表示不限制
-            zipsIds:[],//压缩类型类型允许的文件后缀列表id，为空表示不限制
-            fileTypes:[],//允许的文件后缀列表，由documentsIds和zipsIds定义的类型id转换而来
-        },
-        limitSize:{
-            limit:true,
-            max:maxSize.file
-        }
-    },
-    PictureUpload:{
-        multiple:{
-            isAllowed:true,//是否允许上传多个文件
-            max:null//最大文件个数，为空不限制
-        },
-        limitSize:{
-            limit:true,
-            max:maxSize.picture
-        }
-    },
-    Portrait:{
-        multiple:{
-            isAllowed:false,//头像组件只能传一张图
-            max:1//
-        },
-        limitSize:{
-            limit:true,
-            max:maxSize.picture
-        },
-        width:130,//头像宽度px
-        height:150//头像高度px
-    },
-    SingleFileUpload:{
-        multiple:{
-            isAllowed:false,//是否允许上传多个文件
-            max:1//最大文件个数，为空不限制
-        },
-        limitFileType:{
-            limit:false,
-            documentsIds:[],//文档类型允许的文件后缀列表id，为空表示不限制
-            zipsIds:[],//压缩类型类型允许的文件后缀列表id，为空表示不限制
-            fileTypes:[],//允许的文件后缀列表，由documentsIds和zipsIds定义的类型id转换而来
-        },
-        limitSize:{
-            limit:true,
-            max:maxSize.file
-        }
-    },
-    SingleImageUpload:{
-        multiple:{
-            isAllowed:false,//是否允许上传多个文件
-            max:1//最大文件个数，为空不限制
-        },
-        limitSize:{
-            limit:true,
-            max:maxSize.picture
-        },
-        width:130,//头像宽度px
-        height:150//头像高度px
-    },
-    MultiFileUpload:{
-        multiple:{
-            isAllowed:true,//是否允许上传多个文件
-            max:null//最大文件个数，为空不限制
-        },
-        limitFileType:{
-            limit:false,
-            documentsIds:[],//文档类型允许的文件后缀列表id，为空表示不限制
-            zipsIds:[],//压缩类型类型允许的文件后缀列表id，为空表示不限制
-            fileTypes:[],//允许的文件后缀列表，由documentsIds和zipsIds定义的类型id转换而来
-        },
-        limitSize:{
-            limit:true,
-            max:maxSize.file
-        }
-    },
-    MultiImageUpload:{
-        multiple:{
-            isAllowed:true,//是否允许上传多个文件
-            max:null//最大文件个数，为空不限制
-        },
-        limitSize:{
-            limit:true,
-            max:maxSize.picture
-        }
-    },
-    Avatar:{
-        multiple:{
-            isAllowed:false,//头像组件只能传一张图
-            max:1//
-        },
-        limitSize:{
-            limit:true,
-            max:maxSize.picture
-        },
-        width:130,//头像宽度px
-        height:150//头像高度px
-    }
+    FileUpload:_types.getPropsDefault(props.MultiFileUpload),
+    PictureUpload:_types.getPropsDefault(props.MultiImageUpload),
+    Portrait:_types.getPropsDefault(props.Avatar),
+    SingleFileUpload:_types.getPropsDefault(props.SingleFileUpload),
+    SingleImageUpload:_types.getPropsDefault(props.SingleImageUpload),
+    MultiFileUpload:_types.getPropsDefault(props.MultiFileUpload),
+    MultiImageUpload:_types.getPropsDefault(props.MultiImageUpload),
+    Avatar:_types.getPropsDefault(props.Avatar)
 };
 //判断是否上传相关组件
 function accept(componentType){

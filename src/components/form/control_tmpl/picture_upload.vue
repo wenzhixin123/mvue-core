@@ -40,7 +40,7 @@
                     :default-file-list="defaultList"
                     :format="allowedFormats"
                     :max-size="maxSize*1024"
-                    :multiple="formItem.componentParams.multiple.isAllowed"
+                    :multiple="multiple"
                     type="drag"
                     name="image"
                     :action="uploadAction"
@@ -65,7 +65,8 @@ export default {
     data:function(){
         return {
             previewItem:null,
-            visible:false
+            visible:false,
+            multiple:true
         };
     }
 }

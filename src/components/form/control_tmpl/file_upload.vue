@@ -22,7 +22,7 @@
                     :default-file-list="defaultList"
                     :format="allowedFormats"
                     :max-size="maxSize*1024"
-                    :multiple="formItem.componentParams.multiple.isAllowed"
+                    :multiple="multiple"
                     name="file"
                     :action="uploadAction">
                     <Button  icon="ios-cloud-upload-outline" style="font-size:13px;">上传</Button>
@@ -42,7 +42,12 @@ import controlBase from '../js/control_base';
 import uploadBase from '../js/upload_base';
 import multiUpload from '../js/multi-upload';
 export default {
-    mixins: [controlBase,multiUpload,uploadBase]
+    mixins: [controlBase,multiUpload,uploadBase],
+    data(){
+        return {
+            multiple:true
+        }
+    }
 }
 </script>
 <style lang="less">

@@ -405,6 +405,10 @@ function firstNotNaN(){
 }
 
 export default {
+    getMetaBase:function(){
+      let metabase = getMetabase(currentProjectId);
+      return metabase;
+    },
     /**
      * 根据实体名，查询实体
      * @param metaEntityName

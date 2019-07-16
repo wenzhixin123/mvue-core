@@ -13,6 +13,7 @@
         </template>
         <template v-else>
             <Cascader filterable
+                :placeholder="formItem.componentParams.placeholder||'请选择'"
                 :change-on-select="changeOnSelect"  
                 :data="optionsData" 
                 @on-change="handleChange" 

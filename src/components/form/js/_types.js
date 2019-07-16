@@ -23,7 +23,8 @@ const store={
  */
 let inputTypeArray=[
   'Boolean','SingleLineText','MultiLineText','Number','SingleSelect','SingleSelectWithInput',
-  'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json'
+  'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json','ManyToOneRelation',
+  'RefEntityField'
 ]; 
 let inputType={};
 inputTypeArray.forEach(t => {
@@ -114,6 +115,32 @@ const rules={
   store:store.MetaFieldInputParams,
   title:'验证规则'
 }
+//leap查询条件属性
+const queryOptions={
+  id:'queryOptions',
+  inputType:inputType.Json,
+  default:{},
+  store:store.MetaFieldInputParams,
+  title:'引用实体查询条件'
+}
+//多对一引用关系属性
+const manyToOneRelation={
+    id:'manyToOneRelation',
+    inputType:inputType.ManyToOneRelation,
+    default:{
+        targetEntity:''
+    },
+    store:store.MetaField,
+    title:'引用实体'
+};
+//选项属性
+const options={
+    id:'options',
+    inputType:inputType.OptionsEditor,
+    default:'',
+    store:store.MetaField,
+    title:'选项'
+};
 export default {
   store,//属性的存储位置
   inputType,//属性的控件类型
@@ -138,5 +165,8 @@ export default {
   },
   unique,
   placeholder,
-  rules
+  rules,
+  options,
+  queryOptions,
+  manyToOneRelation
 }

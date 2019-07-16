@@ -14,37 +14,36 @@
  *    }
  *
  */
-const uuidv1 = require('uuid/v1');
 import optionsUtils from '../../../libs/metadata/options-utils';
 import entityType from './entity_type';
-
-var defaultValue=[];
-var selectTexts=["请选择","请选择","请选择","请选择"];
+import _types from './_types';
+const parentFieldProp={
+    id:'parentField',
+    inputType:_types.inputType.RefEntityField,
+    default:'',
+    store:_types.store.MetaFieldInputParams,
+    title:'引用实体的分类字段'
+}
 var types={
     CascadeSelect:{
         id: "CascadeSelect", 
         title: "级联下拉", 
-        icon:"ios-more-outline"
-    },
+        icon:"ios-more-outline",
+        props:_types.merge(
+            _types.placeholder,
+            _types.options,
+            _types.manyToOneRelation,
+            parentFieldProp,
+             _types.queryOptions,
+            Object.assign({},_types.queryOptions,{id:'parentQueryOptions',title:'分类实体的查询条件'})
+        )
+    }
 };
 var componentParams={
-    CascadeSelect:{
-        cascadeOptions:{
-            options:[],
-            levels:2,//设计器使用的特殊属性
-            selectTexts:selectTexts//设计器使用的特殊属性
-        },
-        entityId:null,//引用实体名称
-        parentField:null,//指定关系实体的父字段名称，如果关系字段未指定parentField，近似退化为下拉框选择
-        parentQueryOptions:null,//父级实体默认leap查询条件
-        queryOptions:null//默认的leap查询条件
-    }
+    CascadeSelect:_types.getPropsDefault(types.CascadeSelect.props)
 };
 function accept(componentType){
     return !!types[componentType];
-}
-var newOne=function(){
-    return {id:uuidv1(),text:"新选项",children:[]};
 }
 function formatData(componentType,item,metaField){
     let fieldName=metaField.name;
@@ -71,7 +70,9 @@ function isLocalOptions(metaField){
 function fillComponentParams(formItem,metaField){
     if(isLocalOptions(metaField)){//选项类型
         let options=metaField.inputTypeParams["options"];
-        formItem.componentParams.cascadeOptions.options=_.cloneDeep(options);
+        formItem.componentParams.cascadeOptions={
+            options:_.cloneDeep(options)
+        };
     }else{//多对一关系类型
         entityType.fillComponentParams(formItem,metaField);
     }
@@ -79,9 +80,6 @@ function fillComponentParams(formItem,metaField){
 export default{
     types:types,
     componentParams:componentParams,
-    newOne:newOne,
-    defaultValue:defaultValue,
-    selectTexts:selectTexts,
     accept:accept,
     formatData:formatData,
     formatDataForExport:formatDataForExport,

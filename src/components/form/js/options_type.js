@@ -1,13 +1,6 @@
 import optionsUtils from '../../../libs/metadata/options-utils';
 import _types from './_types';
 
-const optionsProp={
-    id:'options',
-    inputType:_types.inputType.OptionsEditor,
-    default:'',
-    store:_types.store.MetaField,
-    title:'选项'
-};
 const showOthersProp={
     id:'showOthers',
     inputType:_types.inputType.Boolean,
@@ -22,13 +15,22 @@ const othersTextProp={
     store:_types.store.MetaFieldInputParams,
     title:'[其他]文字说明'
 };
+//控制自填输入框可输入的字符串个数
+const othersInputMaxProp={
+    id:'othersInputMax',
+    inputType:_types.inputType.Number,
+    default:20,
+    min:1,
+    store:_types.store.MetaFieldInputParams,
+    title:'[其他]文字长度限制'
+};
 const placeholderProp=Object.assign({},_types.placeholder,{default:'请选择',title:'选择框默认文字'});
 let props={
-    RadioButton:_types.merge(optionsProp,showOthersProp,othersTextProp),
-    SingleSelect:_types.merge(optionsProp,placeholderProp),
-    MultiSelect:_types.merge(optionsProp,placeholderProp),
-    CheckboxGroup:_types.merge(optionsProp,showOthersProp,othersTextProp),
-    BitCode:_types.merge(optionsProp)
+    RadioButton:_types.merge(_types.options,showOthersProp,othersTextProp,othersInputMaxProp),
+    SingleSelect:_types.merge(_types.options,placeholderProp),
+    MultiSelect:_types.merge(_types.options,placeholderProp),
+    CheckboxGroup:_types.merge(_types.options,showOthersProp,othersTextProp,othersInputMaxProp),
+    BitCode:_types.merge(_types.options)
 };
 //定义基础组件：选项类型
 var optionsTypes={

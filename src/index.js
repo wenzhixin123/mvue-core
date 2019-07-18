@@ -213,17 +213,20 @@ import toolService from './services/tool/tool_service';
 import treeService from './services/tool/tree-service';
 import metaLayoutConvertor from './components/meta-layout/layout-convertor';
 
+
 import formConstants from './components/form/js/constants';
 import formValidationPattern from './components/form/js/validation_pattern';
 import controlTypeService from './components/form/js/control_type_service';
 import commonOperation from './components/meta_operation/js/common_operation';
 
 import  context from "./libs/context";
+import permissionService from "./libs/security/permission";
 import getParent from './components/mixins/get-parent';
 import TransferDom from './components/form/js/transfer_dom';
 import operationManager from "./libs/operation/operations";
 import formControlManager from './components/form/control-manager';
 import topEntityService from "./services/store/top-entity";
+
 
 import interceptorManager from "./libs/interceptor/interceptors";
 
@@ -251,6 +254,7 @@ let MvueCore={
     formControlManager,
     ufs,
     topEntityService,
+    permissionService,
     initAfterAppCtxCreated:(appCtx)=>{
         context.initAfterAppCtxCreated(appCtx);
     },

@@ -46,7 +46,8 @@ var numberTypes={
     NumberInput:{//过时的，先隐藏
         id: "NumberInput", 
         title: "数字", 
-        hidden:true 
+        hidden:true ,
+        props:_types.merge(_types.placeholder,...props)
     },
     Number:{ 
         id: "Number", 

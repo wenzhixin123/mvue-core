@@ -30,11 +30,15 @@ function register(controlDef){
     }
 }
 //合并设计器模式的表单控件定义
-function mergeDesignerDef(designerDef){
+function mergeDesignerDef(designerDef,isAuxiliary){
     if(!designerDef){
         return;
     }
-    controlTypeService.mergeFieldControlDesignerDef(designerDef);
+    if(isAuxiliary){
+        controlTypeService.mergeAuxiliaryControlDesignerDef(designerDef);
+    }else{
+        controlTypeService.mergeFieldControlDesignerDef(designerDef);
+    }
 }
 export default {
     propTypes,

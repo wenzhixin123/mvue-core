@@ -14,7 +14,50 @@ function limitLength(max){
 }
 //控件属性定义
 const props={
-    SingleLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,limitLength(200)),
+    SingleLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,limitLength(200),
+        {
+            id:'prepend',
+            inputType:_types.inputType.Json,
+            default:'',
+            store:_types.store.MetaFieldInputParams,
+            title:'前缀选项'
+        },
+        {
+            id:'prependWidth',
+            inputType:_types.inputType.SingleLineText,
+            default:'80px',
+            store:_types.store.MetaFieldInputParams,
+            title:'前缀选项宽度'
+        },
+        {
+            id:'append',
+            inputType:_types.inputType.Json,
+            default:'',
+            store:_types.store.MetaFieldInputParams,
+            title:'后缀缀选项'
+        },
+        {
+            id:'appendWidth',
+            inputType:_types.inputType.SingleLineText,
+            default:'80px',
+            store:_types.store.MetaFieldInputParams,
+            title:'后缀选项宽度'
+        },
+        {
+            id:'prefix',
+            inputType:_types.inputType.SingleLineText,
+            default:'',
+            store:_types.store.MetaFieldInputParams,
+            title:'头部图标'
+        },
+        {
+            id:'suffix',
+            inputType:_types.inputType.SingleLineText,
+            default:'',
+            store:_types.store.MetaFieldInputParams,
+            title:'尾部图标'
+        }
+    ),
     MultiLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,limitLength(2000),
         {
             id:'rows',

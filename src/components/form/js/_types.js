@@ -24,7 +24,7 @@ const store={
 let inputTypeArray=[
   'Boolean','SingleLineText','MultiLineText','Number','SingleSelect','SingleSelectWithInput',
   'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json','ManyToOneRelation',
-  'RefEntityField'
+  'RefEntityField','EntityField'
 ]; 
 let inputType={};
 inputTypeArray.forEach(t => {
@@ -32,6 +32,14 @@ inputTypeArray.forEach(t => {
 });
 //定义所有表单控件公共的基础属性
 const commonProps=[
+  {
+    id:'name',
+    inputType:inputType.EntityField,
+    default:'',
+    required:true,
+    store:store.MetaField,
+    title:'名称'
+  },
   {
     id:'title',
     inputType:inputType.SingleLineText,

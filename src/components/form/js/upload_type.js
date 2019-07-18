@@ -68,11 +68,14 @@ const height={
     title:'高(px)'
 };
 const props={
+    FileUpload:_types.merge(maxSize,allowedFormats),
+    PictureUpload:_types.merge(Object.assign({},maxSize,{default:Size.picture})),
+    Portrait:_types.merge(Object.assign({},maxSize,{default:Size.picture}),width,height),
     Avatar:_types.merge(Object.assign({},maxSize,{default:Size.picture}),width,height),
     SingleImageUpload:_types.merge(Object.assign({},maxSize,{default:Size.picture}),width,height),
     MultiImageUpload:_types.merge(Object.assign({},maxSize,{default:Size.picture})),
     SingleFileUpload:_types.merge(maxSize,allowedFormats),
-    MultiFileUpload:_types.merge(maxSize,allowedFormats)
+    MultiFileUpload:_types.merge(maxSize,allowedFormats),
 };
 //定义基础组件:上传类型基础组件定义
 var uploadTypes={

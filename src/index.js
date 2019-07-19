@@ -32,10 +32,6 @@ import batchEditor from "./components/batch-editor/index";
 import simpleBatchEditor from "./components/batch-editor/simple";
 import mIcon from "./components/m-icon/index";
 
-import Description from './components/form/control_tmpl/description';
-import DivisionLine from './components/form/control_tmpl/division_line';
-import Group from './components/form/control_tmpl/group'
-
 import SingleLineText from './components/form/control_tmpl/single_line_text';
 import MultiLineText from './components/form/control_tmpl/multi_line_text';
 import JsonText from './components/form/control_tmpl/json-text';
@@ -95,9 +91,6 @@ import EntitySelect from './components/entity-select/index'
 import ObjectEditor from './components/form/control_tmpl/object-editor/index';
 
 const formComponents={
-    Description,
-    DivisionLine,
-    Group,
     SingleLineText,
     MultiLineText,
     JsonText,

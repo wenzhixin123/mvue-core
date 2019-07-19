@@ -1,16 +1,14 @@
+import _types from './_types';
 var types={
     Tag:{ 
         id: "Tag", 
         title: "标签", 
-        icon:"ivu-icon ivu-icon-md-radio-button-off" 
+        icon:"ivu-icon ivu-icon-md-radio-button-off",
+        props:_types.merge(_types.placeholder,_types.rules) 
     }
 };
 var componentParams={
-    Tag:{
-        validation:{
-            validate:false
-        }
-    }
+    Tag:_types.getPropsDefault(types.Tag.props)
 };
 function accept(componentType){
     return !!types[componentType];

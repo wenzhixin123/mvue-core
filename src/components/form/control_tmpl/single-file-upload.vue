@@ -22,7 +22,7 @@
                     :default-file-list="defaultList"
                     :format="allowedFormats"
                     :max-size="maxSize*1024"
-                    :multiple="formItem.componentParams.multiple.isAllowed"
+                    :multiple="multiple"
                     name="file"
                     :action="uploadAction">
                     <Button  icon="ios-cloud-upload-outline" style="font-size:13px;">上传</Button>

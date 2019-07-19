@@ -1,14 +1,14 @@
+import _types from './_types';
 var types={
     Boolean:{ 
         id: "Boolean", 
         title: "布尔值", 
-        icon:"md-checkbox"
+        icon:"md-checkbox",
+        props:_types.merge()
     }
 };
 var componentParams={
-    Boolean:{
-        
-    }
+    Boolean:_types.getPropsDefault(types.Boolean.props)
 };
 function accept(componentType){
     return !!types[componentType];

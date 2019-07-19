@@ -1,7 +1,23 @@
 import metabase from '../../../libs/metadata/metabase';
 import context from '../../../libs/context';
 import rowMeta from './row-meta';
+import _types from './_types';
 const deletedFlag='__#deletedFlag#__';
+//控制只能选到第几层,selectLevel大于0才有意义，否则不限制
+const selectLevelProp={
+    id:'selectLevel',
+    inputType:_types.inputType.Number,
+    default:0,
+    min:0,
+    store:_types.store.MetaFieldInputParams,
+    title:'最高可选层级'
+};
+const props={
+    RefEntity:_types.merge(_types.placeholder,_types.manyToOneRelation,_types.queryOptions),
+    MultiRefEntity:_types.merge(_types.placeholder,_types.manyToOneRelation,_types.queryOptions),
+    ParentSelect:_types.merge(_types.manyToOneRelation,_types.queryOptions,selectLevelProp),
+    OrderedMultiRefEntity:_types.merge(_types.placeholder,_types.manyToOneRelation,_types.queryOptions)
+};
 var types={
     RefEntity:{ 
         id: "RefEntity", 
@@ -24,40 +40,15 @@ var types={
         icon:"ios-list"
     }
 };
+//设置控件属性定义，到控件基础定义上
+_.forIn(types,(value,key)=>{
+    value.props=props[key];
+});
 var componentParams={
-    RefEntity:{
-        entityId:"",//必填
-        idField:"",//必填
-        titleField:"",//必填
-        orderbyField:"",//排序字段
-        orderbyType:"asc",//排序规则
-        entityResourceUrl:""//后端自动生成
-    },
-    MultiRefEntity:{
-        entityId:"",//必填
-        idField:"",//必填
-        titleField:"",//必填
-        orderbyField:"",//排序字段
-        orderbyType:"asc",//排序规则
-        entityResourceUrl:""//后端自动生成
-    },
-    ParentSelect:{
-        entityId:"",//必填
-        idField:"",//必填
-        titleField:"",//必填
-        orderbyField:"",//排序字段
-        orderbyType:"asc",//排序规则
-        entityResourceUrl:"",//后端自动生成
-        selectLevel:0//控制只能选到第几层,selectLevel大于0才有意义，否则不限制
-    },
-    OrderedMultiRefEntity:{
-        entityId:"",//必填
-        idField:"",//必填
-        titleField:"",//必填
-        orderbyField:"",//排序字段
-        orderbyType:"asc",//排序规则
-        entityResourceUrl:""//后端自动生成
-    }
+    RefEntity:_types.getPropsDefault(props.RefEntity),
+    MultiRefEntity:_types.getPropsDefault(props.RefEntity),
+    ParentSelect:_types.getPropsDefault(props.RefEntity),
+    OrderedMultiRefEntity:_types.getPropsDefault(props.RefEntity)
 };
 function accept(componentType){
     return !!types[componentType];

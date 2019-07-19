@@ -1,36 +1,38 @@
 import entityType from './entity_type';
+import _types from './_types';
+const props={
+    SingleUserSelect:_types.merge(_types.placeholder),
+    SingleOrgSelect:_types.merge(_types.placeholder),
+    MultiUserSelect:_types.merge(_types.placeholder),
+    MultiOrgSelect:_types.merge(_types.placeholder)
+};
 var orgUserTypes={
     SingleUserSelect:{ 
         id: "SingleUserSelect", 
-        title: "用户选择", 
-        icon:"ios-people"
+        title: "用户单选", 
+        icon:"md-contact"
     },
     SingleOrgSelect:{ 
         id: "SingleOrgSelect", 
-        title: "部门选择", 
-        icon:"ios-git-network" 
+        title: "部门单选", 
+        icon:"ios-git-merge" 
     },
     MultiUserSelect:{ 
         id: "MultiUserSelect", 
         title: "用户多选", 
-        hidden:true
+        icon:"ios-people"
     },
     MultiOrgSelect:{ 
         id: "MultiOrgSelect", 
         title: "部门多选", 
-        hidden:true 
+        icon:"ios-git-network"
     }
 };
-var orgUserComponentParams={
-    SingleUserSelect:{
-    },
-    SingleOrgSelect:{
-    },
-    MultiUserSelect:{
-    },
-    MultiOrgSelect:{
-    }
-};
+//设置控件属性定义，到控件基础定义上
+_.forIn(orgUserTypes,(value,key)=>{
+    value.props=props[key];
+});
+
 function accept(componentType){
     return !!orgUserTypes[componentType];
 }

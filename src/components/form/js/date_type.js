@@ -1,6 +1,45 @@
 import context from '../../../libs/context';
 import constants from './constants';
 var dayjs = require("dayjs");
+import _types from './_types';
+
+var datePrecision={
+    day:"day",
+    month:"month",
+    year:"year"
+};
+var timePrecision={
+    second:"second",
+    minute:"minute"
+};
+const datePrecisionProp={
+    id:'datePrecision',
+    inputType:_types.inputType.SingleSelect,
+    default:datePrecision.day,
+    store:_types.store.MetaFieldInputParams,
+    options:[
+        {value:datePrecision.day,title:'天'},
+        {value:datePrecision.month,title:'月'},
+        {value:datePrecision.year,title:'年'}
+    ],
+    title:'日期精确到'
+};
+const timePrecisionProp={
+    id:'timePrecision',
+    inputType:_types.inputType.SingleSelect,
+    default:timePrecision.second,
+    store:_types.store.MetaFieldInputParams,
+    options:[
+        {value:timePrecision.second,title:'秒'},
+        {value:timePrecision.minute,title:'分'}
+    ],
+    title:'时间精确到'
+};
+let props={
+    Date:_types.merge(datePrecisionProp),
+    Time:_types.merge(timePrecisionProp),
+    DateTime:_types.merge(datePrecisionProp,timePrecisionProp)
+};
 //定义基础组件:日期和时间类型
 var dateTypes={
     Date:{ 
@@ -34,30 +73,16 @@ var dateTypes={
         hidden:true 
     }
 };
-var datePrecision={
-    day:"day",
-    month:"month",
-    year:"year"
-};
-var timePrecision={
-    second:"second",
-    minute:"minute"
-};
+//设置控件属性定义，到控件基础定义上
+_.forIn(dateTypes,(value,key)=>{
+    value.props=props[key];
+});
 //日期相关组件的扩展参数定义
+//TODO defaultValueType 和默认值一起考虑
 var componentParams={
-    Date:{
-        datePrecision:datePrecision.day,
-        defaultValueType:null
-    },
-    Time:{
-        timePrecision:timePrecision.second,
-        defaultValueType:null
-    },
-    DateTime:{
-        datePrecision:datePrecision.day,
-        timePrecision:timePrecision.second,
-        defaultValueType:null
-    },
+    Date:_types.getPropsDefault(props.Date),
+    Time:_types.getPropsDefault(props.Time),
+    DateTime:_types.getPropsDefault(props.DateTime),
     DateTimeRange:{
         datePrecision:datePrecision.day,
         timePrecision:timePrecision.second

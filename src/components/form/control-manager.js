@@ -1,6 +1,8 @@
 import controlTypeService from './js/control_type_service';
 import controlBase from './js/control_base';
-import context from '../../libs/context'
+import context from '../../libs/context';
+//所有控件属性定义的相关工具包
+import propTypes from './js/_types';
 function registerSingle(controlDef){
     //注册表单字段组件到controlTypeService
     controlTypeService.registerFieldControls(controlDef);
@@ -28,13 +30,18 @@ function register(controlDef){
     }
 }
 //合并设计器模式的表单控件定义
-function mergeDesignerDef(designerDef){
+function mergeDesignerDef(designerDef,isAuxiliary){
     if(!designerDef){
         return;
     }
-    controlTypeService.mergeFieldControlDesignerDef(designerDef);
+    if(isAuxiliary){
+        controlTypeService.mergeAuxiliaryControlDesignerDef(designerDef);
+    }else{
+        controlTypeService.mergeFieldControlDesignerDef(designerDef);
+    }
 }
 export default {
+    propTypes,
     mergeDesignerDef,
     register:register,
     controlBase:controlBase

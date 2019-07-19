@@ -182,26 +182,46 @@ function buildValidationRuleForJson(){
     }
     return _rule;
 }
-function buildPatternRules(params,fieldTitle){
-    if ((params.validation   && params.validation.validate && params.validation.rule && params.validation.rule.pattern)
-        ||  (params.validation && params.validation.pattern)
-        ||  (params.validation && params.validation.rules)) {
+function buildPatternRules(params,fieldTitle,entity,metaEntity){
+    let onePatternRule=params.validation 
+        && params.validation.validate 
+        && params.validation.rule 
+        && params.validation.rule.pattern;
+    let onePatternRule2= params.validation && params.validation.pattern ;  
+    let hasRules=params.validation && params.validation.rules;
+    let hasRules2=params.rules;
+    let __rules=hasRules||hasRules2;
+    let has=onePatternRule||onePatternRule2||__rules;
+    if (has) {
         let rules=[];
         let _msg=`${fieldTitle}格式不符合`;
-        if(params.validation.pattern){
+        if(!_.isEmpty(__rules)){
+            rules=rules.concat(_.cloneDeep(__rules));
+            let _rules=[];
+            _.forEach(rules,r=>{
+                if(!r.message){
+                    r.message=_msg;
+                }
+                //特殊转换一下字段比较类型的验证规则
+                if(entity
+                    && metaEntity
+                    && r.type==='compare'
+                    && _.includes(["lessThan", "biggerThan", "equals"], r.operator)
+                    && r.fieldName){
+                    let _compareRule=buildValidationRuleForCompare(r.fieldName,r.operator,entity,metaEntity);
+                    _rules.push(_compareRule);
+                }else{
+                    _rules.push(r);
+                }
+            });
+            rules=_rules;
+        }else if(onePatternRule2){
             rules.push({
                 type: "string",
                 pattern: params.validation.pattern,
                 message: _msg
             });
-        }else if(params.validation.rules){
-            rules=rules.concat(_.cloneDeep(params.validation.rules));
-            _.forEach(rules,r=>{
-                if(!r.message){
-                    r.message=_msg;
-                }
-            });
-        }else{
+        }else if(onePatternRule){
             rules.push({
                 type: "string",
                 pattern: params.validation.rule.pattern,
@@ -281,7 +301,7 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
     }
     //验证规则
     if (isStringType) {
-        let _vRules=buildPatternRules(params,fieldTitle);
+        let _vRules=buildPatternRules(params,fieldTitle,entity,metaEntity);
         if(_vRules){
            rules=rules.concat(_vRules);
         }

@@ -1,5 +1,37 @@
-const uuidv1 = require('uuid/v1');
 import optionsUtils from '../../../libs/metadata/options-utils';
+import _types from './_types';
+
+const showOthersProp={
+    id:'showOthers',
+    inputType:_types.inputType.Boolean,
+    default:false,
+    store:_types.store.MetaFieldInputParams,
+    title:'显示[其他]'
+};
+const othersTextProp={
+    id:'othersText',
+    inputType:_types.inputType.SingleLineText,
+    default:optionsUtils.othersText,
+    store:_types.store.MetaFieldInputParams,
+    title:'[其他]文字说明'
+};
+//控制自填输入框可输入的字符串个数
+const othersInputMaxProp={
+    id:'othersInputMax',
+    inputType:_types.inputType.Number,
+    default:20,
+    min:1,
+    store:_types.store.MetaFieldInputParams,
+    title:'[其他]文字长度限制'
+};
+const placeholderProp=Object.assign({},_types.placeholder,{default:'请选择',title:'选择框默认文字'});
+let props={
+    RadioButton:_types.merge(_types.options,showOthersProp,othersTextProp,othersInputMaxProp),
+    SingleSelect:_types.merge(_types.options,placeholderProp),
+    MultiSelect:_types.merge(_types.options,placeholderProp),
+    CheckboxGroup:_types.merge(_types.options,showOthersProp,othersTextProp,othersInputMaxProp),
+    BitCode:_types.merge(_types.options)
+};
 //定义基础组件：选项类型
 var optionsTypes={
     RadioButton:{ 
@@ -28,40 +60,22 @@ var optionsTypes={
         icon:"md-disc"
     }
 };
-function baseOptions(){
-    return [
-        {id:uuidv1(),text:"选项1",checked:false},
-        {id:uuidv1(),text:"选项2",checked:false},
-        {id:uuidv1(),text:"选项3",checked:false}
-    ];
-}
+//设置控件属性定义，到控件基础定义上
+_.forIn(optionsTypes,(value,key)=>{
+    value.props=props[key];
+});
+function buildPropsDefault(componentType){
+    let params= _types.getPropsDefault(props[componentType]);
+    //属性定义options是字符串，存的是选项级的名字；实际表单控件是展开的options数组，所以这里做个转换
+    params.options=[];
+};
 //定义选项类型组件的扩展参数
 var componentParams={
-    RadioButton:{
-        options:baseOptions(),
-        showOthers:false,
-        othersText:optionsUtils.othersText
-    },
-    SingleSelect:{
-        options:baseOptions(),
-        selectText:"请选择"
-    },
-    MultiSelect:{
-        options:baseOptions(),
-        selectText:"请选择"
-    },
-    CheckboxGroup:{
-        options:baseOptions(),
-        showOthers:false,
-        othersText:optionsUtils.othersText
-    },
-    BitCode:{
-        options:[]
-    }
-};
-//构建一个新的选项
-function buildOptionsItem(){
-    return {id:uuidv1(),text:"新选项",checked:false};
+    RadioButton:buildPropsDefault(optionsTypes.RadioButton.id),
+    SingleSelect:buildPropsDefault(optionsTypes.SingleSelect.id),
+    MultiSelect:buildPropsDefault(optionsTypes.MultiSelect.id),
+    CheckboxGroup:buildPropsDefault(optionsTypes.CheckboxGroup.id),
+    BitCode:buildPropsDefault(optionsTypes.BitCode.id)
 };
 //判断是否选项类型
 function accept(componentType){
@@ -125,7 +139,6 @@ function fillComponentParams(formItem,metaField){
 export default{
     types:optionsTypes,
     componentParams:componentParams,
-    buildOptionsItem:buildOptionsItem,
     accept:accept,
     isSingleSelect:isSingleSelect,
     isSingleOption:isSingleOption,

@@ -1,3 +1,6 @@
+//所有控件属性定义的相关工具包
+import propTypes from './_types';
+
 const uuidv1 = require('uuid/v1');
 //定义基础组件：选项类型
 import optionsType from './options_type'
@@ -25,14 +28,30 @@ import arrayType from './array-type'
 import objectType from './object-type'
 //高级组件：成员组件定义
 import noFieldType from './no_field_type'
-
-//定义所有辅助组件类型，如描述、分隔线等
-import auxiliaryType from './auxiliary_type'
-var auxiliaryTypes=auxiliaryType.types;
-
-//定义所有容器类型，如分组等
-import containerType from './container_type'
-var containerTypes=containerType.types;
+//辅助组件：与元数据无关，纯ui组件，参数由组件自己定义
+import auxiliaryType from './auxiliary_type';
+let auxiliaryControls=[];
+_.forIn(auxiliaryType,auxType=>{
+    auxiliaryControls.push(auxType);
+});
+let allAuxiliaryType=_.cloneDeep(auxiliaryType);
+//表单设计器定义的辅助组件合并
+function mergeAuxiliaryControlDesignerDef(designerDef){
+    if(!_.isEmpty(designerDef)){
+        _.forIn(designerDef,(def,controlId)=>{
+            let control=auxiliaryType[controlId];
+            if(control){
+                mergeDef(control,def);
+            }else{
+                allAuxiliaryType[controlId]=def;
+                auxiliaryControls.push(def);
+            }
+        });
+    }
+}
+function isAuxiliary(controlType){
+    return !!allAuxiliaryType[controlType];
+}
 
 //所有支持的基础组件
 //添加新组件(基础组件)时 step1-1 需要先import再加到这里
@@ -111,39 +130,7 @@ function mergeFieldControlDesignerDef(designerDef){
         });
     }
 }
-//所有支持的辅助组件
-var auxiliaryControls=[
-    auxiliaryTypes.Description,
-    auxiliaryTypes.DivisionLine
-];
-//所有容器类组件
-var containerControls=[
-    containerTypes.Group
-];
-//组件布局定义
-var componentLayout={
-    horizontal:"horizontal",//左右布局
-    vertical:"vertical"//上下布局
-}
-//定义所有基础组件类型的基础参数
-var baseComponentParams={
-    title:"",//标题，相当于表单label显示文字
-    description:"",//描述，相当于input下的提示说明文字
-    layout:componentLayout.vertical,//组件的布局方式
-    width:"100",//组件所占的宽度，是百分比
-    horizontalLayoutLabelWidth:"20",//左右布局时，组件label占的百分比
-    required:false,//是否必填
-    semantics:"",//语义设置
-    placeholder:"",
-    validation:{
-        validate:false,
-        rule:{
-            type:"",
-            brief:"",
-            pattern:""
-        }
-    }
-};
+
 var fieldIndex=0;
 //根据组件类型构造对应的表单布局
 function buildFormItemByComponentType(componentType,ignoreDataField){
@@ -157,17 +144,10 @@ function buildFormItemByComponentType(componentType,ignoreDataField){
         componentType:componentType
     };
     var componentParams={};
-    if(auxiliaryType.accept(componentType)){
-        componentParams=_.extend({},auxiliaryType.componentParams[componentType]);
-    }else if(containerType.accept(componentType)){
-        //容器组件可以放置其它组件，存放在children中
-        formItem.children=[];
-        formItem.isContainer=true;
-        componentParams=_.extend({},containerType.componentParams[componentType]);
-    }else if(noFieldType.accept(componentType)){
+    if(noFieldType.accept(componentType)){
         //不是字段类型的组件：如成员、子列表等
         formItem.isExternal=true;
-        componentParams=_.extend({},baseComponentParams,noFieldType.componentParams[componentType]);
+        componentParams=_.extend({},noFieldType.componentParams[componentType]);
         componentParams.title=componentTypes[componentType].title;
     }else{
         formItem.isDataField=true;
@@ -179,13 +159,13 @@ function buildFormItemByComponentType(componentType,ignoreDataField){
         for(let type of allType){
             if(type.accept(componentType)){
                 let typeComponentParams=type.componentParams&&type.componentParams[componentType];
-                componentParams=_.extend({},baseComponentParams,typeComponentParams||{});
+                componentParams=_.extend({},typeComponentParams||{});
                 accept=true;
                 break;
             }
         }
         if(!accept){
-            componentParams=_.extend({},baseComponentParams);
+            componentParams={};
         }
         componentParams.title=componentTypes[componentType].title;
     }
@@ -337,13 +317,11 @@ function nextDataFieldName(formItem){
     formItem.dataField="field"+fieldIndex++;
     return formItem;
 }
-//复制一个组件
+//复制一个字段组件
 function cloneFormItem(formItem){
     let formItemCopy=_.cloneDeep(formItem);
     formItemCopy.id=uuidv1();
-    if(!auxiliaryType.accept(formItem.componentType)){//辅助组件和实体字段无关,但基础组件和实体字段相关
-        formItemCopy.dataField="field"+fieldIndex++;
-    }
+    formItemCopy.dataField="field"+fieldIndex++;
     return formItemCopy;
 }
 //从一个组件切换到另一个兼容组件
@@ -374,30 +352,24 @@ function defaultValueTypes(formItem){
     }
     return null;
 };
-//可设置的语义
-var semantics=[
-    {id:"title",title:"标题"},
-    {id:"member",title:"成员"},
-    {id:"manager",title:"管理员"}
-];
 //值可设置的类型：默认值和固定值
 var valueTypes={
     defaultValue:{id:"defaultValue",title:"默认值"},
     fixedValue:{id:"fixedValue",title:"固定值"},
 };
 export default {
-    mergeFieldControlDesignerDef:mergeFieldControlDesignerDef,
-    registerFieldControls:registerFieldControls,
-    componentTypes:componentTypes,
+    isAuxiliary,
+    auxiliaryControls,
+    mergeAuxiliaryControlDesignerDef,
+    mergeFieldControlDesignerDef,
+    registerFieldControls,
+    componentTypes,
     switchableComponents:switchableComponents,
     toggleComponent:toggleComponent,
     buildFormItemByComponentType:buildFormItemByComponentType,
-    buildOptionsItem:optionsType.buildOptionsItem,
     nextDataFieldName:nextDataFieldName,
     fieldControls:fieldControls,
-    auxiliaryControls:auxiliaryControls,
     entityControls:entityControls,
-    containerControls:containerControls,
     cloneFormItem:cloneFormItem,
     isText:textType.accept,
     isSingleLineText:textType.isSingleLineText,
@@ -405,9 +377,6 @@ export default {
     isOptions:optionsType.accept,
     isSingleOption:optionsType.isSingleOption,
     isSingleSelect:optionsType.isSingleSelect,
-    isAuxiliary:auxiliaryType.accept,
-    isDescription:auxiliaryType.isDescription,
-    isDivisionLine:auxiliaryType.isDivisionLine,
     isDate:dateType.isDate,
     isTime:dateType.isTime,
     isDateTime:dateType.isDateTime,
@@ -419,10 +388,8 @@ export default {
     isOrguserType:orguserType.accept,
     isCascadeType:cascadeType.accept,
     isRefEntityType:entityType.accept,
-    isContainer:containerType.accept,
     isNoFieldType:noFieldType.accept,
     isIssuedNumber:issuedNumberType.isIssuedNumber,
-    componentLayout:componentLayout,
     datePrecision:dateType.datePrecision,
     timePrecision:dateType.timePrecision,
     uploadFilters:uploadType.uploadFilters,
@@ -433,7 +400,6 @@ export default {
     formatDataForExport:formatDataForExport,
     getMetaFieldComponentType:getMetaFieldComponentType,
     defaultValueTypes:defaultValueTypes,
-    semantics:semantics,
     valueTypes:valueTypes,
     //type definition
     textType,
@@ -446,6 +412,6 @@ export default {
     orguserType,
     entityType,
     noFieldType,
-    containerType,
-    issuedNumberType
+    issuedNumberType,
+    propTypes
 };

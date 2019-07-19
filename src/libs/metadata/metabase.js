@@ -110,8 +110,13 @@ function loadMetabase(swagger,projectId){
   var context={
     swagger:swagger
   };
-  var options=loadMetaOptions(context,firstNotNaN(swagger["x-option-sets"],{}));
-    context["options"]=options;
+  let xOptionSets=firstNotNaN(swagger["x-option-sets"],{});
+  let optionSets={};
+  _.forIn(xOptionSets,(optionSet,key)=>{
+    optionSets[key.toLowerCase()]=optionSet;
+  });
+  var options=loadMetaOptions(context,optionSets);
+  context["options"]=options;
 
   var entities={};
   _.forIn(swagger.definitions,function(val,key){
@@ -124,7 +129,8 @@ function loadMetabase(swagger,projectId){
   });
   var metabase={};
   metabase.entities=entities;
-  metabase.options=options;
+  //这里存储原生的options,只是key转成了全小写模式，为了optionSets维护(旧模式存储的是转换后的options，title等丢失了)
+  metabase.options=optionSets;
   var cachedKey=mbCacheKey(projectId);
   metabases[cachedKey]=metabase;
   store.set(cachedKey,metabase);
@@ -134,8 +140,8 @@ function loadMetabase(swagger,projectId){
 function loadMetaOptions(context,optionsModel) {
     var options={};
     _.forIn(optionsModel,function(opItem,key){
-       var option= optionsConvert(opItem.items,{});
-        options[key.toLowerCase()]=option;
+      var option= optionsConvert(opItem.items,{});
+      options[key.toLowerCase()]=option;
     });
     return options;
 }
@@ -334,8 +340,10 @@ function fillInputTypeParams(context,metaField,property) {
   if(xOptions){
     let fieldOption=null;
     if(_.isString(xOptions)){
-        let _fieldOption=context.options[xOptions.toLowerCase()];
-        fieldOption=_.cloneDeep(_fieldOption);
+      let optionSetKey=xOptions.toLowerCase();
+      let _fieldOption=context.options[optionSetKey];
+      fieldOption=_.cloneDeep(_fieldOption);
+      metaField.options=optionSetKey;
     }else{
         if(xOptions.items){
             fieldOption=optionsConvert(xOptions.items);
@@ -405,6 +413,10 @@ function firstNotNaN(){
 }
 
 export default {
+    getMetaBase:function(){
+      let metabase = getMetabase(currentProjectId);
+      return metabase;
+    },
     /**
      * 根据实体名，查询实体
      * @param metaEntityName
@@ -497,6 +509,7 @@ export default {
         if (_.isEmpty(optionSet)) {
             return null;
         }
-        return optionSet;
+        let options= optionsConvert(optionSet.items,{});
+        return options;
     }
 }

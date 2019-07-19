@@ -306,6 +306,15 @@
                     form:this,
                     formItem:formItem
                 });
+            },
+            validate(callback){
+                return this.$ref["formRef"].validate(callback);
+            },
+            validateField(fieldName,callback){
+                return this.$ref["formRef"].validateField(fieldName,callback);
+            },
+            resetFields(callback){
+                return this.$ref["formRef"].resetFields();
             }
         }
     }

@@ -63,12 +63,16 @@ export default {
 
         let comId=this.getComId();
         let comConfig = this.comConfig;
+        let _self=this;
         //处理动态属性
         if (comConfig && comConfig.props) {
             if(comConfig.props){
                 _.forIn(comConfig.props,(val,prop)=>{
                     Object.defineProperty(params.props,prop, {
                         get: function () {
+                            if(_.isFunction(val)){
+                                return val.apply(_self,[parentPage.getPageContext()]);
+                            }
                             return pageHelper.evalExpr(val,parentPage.getPageContext());
                         },
                         configurable:true

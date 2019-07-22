@@ -24,7 +24,7 @@ const store={
 let inputTypeArray=[
   'Boolean','SingleLineText','MultiLineText','Number','SingleSelect','SingleSelectWithInput',
   'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json','ManyToOneRelation',
-  'RefEntityField','EntityField'
+  'RefEntityField','EntityField','DefaultValue'
 ]; 
 let inputType={};
 inputTypeArray.forEach(t => {
@@ -149,6 +149,14 @@ const options={
     store:store.MetaField,
     title:'选项'
 };
+//默认值
+const defaultValue={
+    id:'defaultExpr',
+    inputType:inputType.DefaultValue,
+    default:null,
+    store:store.MetaField,
+    title:'默认值'
+};
 export default {
   store,//属性的存储位置
   inputType,//属性的控件类型
@@ -176,5 +184,6 @@ export default {
   rules,
   options,
   queryOptions,
-  manyToOneRelation
+  manyToOneRelation,
+  defaultValue
 }

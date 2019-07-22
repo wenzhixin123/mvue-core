@@ -47,13 +47,13 @@ var numberTypes={
         id: "NumberInput", 
         title: "数字", 
         hidden:true ,
-        props:_types.merge(_types.placeholder,...props)
+        props:_types.merge(_types.placeholder,_types.defaultValue,...props)
     },
     Number:{ 
         id: "Number", 
         title: "数字", 
         icon:"ios-calculator",
-        props:_types.merge(_types.placeholder,...props)
+        props:_types.merge(_types.placeholder,_types.defaultValue,...props)
     },
     AdvNumber:{//仅在高级查询表单使用，隐藏 
         id: "AdvNumber", 

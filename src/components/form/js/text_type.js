@@ -14,7 +14,7 @@ function limitLength(max){
 }
 //控件属性定义
 const props={
-    SingleLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,limitLength(200),
+    SingleLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,_types.defaultValue,limitLength(200),
         {
             id:'prepend',
             inputType:_types.inputType.Json,
@@ -58,7 +58,7 @@ const props={
             title:'尾部图标'
         }
     ),
-    MultiLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,limitLength(2000),
+    MultiLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,_types.defaultValue,limitLength(2000),
         {
             id:'rows',
             inputType:_types.inputType.Number,
@@ -90,7 +90,7 @@ const props={
             title:'是否加密'
         }
     ),
-    JsonText:_types.merge(_types.placeholder)
+    JsonText:_types.merge(_types.placeholder,_types.defaultValue)
 };
 //文本控件相关定义
 var textTypes={

@@ -4,7 +4,7 @@ var types={
         id: "Boolean", 
         title: "布尔值", 
         icon:"md-checkbox",
-        props:_types.merge()
+        props:_types.merge(_types.defaultValue)
     }
 };
 var componentParams={

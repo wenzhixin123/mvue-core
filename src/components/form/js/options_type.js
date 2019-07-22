@@ -26,11 +26,11 @@ const othersInputMaxProp={
 };
 const placeholderProp=Object.assign({},_types.placeholder,{default:'请选择',title:'选择框默认文字'});
 let props={
-    RadioButton:_types.merge(_types.options,showOthersProp,othersTextProp,othersInputMaxProp),
-    SingleSelect:_types.merge(_types.options,placeholderProp),
-    MultiSelect:_types.merge(_types.options,placeholderProp),
-    CheckboxGroup:_types.merge(_types.options,showOthersProp,othersTextProp,othersInputMaxProp),
-    BitCode:_types.merge(_types.options)
+    RadioButton:_types.merge(_types.options,_types.defaultValue,showOthersProp,othersTextProp,othersInputMaxProp),
+    SingleSelect:_types.merge(_types.options,_types.defaultValue,placeholderProp),
+    MultiSelect:_types.merge(_types.options,_types.defaultValue,placeholderProp),
+    CheckboxGroup:_types.merge(_types.options,_types.defaultValue,showOthersProp,othersTextProp,othersInputMaxProp),
+    BitCode:_types.merge(_types.options,_types.defaultValue)
 };
 //定义基础组件：选项类型
 var optionsTypes={

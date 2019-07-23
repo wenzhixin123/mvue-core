@@ -103,6 +103,11 @@ initAllType();
 //注册新的字段组件
 function registerFieldControls(controlDef){
     fieldControlsType.push(controlDef);
+    _.forIn(controlDef.types,function(_t){
+        if(!_t.hidden){
+            fieldControls.push(_t);
+        }
+    });
     initAllType();
 }
 //合并设计器模式组件的定义

@@ -12,6 +12,7 @@
 <script>
 import controlBase from '../js/control_base';
 import numberType from '../js/number_type';
+import textType from '../js/text_type';
 export default {
     mixins: [controlBase],
     props: {
@@ -51,6 +52,10 @@ export default {
                 let fs=numberType.formatters[formatter];
                 if(fs){
                     return fs.format(this.value);
+                }else{
+                    let context={value:this.value,model:this.model};
+                    let formattedValue=textType.stringFormat(context,formatter);
+                    return formattedValue;
                 }
             }
             return this.value;

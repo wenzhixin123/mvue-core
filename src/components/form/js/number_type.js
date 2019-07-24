@@ -1,5 +1,6 @@
 var filesize = require('file-size');
 import _types from './_types';
+import textType from './text_type';
 let props=[
     {
         id:'limitRange',
@@ -31,10 +32,12 @@ let props=[
     },
     {
         id:'formatter',
-        inputType:_types.inputType.SingleSelect,
+        inputType:_types.inputType.SingleSelectWithInput,
         options:[
             {value:'',title:'无'},
-            {value:'bytes',title:'字节转换'}
+            {value:'bytes',title:'字节转换'},
+            {value:'rmb',title:'人民币'},
+            {value:'usd',title:'美元'}
         ],
         default:'',
         store:_types.store.MetaFieldInputParams,
@@ -73,6 +76,16 @@ const formatters={
         format(bytesSize){
             return filesize(bytesSize).human('jedec');
         }
+    },
+    rmb:{
+        format(money){
+            return ('¥ '+money).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        } 
+    },
+    usd:{
+        format(money){
+            return ('$ '+money).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
     }
 }
 //判断是否数值类型组件
@@ -85,10 +98,15 @@ function formatData(componentType,item,metaField){
     if(_.isNil(origin)||origin===''){
         return "";
     }
-    if(metaField.inputTypeParams&&metaField.inputTypeParams.formatter){
-        let fs=formatters[metaField.inputTypeParams.formatter];
+    let formatter=metaField.inputTypeParams&&metaField.inputTypeParams.formatter;
+    if(formatter){
+        let fs=formatters[formatter];
         if(fs){
             return fs.format(origin);
+        }else{
+            let context={value:origin,model:item};
+            let formattedValue=textType.stringFormat(context,formatter);
+            return formattedValue;
         }
     }
     return origin;

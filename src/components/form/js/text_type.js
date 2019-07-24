@@ -16,6 +16,13 @@ function limitLength(max){
 const props={
     SingleLineText:_types.merge(_types.unique,_types.placeholder,_types.rules,_types.defaultValue,limitLength(200),
         {
+            id:'formatter',
+            inputType:_types.inputType.SingleLineText,
+            default:'',
+            store:_types.store.MetaFieldInputParams,
+            title:'格式'
+        },
+        {
             id:'prepend',
             inputType:_types.inputType.Json,
             default:'',
@@ -145,12 +152,42 @@ function isMultiLineText(componentType){
 function isPassword(componentType){
     return textTypes.Password.id===componentType;
 }
-
+//格式化输出
+/**
+ * @param context 必须包含formatter中使用的上下文参数，如：{value:'123',model:{}}
+ * @param formatter lodash _.template 模板支持的格式，如 <a href='${value}'>${value}</a>
+ *  数字分隔符示例：<%= ('¥ '+value).replace(/\\B(?=(\\d{3})+(?!\\d))/g, ',') %>
+ *  if语句写法："<% if(value) { %> <a>${value}</a> <% } %><% if(!value) { %> nodata <% } %>"
+ */
+function stringFormat(context,formatter){
+    if(formatter){
+        let compiled=_.template(formatter);
+        let formattedValue=compiled(context||{});
+        return formattedValue;
+    }
+    return '';
+}
+function formatData(componentType,item,metaField){
+    let fieldName=metaField.name;
+    let origin=item[fieldName];
+    if(_.isNil(origin)||origin===''){
+        return "";
+    }
+    let formatter=metaField.inputTypeParams&&metaField.inputTypeParams.formatter;
+    if(formatter){
+        let context={value:origin,model:item};
+        let formattedValue=stringFormat(context,formatter);
+        return formattedValue;
+    }
+    return origin;
+}
 export default{
     types:textTypes,
     componentParams:componentParams,
     accept:accept,
     isSingleLineText:isSingleLineText,
     isMultiLineText,
-    isPassword
+    isPassword,
+    formatData,
+    stringFormat
 }

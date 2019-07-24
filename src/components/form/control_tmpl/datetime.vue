@@ -1,7 +1,7 @@
 <template>
     <div>
         <template v-if="viewMode">
-            <div class="form-item-view" v-text="valueObj||emptyText" :title="valueObj||emptyText"></div>
+            <div class="form-item-view" v-text="formatValue()" :title="valueObj||emptyText"></div>
         </template>
         <template v-else>
             <DatePicker transfer
@@ -76,6 +76,17 @@ export default {
             }
             let _d=dayjs(newDate);
             this.$emit("input",_d.format('YYYY-MM-DD HH:mm:ss'));
+        },
+        formatValue(){
+            //如果指定格式，格式化输出
+            let formatter=this.formItem.componentParams.formatter;
+            if(formatter){
+                let _d=dayjs(this.value);
+                let formattedValue=_d.format(formatter);
+                return formattedValue;
+            }
+            let _value=this.valueObj||this.emptyText;
+            return _value;
         }
     }
 }

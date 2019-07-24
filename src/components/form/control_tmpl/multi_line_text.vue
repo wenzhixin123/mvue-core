@@ -4,8 +4,8 @@
                 <div v-html="convertedValue()||emptyText" class="upload-form-item-view"></div>
         </template>
         <template v-else>
-            <Input ref="focusInput" v-model="valueObj" @on-change="updateValue"  :disabled="disabled" type="textarea"  :rows="formItem.componentParams.rows||3"  :autosize="formItem.componentParams.autosize||{minRows: 3, maxRows: 10 }"
-                   :placeholder="formItem.componentParams.placeholder"></Input>
+            <i-input ref="focusInput" v-model="valueObj" @on-change="updateValue"  :disabled="disabled" type="textarea"  :rows="formItem.componentParams.rows||3"  :autosize="formItem.componentParams.autosize||{minRows: 3, maxRows: 10 }"
+                   :placeholder="formItem.componentParams.placeholder"></i-input>
         </template>
     </div>
 </template>

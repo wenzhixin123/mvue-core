@@ -1,10 +1,10 @@
 <template>
     <div>
         <template v-if="viewMode">
-                <div class="form-item-view" v-text="value||emptyText" :title="value||emptyText"></div>
+                <div class="form-item-view" v-html="formatValue()" :title="value||emptyText"></div>
         </template>
         <template v-else>
-            <Input ref="focusInput" v-model="valueObj" 
+            <i-input ref="focusInput" v-model="valueObj" 
                 @input="updateValue" 
                 :prefix="formItem.componentParams.prefix" 
                 :suffix="formItem.componentParams.suffix" 
@@ -16,12 +16,13 @@
                 <Select v-if="formItem.componentParams.append" @on-change="updateValue" v-model="appendVal" slot="append" :style="{width:formItem.componentParams.appendWidth||'80px'}">
                     <Option v-for="opt in appendOptions(formItem.componentParams.append)" :value="opt" :key="opt">{{opt}}</Option>
                 </Select>
-            </Input>
+            </i-input>
         </template>
     </div>
 </template>
 <script>
 import controlBase from '../js/control_base';
+import textType from '../js/text_type';
 export default {
     mixins: [controlBase],
     props: {
@@ -105,6 +106,17 @@ export default {
                 return val;
             }
             return [];
+        },
+        formatValue(){
+            //如果指定格式，格式化输出
+            let formatter=this.formItem.componentParams.formatter;
+            if(formatter){
+                let context={'value': this.value,model:this.model};
+                let formattedValue=textType.stringFormat(context,formatter);
+                return formattedValue;
+            }
+            let _value=this.value||this.emptyText;
+            return _value;
         }
     }
 }

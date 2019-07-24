@@ -35,10 +35,22 @@ const timePrecisionProp={
     ],
     title:'时间精确到'
 };
+const dateTimeFormatterProp={
+    id:'formatter',
+    inputType:_types.inputType.SingleSelectWithInput,
+    default:'',
+    store:_types.store.MetaFieldInputParams,
+    options:[
+        {value:'',title:'未设置'},
+        {value:'yyyy-MM-dd HH:mm:ss',title:'yyyy-MM-dd HH:mm:ss'},
+        {value:'yyyy/MM/DD HH:mm:ss',title:'yyyy/MM/DD HH:mm:ss'}
+    ],
+    title:'格式'
+};
 let props={
     Date:_types.merge(datePrecisionProp),
     Time:_types.merge(timePrecisionProp),
-    DateTime:_types.merge(datePrecisionProp,timePrecisionProp)
+    DateTime:_types.merge(datePrecisionProp,timePrecisionProp,dateTimeFormatterProp)
 };
 //定义基础组件:日期和时间类型
 var dateTypes={
@@ -164,9 +176,11 @@ function formatData(componentType,item,metaField,from){
         result= formatDateTime(origin,timePrecision);
         //如果是grid的日期时间渲染，根据gridFormatter作格式化
         if(from==='grid'&&origin){
+            //字段上定义的gridFormatter优先于formatter，字段上定义的formatter优先于全局的gridFormatter
+            let formatter=metaField.inputTypeParams&&metaField.inputTypeParams.formatter;
             let gridFormatter=metaField.inputTypeParams&&metaField.inputTypeParams.gridFormatter;
             if(!gridFormatter){
-                gridFormatter=context.getSettings().control.dateTime.gridFormatter;
+                gridFormatter=formatter||context.getSettings().control.dateTime.gridFormatter;
             }
             if(gridFormatter){
                 let realValue=result;

@@ -32,7 +32,7 @@ var types={
         props:_types.merge(
             _types.placeholder,
             _types.options,
-            _types.manyToOneRelation,
+            Object.assign({},_types.manyToOneRelation,{required:false}),
             parentFieldProp,
              _types.queryOptions,
             Object.assign({},_types.queryOptions,{id:'parentQueryOptions',title:'分类实体的查询条件'})

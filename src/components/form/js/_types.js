@@ -23,7 +23,7 @@ const store={
  */
 let inputTypeArray=[
   'Boolean','SingleLineText','MultiLineText','Number','SingleSelect','SingleSelectWithInput',
-  'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json','ManyToOneRelation',
+  'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json','RefEntity',
   'RefEntityField','EntityField','DefaultValue'
 ]; 
 let inputType={};
@@ -134,10 +134,11 @@ const queryOptions={
 //多对一引用关系属性
 const manyToOneRelation={
     id:'manyToOneRelation',
-    inputType:inputType.ManyToOneRelation,
+    inputType:inputType.RefEntity,
     default:{
         targetEntity:''
     },
+    required:true,
     store:store.MetaField,
     title:'引用实体'
 };

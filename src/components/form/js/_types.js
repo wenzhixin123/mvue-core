@@ -133,10 +133,11 @@ const queryOptions={
 }
 //多对一引用关系属性
 const manyToOneRelation={
-    id:'manyToOneRelation',
+    id:'relation',
     inputType:inputType.RefEntity,
     default:{
-        targetEntity:''
+        targetEntity:'',
+        type:'many-to-one'
     },
     required:true,
     store:store.MetaField,

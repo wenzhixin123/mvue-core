@@ -14,9 +14,27 @@ const selectLevelProp={
 };
 const props={
     RefEntity:_types.merge(_types.placeholder,_types.manyToOneRelation,_types.queryOptions),
-    MultiRefEntity:_types.merge(_types.placeholder,Object.assign({},_types.manyToOneRelation,{id:'embeddedRelation'}),_types.queryOptions),
+    MultiRefEntity:_types.merge(
+        _types.placeholder,
+        Object.assign({},_types.manyToOneRelation,{
+            default:{
+                embedded:true,
+                targetEntity:'',
+                type:'many-to-many'
+            }
+        }),
+        _types.queryOptions),
     ParentSelect:_types.merge(_types.manyToOneRelation,_types.queryOptions,selectLevelProp),
-    OrderedMultiRefEntity:_types.merge(_types.placeholder,Object.assign({},_types.manyToOneRelation,{id:'embeddedRelation'}),_types.queryOptions)
+    OrderedMultiRefEntity:_types.merge(
+        _types.placeholder,
+        Object.assign({},_types.manyToOneRelation,{
+            default:{
+                embedded:true,
+                targetEntity:'',
+                type:'many-to-many'
+            }
+        }),
+        _types.queryOptions)
 };
 var types={
     RefEntity:{ 

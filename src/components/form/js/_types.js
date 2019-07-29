@@ -15,7 +15,8 @@
 const store={
   MetaField:'MetaField',
   MetaFieldInputParams:'MetaField.inputParams',
-  Layout:'Layout'
+  Layout:'Layout',
+  Form:'Form'
 };
 /**
   基础类型: 'Boolean','SingleLineText','MultiLineText','Number'
@@ -24,7 +25,7 @@ const store={
 let inputTypeArray=[
   'Boolean','SingleLineText','MultiLineText','Number','SingleSelect','SingleSelectWithInput',
   'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json','RefEntity',
-  'RefEntityField','EntityField','DefaultValue'
+  'RefEntityField','EntityField','DefaultValue','PropSettings','Events'
 ]; 
 let inputType={};
 inputTypeArray.forEach(t => {
@@ -90,9 +91,26 @@ const commonProps=[
       {value:'invisible',title:'隐藏'}],
     default:'',
     store:store.Layout,
-    title:'控件状态'
+    title:'控件状态',
+    dynamic:true
   }
-];    
+]; 
+//动态属性和事件规则属性定义 
+const propSettingsProp={
+  id:'propSettings',
+  inputType:inputType.PropSettings,
+  default:null,
+  store:store.Form,
+  title:'动态属性'
+}; 
+const eventsProp={
+  id:'events',
+  inputType:inputType.Events,
+  default:false,
+  store:store.Form,
+  title:'事件规则'
+}; 
+const pageCommonProps=[propSettingsProp,eventsProp];
 const unique={
   id:'unique',
   inputType:inputType.Boolean,
@@ -162,6 +180,15 @@ const defaultValue={
 export default {
   store,//属性的存储位置
   inputType,//属性的控件类型
+  getLayoutPropsDefault(props){
+    let params={};
+    _.forEach(props,(item)=>{
+      if(_.has(item,'id')&&item.store===store.Layout){
+        params[item.id]=_.cloneDeep(item.default);
+      }
+    });
+    return params;
+  },
   /**
    * @props 属性定义数组
    */
@@ -187,5 +214,6 @@ export default {
   options,
   queryOptions,
   manyToOneRelation,
-  defaultValue
+  defaultValue,
+  pageCommonProps
 }

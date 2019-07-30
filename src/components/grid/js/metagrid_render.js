@@ -113,6 +113,10 @@ export default {
         return function (h, params) {
             var btnOpts=null;
             var clickHandler=context.grid&&context.grid.handleOnTitleClick;
+            //特殊处理后端返回的false值: jmms无法正确转换false值，只能返回{enabled:false}
+            if(_.isPlainObject(clickHandler)&&clickHandler.enabled===false){
+              clickHandler=false;
+            }
             if(clickHandler){
                 btnOpts={name:"edit",security:""};
                 if(_.isFunction(clickHandler)){

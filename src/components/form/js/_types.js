@@ -205,7 +205,7 @@ export default {
    * 合并所有的定义，保持顺序，克隆定义不影响原始定义
    */
   merge(...props){
-    let _props=[].concat(commonProps,props);
+    let _props=[].concat(commonProps,props,pageCommonProps);
     return _.cloneDeep(_props);
   },
   unique,

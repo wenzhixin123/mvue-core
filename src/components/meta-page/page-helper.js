@@ -127,10 +127,68 @@ function processComRules(pageSettings,context) {
     });
     return comConfigs;
 }
-
+/**
+ * 新的完整模式，支持多个if
+ */
+function buildEventListener2(optionsArray,eventInfo,context){
+    let conditionArray=[];
+    _.forEach(optionsArray,options=>{
+        let condition=options.if||true;
+        let actions=[];
+        _.forEach(options.do,(param)=>{
+            let action=buildAction(param,eventInfo);
+            actions.push(action);
+        });
+        conditionArray.push({condition,actions});
+    });
+    return function () {
+        _.forEach(conditionArray,ca=>{
+            let condition=ca.condition;
+            let actions=ca.actions;
+            let ifVal=null;
+            if(typeof condition=="boolean"){
+                ifVal=condition;
+            }else if(_.isString(condition)){
+                ifVal=evalExpr(condition,context,false);
+            }else{
+                ifVal=false;
+            }
+            if(ifVal){
+                _.forEach(actions,(action)=>{
+                    action.exec(context);
+                });
+            }
+        });
+    }
+}
 /**
  * 根据设置信息，生成事件的处理器
- * @param options
+ * @param options 有三种形式
+        events:{
+            //最初的无if和do模式
+            "<控件Id>.<事件名称>":[
+                <操作定义1>, <操作定义2>...
+            ],
+            //最初的有if和do模式
+            "<控件Id>.<事件名称>":{
+                "if":"规则生效的条件表达式",
+                "do":[
+                    <操作定义1>, <操作定义2>...
+                ]
+            },
+            //新的完整模式，支持多个if
+            "<控件Id>.<事件名称>":[{
+                "if":"规则生效的条件表达式",
+                "do":[
+                    <操作定义1>, <操作定义2>...
+                ]
+            },{
+                "if":"规则生效的条件表达式",
+                "do":[
+                    <操作定义1>, <操作定义2>...
+                ]
+            }]
+        }
  * @param eventInfo
  * @param context
  * @returns {Function}
@@ -138,12 +196,18 @@ function processComRules(pageSettings,context) {
 function buildEventListener(options,eventInfo,context) {
     let condition=true;
     let actions=[];
-    if(_.isArray(options)){
-        _.forEach(options,(param)=>{
-            let action=buildAction(param,eventInfo);
-            actions.push(action);
-        });
-    }else if(_.isPlainObject(options)){
+    if(_.isArray(options)
+        && !_.isEmpty(options)){
+        //最初的无if和do模式   
+        if(!_.has(options[0],'do')){
+            _.forEach(options,(param)=>{
+                let action=buildAction(param,eventInfo);
+                actions.push(action);
+            });
+        }else{//新的完整模式，支持多个if
+            return buildEventListener2(options,eventInfo,context);
+        }
+    }else if(_.isPlainObject(options)){//最初的有if和do模式
         condition=options.if||true;
         _.forEach(options.do,(param)=>{
             let action=buildAction(param,eventInfo);
@@ -300,7 +364,7 @@ actions["showByValue"]=function actionForShowByValue(action,context,event) {
  * @param context
  * @param event
  */
-actions["setProps"]=function actionForShow(action,context,event) {
+actions["setProps"]=function(action,context,event) {
     let target = context[action.target];
     let matchedIf = true;
     if (!_.isEmpty(action.if)) {
@@ -320,7 +384,29 @@ actions["setProps"]=function actionForShow(action,context,event) {
     });
 }
 
-actions["script"]=function actionForShow(action,context,event) {
+/**
+ * 设置表单model属性
+ * @param action {action:"updateModel","props":{"key1":"value1","key2":"value2",...}}
+ * @param context
+ * @param event
+ */
+actions["updateModel"]=function(action,context,event) {
+    let target = context.model;
+    let matchedIf = true;
+    if (!_.isEmpty(action.if)) {
+        matchedIf = evalExpr(action.if, context, false);
+    }
+    if(!matchedIf){
+        return ;
+    }
+    let obj=target;
+    _.forIn(action.props,(propValExpr,prop)=>{
+        let propVal = evalExpr(propValExpr, context, null);
+        this.$set(obj,prop,propVal);
+    });
+}
+
+actions["script"]=function(action,context,event) {
     let matchedIf = true;
     if (!_.isEmpty(action.if)) {
         matchedIf = evalExpr(action.if, context, false);

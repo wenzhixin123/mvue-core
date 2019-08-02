@@ -27,7 +27,25 @@ function  buildQueryOptions(queryOptions,filters) {
     return cloned;
 }
 
+function visitTree(tree, processor, parent) {
+    _.forEach(tree, function (node, index) {
+        if (parent && _.isEmpty(node.parentId)) {
+            node["parentId"] = parent.id;
+        }
+        if (processor) {
+            let result = processor(node, tree, index,parent);
+            if (result === false) {
+                return false;
+            }
+        }
+        if (node.children) {
+            visitTree(node.children, processor, node);
+        }
+    });
+}
+
 export default{
+    visitTree,
     buildDataResource:function (entityName,opts) {
         var opts=_.extend({
             parentField:"parentId",

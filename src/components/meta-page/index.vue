@@ -19,7 +19,7 @@
     </div>
   </div>
   <div v-else>
-    <meta-layout v-if="renderLayout" :layout="pageSettings.layout"></meta-layout>
+    <meta-layout class="no-page" v-if="renderLayout" :layout="pageSettings.layout"></meta-layout>
     <Alert type="warning" v-if="errorObj.has" show-icon style="margin: 20px 200px">
       页面错误
       <template slot="desc">
@@ -143,7 +143,7 @@ export default {
     };
   },
   mounted(){
-    
+
   },
   methods: {
     setTitleSource(){

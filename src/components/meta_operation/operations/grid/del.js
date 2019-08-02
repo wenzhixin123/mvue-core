@@ -49,6 +49,13 @@ function impl(context,$optInst) {
             }).then(function (re) {
                 let router = null;
                 if ($optInst && $optInst.operation) {
+                    let operation=$optInst.operation;
+                    if(_.isFunction(operation.onSuccess)){
+                        let reVal=operation.onSuccess(id,context);
+                        if(reVal===false){
+                            return;
+                        }
+                    }
                     router = gridUtils.buildRouteToFromOp($optInst.operation);
                 }
                 if(router!=null){

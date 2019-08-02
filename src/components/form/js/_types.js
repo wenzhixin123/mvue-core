@@ -96,21 +96,24 @@ const commonProps=[
   }
 ]; 
 //动态属性和事件规则属性定义 
-const propSettingsProp={
+const propSettings={
   id:'propSettings',
   inputType:inputType.PropSettings,
   default:null,
   store:store.Form,
   title:'动态属性'
 }; 
-const eventsProp={
+const events={
   id:'events',
   inputType:inputType.Events,
   default:false,
   store:store.Form,
-  title:'事件规则'
+  title:'事件规则',
+  options:[
+    {value:'on-change',title:'值变化时'}
+  ]
 }; 
-const pageCommonProps=[propSettingsProp,eventsProp];
+const pageCommonProps=[propSettings,events];
 const unique={
   id:'unique',
   inputType:inputType.Boolean,
@@ -208,6 +211,14 @@ export default {
     let _props=[].concat(commonProps,props,pageCommonProps);
     return _.cloneDeep(_props);
   },
+  /**
+   * 合并定义，但不包括事件规则设置属性
+   * 这个方法主要是针对那些需要自定义events属性的可触发事件
+   */
+  mergeIgnoreEvents(...props){
+    let _props=[].concat(commonProps,props,[propSettings]);
+    return _.cloneDeep(_props);
+  },
   unique,
   placeholder,
   rules,
@@ -215,5 +226,6 @@ export default {
   queryOptions,
   manyToOneRelation,
   defaultValue,
-  pageCommonProps
+  propSettings,
+  events
 }

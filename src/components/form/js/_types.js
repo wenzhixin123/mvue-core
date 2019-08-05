@@ -25,7 +25,7 @@ const store={
 let inputTypeArray=[
   'Boolean','SingleLineText','MultiLineText','Number','SingleSelect','SingleSelectWithInput',
   'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json','RefEntity',
-  'RefEntityField','EntityField','DefaultValue','PropSettings','Events'
+  'RefEntityField','EntityField','DefaultValue','PropSettings','Events','ColSpan'
 ]; 
 let inputType={};
 inputTypeArray.forEach(t => {
@@ -95,6 +95,15 @@ const commonProps=[
     dynamic:true
   }
 ]; 
+//控件所占宽度属性
+const span={
+    id:'span',
+    inputType:inputType.ColSpan,
+    default:null,
+    store:store.Layout,
+    title:'宽度占比'
+};
+commonProps.push(span);
 //动态属性和事件规则属性定义 
 const propSettings={
   id:'propSettings',
@@ -227,5 +236,6 @@ export default {
   manyToOneRelation,
   defaultValue,
   propSettings,
-  events
+  events,
+  span
 }

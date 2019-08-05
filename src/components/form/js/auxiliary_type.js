@@ -20,7 +20,8 @@ const auxiliaryTypes={
                 default:'',
                 store:_types.store.Layout,
                 title:'图标'
-            }
+            },
+            _types.span
         ]
     },
     Text:{
@@ -35,7 +36,8 @@ const auxiliaryTypes={
                 default:'',
                 store:_types.store.Layout,
                 title:'文本内容'
-            }
+            },
+            _types.span
         ]
     }
 };

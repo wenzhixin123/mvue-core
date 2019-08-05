@@ -1,6 +1,7 @@
 <template>
     <Form @submit.native.prevent v-if="preprocessed" :ref="'formRef'" :model="entity"
           :rules="innerRules" :inline="inline" :label-position="labelPosition" :label-width="itemLabelWidth"
+          :class="{'mform-show-border':bordered}"
           :show-message="showMessage" :autocomplete="autocomplete">
         <slot name="prepend"></slot>
         <slot>

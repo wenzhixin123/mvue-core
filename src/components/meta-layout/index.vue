@@ -1,8 +1,8 @@
 <template>
 <div class="meta-layout-con">
-    <Row v-for="(rowItems,index) in innerSettings" :key="index">
+    <Row v-for="(rowItems,index) in innerSettings" type="flex" :key="index">
         <template v-if="isArray(rowItems)">
-            <Col v-for="(rowItem,itemIndex) in rowItems" :key="itemIndex" :span="rowItemSpan(rowItems,rowItem)">
+            <i-col v-for="(rowItem,itemIndex) in rowItems" :key="itemIndex" :span="rowItemSpan(rowItems,rowItem)">
                 <!--子元素还是个布局，用布局组件渲染-->
                 <template v-if="isArray(rowItem)">
                     <meta-layout @popup-close="handleOnPopupClose" :layout="rowItem" :itemProcessor="itemProcessor"></meta-layout>
@@ -10,11 +10,13 @@
                 <template v-else>
                     <m-component @popup-close="handleOnPopupClose"  :settings="componentProps(rowItem)"></m-component>
                 </template>
-            </Col>
+            </i-col>
         </template>
         <!--直接放组件，组件内部实现列排版-->
         <template v-else>
-            <m-component @popup-close="handleOnPopupClose"  :settings="componentProps(rowItems)"></m-component>
+            <i-col :span="24">
+                <m-component @popup-close="handleOnPopupClose"  :settings="componentProps(rowItems)"></m-component>
+            </i-col>
         </template>
     </Row>
 </div>

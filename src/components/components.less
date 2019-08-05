@@ -442,3 +442,44 @@ input[readonly]{
         overflow-x:auto;
     }
 }
+.mform-show-border{
+    .ivu-row-flex{
+        .ivu-form-item{
+            margin-bottom:0px;
+            display: flex;
+            height: 100%;
+            .ivu-form-item-error-tip{
+                position: unset;
+            }
+            .ivu-form-item-content{
+                border-left:1px solid #e8eaec;
+                margin-left:0px !important;
+                padding:5px;
+                flex:1;
+            }
+            .ivu-form-item-label{
+                background-color: #e8eaec59;
+            }
+        }
+        .ivu-col{
+            border-bottom:1px solid #e8eaec;
+            border-right:1px solid #e8eaec;
+        }
+        >.ivu-col:last-child{
+            border-right:none;
+        }
+    }
+    >.meta-layout-con{
+        border:1px solid #e8eaec;
+    }
+    .meta-layout-con{
+        >.ivu-row-flex:last-child{
+            >.ivu-col{
+                border-bottom:none;
+            }
+        }
+    }
+    .form-toolbar{
+        padding:5px 0px;
+    }
+}

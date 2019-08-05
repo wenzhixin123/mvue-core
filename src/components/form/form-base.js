@@ -109,6 +109,10 @@ export default {
         calc: {//后端不提供calc接口，可设置calc为false，这样表单控件就不会调用calc接口获取默认值
             type: Boolean,
             default:true
+        },
+        bordered:{//是否显示表单边界线，默认不显示
+            type:Boolean,
+            default:false
         }
     },
     data(){

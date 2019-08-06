@@ -115,7 +115,7 @@ const propSettings={
 const events={
   id:'events',
   inputType:inputType.Events,
-  default:false,
+  default:null,
   store:store.Form,
   title:'事件规则',
   options:[

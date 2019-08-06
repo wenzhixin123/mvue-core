@@ -228,6 +228,7 @@ export default {
     let _props=[].concat(commonProps,props,[propSettings]);
     return _.cloneDeep(_props);
   },
+  commonProps,
   unique,
   placeholder,
   rules,

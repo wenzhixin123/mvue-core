@@ -5,7 +5,7 @@
           :show-message="showMessage" :autocomplete="autocomplete">
         <slot name="prepend"></slot>
         <slot>
-            <meta-layout :layout="layout" :itemProcessor="itemProcessor"></meta-layout>
+            <meta-layout :flex="bordered" :layout="layout" :itemProcessor="itemProcessor"></meta-layout>
         </slot>
         <slot name="append"></slot>
         <FormItem v-if="hasButtons() || $slots.toolbar" class="form-toolbar"

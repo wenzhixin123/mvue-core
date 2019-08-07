@@ -1,11 +1,11 @@
 <template>
 <div class="meta-layout-con">
-    <Row v-for="(rowItems,index) in innerSettings" type="flex" :key="index">
+    <Row v-for="(rowItems,index) in innerSettings" v-bind="boundAttrs" :key="index">
         <template v-if="isArray(rowItems)">
             <i-col v-for="(rowItem,itemIndex) in rowItems" :key="itemIndex" :span="rowItemSpan(rowItems,rowItem)">
                 <!--子元素还是个布局，用布局组件渲染-->
                 <template v-if="isArray(rowItem)">
-                    <meta-layout @popup-close="handleOnPopupClose" :layout="rowItem" :itemProcessor="itemProcessor"></meta-layout>
+                    <meta-layout :flex="flex" @popup-close="handleOnPopupClose" :layout="rowItem" :itemProcessor="itemProcessor"></meta-layout>
                 </template>
                 <template v-else>
                     <m-component @popup-close="handleOnPopupClose"  :settings="componentProps(rowItem)"></m-component>
@@ -42,11 +42,21 @@ export default {
         },
         itemProcessor:{ //内容组件处理器
             type:Function
+        },
+        flex:{//是否使用flex布局，默认不使用：当表单开启边框时需要使用flex布局
+            type:Boolean,
+            default:false
         }
     },
     data(){
         var processed=this.preprocess(this.layout);
+        let boundAttrs={};
+        //如果开启了flex布局，增加type=flex属性
+        if(this.flex){
+            boundAttrs.type='flex';
+        }
         return {
+            boundAttrs:boundAttrs,
             innerSettings:processed,
             isLayout:true
         };
@@ -133,6 +143,10 @@ export default {
                     _props[key]=value;
                 }
             });
+            //layout组件，附加flex属性
+            if(!rowItem.ctype){
+                _props.flex=this.flex;
+            }
             return _props;
         },
         handleOnPopupClose(){

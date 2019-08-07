@@ -69,7 +69,10 @@ export default {
         }
     },
     mounted(){
-        this.getLayoutSettings();
+        //只有layout渲染才需要初始化layoutSettings
+        if(this.isMetaLayout()){
+            this.getLayoutSettings();
+        }
     },
     methods:{
         toggleModal(){

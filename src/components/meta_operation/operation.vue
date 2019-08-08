@@ -10,7 +10,7 @@
 import propParser from '../../services/tool/prop_parser';
 import OperationUtils from './operations/utils';
 import operations from "./operations/register";
-import  operationManager from "../../libs/operation/operations";
+import operationManager from "../../libs/operation/operations";
 import getParent from '../mixins/get-parent';
 import context from '../../libs/context';
 import sc from '../../libs/security/permission';
@@ -58,6 +58,10 @@ export default {
         },
     },
     data(){
+        //转换一下type到operationType
+        if(this.operation.type&&!this.operation.operationType){
+            this.operation.operationType=this.operation.type;
+        }
         return {
             hasPermission:false
         };

@@ -120,7 +120,7 @@
                             && innerToolbar.advanceSearchFields.length>0
                             && !innerToolbar.advFormEmbedded"
                         @click="showAdvForm=!showAdvForm" type="default">
-                        高级搜索
+                        {{getAdvanceSearchTitle()}}
                     </Button>
                     <!--弹出式高级搜索-->
                     <advance-search ref="advanceSearchRef"

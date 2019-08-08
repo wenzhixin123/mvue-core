@@ -1,9 +1,9 @@
 <template>
     <div class="grid-advance-search-con">
-        <Button @click="toggleModal" type="default">高级搜索</Button>
+        <Button @click="toggleModal" type="default">{{getAdvanceSearchTitle()}}</Button>
         <Modal :width="modalWidth"
                 v-model="searchModal"
-                title="高级搜索"  ok-text="搜索" cancel-text="重置"
+                :title="getAdvanceSearchTitle()"  ok-text="搜索" cancel-text="重置"
                 @on-ok="doSearch"
                 @on-cancel="doReset">
             <adv-form ref="advFormRef"
@@ -21,6 +21,7 @@
 </template>
 <script>
 import baseProps from './adv-search/base-props';
+import context from '../../libs/context';
 export default {
     mixins:[baseProps],
     props: {
@@ -61,6 +62,9 @@ export default {
         handleOnAdvanceSearch(advanceSearchFilters,innerQuicksearchKeyword,joins){
             this.$emit("on-advance-search",advanceSearchFilters,innerQuicksearchKeyword,joins);
             this.searchModal=false;
+        },
+        getAdvanceSearchTitle(){
+            return context.getSettings().control.grid.advanceSearchTitle;
         }
     },
     components:{

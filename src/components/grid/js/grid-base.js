@@ -1,6 +1,6 @@
 import globalContext from '../../../libs/context';
 import operationManager from "../../../libs/operation/operations";
-import  gridProps from "./grid-props";
+import gridProps from "./grid-props";
 import entityResource from "../../../libs/metadata/entity-resource";
 export default{
     mixins:[gridProps],
@@ -297,6 +297,9 @@ export default{
             return entityResource.find(oneToManyRelation.entity,refId).then((data)=>{
                return  data;
             });
+        },
+        getAdvanceSearchTitle(){
+            return globalContext.getSettings().control.grid.advanceSearchTitle;
         }
     },
     components:{

@@ -7,7 +7,6 @@ let operation= {
     name: "custom",
     title: "自定义",
     to:null,
-    operationType:"common",
     btnType:"primary",
     onclick:function(context,$optInst) {
         contextHelper.warning("操作未实现");

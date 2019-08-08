@@ -16,7 +16,7 @@ import context from '../../libs/context';
 import sc from '../../libs/security/permission';
 import entityResource from '../../libs/metadata/entity-resource';
 //操作类型定义
-var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',group:'group',selectEntity:'selectEntity'};
+var operationType={common:'common', toPage:'toPage', widget:'widget', popup:'popup',script:'script',group:'group',selectEntity:'selectEntity',http:'http'};
 //将不同的部件操作类型转成实际的操作
 export default {
     mixins:[getParent],
@@ -140,6 +140,7 @@ export default {
         scriptOperation:require('./script_operation'),
         groupOperation:require('./group-operation'),
         selectEntityOperation:require('./select-entity-operation'),
+        httpOperation:require('./http-operation')
     }
 }
 </script>

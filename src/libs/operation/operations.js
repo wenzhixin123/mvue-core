@@ -33,14 +33,10 @@ function create(opts) {
         opts={name:opts};
     }
     var name=opts.name;
-    if(_.isNil(name)){
+    if((!name)||(name&&!operations[name])){
         name="custom";
     }
     var template=operations[name];
-    if(_.isEmpty(template)){
-        console.log("operation hasn't register,opts:"+JSON.stringify(opts));
-        return opts;
-    }
     var created=_.assign({},template,opts);
     if(template.security===true){
         created.security=[created.name];
@@ -50,7 +46,7 @@ function create(opts) {
     }
 
     //根据type重写operationType
-    if(_.has(created,"type")){
+    if(_.has(created,"type")&& !_.has(created,'operationType')){
         created["operationType"]=created["type"];
     }
     return created;

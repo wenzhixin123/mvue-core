@@ -43,6 +43,14 @@ function initWebContext(location) {
   cachedContext.webContext.pagePath=href.replace(location.hash,"");
 }
 
+function convertMessageOpts(opts){
+    if(_.isString(opts)){
+        return {content:opts};
+
+    }
+    return opts;
+}
+
 export default {
     appCtx:null,
     init: function (Vue, opts) {
@@ -115,6 +123,7 @@ export default {
         return cachedContext.eventBus;
     },
     info: function (opts) {
+        opts=convertMessageOpts(opts);
         var vue = this.getCurrentVue();
         if (vue.$Message) {
             if (opts && opts.noTimeout) {
@@ -127,6 +136,7 @@ export default {
         }
     },
     success: function (opts) {
+        opts=convertMessageOpts(opts);
         var vue = this.getCurrentVue();
         if(_.isString(opts)){
             opts={content:opts}
@@ -145,6 +155,8 @@ export default {
         }
     },
     warning: function (opts) {
+        opts=convertMessageOpts(opts);
+        debugger
         var vue = this.getCurrentVue();
         opts=_.extend({
             title:"警告信息"
@@ -160,6 +172,7 @@ export default {
         }
     },
     error: function (opts) {
+        opts=convertMessageOpts(opts);
         var vue = this.getCurrentVue();
         opts=_.extend({
             title:"错误信息"
@@ -175,6 +188,7 @@ export default {
         }
     },
     confirm: function (opts) {
+        opts=convertMessageOpts(opts);
         var vue = this.getCurrentVue();
         opts=_.extend({
             title:"确认信息"

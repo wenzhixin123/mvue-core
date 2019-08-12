@@ -175,12 +175,21 @@ export default {
             }
             return false;
         },
-        shouldInitDefault(){//判断新建模式，并且需要设置默认值
-            return this.isCreate()&&
-                (this.initWhenCreate || this.formItem.componentParams.valueType===controlTypeService.valueTypes.defaultValue.id);
+        getMetaField(){
+            let metaEntity=this.context.metaEntity;
+            let metaField=null;
+            if(metaEntity){
+                metaField=metaEntity.findField(this.formItem.dataField);
+            }
+            return metaField;
         },
-        isFixedValue(){//是否是固定字段(计算字段)，计算字段的值由后端计算，前端只能显示不能修改
-            return this.formItem.componentParams.valueType===controlTypeService.valueTypes.fixedValue.id;
+        isExprValue(){//是否是动态计算字段(计算字段)
+            let metaField=this.getMetaField();
+            return metaField && (metaField.defaultExpr||metaField.valueExpr);
+        },
+        shouldInitDefault(){//判断新建模式，并且需要设置默认值
+            return this.isCreate()
+                && (this.initWhenCreate || this.isExprValue());
         },
         //begin 用户组织默认值相关的基础方法
         /** 
@@ -349,7 +358,7 @@ export default {
             return dependOn;
         },
         initFixedField(callback){//初始化计算字段的监听逻辑，当依赖的字段变化时，重新计算
-            if(this.isFixedValue()){
+            if(this.isExprValue()){
                 let _this=this;
                 let dependOn=this.parseDependOn();
                 _.forIn(dependOn.dependOn,function(value,dep){

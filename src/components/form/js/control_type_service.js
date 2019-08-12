@@ -357,11 +357,7 @@ function defaultValueTypes(formItem){
     }
     return null;
 };
-//值可设置的类型：默认值和固定值
-var valueTypes={
-    defaultValue:{id:"defaultValue",title:"默认值"},
-    fixedValue:{id:"fixedValue",title:"固定值"},
-};
+
 export default {
     isAuxiliary,
     auxiliaryControls,
@@ -405,7 +401,6 @@ export default {
     formatDataForExport:formatDataForExport,
     getMetaFieldComponentType:getMetaFieldComponentType,
     defaultValueTypes:defaultValueTypes,
-    valueTypes:valueTypes,
     //type definition
     textType,
     optionsType,

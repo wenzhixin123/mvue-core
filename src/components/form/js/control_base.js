@@ -325,6 +325,17 @@ export default {
             if(!ast){
                 return;
             }
+            //${title}这种只有一个字段的特殊处理
+            if(ast.type==='Identifier' && ast.name){
+                let name=ast.name;
+                if((!dependOn.dependOn[name])){
+                    if(metaEntity.findField(name)){
+                        dependOn.dependOn[name]=true;
+                    }else{
+                        dependOn.justModelFields=false;
+                    }
+                }
+            }
             _.forIn(ast,(value,key)=>{
                 if(value&&value.type==='Identifier'){
                     let name=value.name;
@@ -360,6 +371,7 @@ export default {
         initFixedField(callback){//初始化计算字段的监听逻辑，当依赖的字段变化时，重新计算
             if(this.isExprValue()){
                 let _this=this;
+                debugger
                 let dependOn=this.parseDependOn();
                 _.forIn(dependOn.dependOn,function(value,dep){
                     _this.$watch(`model.${dep}`,function(){

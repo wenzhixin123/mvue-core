@@ -12,8 +12,8 @@
                 v-transfer-dom="toolbarTransferDomId" :data-transfer="transfer">
             <slot name="toolbar" >
                 <template v-if="isView">
-                    <template v-for="btn in innerToolbar.viewBtns">
-                        <meta-operation v-if="!btnIsHidden(btn)" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                    <template v-for="(btn,index) in innerToolbar.viewBtns">
+                        <meta-operation v-if="!btnIsHidden(btn)" :key="index" :operation="btn" :widget-context="getWidgetContext()">
                             <Button slot-scope="{operation}" :disabled="btnIsDisabled(operation)" :type="operation.btnType||'primary'"  :title="operation.title">
                                 <m-icon :type="operation.icon" v-if="operation.icon"></m-icon>
                                 {{operation.title}}
@@ -22,8 +22,8 @@
                     </template>
                 </template>
                 <template v-if="!isView">
-                    <template v-for="btn in innerToolbar.editBtns">
-                        <meta-operation  v-if="!btnIsHidden(btn)" :key="btn.name" :operation="btn" :widget-context="getWidgetContext()">
+                    <template v-for="(btn,index) in innerToolbar.editBtns">
+                        <meta-operation  v-if="!btnIsHidden(btn)" :key="index" :operation="btn" :widget-context="getWidgetContext()">
                             <Button slot-scope="{operation}" :disabled="btnIsDisabled(operation)" :type="operation.btnType||'primary'"  :title="operation.title">
                                 <m-icon :type="operation.icon" v-if="operation.icon"></m-icon>
                                 {{operation.title}}

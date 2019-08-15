@@ -156,7 +156,6 @@ export default {
     },
     warning: function (opts) {
         opts=convertMessageOpts(opts);
-        debugger
         var vue = this.getCurrentVue();
         opts=_.extend({
             title:"警告信息"

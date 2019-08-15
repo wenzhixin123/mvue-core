@@ -371,7 +371,6 @@ export default {
         initFixedField(callback){//初始化计算字段的监听逻辑，当依赖的字段变化时，重新计算
             if(this.isExprValue()){
                 let _this=this;
-                debugger
                 let dependOn=this.parseDependOn();
                 _.forIn(dependOn.dependOn,function(value,dep){
                     _this.$watch(`model.${dep}`,function(){

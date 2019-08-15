@@ -34,7 +34,6 @@ let props=[
         id:'formatter',
         inputType:_types.inputType.SingleSelectWithInput,
         options:[
-            {value:'',title:'无'},
             {value:'bytes',title:'字节转换'},
             {value:'rmb',title:'人民币'},
             {value:'usd',title:'美元'}

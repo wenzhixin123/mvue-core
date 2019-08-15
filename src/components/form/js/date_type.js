@@ -41,7 +41,6 @@ const dateTimeFormatterProp={
     default:'',
     store:_types.store.MetaFieldInputParams,
     options:[
-        {value:'',title:'未设置'},
         {value:'yyyy-MM-dd HH:mm:ss',title:'yyyy-MM-dd HH:mm:ss'},
         {value:'yyyy/MM/DD HH:mm:ss',title:'yyyy/MM/DD HH:mm:ss'}
     ],

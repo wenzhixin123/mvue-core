@@ -1,8 +1,8 @@
 import entityType from './entity_type';
 import _types from './_types';
 const props={
-    SingleUserSelect:_types.merge(_types.placeholder),
-    SingleOrgSelect:_types.merge(_types.placeholder),
+    SingleUserSelect:_types.merge(_types.placeholder,_types.defaultValue),
+    SingleOrgSelect:_types.merge(_types.placeholder,_types.defaultValue),
     MultiUserSelect:_types.merge(_types.placeholder),
     MultiOrgSelect:_types.merge(_types.placeholder)
 };

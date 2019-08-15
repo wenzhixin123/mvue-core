@@ -48,9 +48,9 @@ const dateTimeFormatterProp={
     title:'格式'
 };
 let props={
-    Date:_types.merge(datePrecisionProp),
-    Time:_types.merge(timePrecisionProp),
-    DateTime:_types.merge(datePrecisionProp,timePrecisionProp,dateTimeFormatterProp)
+    Date:_types.merge(datePrecisionProp,_types.defaultValue),
+    Time:_types.merge(timePrecisionProp,_types.defaultValue),
+    DateTime:_types.merge(datePrecisionProp,timePrecisionProp,dateTimeFormatterProp,_types.defaultValue)
 };
 //定义基础组件:日期和时间类型
 var dateTypes={

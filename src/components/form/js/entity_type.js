@@ -13,7 +13,7 @@ const selectLevelProp={
     title:'最高可选层级'
 };
 const props={
-    RefEntity:_types.merge(_types.placeholder,_types.manyToOneRelation,_types.queryOptions),
+    RefEntity:_types.merge(_types.placeholder,_types.manyToOneRelation,_types.queryOptions,_types.defaultValue),
     MultiRefEntity:_types.merge(
         _types.placeholder,
         Object.assign({},_types.manyToOneRelation,{
@@ -24,7 +24,7 @@ const props={
             }
         }),
         _types.queryOptions),
-    ParentSelect:_types.merge(_types.manyToOneRelation,_types.queryOptions,selectLevelProp),
+    ParentSelect:_types.merge(_types.manyToOneRelation,_types.queryOptions,selectLevelProp,_types.defaultValue),
     OrderedMultiRefEntity:_types.merge(
         _types.placeholder,
         Object.assign({},_types.manyToOneRelation,{

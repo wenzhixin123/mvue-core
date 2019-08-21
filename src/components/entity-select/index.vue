@@ -1,5 +1,13 @@
 <template>
-  <div :class="{'bvue-select-group-append':showBtn&&append}">
+  <ref-entity-select v-if="noModal" ref="selectRef" style="position:relative;"
+      :form-item="formItem"
+      :multiple="multiple"
+      :value="value" 
+      :modal-height="innerModalHeight"
+      :grid-settings="gridSettings"
+      :queryOptions="queryOptions"
+    ></ref-entity-select>
+  <div v-else :class="{'bvue-select-group-append':showBtn&&append}">
     <slot name="btn" v-if="showBtn">
       <Button :type="btnType||'primary'" :disabled="disabled" @click="toggleModal">
           <Icon :type="btnIcon"></Icon>
@@ -75,6 +83,10 @@ export default {
     },
     btnType:{
       type:String
+    },
+    noModal:{
+      type:Boolean,
+      default:false
     }
   },
   data(){
@@ -107,6 +119,9 @@ export default {
       this.selectedItem=selectedItem;
       this.$emit('on-select-change',selectedItem);
       this.close();
+    },
+    getSelectedItem(){
+      return this.$refs.selectRef.selectedItem;
     }
   },
   components:{

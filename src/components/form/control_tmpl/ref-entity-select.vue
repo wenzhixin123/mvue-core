@@ -91,7 +91,7 @@ export default {
         async preprocess(){
             let metaEntity=this.$metaBase.findMetaEntity(this.entityName);
             //如果外部没有传入grid的配置gridSettings，从后端获取试试
-            if(metaEntity.isUIEnable&&(!this.gridSettings)){
+            if(metaEntity.isUIEnable()&&(!this.gridSettings)){
                 let settings=await metaEntity.getPage("select");
                 //这里对于settings先不做metaLayoutConvertor处理
                 if(!_.isEmpty(settings)){
@@ -110,6 +110,11 @@ export default {
                 this.layoutSettings.columns=[defaultTitleField];
             }
             this.preprocessed=true;
+            if(this.shouldInitByIds){
+                this.$nextTick(()=>{
+                    this.initByIds();
+                })
+            }
         }
     }
 }

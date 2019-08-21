@@ -25,7 +25,9 @@
 </template>
 
 <script>
+    import context from '../../../../libs/context';
     import orgTree from '../user-select/org-tree';
+    import queryMethods from '../user-select/query-methods';
     export default {
         mixins: [orgTree],
         props: {
@@ -37,17 +39,25 @@
             },
             queryMethods: {
                 type: Object,
-                required: true
+                default(){
+                    return queryMethods;
+                }
             },
             multiple: {
                 type: Boolean,
                 default: false
             },
             labelKey: {
-                type: String
+                type: String,
+                default() {
+                    return context.getSettings().control.orgSelect.nameField;
+                }
             },
             valueKey: {
-                type: String
+                type: String,
+                default() {
+                    return context.getSettings().control.orgSelect.idField;
+                }
             },
             queryPlaceholder: {
                 type: String

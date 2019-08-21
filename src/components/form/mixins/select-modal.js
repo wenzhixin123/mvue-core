@@ -14,7 +14,8 @@ export default {
             default:80
         },
         modalHeight:{
-            type:Number
+            type:Number,
+            default:context.modalHeight()
         }
     },
     watch:{

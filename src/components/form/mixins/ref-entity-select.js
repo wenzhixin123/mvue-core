@@ -1,9 +1,12 @@
+import context from '../../../libs/context';
 export default {
     data(){
         var entityName=this.formItem.componentParams.entityId;
+        let {shouldInitByIds,value}=this.convertedValue();
         return {
             entityName:entityName,
-            selectedItem:_.cloneDeep(this.value)
+            shouldInitByIds:shouldInitByIds,
+            selectedItem:value
         }
     },
     methods:{
@@ -73,6 +76,28 @@ export default {
                 return title.substring(0,10)+'...';
             }
             return title;
+        },
+        initByIds(){
+            let inValueArray=[];
+            for (let item of this.value) {
+                inValueArray.push(`'${context.getMvueToolkit().utils.leapQueryValueEncode(item)}'`);
+            }
+            let idField=this.getIdField();
+            let filters=`${idField} in ${inValueArray.join(",")}`;
+            this.$refs.gridList.queryResource.query({filters:filters}).then( ({data})=>{
+                this.selectedItem=data;
+            });
+        },
+        convertedValue(){
+            let res={
+                shouldInitByIds:false,
+                value:_.cloneDeep(this.value)
+            };
+            if(_.isArray(this.value)&&!_.isEmpty(this.value)&&!_.isPlainObject(this.value[0])){
+                res.shouldInitByIds=true;
+                res.value=[];
+            }
+            return res;
         }
     }
 }

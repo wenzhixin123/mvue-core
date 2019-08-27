@@ -54,7 +54,8 @@ const commonProps=[
     inputType:inputType.Boolean,
     default:false,
     store:store.MetaField,
-    title:'是否必填'
+    title:'是否必填',
+    sync:true
   },
   {
     id:'description',

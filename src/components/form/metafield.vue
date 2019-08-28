@@ -17,6 +17,7 @@
                 :form-item="formItem"
                 :init-when-create="initWhenCreate"
                 @input="handleChange"
+                v-bind="$attrs"
             >
             </component>
             <div v-if="description&&descLevel=='warn'&&!ignoreDescription" v-text="description"></div>
@@ -32,6 +33,7 @@ import getParent from '../mixins/get-parent';
 import widgetMode from './js/widget-mode';
 export default {
     mixins:[getParent],
+    inheritAttrs: false,//vue规定：非props定义的属性会在$attrs中，默认会自动附加到顶层元素上，inheritAttrs为false就不会附加(除去特殊属性style和class)
     props:{
         name:{
             type:String,
@@ -47,8 +49,7 @@ export default {
             type:String
         },
         preprocessor:{//数据预处理函数，对formItem作预处理转换
-            type:Function,
-            required: false
+            type:Function
         },
         context:{//context
             type:Object,
@@ -60,7 +61,7 @@ export default {
             type:String
         },
         model:{//高级查询model
-            required: false
+            type:Object
         },
         showLabel:{
             type:Boolean,
@@ -194,6 +195,8 @@ export default {
         }
         this.overrideProps(metaField,inBatchEditor);
         var formItem=controlTypeService.buildFormItemByMetaField(metaField);
+        //将非props定义的其他属性，附加到params中
+        this.copyNonPropsAttrsToParams();
         formItem.componentParams=_.extend(formItem.componentParams,this.params);
         //构造字段描述
         var description=null;
@@ -254,6 +257,11 @@ export default {
         }
     },
     methods:{
+        copyNonPropsAttrsToParams(){
+            _.forIn(this.$attrs,(v,k)=>{
+                this.params[k]=v;
+            });
+        },
         buildMethodRule(validateMethod){
             let refs=this.$refs;
             let _rule={

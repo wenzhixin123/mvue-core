@@ -11,6 +11,7 @@ import numberType from './number_type';
 
 export default {
     mixins:[emitter,getParent],
+    inheritAttrs: false,
     props:{
         formItem:{
             type:Object,

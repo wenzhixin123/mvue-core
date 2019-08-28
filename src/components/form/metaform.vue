@@ -281,16 +281,16 @@
                         item["name"]=item["value"];
                         delete item["value"];
                     }
-                    var ignores=["value","icon","ctype","name","title","input-type","span","inputType","action","entityName","preprocessor",
-                        "context","model","showLabel","label","rules","required","error","showMessage",
-                        "labelFor","labelWidth","initWhenCreate","params"];
-                    var params=item.params||{};
-                    _.forIn(item,(v,k)=>{
-                        if(!_.includes(ignores,k)){
-                            params[k]=v;
-                        }
-                    });
-                    item.params=params;
+                    // var ignores=["value","icon","ctype","name","title","input-type","span","inputType","action","entityName","preprocessor",
+                    //     "context","model","showLabel","label","rules","required","error","showMessage",
+                    //     "labelFor","labelWidth","initWhenCreate","params"];
+                    // var params=item.params||{};
+                    // _.forIn(item,(v,k)=>{
+                    //     if(!_.includes(ignores,k)){
+                    //         params[k]=v;
+                    //     }
+                    // });
+                    // item.params=params;
                     _item=item;
                 }
                 //表单上下文都要附加到m-field组件上去

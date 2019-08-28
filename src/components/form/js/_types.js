@@ -62,7 +62,8 @@ const commonProps=[
     inputType:inputType.SingleLineText,
     default:'',
     store:store.MetaField,
-    title:'提示文字'
+    title:'提示文字',
+    sync:true
   },
   {
     id:'descLevel',

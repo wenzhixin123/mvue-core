@@ -381,6 +381,15 @@ actions["setProps"]=function(action,context,event) {
     _.forIn(action.props,(propValExpr,prop)=>{
         let propVal = evalExpr(propValExpr, context, null);
         this.$set(obj,prop,propVal);
+        //触发m-component组件重新渲染
+        if(target.$parent.continueRender){
+            //保证continueRender的值不会一直变大
+            if(target.$parent.continueRender>100){
+                target.$parent.continueRender=target.$parent.continueRender-1;
+            }else{
+                target.$parent.continueRender=target.$parent.continueRender+1;
+            }
+        }
     });
 }
 

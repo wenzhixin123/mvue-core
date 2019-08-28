@@ -137,11 +137,8 @@ export default {
         },
         componentProps(rowItem){
             var _props={};
-            var ignores=[];
             _.forIn(rowItem,(value,key)=>{
-                if(!_.includes(ignores,key)){
-                    _props[key]=value;
-                }
+                _props[key]=value;
             });
             //layout组件，附加flex属性
             if(!rowItem.ctype){
@@ -165,7 +162,21 @@ export default {
             if(item.indexOf("@")!=0){
                 return item;
             }
-             var args=_.split(item," ");
+            //先匹配出含空格的字符串参数:--arg1='ss 55'
+            var strArgPattrn = /--\w+='[\w\s]+'/g;
+            var strArgs = item.match(strArgPattrn);
+            //如果有含空格的字符串参数，先去掉，后续添加进来
+            if(strArgs){
+                item=item.replace(strArgPattrn,'');
+            }
+            var args=_.split(item," ");
+            //如果有含空格的字符串参数附加进来
+            if(strArgs){
+                strArgs=strArgs.map(s=>{
+                    return s.replace(/'/g,'');
+                });
+                args=args.concat(strArgs);
+            }
             var componentName=_.kebabCase(args[0].replace("@",""));
             var component={
                 ctype:componentName
@@ -185,7 +196,7 @@ export default {
                         _.forEach(val,(sKey,index)=>{
                             if(index==0){
                                 component["value"]=sKey;
-                            }else{
+                            }else if(sKey!==''){
                                 component[sKey]=true;
                             }
                         });
@@ -202,7 +213,7 @@ export default {
                             component["value"]=val;
                         }else if(key=="c"){
                             component["class"]=val;
-                        }else{
+                        }else if(key!==''){
                             if(!_.isEmpty(val)
                                 && val.charAt(0)=="[" && val.charAt(val.length-1)=="]"){
                                 val=JSON.parse(val);

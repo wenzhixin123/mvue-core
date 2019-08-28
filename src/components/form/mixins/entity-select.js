@@ -4,6 +4,11 @@ import entityType from '../js/entity_type';
 import topEntityService from "../../../services/store/top-entity";
 
 export default{
+    props:{
+        defaultFilters:{//可以在表单设计器动态设置的属性，用来运行时覆盖默认的queryOptions.filters
+            type:String
+        }
+    },
     data(){
         return {
             isLoading:false,
@@ -376,17 +381,24 @@ export default{
             return limit;
         },
         mergeQueryOptions(params){
-            if(_.isEmpty(this.innerQueryOptions)){
+            let _queryOpts=this.innerQueryOptions;
+            if(this.defaultFilters){
+                _queryOpts=_queryOpts||{};
+                _queryOpts.filters=this.defaultFilters;
+            }
+            if(_.isEmpty(_queryOpts)){
                 return;
             }
-            _.forIn(this.innerQueryOptions,(val,key)=>{
+            _.forIn(_queryOpts,(val,key)=>{
                 if(!_.has(params,key)){
                     params[key]=val;
                     return;
                 }
                 switch (key) {
                     case "filters":
-                        params.filters=`(${params.filters}) and (${val})`;
+                        if(val){
+                            params.filters=`(${params.filters}) and (${val})`;
+                        }
                         break;
                     case "orderby","select":
                         params[key]=val;
@@ -410,6 +422,7 @@ export default{
             }else{
                 //如果是关键字查询，附加查询条件查询
                 this.buildQueryOptions(params,keyword);
+                this.mergeQueryOptions(params);
             }
             if(this.entityResource){
                 context.getMvueToolkit().utils.smartSearch(_this,function(){

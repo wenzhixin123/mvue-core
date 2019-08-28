@@ -12,8 +12,17 @@ const selectLevelProp={
     store:_types.store.MetaFieldInputParams,
     title:'最高可选层级'
 };
+const defaultFiltersProp={
+    id:'defaultFilters',
+    inputType:_types.inputType.SingleLineText,
+    default:'',
+    hidden:true,
+    dynamic:true,
+    store:_types.store.Layout,
+    title:'默认查询条件'
+};
 const props={
-    RefEntity:_types.merge(_types.placeholder,_types.manyToOneRelation,_types.queryOptions,_types.defaultValue),
+    RefEntity:_types.merge(_types.placeholder,_types.manyToOneRelation,_types.queryOptions,_types.defaultValue,defaultFiltersProp),
     MultiRefEntity:_types.merge(
         _types.placeholder,
         Object.assign({},_types.manyToOneRelation,{
@@ -23,7 +32,7 @@ const props={
                 type:'many-to-many'
             }
         }),
-        _types.queryOptions),
+        _types.queryOptions,defaultFiltersProp),
     ParentSelect:_types.merge(_types.manyToOneRelation,_types.queryOptions,selectLevelProp,_types.defaultValue),
     OrderedMultiRefEntity:_types.merge(
         _types.placeholder,
@@ -34,7 +43,7 @@ const props={
                 type:'many-to-many'
             }
         }),
-        _types.queryOptions)
+        _types.queryOptions,defaultFiltersProp)
 };
 var types={
     RefEntity:{ 

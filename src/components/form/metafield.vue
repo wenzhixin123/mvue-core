@@ -1,5 +1,6 @@
 <template>
-    <FormItem  :prop="innerPropName"  :label-for="labelFor" v-if="!isHidden()"
+    <FormItem ref="formItemRef"  :prop="innerPropName"  :label-for="labelFor" v-if="!isHidden()"
+        :required="required"
         :rules="innerRules" :show-message="showMessage" :class="itemClass">
         <template v-if="showLabel" slot="label">
             <slot name="label">{{ metaField.title}}<info-tip v-if="description&&descLevel=='info'&&!ignoreDescription" :content="description"></info-tip></slot>
@@ -145,6 +146,21 @@ export default {
                 _mode=this.getInnerMode(this.metaField);
             }
             this.innerMode= _mode;
+        },
+        required:function(){
+            let rules=[];
+            let innerRules=this.buildInnerRules(this.formItem);
+            if(this.required){
+                let _r=metaformUtils.buildValidationRuleForRequired(this.formItem.componentParams.title);
+                rules.push(_r);
+            }
+            if(!_.isEmpty(innerRules)){
+                rules=rules.concat(innerRules);
+            }
+            //重设form-item验证规则，否则必填验证不会生效
+            this.innerRules=rules;
+            //清除验证错误标记，否则动态切换规则后会存留之前的验证错误提示
+            this.$refs.formItemRef.validateState='';
         }
     },
     data:function(){

@@ -55,7 +55,8 @@ const commonProps=[
     default:false,
     store:store.MetaField,
     title:'是否必填',
-    sync:true
+    sync:true,
+    dynamic:true
   },
   {
     id:'description',

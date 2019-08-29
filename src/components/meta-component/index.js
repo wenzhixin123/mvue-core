@@ -1,4 +1,6 @@
 import  pageHelper from "../meta-page/page-helper";
+var showResultInterval=null;
+var showResultIntervalCount=0;
 export default {
     props: {
         settings: {
@@ -17,7 +19,8 @@ export default {
             comConfig:comConfig,
             visible:null,
             innerSettings:this.settings,
-            continueRender:1
+            continueRender:1,
+            showResultResolved:false
         }
         return dataVal;
     },
@@ -115,6 +118,8 @@ export default {
         }
         let el = createElement(comType, params);
         parentPage.registerComponent(comId, el);
+        //这里注册之后才标记事件规则中的show操作执行成功，保证下一个的action执行时context中组件实例是新的
+        this.showResultResolved=true;
         return el;
     },
     methods:{
@@ -133,12 +138,31 @@ export default {
         },
         show(){
             this.visible=true;
+            showResultIntervalCount=0;
+            this.showResultResolved=false;
+            //这里返回一个Promise，必须在show完成注册后标记当前show操作是执行成功的，保证下一个的action执行时context中组件实例是新的
+            let showResult=new Promise((resolve,reject)=>{
+                showResultInterval=setInterval(()=> {
+                    showResultIntervalCount++;
+                    //这里定时器最多跑20次后自动清除，避免性能损耗
+                    if(this.showResultResolved||showResultIntervalCount>20){
+                        clearInterval(showResultInterval);
+                        resolve(true);
+                    }
+                }, 300);
+            });
+            return showResult;
         },
         hide(){
             this.visible=false;
+            return Promise.resolve(true);
         },
         setVisible(visible){
-            this.visible=visible;
+            if(visible){
+                return this.show();
+            }else{
+                return this.hide();
+            }
         }
     }
 }

@@ -225,9 +225,23 @@ function buildEventListener(options,eventInfo,context) {
             ifVal=false;
         }
         if(ifVal){
-            _.forEach(actions,(action)=>{
-                action.exec(context);
-            });
+            let res=[];
+            for(let i=0;i<actions.length;++i){
+                let action=actions[i];
+                //这里如果上一步action返回的Promise，则等它resolve了再执行下一个action
+                if(i>0&&res[i-1]){
+                    res[i-1].then(()=>{
+                        let _res=action.exec(context);
+                        res.push(_res);
+                    });
+                }else{
+                    let _res=action.exec(context);
+                    res.push(_res);
+                }
+            }
+            // _.forEach(actions,(action)=>{
+            //     let _res=action.exec(context);
+            // });
         }
     }
 }
@@ -274,7 +288,7 @@ function buildAction(action,event) {
                 console.error(`操作${action.action}不存在`);
             }
             let target = context[event.comId] || context.page;
-            func.call(target, action, context, event);
+            return func.call(target, action, context, event);
         }
     }
 }
@@ -285,28 +299,37 @@ function buildAction(action,event) {
  * @param context
  * @param event
  */
-actions["show"]=function actionForShow(action,context,event) {
+actions["show"]=function(action,context,event) {
     let isShow = true;
     if (!_.isEmpty(action.value)) {
         isShow = evalExpr(action.value, context, false);
     }
 
     if (_.isArray(action.target)) {
+        let res=[];
         _.forEach(action.target, (comId) => {
             let com = context[comId];
             if (com && com.$parent) {
-                com.$parent.setVisible(isShow);
+                let _r=com.$parent.setVisible(isShow);
+                if(_r){
+                    res.push(r);
+                }
             }
         })
+        return Promise.all(res);
     } else {
         let com = context[action.target];
         if (com && com.$parent) {
-            com.$parent.setVisible(isShow);
+            let _r=com.$parent.setVisible(isShow);
+            if(_r){
+                return _r;
+            }
         }
     }
+    return Promise.resolve(true);
 }
 
-actions["hide"]=function actionForShow(action,context,event) {
+actions["hide"]=function(action,context,event) {
     if (_.isArray(action.target)) {
         _.forEach(action.target, (comId) => {
             let com = context[comId];
@@ -328,7 +351,7 @@ actions["hide"]=function actionForShow(action,context,event) {
  * @param context
  * @param event
  */
-actions["showByValue"]=function actionForShowByValue(action,context,event) {
+actions["showByValue"]=function(action,context,event) {
     let fieldVal=null;
     if(action.value) {
         fieldVal=evalExpr(action.value,context);
@@ -349,13 +372,19 @@ actions["showByValue"]=function actionForShowByValue(action,context,event) {
         });
     });
     if(matchedItems){
+        let res=[];
         _.forEach(matchedItems,(comId)=>{
             let com=context[comId];
             if(com){
-                com.$parent.show();
+                let _res=com.$parent.show();
+                if(_res){
+                    res.push(_res);
+                }
             }
         });
+        return Promise.all(res);
     }
+    return Promise.resolve(true);
 }
 
 /**
@@ -380,16 +409,18 @@ actions["setProps"]=function(action,context,event) {
     }
     _.forIn(action.props,(propValExpr,prop)=>{
         let propVal = evalExpr(propValExpr, context, null);
-        this.$set(obj,prop,propVal);
-        //触发m-component组件重新渲染
-        if(target.$parent.continueRender){
-            //保证continueRender的值不会一直变大
-            if(target.$parent.continueRender>100){
-                target.$parent.continueRender=target.$parent.continueRender-1;
-            }else{
-                target.$parent.continueRender=target.$parent.continueRender+1;
+        this.$nextTick(()=>{
+            this.$set(obj,prop,propVal);
+            //触发m-component组件重新渲染
+            if(target.$parent.continueRender){
+                //保证continueRender的值不会一直变大
+                if(target.$parent.continueRender>100){
+                    target.$parent.continueRender=target.$parent.continueRender-1;
+                }else{
+                    target.$parent.continueRender=target.$parent.continueRender+1;
+                }
             }
-        }
+        })
     });
 }
 

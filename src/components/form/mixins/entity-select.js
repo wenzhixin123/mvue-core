@@ -34,10 +34,12 @@ export default{
             return _.isArray(this.selectedItem);
         },
         innerQueryOptions(){
-            if(this.formItem && this.formItem.componentParams){
-                return this.formItem.componentParams.queryOptions;
+            let _queryOpts=this.formItem && this.formItem.componentParams && this.formItem.componentParams.queryOptions;
+            if(this.defaultFilters){
+                _queryOpts=_queryOpts||{};
+                _queryOpts.filters=this.defaultFilters;
             }
-            return null;
+            return _queryOpts;
         }
     },
     watch:{
@@ -382,10 +384,6 @@ export default{
         },
         mergeQueryOptions(params){
             let _queryOpts=this.innerQueryOptions;
-            if(this.defaultFilters){
-                _queryOpts=_queryOpts||{};
-                _queryOpts.filters=this.defaultFilters;
-            }
             if(_.isEmpty(_queryOpts)){
                 return;
             }

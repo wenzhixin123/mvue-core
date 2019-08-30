@@ -167,7 +167,7 @@ export default {
       if(pageSettings){
         let initEvent=pageSettings.events["on-inited"];
         if(initEvent){
-          initEvent.apply(this,[actionType]);
+          initEvent.apply(this,[{actionType:actionType,__initparam__:true}]);
         }
       }
     },

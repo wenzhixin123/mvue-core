@@ -127,6 +127,20 @@ function processComRules(pageSettings,context) {
     });
     return comConfigs;
 }
+function filteredActions(actions,param){
+    let _actions=actions;
+    let actionType=null;
+    if(_.isPlainObject(param)&&param.__initparam__&&param.actionType){
+        actionType=param.actionType;
+    }
+    //根据传入的actionType执行对应的actions
+    if(actionType){
+        _actions=actions.filter(a=>{
+            return a.params.action===actionType;
+        });
+    }
+    return _actions;
+}
 /**
  * 新的完整模式，支持多个if
  */
@@ -141,7 +155,7 @@ function buildEventListener2(optionsArray,eventInfo,context){
         });
         conditionArray.push({condition,actions});
     });
-    return function (actionType) {
+    return function (param) {
         _.forEach(conditionArray,ca=>{
             let condition=ca.condition;
             let actions=ca.actions;
@@ -154,13 +168,7 @@ function buildEventListener2(optionsArray,eventInfo,context){
                 ifVal=false;
             }
             if(ifVal){
-                let _actions=actions;
-                //根据传入的actionType执行对应的actions
-                if(actionType){
-                    _actions=actions.filter(a=>{
-                        return a.params.action===actionType;
-                    });
-                }
+                let _actions=filteredActions(actions,param);
                 _.forEach(_actions,(action)=>{
                     action.exec(context);
                 });
@@ -222,7 +230,7 @@ function buildEventListener(options,eventInfo,context) {
         });
     }
 
-    return function (actionType) {
+    return function (param) {
         let ifVal=null;
         if(typeof condition=="boolean"){
             ifVal=condition;
@@ -232,13 +240,7 @@ function buildEventListener(options,eventInfo,context) {
             ifVal=false;
         }
         if(ifVal){
-            let _actions=actions;
-            //根据传入的actionType执行对应的actions
-            if(actionType){
-                _actions=actions.filter(a=>{
-                    return a.params.action===actionType;
-                });
-            }
+            let _actions=filteredActions(actions,param);
             let res=[];
             for(let i=0;i<_actions.length;++i){
                 let action=_actions[i];
@@ -253,9 +255,6 @@ function buildEventListener(options,eventInfo,context) {
                     res.push(_res);
                 }
             }
-            // _.forEach(actions,(action)=>{
-            //     let _res=action.exec(context);
-            // });
         }
     }
 }

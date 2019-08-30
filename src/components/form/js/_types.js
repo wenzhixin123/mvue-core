@@ -23,7 +23,7 @@ const store={
   对象类型: 'Rules','LimitLength','AutoSize'
  */
 let inputTypeArray=[
-  'Boolean','SingleLineText','MultiLineText','Number','SingleSelect','SingleSelectWithInput',
+  'Boolean','SingleLineText','MultiLineText','Number','SingleSelect','SingleSelectWithInput','SingleLineTextWithLink',
   'Rules','LimitRange','AutoSize','Decimal','OptionsEditor','Json','RefEntity',
   'RefEntityField','EntityField','DefaultValue','PropSettings','Events','ColSpan'
 ]; 
@@ -43,11 +43,12 @@ const commonProps=[
   },
   {
     id:'title',
-    inputType:inputType.SingleLineText,
+    inputType:inputType.SingleLineTextWithLink,
     default:'',
     required:true,
     store:store.MetaField,
-    title:'显示名称'
+    title:'显示名称',
+    sync:true
   },
   {
     id:'required',

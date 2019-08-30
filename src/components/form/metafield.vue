@@ -3,7 +3,7 @@
         :required="required"
         :rules="innerRules" :show-message="showMessage" :class="itemClass">
         <template v-if="showLabel" slot="label">
-            <slot name="label">{{ metaField.title}}<info-tip v-if="description&&descLevel=='info'&&!ignoreDescription" :content="description"></info-tip></slot>
+            <slot name="label">{{ title||label||metaField.title}}<info-tip v-if="description&&descLevel=='info'&&!ignoreDescription" :content="description"></info-tip></slot>
         </template>
         <slot v-if="formItem"
             :model="entity" :metaField="metaField"  :formItem="formItem">
@@ -135,11 +135,6 @@ export default {
         }
     },
     watch:{
-        title:function (newVal,oldVal) {
-            if(newVal){
-                this.metaField.title=newVal;
-            }
-        },
         mode:function (newVal,oldVal) {
             let _mode=newVal;
             if(_mode==null &&!this.ignoreAutoMode){
@@ -330,12 +325,6 @@ export default {
         },
         //根据组件传递进来的参数，覆盖metaField的属性
         overrideProps(metaField,inBatchEditor){
-            if(this.title){
-                metaField.title=this.title;
-            }
-            if(this.label){
-                metaField.title=this.label;
-            }
             if(this.inputType){
                 metaField.inputType=this.inputType;
             }

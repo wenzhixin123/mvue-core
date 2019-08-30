@@ -157,12 +157,17 @@ export default {
       //解析组件相关的事件和相关动态属性
       //将propSettings和events配置，解析到$config属性中
       pageHelper.preparePageSettings(this.pageSettings,this.pageContext);
+      this.initPageEvent();
+    },
+    //on-inited事件中updateModel操作会移到表单组件中再执行一次，因为page初始化时m-form还未初始化，执行updateModel会失败
+    //所以等表单m-form组件初始化完毕时，会调用这里actionType='updateModel'
+    initPageEvent(actionType){
       //页面初始化事件调用
       let pageSettings = pageHelper.getComConfig(this.pageSettings,"$page");
       if(pageSettings){
         let initEvent=pageSettings.events["on-inited"];
         if(initEvent){
-          initEvent.apply(this);
+          initEvent.apply(this,[actionType]);
         }
       }
     },

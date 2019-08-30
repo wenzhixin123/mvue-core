@@ -116,6 +116,14 @@ export default {
                 });
             }
         }
+        //将on-inited事件中updateModel操作移到表单组件中再执行一次，因为page初始化时m-form还未初始化，执行updateModel会失败
+        if(comType==='m-form'||comType==='meta-form'){
+            let oldOnInitiated=params.props.onInited;
+            params.props.onInited=function(){
+                oldOnInitiated&&oldOnInitiated();
+                parentPage.initPageEvent&&parentPage.initPageEvent('updateModel');
+            }
+        }
         let el = createElement(comType, params);
         parentPage.registerComponent(comId, el);
         //这里注册之后才标记事件规则中的show操作执行成功，保证下一个的action执行时context中组件实例是新的

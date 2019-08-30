@@ -141,7 +141,7 @@ function buildEventListener2(optionsArray,eventInfo,context){
         });
         conditionArray.push({condition,actions});
     });
-    return function () {
+    return function (actionType) {
         _.forEach(conditionArray,ca=>{
             let condition=ca.condition;
             let actions=ca.actions;
@@ -154,7 +154,14 @@ function buildEventListener2(optionsArray,eventInfo,context){
                 ifVal=false;
             }
             if(ifVal){
-                _.forEach(actions,(action)=>{
+                let _actions=actions;
+                //根据传入的actionType执行对应的actions
+                if(actionType){
+                    _actions=actions.filter(a=>{
+                        return a.params.action===actionType;
+                    });
+                }
+                _.forEach(_actions,(action)=>{
                     action.exec(context);
                 });
             }
@@ -215,7 +222,7 @@ function buildEventListener(options,eventInfo,context) {
         });
     }
 
-    return function () {
+    return function (actionType) {
         let ifVal=null;
         if(typeof condition=="boolean"){
             ifVal=condition;
@@ -225,9 +232,16 @@ function buildEventListener(options,eventInfo,context) {
             ifVal=false;
         }
         if(ifVal){
+            let _actions=actions;
+            //根据传入的actionType执行对应的actions
+            if(actionType){
+                _actions=actions.filter(a=>{
+                    return a.params.action===actionType;
+                });
+            }
             let res=[];
-            for(let i=0;i<actions.length;++i){
-                let action=actions[i];
+            for(let i=0;i<_actions.length;++i){
+                let action=_actions[i];
                 //这里如果上一步action返回的Promise，则等它resolve了再执行下一个action
                 if(i>0&&res[i-1]){
                     res[i-1].then(()=>{
@@ -395,6 +409,9 @@ actions["showByValue"]=function(action,context,event) {
  */
 actions["setProps"]=function(action,context,event) {
     let target = context[action.target];
+    if(!target){
+        return;
+    }
     let matchedIf = true;
     if (!_.isEmpty(action.if)) {
         matchedIf = evalExpr(action.if, context, false);
@@ -412,7 +429,7 @@ actions["setProps"]=function(action,context,event) {
         this.$nextTick(()=>{
             this.$set(obj,prop,propVal);
             //触发m-component组件重新渲染
-            if(target.$parent.continueRender){
+            if(target.$parent&&target.$parent.continueRender){
                 //保证continueRender的值不会一直变大
                 if(target.$parent.continueRender>100){
                     target.$parent.continueRender=target.$parent.continueRender-1;

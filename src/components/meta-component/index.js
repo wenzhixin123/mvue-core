@@ -50,12 +50,12 @@ export default {
             comType = "m-layout";
         }
         //这里全部传递到attrs中，vue会自动把props的属性提取出来填充的，这样在控件内部就可以通过this.$attrs自动提取非props属性了
-        let params = _.cloneDeep({
-            attrs: this.innerSettings,
+        let params = {
+            attrs: _.cloneDeep(this.innerSettings),
             props: this.innerSettings,
             on: this.$listeners,
             nativeOn:{}
-        });
+        };
 
         let parentPage = this.parentPage;
         if (parentPage == null) {

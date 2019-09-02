@@ -157,33 +157,60 @@ export default {
             if(value.op==='range'){
               let valueArray=_.split(value.value,/[\s|,]/);
               if(valueArray){
-                if(valueArray.length>1){
-                    advanceSearchFilters.push({
-                        key:key+'1',
-                        mappingKey:key,
-                        op:'ge',
-                        value:_.toNumber(valueArray[0])
-                    });
-                    advanceSearchFilters.push({
-                        key:key+'2',
-                        mappingKey:key,
-                        op:'le',
-                        value:_.toNumber(valueArray[1])
-                    });
-                }else if(valueArray.length===1){
-                    advanceSearchFilters.push({
-                        key:key,
-                        op:'ge',
-                        value:_.toNumber(valueArray[0])
-                    });
+                    let geValue=_.toNumber(valueArray[0]);
+                    if(_.isNaN(geValue)){
+                        this.$Message.error({
+                            content: "请填写合法的数值范围",
+                            duration: 2.5,
+                            closable: true
+                        });
+                        return false;
+                    }
+                    if(valueArray.length>1){
+                        let leValue=_.toNumber(valueArray[1]);
+                        if(_.isNaN(leValue)){
+                            this.$Message.error({
+                                content: "请填写合法的数值范围",
+                                duration: 2.5,
+                                closable: true
+                            });
+                            return false;
+                        }
+                        advanceSearchFilters.push({
+                            key:key+'1',
+                            mappingKey:key,
+                            op:'ge',
+                            value:geValue
+                        });
+                        advanceSearchFilters.push({
+                            key:key+'2',
+                            mappingKey:key,
+                            op:'le',
+                            value:leValue
+                        });
+                    }else if(valueArray.length===1){
+                        advanceSearchFilters.push({
+                            key:key,
+                            op:'ge',
+                            value:geValue
+                        });
+                    }
                 }
-              }
             }else{
-              advanceSearchFilters.push({
-                  key:key,
-                  op:value.op,
-                  value:_.toNumber(value.value)
-              });
+                let _value=_.toNumber(value.value);
+                if(_.isNaN(_value)){
+                    this.$Message.error({
+                        content: "请填写合法的数值",
+                        duration: 2.5,
+                        closable: true
+                    });
+                    return false;
+                }
+                advanceSearchFilters.push({
+                    key:key,
+                    op:value.op,
+                    value:_value
+                });
             }
         }else{
             advanceSearchFilters.push({
@@ -192,6 +219,7 @@ export default {
                 value:value
             });
         }
+        return true;
     },
     getGridDefaultJoins(){
         if(this.queryOptions&&this.queryOptions.joins){
@@ -210,6 +238,7 @@ export default {
     doSearch(){
         var advanceSearchFilters=[];
         let _joins={};
+        let isValid=true;
         _.forIn(this.model,(value,key)=>{
           let hasValue=false;
           if(_.isArray(value)){
@@ -218,19 +247,30 @@ export default {
             hasValue=!_.isNil(value)&&value!=='';
           }
           if(this.joinMapping[key]){//关系字段join
-              let joinMapping=this.joinMapping[key];
-              if(hasValue){
-                  _joins[joinMapping.relationName]=joinMapping;
-                  let metaField=joinMapping.metaEntity.findField(joinMapping.fieldName);
-                  let inputType=metaField.inputType;
-                  this.addFilters(`${joinMapping.alias}.${joinMapping.fieldName}`,value,inputType,advanceSearchFilters,metaField);
-              }
+            let joinMapping=this.joinMapping[key];
+            if(hasValue){
+                _joins[joinMapping.relationName]=joinMapping;
+                let metaField=joinMapping.metaEntity.findField(joinMapping.fieldName);
+                let inputType=metaField.inputType;
+                let res=this.addFilters(`${joinMapping.alias}.${joinMapping.fieldName}`,value,inputType,advanceSearchFilters,metaField);
+                if(!res){
+                    isValid=false;
+                    return false;
+                }
+            }
           }else if(hasValue){//当前实体字段构成的查询条件
-              let metaField=this.metaEntity.findField(key);
-              let inputType=metaField.inputType;
-              this.addFilters(key,value,inputType,advanceSearchFilters,metaField);
+            let metaField=this.metaEntity.findField(key);
+            let inputType=metaField.inputType;
+            let res=this.addFilters(key,value,inputType,advanceSearchFilters,metaField);
+            if(!res){
+                isValid=false;
+                return false;
+            }
           }
         });
+        if(!isValid){
+            return;
+        }
         let joinsArray=[],joins=null;
         if(!_.isEmpty(_joins)){
             _.forIn(_joins,(v,k)=>{

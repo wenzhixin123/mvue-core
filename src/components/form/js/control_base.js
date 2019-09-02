@@ -362,7 +362,12 @@ export default {
                 console.error(`实体${metaEntity.name}的字段${metaField.name}动态值表达式为空`);
                 return {};
             }
-            let tplContent=valueExpr.substring(2,valueExpr.length-1);
+            let tplContent=valueExpr;
+            if(valueExpr.indexOf('${')===0){
+                tplContent=valueExpr.substring(2,valueExpr.length-1);
+            }else{
+                return {};
+            }
             let ast=expr.parse(tplContent);
             //justModelFields表示依赖的变量是否都是表单模型的数据，全是表单模型数据可以前端计算，不用调后端calc接口计算
             let dependOn={dependOn:{},justModelFields:true,valueExpr:tplContent};

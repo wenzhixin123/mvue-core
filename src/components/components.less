@@ -58,6 +58,7 @@
 .multiselect__single {
     margin-bottom: 4px;
     font-size:13px;
+    word-break: break-all;
 }
 .m-batch-editor .multiselect__single{
     width: 150px;
@@ -80,7 +81,9 @@
     font-size:13px;
     margin-bottom: 2px;
     background:@multi-bkg-color;
-    color:rgba(0,0,0,.65)
+    color:rgba(0,0,0,.65);
+    white-space: unset;
+    word-break: break-all;
 }
 .multiselect__tag-icon:after {
     font-size: 14px;
@@ -292,6 +295,7 @@
     height: 34px;
     line-height:28px;
     overflow: hidden;
+    word-break: break-all;
 }
 .upload-form-item-view{
     padding: 4px 7px;

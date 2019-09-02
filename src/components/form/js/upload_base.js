@@ -118,7 +118,8 @@ export default {
                 filePromise=new Promise((resolve,reject)=>{
                     //加上这里，会两次调用sign，因为ufs-image会异步渲染
                     //expires:-1，表示ufs地址永不过期，取一次就可以了
-                    ufs.getDownloadUrl(file.id,file.name,{expires:-1}).then(res=>{
+                    let fileName=encodeURIComponent(file.name);
+                    ufs.getDownloadUrl(file.id,fileName,{expires:-1}).then(res=>{
                         file.url=res.url;
                         resolve(file);
                     },(err)=>{

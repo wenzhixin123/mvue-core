@@ -42,7 +42,8 @@ function fileRealUrl(item,uploadBasePath){
             let url=oldFileRealUrl(item.url,uploadBasePath);
             resolve(url);
         }else if(item.id){
-            ufs.getDownloadUrl(item.id,item.name).then(res=>{
+            let fileName=encodeURIComponent(item.name);
+            ufs.getDownloadUrl(item.id,fileName).then(res=>{
                 if(!res.url.startsWith('http')){
                     let baseUrl=getUfsEndpoint();
                     resolve(pathsJoin(baseUrl,res.url));

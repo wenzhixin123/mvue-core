@@ -57,6 +57,14 @@ export default{
                     this.firstInit();
                 });
             }
+        },
+        defaultFilters(){
+            if(this.defaultFilters){
+                this.cachedDataItems=null;
+                this.doSearchForCache((items) => {
+                    this.ensureHistoryItems(items);
+                });
+            }
         }
     },
     mounted:function(){

@@ -49,9 +49,21 @@ export default {
         if (comType == null) {
             comType = "m-layout";
         }
+        function isSimpleType(value){
+            let isSimple=false;
+            isSimple= _.isNumber(value)||_.isString(value)||value===false||value===true||_.isEmpty(value);
+            return isSimple;
+        }
         //这里全部传递到attrs中，vue会自动把props的属性提取出来填充的，这样在控件内部就可以通过this.$attrs自动提取非props属性了
+        //拷贝所有简单属性到attrs中
+        let _attrs={};
+        _.forIn(this.innerSettings,(value,key)=>{
+            if(isSimpleType(value)){
+                _attrs[key]=value;
+            }
+        });
         let params = {
-            attrs: _.cloneDeep(this.innerSettings),
+            attrs: _attrs,
             props: this.innerSettings,
             on: this.$listeners,
             nativeOn:{}

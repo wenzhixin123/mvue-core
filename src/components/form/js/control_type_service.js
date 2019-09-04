@@ -304,11 +304,14 @@ function buildFormItemByMetaField(metaField){
     }
     //长度规则
     if(metaField.inputTypeParams["maxLength"]||metaField.inputTypeParams["minLength"]){
-        formItem.componentParams.limitLength={
-            limit:true,
-            max:parseInt(metaField.inputTypeParams["maxLength"]),
-            min:parseInt(metaField.inputTypeParams["minLength"])
-        };
+        //如果自定义了长度验证规则，以自定义的优先
+        if(!formItem.componentParams.limitLength){
+            formItem.componentParams.limitLength={
+                limit:true,
+                max:parseInt(metaField.inputTypeParams["maxLength"]),
+                min:parseInt(metaField.inputTypeParams["minLength"])
+            };
+        }
     }
     for(let type of allType){
         if(type.accept(componentType)&&type.fillComponentParams){
@@ -382,7 +385,7 @@ export default {
     isTime:dateType.isTime,
     isDateTime:dateType.isDateTime,
     isDateOrTime:dateType.accept,
-    isDigits:numberType.accept,
+    isNumber:numberType.accept,
     isUpload:uploadType.accept,
     isPictureUpload:uploadType.isPictureUpload,
     isFileUpload:uploadType.isFileUpload,

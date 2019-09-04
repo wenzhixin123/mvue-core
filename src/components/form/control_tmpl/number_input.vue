@@ -4,8 +4,12 @@
             <div class="form-item-view" v-text="formatValue()"  :title="formatValue()"></div>
         </template>
         <template v-else>
-            <InputNumber   v-model="valueObj" @on-change="updateValue"  :disabled="disabled"
-                           :placeholder="formItem.componentParams.placeholder"></InputNumber >
+            <InputNumber 
+                v-model="valueObj" 
+                @on-change="updateValue" 
+                :precision="precision" 
+                :disabled="disabled"
+                :placeholder="formItem.componentParams.placeholder"></InputNumber >
         </template>
     </div>
 </template>
@@ -24,6 +28,18 @@ export default {
         return {
             valueObj:this.value
         };
+    },
+    computed:{
+        precision(){
+            let precision=this.formItem.componentParams.decimal && 
+                this.formItem.componentParams.decimal.isAllowed && 
+                this.formItem.componentParams.decimal.precision;
+            if(this.formItem.componentParams.decimal && 
+                ! this.formItem.componentParams.decimal.isAllowed){
+                return 0;
+            }
+            return precision||undefined;
+        }
     },
     watch:{
         "value":function (newV,oldV) {

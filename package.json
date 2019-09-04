@@ -4,7 +4,8 @@
   "description": "mvue project core components",
   "main": "src/index.js",
   "scripts": {
-    "build": "node build/build-lib.js",
+    "build": "node build/build-lib.js && npm run locale",
+    "locale": "webpack --config build/webpack.dist.locale.config.js",
     "prepublish": "npm run build"
   },
   "author": "bingosoft",

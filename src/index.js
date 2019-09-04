@@ -232,6 +232,7 @@ import interceptorManager from "./libs/interceptor/interceptors";
 
 
 import ufs from "./libs/ufs";
+import locale from './locale/index';
 //关闭浏览器tab时，标记当前会话sid对应的localStorage数据可能过期
 window.onbeforeunload = function clearAfterWindowClose(){
     topEntityService.setMayExpired();
@@ -253,6 +254,7 @@ let MvueCore={
     treeService,
     formControlManager,
     ufs,
+    locale,
     topEntityService,
     permissionService,
     initAfterAppCtxCreated:(appCtx)=>{

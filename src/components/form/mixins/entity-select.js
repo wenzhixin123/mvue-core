@@ -419,7 +419,8 @@ export default{
             /*if(!this.multiple){
                 params.expand=this.buildQueryExpand();
             }*/
-            if(!keyword){
+            //这里如果keyword为空不远程查询，会导致下拉框无数据，最后一次非空的查询条件可能会覆盖缓存的数据
+            /*if(!keyword){
                 _this.doSearchForCache(items=>{
                     this.ensureHistoryItems(items);
                     callback&&callback(data);
@@ -429,7 +430,9 @@ export default{
                 //如果是关键字查询，附加查询条件查询
                 this.buildQueryOptions(params,keyword);
                 this.mergeQueryOptions(params);
-            }
+            }*/
+            this.buildQueryOptions(params,keyword);
+            this.mergeQueryOptions(params);
             if(this.entityResource){
                 context.getMvueToolkit().utils.smartSearch(_this,function(){
                     _this.entityResource.query(params)

@@ -1,117 +1,11 @@
 import constants from './constants';
 import controlTypeService from '../../form/js/control_type_service';
 import contextHelper from "../../../libs/context";
+import {t} from '../../../locale'
 
 var linkplugin=require('../../../services/link/linkplugin');
-//因为metaForm加入了容器布局，容器的children包含了子级表单组件
-function getAllFormItems(metaForm){
-    var formItems=[];
-    _.each(metaForm.layout,function(formItem){
-        formItems.push(formItem);
-        if(formItem.isContainer&&formItem.children&&formItem.children.length>0){
-            formItems=formItems.concat(formItem.children);
-        }
-    });
-    return formItems;
-}
-//返回所有字段组件
-function getAllFieldItems(metaForm){
-    var formItems=[];
-    _.each(metaForm.layout,function(formItem){
-        if(formItem.isContainer&&formItem.children&&formItem.children.length>0){
-            _.each(formItem.children,function(child){
-                if(child.isDataField){
-                    formItems.push(child);
-                }
-            });
-        }else{
-            if(formItem.isDataField){
-                formItems.push(formItem);
-            }
-        }
-    });
-    return formItems;
-}
-//根据字段名称查找组件
-function formItemByFieldName(metaForm,fieldName){
-    if(!metaForm){
-        return null;
-    }
-    var formItemResult=null;
-    _.each(metaForm.layout,function(formItem){
-        if(formItem.isContainer&&formItem.children&&formItem.children.length>0){
-            _.each(formItem.children,function(child){
-                if(child.isDataField&&child.dataField===fieldName){
-                    formItemResult=child;
-                    return false;//已经找到，跳出内部each循环
-                }
-            });
-            if(formItemResult){//内部已经找到，跳出each循环
-                return false;
-            }
-        }else{
-            if(formItem.isDataField&&formItem.dataField===fieldName){
-                formItemResult=formItem;
-                return false;
-            }
-        }
-    });
-    return formItemResult;
-}
-//根据字段id查找组件
-function getFormItemById(metaForm,id){
-    if(!metaForm){
-        return null;
-    }
-    var formItemResult=null;
-    _.each(metaForm.layout,function(formItem){
-        if(formItem.isContainer&&formItem.children&&formItem.children.length>0){
-            _.each(formItem.children,function(child){
-                if(child.isDataField&&child.id===id){
-                    formItemResult=child;
-                    return false;//已经找到，跳出内部each循环
-                }
-            });
-            if(formItemResult){//内部已经找到，跳出each循环
-                return false;
-            }
-        }else{
-            if(formItem.isDataField&&formItem.id===id){
-                formItemResult=formItem;
-                return false;
-            }
-        }
-    });
-    return formItemResult;
-}
-//查找组件在布局中的位置索引，如果组件在容器组件里边，需要返回容器组件的index和在容器里的index
-function indexOfFormItem(metaForm,formItem){
-    var parentIndex=-1,childIndex=-1;
-    for(let i=0;i<metaForm.layout.length;++i){
-        let _formItem=metaForm.layout[i];
-        parentIndex=i;
-        if(_formItem.id===formItem.id){
-            break;
-        }
-        if(_formItem.isContainer&&_formItem.children){
-            for(let j=0;j<_formItem.children.length;++j){
-                let _childFormItem=_formItem.children[j];
-                if(_childFormItem.id===formItem.id){
-                    childIndex=j;
-                    break;
-                }
-            }
-        }
-        if(childIndex>-1){
-            break;
-        }
-    }
-    if(childIndex>-1){//返回容器组件的index和在容器里的index
-        return [parentIndex,childIndex];
-    }
-    //直接返回index
-    return parentIndex;
-}
+
+
 //"lessThan", "biggerThan", "equals"
 function compareRuleValidate(op,value,comparedFieldValue){
     if(op==="lessThan"){
@@ -125,15 +19,15 @@ function compareRuleValidate(op,value,comparedFieldValue){
 }
 function compareRuleMessage(op,fieldName,metaEntity){
     var title = metaEntity.findField(fieldName).title||fieldName;
-    var opDesc="";
+    var msg="";
     if(op==="lessThan"){
-        opDesc="小于";
+        msg=t('m.validation.lessThan',{field:title});
     }else if(op==="biggerThan"){
-        opDesc="大于";
+        msg=t('m.validation.biggerThan',{field:title});
     }else if(op==="equals"){
-        opDesc="等于";
-    }``
-    return `必须${opDesc}${title}的值`;
+        msg=t('m.validation.equals',{field:title});
+    }
+    return msg;
 }
 function buildValidationRuleForCompare(compareToFieldName,operator,entity,metaEntity){
     let _compareRule={
@@ -158,12 +52,14 @@ function buildValidationRuleForCompare(compareToFieldName,operator,entity,metaEn
     }
     return _compareRule;
 }
-function buildValidationRuleForRequired(fieldTitle){
+function buildValidationRuleForRequired(field){
+    let msg=t('m.validation.required',{field});
     return {
-        required: true,message:`${fieldTitle}不能为空`
+        required: true,message:msg
     };
 }
 function buildValidationRuleForJson(){
+    let msg=t('m.validation.json');
     let _rule={
         validator(rule, value, callback) {
             if(!value){
@@ -177,7 +73,7 @@ function buildValidationRuleForJson(){
                 callback();
             }
         },
-        message:'JSON格式错误',
+        message:msg,
         trigger: 'blur'
     }
     return _rule;
@@ -194,7 +90,7 @@ function buildPatternRules(params,fieldTitle,entity,metaEntity){
     let has=onePatternRule||onePatternRule2||__rules;
     if (has) {
         let rules=[];
-        let _msg=`${fieldTitle}格式不符合`;
+        let _msg=t('m.validation.pattern',{field:fieldTitle});
         if(!_.isEmpty(__rules)){
             rules=rules.concat(_.cloneDeep(__rules));
             let _rules=[];
@@ -235,9 +131,10 @@ function buildPatternRules(params,fieldTitle,entity,metaEntity){
 function buildValidationRuleForTag(params,fieldTitle){
     let _vRules=buildPatternRules(params,fieldTitle);
     if(_vRules){
+        let _msg=t('m.validation.pattern',{field:fieldTitle});
         let _rule={
             type:"array",
-            message: `${fieldTitle}格式不符合`
+            message: _msg
         };
         let _len=params.validation.len||params.validation.length;
         if(_len&&_len>0){
@@ -287,20 +184,23 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
             type: "string",
         };
         rules.push(lenRule);
+        let lenMsg='';
         if (params.limitLength.max > 0) {
             lenRule.max = params.limitLength.max;
-            lenRule["message"]=`${fieldTitle}长度不能超过${params.limitLength.max}`
+            lenMsg=t('m.validation.maxLen',{field:fieldTitle,max:params.limitLength.max});
         }
         if (params.limitLength.min > 0) {
             lenRule.min = params.limitLength.min;
-            lenRule["message"]=`${fieldTitle}长度不少于${params.limitLength.min}`
+            lenMsg=t('m.validation.minLen',{field:fieldTitle,min:params.limitLength.min});
         }
         if(params.limitLength.max > 0 && params.limitLength.min > 0){
-            lenRule["message"]=`${fieldTitle}长度介于${params.limitLength.min}--${params.limitLength.max}`
+            lenMsg=t('m.validation.rangeLen',{field:fieldTitle,min:params.limitLength.min,max:params.limitLength.max});
         }
+        lenRule["message"]=lenMsg;
     }
+    let isNumber=metaField&&controlTypeService.isNumber(metaField.inputType);
     //验证规则
-    if (isStringType) {
+    if (isStringType||isNumber) {
         let _vRules=buildPatternRules(params,fieldTitle,entity,metaEntity);
         if(_vRules){
            rules=rules.concat(_vRules);
@@ -319,45 +219,32 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
     var rangeRule = {
         type: "number",
     };
-    let rangeAdded=false;
-    if (params.limitRange && params.limitRange.limit) {
-        rules.push(rangeRule);
-        rangeAdded=true;
-        if (_.isNumber(params.limitRange.max)) {
-            rangeRule.max = params.limitRange.max;
-            rangeRule["message"]=`${fieldTitle}必须小于等于${params.limitRange.max}`
-        }
-        if (_.isNumber(params.limitRange.min)) {
-            rangeRule.min = params.limitRange.min;
-            rangeRule["message"]=`${fieldTitle}必须大于等于${params.limitRange.min}`
-        }
-        if(_.isNumber(params.limitRange.min)&& _.isNumber(params.limitRange.max)){
-            rangeRule["message"]=`${fieldTitle}必须在${params.limitRange.min}--${params.limitRange.max}之间`
-        }
-    }
-    //负数限制
+    //负数限制，此时需要和limitRange规则合并
     if (params.allowNegative===false) {
-        //如果最小值没有设置为大于0，设置最小值0
-        if(!(_.isNumber(rangeRule.min)&&rangeRule.min>=0)){
-            rangeRule.min=0;
-            rangeRule["message"]=`${fieldTitle}必须大于等于${params.limitRange.min}`;
-            if(!rangeAdded){
-                rules.push(rangeRule);
+        if (params.limitRange && params.limitRange.limit){
+            params.limitRange.min=params.limitRange.min>0?params.limitRange.min:0;
+        }else{
+            params.limitRange={
+                limit:true,
+                min:0
             }
         }
     }
-    //小数点限制
-    if (params.decimal) {
-        //小数
-        var decimalRule = {
-            type: "number",
-            message:`${fieldTitle}必须是数字`
-        };
-        rules.push(decimalRule);
-        if (!params.decimal.isAllowed) {
-            decimalRule.type = "integer";
-            decimalRule.message=`${fieldTitle}必须是整数`;
+    if (params.limitRange && params.limitRange.limit) {
+        rules.push(rangeRule);
+        let rangeMsg='';
+        if (_.isNumber(params.limitRange.max)) {
+            rangeRule.max = params.limitRange.max;
+            rangeMsg=t('m.validation.max',{field:fieldTitle,max:params.limitRange.max});
         }
+        if (_.isNumber(params.limitRange.min)) {
+            rangeRule.min = params.limitRange.min;
+            rangeMsg=t('m.validation.min',{field:fieldTitle,min:params.limitRange.min});
+        }
+        if(_.isNumber(params.limitRange.min)&& _.isNumber(params.limitRange.max)){
+            rangeMsg=t('m.validation.range',{field:fieldTitle,min:params.limitRange.min,max:params.limitRange.max});
+        }
+        rangeRule["message"]=rangeMsg;
     }
     //唯一性校验
     if (params.unique && metaField && metaField.filterable) {
@@ -391,7 +278,7 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
                         });
                 },500);
             },
-            message: `${fieldTitle}值重复`
+            message: t('m.validation.unique',{field:fieldTitle})
         };
         rules.push(uniqueRule);
     }
@@ -411,11 +298,6 @@ function metaComponentType(formItem){
     }
 }
 export default{
-    getAllFormItems:getAllFormItems,
-    getAllFieldItems:getAllFieldItems,
-    formItemByFieldName:formItemByFieldName,
-    getFormItemById:getFormItemById,
-    indexOfFormItem:indexOfFormItem,
     initValidation:initValidation,
     metaComponentType:metaComponentType,
     buildValidationRuleForCompare,

@@ -159,21 +159,11 @@ export default {
               if(valueArray){
                     let geValue=_.toNumber(valueArray[0]);
                     if(_.isNaN(geValue)){
-                        this.$Message.error({
-                            content: "请填写合法的数值范围",
-                            duration: 2.5,
-                            closable: true
-                        });
                         return false;
                     }
                     if(valueArray.length>1){
                         let leValue=_.toNumber(valueArray[1]);
                         if(_.isNaN(leValue)){
-                            this.$Message.error({
-                                content: "请填写合法的数值范围",
-                                duration: 2.5,
-                                closable: true
-                            });
                             return false;
                         }
                         advanceSearchFilters.push({
@@ -199,11 +189,6 @@ export default {
             }else{
                 let _value=_.toNumber(value.value);
                 if(_.isNaN(_value)){
-                    this.$Message.error({
-                        content: "请填写合法的数值",
-                        duration: 2.5,
-                        closable: true
-                    });
                     return false;
                 }
                 advanceSearchFilters.push({

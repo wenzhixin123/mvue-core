@@ -8,6 +8,7 @@
               <Option v-for="(text,value) in prependOptions" :value="value" :key="value">{{text}}</Option>
             </Select>
         </Input>
+        <span v-if="error" class="error-style">{{error}}</span>
     </div>
 </template>
 <script>
@@ -32,7 +33,8 @@ export default {
             eq:'等于',
             range:'范围',
           },
-          rangeHelp:'[范围]填写格式，空格分隔最小、最大值'
+          rangeHelp:'[范围]填写格式，空格分隔最小、最大值',
+          error:false
       };
     },
     watch:{
@@ -48,6 +50,43 @@ export default {
         
     },
     methods: {
+      isValid(){
+        let _v=this.valueObj;
+        if(!_v){
+          this.error=false;
+          return true;
+        }
+        let _value=_v.value;
+        if(_.isNil(_value)){
+          this.error=false;
+          return true;
+        }
+        if(_v.op==='range'){
+          let valueArray=_.split(_value,/[\s|,]/);
+            if(valueArray){
+              let geValue=_.toNumber(valueArray[0]);
+              if(_.isNaN(geValue)){
+                this.error=this.rangeHelp;
+                return false;
+              }
+              if(valueArray.length>1){
+                let leValue=_.toNumber(valueArray[1]);
+                if(_.isNaN(leValue)){
+                  this.error=this.rangeHelp;
+                  return false;
+                }
+              }
+            }
+        }else{
+          let cValue=_.toNumber(_value);
+          if(_.isNaN(cValue)){
+            this.error='请填写合法的数值';
+            return false;
+          }
+        }
+        this.error=false;
+        return true;
+      },
       convertedValue(){
         let _value={
           op:'',
@@ -67,7 +106,8 @@ export default {
         return _value;
       },
       updateValue: function (value) {
-          this.$emit('input',this.valueObj);
+        this.isValid();
+        this.$emit('input',this.valueObj);
       }
     }
 }

@@ -61,10 +61,10 @@
                                 <i-col span="8">&nbsp;</i-col>
                                 <i-col span="8">
                                     <Button @click="handleAdvFormSearch" size="small" type="primary">
-                                        搜索
+                                        {{t('m.grid.search')}}
                                     </Button>
                                     <Button @click="handleAdvFormReset" size="small" type="default">
-                                        重置
+                                        {{t('m.grid.reset')}}
                                     </Button>
                                 </i-col>
                                 <i-col span="8">&nbsp;</i-col>
@@ -118,7 +118,7 @@
                            :placeholder="toolbar.quicksearch.placeholder"  />
                     <Button v-if="innerToolbar.advanceSearchFields
                             && innerToolbar.advanceSearchFields.length>0
-                            && !innerToolbar.advFormEmbedded"
+                            && !innerToolbar.advFormPopup"
                         @click="showAdvForm=!showAdvForm" type="default">
                         {{getAdvanceSearchTitle()}}
                     </Button>
@@ -126,7 +126,7 @@
                     <advance-search ref="advanceSearchRef"
                             v-if="innerToolbar.advanceSearchFields
                             && innerToolbar.advanceSearchFields.length>0
-                            && innerToolbar.advFormEmbedded"
+                            && innerToolbar.advFormPopup"
                             :query-options="queryOptions"
                             :quicksearch-keyword="quicksearchKeyword"
                             :quicksearch="toolbar.quicksearch"

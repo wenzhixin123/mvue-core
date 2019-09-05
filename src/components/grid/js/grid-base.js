@@ -2,8 +2,9 @@ import globalContext from '../../../libs/context';
 import operationManager from "../../../libs/operation/operations";
 import gridProps from "./grid-props";
 import entityResource from "../../../libs/metadata/entity-resource";
+import locale from '../../mixins/locale';
 export default{
-    mixins:[gridProps],
+    mixins:[gridProps,locale],
     data(){
 
         return {
@@ -299,7 +300,7 @@ export default{
             });
         },
         getAdvanceSearchTitle(){
-            return globalContext.getSettings().control.grid.advanceSearchTitle;
+            return this.t('m.grid.advanceSearch');
         }
     },
     components:{

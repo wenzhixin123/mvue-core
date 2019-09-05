@@ -15,6 +15,11 @@ const lang={
       min:'{field}必须大于等于{min}',
       range:'{field}必须在{min}~{max}之间',
       unique:'{field}值重复'
+    },
+    grid:{
+      advanceSearch:'高级查询',
+      search:'搜索',
+      reset:'重置'
     }
   }
 };

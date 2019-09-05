@@ -3,7 +3,7 @@
         <Button @click="toggleModal" type="default">{{getAdvanceSearchTitle()}}</Button>
         <Modal :width="modalWidth"
                 v-model="searchModal"
-                :title="getAdvanceSearchTitle()"  ok-text="搜索" cancel-text="重置"
+                :title="getAdvanceSearchTitle()"  :ok-text="t('m.grid.search')" :cancel-text="t('m.grid.reset')"
                 @on-ok="doSearch"
                 @on-cancel="doReset">
             <adv-form ref="advFormRef"
@@ -22,8 +22,9 @@
 <script>
 import baseProps from './adv-search/base-props';
 import context from '../../libs/context';
+import locale from '../mixins/locale';
 export default {
-    mixins:[baseProps],
+    mixins:[baseProps,locale],
     props: {
         toolbarType: {//'compact':紧凑型toolbar布局；不设置用默认toolbar布局
             type: String,
@@ -64,7 +65,7 @@ export default {
             this.searchModal=false;
         },
         getAdvanceSearchTitle(){
-            return context.getSettings().control.grid.advanceSearchTitle;
+            return this.t('m.grid.advanceSearch');
         }
     },
     components:{

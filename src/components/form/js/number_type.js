@@ -73,16 +73,25 @@ var componentParams={
 const formatters={
     bytes:{
         format(bytesSize){
+            if(_.isNil(bytesSize)){
+                return '';
+            }
             return filesize(bytesSize).human('jedec');
         }
     },
     rmb:{
         format(money){
+            if(_.isNil(money)){
+                return '';
+            }
             return ('¥ '+money).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         } 
     },
     usd:{
         format(money){
+            if(_.isNil(money)){
+                return '';
+            }
             return ('$ '+money).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
         }
     }

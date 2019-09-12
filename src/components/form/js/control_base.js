@@ -348,7 +348,7 @@ export default {
                         }
                     }
                 }
-                if(key==='left'||key==='right'){
+                if(key==='left'||key==='right'||(key==='test'&&value.type==='BinaryExpression')){
                     this.extractIdentifier(value,dependOn,metaEntity);
                 }
             });

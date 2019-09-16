@@ -146,6 +146,13 @@ function buildValidationRuleForTag(params,fieldTitle){
     }
     return false;
 }
+function evalFunc(tpl) {
+   if(tpl && tpl.indexOf("function(")===0){
+       let func=eval("("+tpl+")");
+       return func;
+   }
+   return tpl;
+}
 //初始化字段组件的验证规则，async-validator验证时，按rules顺序进行验证
 function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate) {
     if (!formItem.isDataField) {
@@ -205,7 +212,15 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
         if(_vRules){
            rules=rules.concat(_vRules);
         }
+    }else if(!_.isEmpty(params.rules)){//其他类型如果有自定义rules也附加上去
+        rules=rules.concat(params.rules);
     }
+    //如果有自定义验证函数，转换为真实的function对象
+    _.forEach(rules,rule=>{
+        if(_.isString(rule.validator)){
+            rule.validator=evalFunc(rule.validator);
+        }
+    });
     if (params.validation  && params.validation.validate  && params.validation.rule
         && params.validation.rule.type === 'compare'
         && _.includes(["lessThan", "biggerThan", "equals"], params.validation.rule.operator)

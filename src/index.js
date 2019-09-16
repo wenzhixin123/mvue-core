@@ -20,6 +20,7 @@ import gridAssociate from './components/grid/associate';
 import operation from './components/meta_operation/operation';
 
 import grid from './components/grid/iview_grid.vue';
+import gridExpand from './components/grid/expand.vue';
 import entityTree from './components/entity-tree/index';
 import treeGrid from './components/meta-tree-grid/index';
 import layout from './components/meta-layout/index';
@@ -186,6 +187,7 @@ const mComponents={
     'm-field':mfield,
     'm-form':mform,
     'm-grid':grid,
+    'm-grid-expand':gridExpand,
     'm-entity-tree':entityTree,
     'm-tree-grid':treeGrid,
     'm-layout':layout,

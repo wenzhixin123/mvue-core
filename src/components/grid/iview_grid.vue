@@ -38,6 +38,7 @@
              @on-filter-change="handleOnFilterChange"
              @on-row-click="handleOnRowClick"
              @on-row-dblclick="handleOnRowDblclick"
+             @on-columns-modified="handleOnColumnsModified"
              @on-expand="handleOnExpand">
              <template slot="top">
                 <slot name="top">

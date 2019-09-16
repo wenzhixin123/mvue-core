@@ -1,16 +1,13 @@
 export default{
     props:{
         item:{
-            type:Object,
-            required:true
+            type:Object
         },
         context:{
-            type:Object,
-            required:true
+            type:Object
         },
         metaField:{
-            type:Object,
-            required:true
+            type:Object
         }
     },
     computed:{

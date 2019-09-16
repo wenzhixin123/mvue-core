@@ -256,6 +256,17 @@ export default {
         }
       });
     }
+  },
+  renderForExpand: function (context, metaField,initialCol) {
+    return function (h, params) {
+      return h("m-grid-expand", {
+        props: {
+          initialCol:initialCol,
+          item: params.row,
+          context:context
+        }
+      });
+    }
   }
 }
 

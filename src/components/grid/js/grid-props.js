@@ -171,5 +171,8 @@ export default{
             type:Object,
             required:false
         },
+        expand:{//控制grid是否将多余的列通过展开的方式显示
+            type:[Object,Boolean]
+        }
     }
 }

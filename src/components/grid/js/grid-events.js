@@ -50,5 +50,10 @@ export default {
     handleOnExpand(row,status){
       this.$emit("on-expand",row,status);
     },
+    handleOnColumnsModified(first){
+      if(this.expand&&!first){
+        this.reload();
+      }
+    }
   }
 }

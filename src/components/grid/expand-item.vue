@@ -1,0 +1,20 @@
+<template>
+  <render-html 
+    :value="value" 
+    :initial-col="initialCol"></render-html>
+</template>
+<script>
+export default {
+  props:{
+    value:{
+      required:true
+    },
+    initialCol:{
+      type:Object
+    }
+  },
+  components:{
+    renderHtml:require('../grid/column-render/render_html')
+  }
+}
+</script>

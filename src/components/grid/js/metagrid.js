@@ -23,7 +23,9 @@ function metaFieldToCol(context,metaField,initialCol) {
     col.width=metaField.width;
   }
   //优先根据前端设置的type字段，设置列的渲染方式
-  if (metaField.type == "operation") {
+  if(initialCol.type === 'expand'){
+    col.render = renderManager.renderForExpand(context,metaField,initialCol);
+  }else if (metaField.type === "operation") {
     col.render = renderManager.renderForOperation(context,metaField);
   }else if (metaField.isTitleField||metaField.type == "optsTitle") {
     if(context.grid.batchEditorMode){
@@ -36,13 +38,13 @@ function metaFieldToCol(context,metaField,initialCol) {
     }else {
         col.render=renderManager.renderForLinkTitle(context,metaField,context.metaEntity.getIdField().name,initialCol);
     }
-  } else if (metaField.type == "imgTitle") {
+  } else if (metaField.type === "imgTitle") {
     if(context.grid.batchEditorMode){
       col.render = renderManager.renderForCommon(context,metaField,initialCol);
       return col;
     }
     col.render = renderManager.renderForImgTitle(context,metaField);
-  } else if(metaField.type == "rowStatus"){//编辑状态显示列
+  } else if(metaField.type === "rowStatus"){//编辑状态显示列
     col.filterMultiple=false;
     col.filterRemote=(selectedValues)=>{//远程过滤
                         //修改过滤条件
@@ -210,6 +212,16 @@ function  initColumns(grid) {
     _cols=grid.innerColumns;
   }
   var __cols=[];
+  //开启了列展开功能
+  if(grid.expand){
+    let expandCol={
+      type: 'expand',
+      key:'__expand__',
+      width: 30,
+      align: 'center'
+    };
+    __cols.push(expandCol);
+  }
   //序号列放在多选列前面
   if(grid.showIndex) {
     let indexCol={

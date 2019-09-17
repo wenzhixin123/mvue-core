@@ -128,24 +128,6 @@ function buildPatternRules(params,fieldTitle,entity,metaEntity){
     }
     return false;
 }
-function buildValidationRuleForTag(params,fieldTitle){
-    let _vRules=buildPatternRules(params,fieldTitle);
-    if(_vRules){
-        let _msg=t('m.validation.pattern',{field:fieldTitle});
-        let _rule={
-            type:"array",
-            message: _msg
-        };
-        let _len=params.validation.len||params.validation.length;
-        if(_len&&_len>0){
-            _rule.len=_len;
-            _rule.message=`${_rule.message}，并且至多添加${_rule.len}个`;
-        }
-        _rule.defaultField=_vRules;
-        return _rule;
-    }
-    return false;
-}
 function evalFunc(tpl) {
    if(tpl && tpl.indexOf("function(")===0){
        let func=eval("("+tpl+")");
@@ -172,18 +154,10 @@ function initValidation(formItem,metaEntity,dataId,entity,ignoreRequiredValidate
     let isOptions=metaField&&controlTypeService.isOptions(metaField.inputType);
     let isStringType=metaField&&metaField.type=='string'&&(!isOptions);
     let isJsonText=metaField&&metaField.inputType==controlTypeService.componentTypes.JsonText.id;
-    let isTag=metaField&&metaField.inputType==controlTypeService.componentTypes.Tag.id;
     if(isJsonText){
         //添加json校验
         let jsonRule=buildValidationRuleForJson();
         rules.push(jsonRule);
-    }
-    if(isTag){
-        //添加tag校验
-        let tagRule=buildValidationRuleForTag(params,fieldTitle);
-        if(tagRule){
-            rules.push(tagRule);
-        }
     }
     //长度验证
     if (isStringType && params.limitLength && params.limitLength.limit) {

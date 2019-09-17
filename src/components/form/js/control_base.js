@@ -348,7 +348,10 @@ export default {
                         }
                     }
                 }
-                if(key==='left'||key==='right'||(key==='test'&&value.type==='BinaryExpression')){
+                if(key==='left'
+                    ||key==='right'
+                    ||( (key==='test' || key==='alternate' || key==='consequent') && value.type==='BinaryExpression')
+                    ){
                     this.extractIdentifier(value,dependOn,metaEntity);
                 }
             });
@@ -368,6 +371,7 @@ export default {
             }else{
                 return {};
             }
+            debugger
             let ast=expr.parse(tplContent);
             //justModelFields表示依赖的变量是否都是表单模型的数据，全是表单模型数据可以前端计算，不用调后端calc接口计算
             let dependOn={dependOn:{},justModelFields:true,valueExpr:tplContent};

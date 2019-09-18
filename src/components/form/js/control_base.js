@@ -371,7 +371,6 @@ export default {
             }else{
                 return {};
             }
-            debugger
             let ast=expr.parse(tplContent);
             //justModelFields表示依赖的变量是否都是表单模型的数据，全是表单模型数据可以前端计算，不用调后端calc接口计算
             let dependOn={dependOn:{},justModelFields:true,valueExpr:tplContent};

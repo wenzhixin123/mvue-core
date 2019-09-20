@@ -237,7 +237,7 @@ function getMetaFieldComponentType(metaField){
     }
     //按映射类型
     if(columnTypeMapping[columnType]){
-        inputType= columnTypeMapping[inputType];
+        inputType= columnTypeMapping[columnType];
     }
     if(columnTypeMapping[metaField.format]){
         inputType= columnTypeMapping[metaField.format];

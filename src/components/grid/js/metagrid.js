@@ -212,13 +212,14 @@ function  initColumns(grid) {
     _cols=grid.innerColumns;
   }
   var __cols=[];
+  var defaultAlign='center';
   //开启了列展开功能
   if(grid.expand){
     let expandCol={
       type: 'expand',
       key:'__expand__',
       width: 30,
-      align: 'center'
+      align: defaultAlign
     };
     __cols.push(expandCol);
   }
@@ -228,7 +229,7 @@ function  initColumns(grid) {
       type: 'index',
       key:'__index__',
       width: 50,
-      align: 'center'
+      align: defaultAlign
     };
     if(grid.indexColumnFixed){
       indexCol.fixed=grid.indexColumnFixed;
@@ -237,7 +238,7 @@ function  initColumns(grid) {
   }
   //多选框列
   if(grid.showSelection){
-    let selectionCol={type: 'selection',key:'__selection__',width:50,align:"center"};
+    let selectionCol={type: 'selection',key:'__selection__',width:50,align:defaultAlign};
     if(grid.selectionColumnFixed){
       selectionCol.fixed=grid.selectionColumnFixed;
     }
@@ -245,7 +246,7 @@ function  initColumns(grid) {
   }
   //行编辑状态显示列显示
   if(grid.showRowStatus){
-    let statusCol={metaParams:{type: 'rowStatus'},key:'__rowStatus__',title:'编辑状态',width:90,align:"center"};
+    let statusCol={metaParams:{type: 'rowStatus'},key:'__rowStatus__',title:'编辑状态',width:90,align:defaultAlign};
     if(grid.statusColumnFixed){
       statusCol.fixed=grid.statusColumnFixed;
     }
@@ -260,7 +261,7 @@ function  initColumns(grid) {
       title:"操作",
       key:"__operation_column__",
       width:colWidth,
-      align:"center",
+      align:defaultAlign,
       metaParams:{
         type:"operation"
       }

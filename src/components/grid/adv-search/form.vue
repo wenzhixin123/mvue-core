@@ -1,5 +1,5 @@
 <template>
-  <Form ref="advanceSearchForm"
+  <Form ref="advanceSearchForm" @submit.native.prevent
       :model="model" 
       label-position="right" 
       :label-width="120">

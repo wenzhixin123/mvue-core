@@ -46,7 +46,9 @@ function create(opts) {
     }
 
     //根据type重写operationType
-    if(_.has(created,"type")&& !_.has(created,'operationType')){
+    if(created["type"]=="popup"){
+        created["operationType"]="popup";
+    }else if(_.has(created,"type")&& !_.has(created,'operationType')){
         created["operationType"]=created["type"];
     }
     return created;

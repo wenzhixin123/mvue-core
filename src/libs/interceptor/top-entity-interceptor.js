@@ -76,6 +76,8 @@ export default {
                     }
                 }
                 if(needRedirect){
+                    //覆盖历史路由轨迹，避免go(-1)跳转错误
+                    newRoute.replace=true;
                     next(newRoute);
                 }else{
                     next();

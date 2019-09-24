@@ -66,7 +66,7 @@ export default {
             this.textShowed=false;
         },
         updateSecret(){
-            var length=(this.formItem.componentParams.limitLength&&this.formItem.componentParams.limitLength.maxLength)||20;
+            var length=(this.formItem.componentParams.limitLength&&this.formItem.componentParams.limitLength.max)||20;
             var randomStr=globalContext.getMvueToolkit().utils.randomString(length);
             this.valueObj=randomStr;
             this.updateValue();

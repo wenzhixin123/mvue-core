@@ -303,15 +303,28 @@ function buildFormItemByMetaField(metaField){
         };
     }
     //长度规则
-    if(metaField.inputTypeParams["maxLength"]||metaField.inputTypeParams["minLength"]){
-        //如果自定义了长度验证规则，以自定义的优先
-        if(!formItem.componentParams.limitLength){
-            formItem.componentParams.limitLength={
-                limit:true,
-                max:parseInt(metaField.inputTypeParams["maxLength"]),
-                min:parseInt(metaField.inputTypeParams["minLength"])
-            };
+    let _maxLength=metaField.inputTypeParams["maxLength"];
+    let _minLength=metaField.inputTypeParams["minLength"];
+    if(_maxLength||_minLength){
+        let lenObj=formItem.componentParams.limitLength||{limit:true};
+        if(_maxLength){
+            let _max=parseInt(_maxLength);
+            if(lenObj.max){
+                _max=_max>lenObj.max?lenObj.max:_max;
+            }
+            lenObj.max=_max;
         }
+        if(_minLength){
+            let _min=parseInt(_minLength);
+            if(lenObj.min){
+                _min=_min>lenObj.min?_min:lenObj.min;
+            }
+            lenObj.min=_min;
+        }
+        if(lenObj.min && lenObj.max && lenObj.min>lenObj.max){
+            lenObj.min=0;
+        }
+        formItem.componentParams.limitLength=lenObj;
     }
     for(let type of allType){
         if(type.accept(componentType)&&type.fillComponentParams){

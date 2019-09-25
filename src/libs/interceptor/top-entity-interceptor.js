@@ -1,5 +1,27 @@
 import topEntityService from "../../services/store/top-entity";
 
+//判断两个路由的路径是不是一样的
+function samePath(from,to){
+    let fromPath=from&&from.path;
+    let toPath=to&&to.path;
+    if(fromPath && toPath){
+        if(fromPath===toPath){
+            return true;
+        }else if(_.startsWith(toPath,fromPath)){
+            let index=toPath.lastIndexOf('/');
+            toPath=toPath.substring(0,index);
+            if(fromPath===toPath){
+                return true;
+            }else{
+                return false;
+            }
+        }else{
+            return false;
+        }
+    }
+    return false;
+}
+
 /**
  * 用于处理topEntity的设置以及清理
  */
@@ -77,7 +99,9 @@ export default {
                 }
                 if(needRedirect){
                     //覆盖历史路由轨迹，避免go(-1)跳转错误
-                    newRoute.replace=true;
+                    if(samePath(from,to)){
+                        newRoute.replace=true;
+                    }
                     next(newRoute);
                 }else{
                     next();

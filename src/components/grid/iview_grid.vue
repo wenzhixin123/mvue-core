@@ -1,5 +1,6 @@
 <template>
     <b-list  v-if="canRender()" ref="listInst"
+             :wrapper-class="wrapperClass"
              :columns="innerColumns"
              :query="innerQuery"
              :toolbar="toolbar"

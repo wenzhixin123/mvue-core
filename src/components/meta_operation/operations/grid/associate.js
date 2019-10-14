@@ -4,7 +4,7 @@
 
 var operation= {
     name:"associate",
-    title:"",
+    title:"关联",
     icon:"ios-infinite",
     operationType:"common",
     btnType:"primary",

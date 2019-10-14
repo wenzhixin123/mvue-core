@@ -62,7 +62,6 @@ export default {
             idField=metaEntity.getIdField().name;
             let titleField=metaEntity.firstTitleField();
             titleFieldName=titleField?titleField.name:idField;
-            this.operation.title=this.operation.title||'关联'+metaEntity.title;
         }
         return {
             showDrawer:false,

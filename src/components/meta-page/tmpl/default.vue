@@ -13,8 +13,11 @@
       resolvePage(){
         let self=this;
         let matchedRoute=null;
+        //如果当前路由的父路由也是使用这个default的page组件，父路由进入时应该找到父路由的组件配置：
+        //  对于直接在浏览器刷新m-detail-view的一个tab地址时，无论是进入父路由还是子路由matched的最后匹配
+        //  地址都是最终的tab地址，这样是不对的
         _.forEach(this.$route.matched,route=>{
-          if(route.meta && route.meta.type=="js"){
+          if(route.meta && route.meta.type==="js"){
             if(route.instances.default && !_.has(route.instances.default,"$loaded")){
               matchedRoute=route;
               route.instances.default["$loaded"]=true;

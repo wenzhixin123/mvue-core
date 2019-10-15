@@ -29,7 +29,7 @@
   </div>
 </template>
 <script>
-  import  pageHelper from "./page-helper";
+import  pageHelper from "./page-helper";
 export default {
   props: {
     header: {
@@ -100,15 +100,11 @@ export default {
         return _title;
       }
       //如果设置了title来源，则从上下文中获取title
-      let sourceId = this.title && this.title.source;
-      if(sourceId){
-        //例如在m-detail-view中，source设置来源为表单，切换到其他tab时，title不应该清空
-        if(this.$store.state.core.pageTitle){
-          this.currentSourceTitle = this.$store.state.core.pageTitle;
-        }
-        return this.currentSourceTitle;
+      //例如在m-detail-view中，source设置来源为表单，切换到其他tab时，title不应该清空
+      if(this.$store.state.core.pageTitle){
+        this.currentSourceTitle = this.$store.state.core.pageTitle;
       }
-      return '';
+      return this.currentSourceTitle;
     },
     renderLayout() {//是否开始渲染布局
       let canRender=false;
@@ -149,7 +145,7 @@ export default {
     return {
       isPage: true,
       pageContext:pageContext,
-      currentSourceTitle:''//临时存贮当前来源传递的标题
+      currentSourceTitle:''//临时存储当前来源传递的标题
     };
   },
   mounted(){

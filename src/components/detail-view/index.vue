@@ -242,15 +242,9 @@
                     }
                     var toPath = paths.relativeToAbsolute(this.basePath, selectedMenu.url);
                     this.activeName = selectedMenu.id;
-                    if(selectedMenu.redirect){
-
-                    }
+                   
                     //这里全部修改为replace为true，菜单切换不作为回退历史记录
-                    //if(replace){
-                        this.$router.replace({path: toPath, query: this.$route.query});
-                    //}else{
-                    //    this.$router.push({path: toPath, query: this.$route.query});
-                    //}
+                    this.$router.replace({path: toPath, query: this.$route.query});
                 }
             },
             prepare: function () {

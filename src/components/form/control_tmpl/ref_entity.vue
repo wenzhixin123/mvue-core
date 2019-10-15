@@ -27,7 +27,7 @@
                             :track-by="getIdField()">
                     <template slot="option" slot-scope="props">
                         <div class="option__desc">
-                            <span class="option__title">{{ props.option[formItem.componentParams.titleField] }}</span>
+                            <span class="option__title">{{ buildOptionTitle(props.option,formItem.componentParams)}}</span>
                         </div>
                     </template>
                     <template slot="noResult">

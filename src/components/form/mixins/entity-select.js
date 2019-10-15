@@ -524,6 +524,23 @@ export default{
                     text:this.viewModeValue||this.emptyText
                 }
             ];
+        },
+        buildOptionTitle(item,params){
+            params=params||{};
+            let titleField=params.titleField;
+            let titleFormatter=params.titleFormatter;
+            if(titleFormatter){
+                try{
+                    let compiled=_.template(titleFormatter);
+                    let formattedValue=compiled(item||{});
+                    return formattedValue;
+                }catch(err){
+                    console.log(err);
+                    return item&&item[titleField];
+                }
+            }else{
+                return item&&item[titleField];
+            }
         }
     }
 }

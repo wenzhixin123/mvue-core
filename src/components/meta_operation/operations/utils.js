@@ -102,10 +102,6 @@ function goto(router,ctx) {
         }else{
             ctx=router.params;
         }
-        var path=router.path;
-        if(ctx.basePath){
-
-        }
         var path= pathToRegexp.compile(router.path)(ctx);
         router.path=path;
     }

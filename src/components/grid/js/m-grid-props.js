@@ -25,6 +25,7 @@ export default{
             required:false
         },
         useRelativePath:{//CRUD时使用关系的相对路径
+            //默认生成的路由path是否为相对路径：默认值true采用相对路径，如果当前m-grid的对应的路由路径为``/entities/aaa/list``，则创建页为``./create``等价于``/entities/aaa/create``，编辑页为``./recordId/edit``等价于``/entities/aaa/recordId/edit`` 
             type:Boolean,
             required:false,
             default:true

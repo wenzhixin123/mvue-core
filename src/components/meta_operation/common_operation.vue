@@ -3,7 +3,7 @@
     <!--有onclick的普通操作-->
     <div v-if="extendedOperation&&!extendedOperation.renderComponent" @click.stop="buttonClick">
         <slot>
-            <Button type="primary" size="small" 
+            <Button :type="extendedOperation.btnType||'primary'" size="small" 
                 :title="extendedOperation.title" >
                 <m-icon :type="extendedOperation.icon"></m-icon>
                 {{extendedOperation.title}}

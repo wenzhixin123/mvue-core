@@ -75,7 +75,7 @@ export default {
                     if(to.query["x_access_mode"]){
                         store.commit('core/setAccessMode',to.query["x_access_mode"]);
                     }
-                    //如果url显示包含topEntity设置，设置到页面会话中
+                    //如果url显式包含topEntity设置，设置到页面会话中
                     if(to.query["x_top_entity_row"]){
                         topEntityService.setByString(to.query["x_top_entity_row"]);
                     }

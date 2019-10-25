@@ -2,7 +2,7 @@
 <div>
     <div @click.stop="toggleModal">
         <slot>
-            <Button type="primary" size="small" 
+            <Button :type="operation.btnType||'primary'" size="small" 
                 :title="operation.title" >
                 <m-icon :type="operation.icon"></m-icon>
                 {{operation.title}}

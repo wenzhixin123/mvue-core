@@ -1,7 +1,7 @@
 <template>
 <div @click.stop="openApp">
     <slot>
-        <Button type="primary" size="small" 
+        <Button :type="operation.btnType||'primary'" size="small" 
             :title="operation.title" >
             <m-icon :type="operation.icon"></m-icon>
             {{operation.title}}

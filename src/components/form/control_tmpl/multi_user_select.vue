@@ -152,7 +152,8 @@ export default {
                 });
                 return;
             }
-            this.entityResource.query({filters:`id in ${value.join(',')}`}).then(({data})=>{
+            let inIds=context.buildLeapIn(value);
+            this.entityResource.query({filters:`id in ${inIds}`}).then(({data})=>{
                 this.selectedItem=data;
                 this.handleOnSelectChange(data,null);
                 this.close();

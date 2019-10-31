@@ -72,7 +72,8 @@ function queryOrgByKeyword(keyword,orgIds){
     return new Promise((resolve,reject)=>{
         one.then(({data:dataOne})=>{
             if(!_.isEmpty(orgIds)){
-                orgService().query({filters:`${getOrgIdField()} in ${orgIds.join(',')}`}).then(({data:dataTwo})=>{
+                let inIds=context.buildLeapIn(orgIds);
+                orgService().query({filters:`${getOrgIdField()} in ${inIds}`}).then(({data:dataTwo})=>{
                     resolve(concatIgnoreDuplicated(dataOne,dataTwo,getOrgIdField()));
                 },()=>{
                     reject();
@@ -87,7 +88,8 @@ function queryOrgByKeyword(keyword,orgIds){
 }
 //查询指定ids的部门
 function queryOrgByIds(orgIds){
-    return orgService().query({filters:`${getOrgIdField()} in ${orgIds.join(',')}`}).then(({data})=>{
+    let inIds=context.buildLeapIn(orgIds);
+    return orgService().query({filters:`${getOrgIdField()} in ${inIds}`}).then(({data})=>{
         return data;
     });
 }
@@ -124,7 +126,8 @@ function queryUserByKeyword(keyword,userIds){
     return new Promise((resolve,reject)=>{
         one.then(({data:usersOne})=>{
             if(!_.isEmpty(userIds)){
-                userService().query({filters:`${getUserIdField()} in ${userIds.join(',')}`}).then(({data:usersTwo})=>{
+                let inIds=context.buildLeapIn(userIds);
+                userService().query({filters:`${getUserIdField()} in ${inIds}`}).then(({data:usersTwo})=>{
                     //usersTwo如果包含在usersOne中，去重
                     resolve(concatIgnoreDuplicated(usersOne,usersTwo));
                 },()=>{
@@ -140,7 +143,8 @@ function queryUserByKeyword(keyword,userIds){
 }
 //查询指定ids的用户
 function queryUserByIds(userIds){
-    return userService().query({filters:`${getUserIdField()} in ${userIds.join(',')}`}).then(({data})=>{
+    let inIds=context.buildLeapIn(userIds);
+    return userService().query({filters:`${getUserIdField()} in ${inIds}`}).then(({data})=>{
         return data;
     });
 }
@@ -148,7 +152,8 @@ function queryUserByIds(userIds){
 function pageQueryUserByOrg(orgIds,userIds,pageParams){//{page:1,pageSize:10}
     var filters='';
     if(!_.isEmpty(orgIds)){
-        filters=`${getUserOrgField()} in '${orgIds.join(',')}'`;
+        let inIds=context.buildLeapIn(orgIds);
+        filters=`${getUserOrgField()} in ${inIds}`;
     }
     filters=rebuildUserFilters(filters);
     var one = userService().query({total:true,page:pageParams.page,page_size:pageParams.pageSize,filters:filters});
@@ -157,7 +162,8 @@ function pageQueryUserByOrg(orgIds,userIds,pageParams){//{page:1,pageSize:10}
             var total=_.toSafeInteger(res.headers['x-total-count'])||res.data.length;
             var usersOne=res.data;
             if(!_.isEmpty(userIds)){
-                userService().query({filters:`${getUserIdField()} in '${userIds.join(',')}'`}).then(({data:usersTwo})=>{
+                let inIds=context.buildLeapIn(userIds);
+                userService().query({filters:`${getUserIdField()} in ${inIds}`}).then(({data:usersTwo})=>{
                     //usersTwo如果包含在usersOne中，去重
                     resolve({
                         data:concatIgnoreDuplicated(usersOne,usersTwo),
@@ -187,7 +193,8 @@ function pageQueryUserByKeyword(queryKeyword,userIds,pageParams){//{page:1,pageS
             var total=_.toSafeInteger(res.headers['x-total-count'])||res.data.length;
             var usersOne=res.data;
             if(!_.isEmpty(userIds)){
-                userService().query({filters:`${getUserIdField()} in '${userIds.join(',')}'`}).then(({data:usersTwo})=>{
+                let inIds=context.buildLeapIn(userIds);
+                userService().query({filters:`${getUserIdField()} in ${inIds}`}).then(({data:usersTwo})=>{
                     //usersTwo如果包含在usersOne中，去重
                     resolve({
                         data:concatIgnoreDuplicated(usersOne,usersTwo),

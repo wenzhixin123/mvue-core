@@ -364,5 +364,12 @@ export default {
     },
     resetPageCache(){
       pageCache={};
+    },
+    buildLeapIn(items){
+        let inValueArray=[];
+        for (let item of items) {
+            inValueArray.push(`'${this.getMvueToolkit().utils.leapQueryValueEncode(item)}'`);
+        }
+        return inValueArray.join(',');
     }
 }

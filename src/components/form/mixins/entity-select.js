@@ -333,7 +333,8 @@ export default{
                 filters:null
             }
             if(_.isArray(ids)){
-                queryOptions.filters=`${idField} in ${ids.join(",")}`;
+                let inIds=context.buildLeapIn(ids);
+                queryOptions.filters=`${idField} in ${inIds}`;
             }else{
                 queryOptions.id=ids;
             }

@@ -1,4 +1,5 @@
 import metabase from "../../libs/metadata/metabase";
+import context from '../../libs/context';
 
 function concatIgnoreDuplicated(firstArray,secondArray,key='userId'){
     firstArray=firstArray||[];
@@ -92,7 +93,8 @@ export default{
                 return new Promise((resolve, reject) => {
                     one.then(({data: dataOne}) => {
                         if (!_.isEmpty(existedIds)) {
-                            dataResource.query({filters: `${idField} in ${existedIds.join(',')}`}).then(({data: dataTwo}) => {
+                            let inIds=context.buildLeapIn(existedIds);
+                            dataResource.query({filters: `${idField} in ${inIds}`}).then(({data: dataTwo}) => {
                                 resolve(concatIgnoreDuplicated(dataOne, dataTwo, idField));
                             }, () => {
                                 reject();
@@ -106,7 +108,8 @@ export default{
                 });
             },
             queryByIds(ids) {
-                return dataResource.query({filters: `${idField} in ${ids.join(',')}`}).then(({data}) => {
+                let inIds=context.buildLeapIn(ids);
+                return dataResource.query({filters: `${idField} in ${inIds}`}).then(({data}) => {
                     return data;
                 });
             }

@@ -1,3 +1,4 @@
+import context from '../../../../libs/context';
 //合并两个数组，并根据key去重
 function concatIgnoreDuplicated(firstArray,secondArray,key){
     firstArray=firstArray||[];
@@ -33,7 +34,8 @@ function build(entityResource,idField,titleField,parentField,comParams){
             return new Promise((resolve,reject)=>{
                 one.then(({data:dataOne})=>{
                     if(!_.isEmpty(entityIds)){
-                        entityResource.query({filters:`${idField} in ${entityIds.join(',')}`}).then(({data:dataTwo})=>{
+                        let inIds=context.buildLeapIn(entityIds);
+                        entityResource.query({filters:`${idField} in ${inIds}`}).then(({data:dataTwo})=>{
                             resolve(concatIgnoreDuplicated(dataOne,dataTwo,idField));
                         },()=>{
                             reject();
@@ -47,7 +49,8 @@ function build(entityResource,idField,titleField,parentField,comParams){
             });
         },
         queryEntityByIds(entityIds){//查询指定ids的实体数据
-            return entityResource.query({filters:`${idField} in ${entityIds.join(',')}`}).then(({data})=>{
+            let inIds=context.buildLeapIn(entityIds);
+            return entityResource.query({filters:`${idField} in ${inIds}`}).then(({data})=>{
                 return data;
             });
         }

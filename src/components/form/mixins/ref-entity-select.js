@@ -78,12 +78,9 @@ export default {
             return title;
         },
         initByIds(){
-            let inValueArray=[];
-            for (let item of this.value) {
-                inValueArray.push(`'${context.getMvueToolkit().utils.leapQueryValueEncode(item)}'`);
-            }
+            let inIds=context.buildLeapIn(this.value);
             let idField=this.getIdField();
-            let filters=`${idField} in ${inValueArray.join(",")}`;
+            let filters=`${idField} in ${inIds}`;
             this.$refs.gridList.queryResource.query({filters:filters}).then( ({data})=>{
                 this.selectedItem=data;
             });

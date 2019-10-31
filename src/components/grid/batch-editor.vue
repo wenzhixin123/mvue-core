@@ -146,7 +146,8 @@ export default {
                 selectedItems.forEach(item => {
                     ids.push(item[idFieldName]);
                 });
-                return `${idFieldName} in ${ids.join(",")}`;
+                let inIds=context.buildLeapIn(ids);
+                return `${idFieldName} in ${inIds}`;
             }else{
                 return false;
             }

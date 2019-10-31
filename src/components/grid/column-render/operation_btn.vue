@@ -58,7 +58,7 @@ export default {
     }
 }
 </script>
-<style lang="less" scoped>
+<style lang="less">
 .operation-btn-con{
     display:inline-block;
     .btn>.ivu-icon{

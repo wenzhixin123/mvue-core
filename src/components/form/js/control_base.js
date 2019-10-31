@@ -142,7 +142,8 @@ export default {
                     });
                 }else{
                     let idFieldName=this.getIdField();
-                    return this.entityResource.query({filters:`${idFieldName} in ${id.join(',')}`}).then(({data})=>{
+                    let inIds=globalContext.buildLeapIn(id);
+                    return this.entityResource.query({filters:`${idFieldName} in ${inIds}`}).then(({data})=>{
                         let titleArray=[],idMap={};
                         _.each(data,d=>{
                             titleArray.push(d[targetTitleField]);

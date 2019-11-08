@@ -74,13 +74,19 @@
                                     <select v-model="mapping.fieldName">
                                         <option v-for="field in mapping.mappingFields" :value="field.name" :key="field.name">{{field.title}}</option>
                                     </select>
+                                    <span v-if="isUnique(mapping)" style="border:1px dashed #ccc;">唯一键</span>
                                 </td>
                                 <td>
-                                    <a href="javascript:void(0)" @click="ignoreOrAdd(mapping)" :class="{'ivu-btn-warning':mapping.optTitle==='忽略'}">{{mapping.optTitle}}</a>
+                                    <a class="mapping-btn-item" href="javascript:void(0)" @click="ignoreOrAdd(mapping)" :class="{'ivu-btn-warning':mapping.optTitle==='忽略'}">{{mapping.optTitle}}</a>
                                 </td>
                             </tr>
                         </tbody>
                     </table>
+                    候选唯一校验字段组合：
+                    <Select v-model="uniqueFieldsGroup" multiple style="width:260px">
+                        <Option v-for="item in availableUniqueFields" :value="item.value" :key="item.value">{{ item.label }}</Option>
+                    </Select>
+                    可选择多个字段，共同唯一标记本条数据，不包括唯一键和只读字段，因为唯一键字段后端一定会校验，而只读字段不可插入
                 </div>
                 <div v-show="current===2">
                     <div class="progress-con margin-top42" v-if="editorProps.preprocessed&&!allImported">
@@ -88,6 +94,7 @@
                             <i-col span="24">
                                 <m-simple-batch-editor v-if="editorProps.preprocessed" ref="simpleBatchEditor"
                                     :column-mappings="validColumnMapping"
+                                    :unique-fields-group="uniqueFieldsGroup"
                                     :import-id="importId"
                                     :items="editorProps.items"
                                     :ignore-columns="ignoreColumns"
@@ -141,6 +148,7 @@ export default {
             importTemplateUrl=grid.importTemplateUrl.replace(':entityName',metaEntity.name);
             importTemplateUrl=context.getMvueToolkit().utils.appendParam(importTemplateUrl,'entityName',metaEntity.name);
         }
+        let {availableUniqueFields,uniqueFieldsGroup}=this.buildAvailableUniqueFields(metaEntity);
         return {
             grid:grid,
             metaEntity:metaEntity,
@@ -166,7 +174,9 @@ export default {
             importId:null,//当前导入的id
             validColumnMapping:null,//后端api调用的映射关系数据
             ignoreColumns:{},//忽略映射的列
-            importTemplateUrl:importTemplateUrl
+            importTemplateUrl:importTemplateUrl,
+            uniqueFieldsGroup:uniqueFieldsGroup,
+            availableUniqueFields:availableUniqueFields
         }
     },
     watch:{
@@ -426,6 +436,35 @@ export default {
             let index=mapping.index;
             this.ignoreColumns[index]=!this.ignoreColumns[index];
             mapping.optTitle= this.ignoreColumns[index]?'添加':'忽略';
+        },
+        isUnique(mapping){
+            let fields=mapping.mappingFields;
+            let name=mapping.fieldName;
+            if(!fields || !name){
+                return false;
+            }
+            let fieldsMap=_.keyBy(fields,f=>{
+                return f.name;
+            });
+            let mField=fieldsMap[name];
+            return !!mField.unique;
+        },
+        buildAvailableUniqueFields(metaEntity){
+            let availableUniqueFields=[],uniqueFieldsGroup=[];
+            _.forIn(metaEntity.fields,f=>{
+                if(!f.unique && !f.readonly){
+                    availableUniqueFields.push(
+                        {
+                            value:f.name,
+                            label:f.title
+                        }
+                    );
+                    if(f.semantics==='title'){
+                        uniqueFieldsGroup.push(f.name);
+                    }
+                }
+            });
+            return {availableUniqueFields,uniqueFieldsGroup};
         }
     }
 }
@@ -434,6 +473,9 @@ export default {
 .grid-import-data-con{
     display:inline-block;
     width:100%;
+    .mapping-btn-item{
+        cursor: pointer;
+    }
 }
 .highlight-number{
     color:#ff9900;

@@ -78,6 +78,9 @@ export default {
             default(){
                 return {};
             }
+        },
+        uniqueFieldsGroup:{//属于当前实体的一组候选唯一键组合
+            type:Array
         }
     },
     data(){
@@ -147,6 +150,9 @@ export default {
                     columns:this.columnMappings,
                     rows:rows
                 };
+                if(!_.isEmpty(this.uniqueFieldsGroup)){
+                    _model.keys=this.uniqueFieldsGroup;
+                }
                 this.rebuildModelIgnoreColumns(_model);
                 this.beginImport=true;
                 let success=await importService().executeImportRows2({entityName:this.entityName},_model).then(({data})=>{

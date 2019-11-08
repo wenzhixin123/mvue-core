@@ -65,7 +65,7 @@ export default function (options) {
     metaEntity.firstSemanticsField = function (semantics) {
         var field = null;
         _.forIn(this.fields, function (metaField, key) {
-            if (metaField.semantics == semantics
+            if (metaField.semantics === semantics
                 || (_.isArray(metaField.semantics) && _.includes(metaField.semantics, semantics))) {
                 field = metaField;
                 return false;

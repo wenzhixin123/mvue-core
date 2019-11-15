@@ -6,6 +6,7 @@
       :modal-height="innerModalHeight"
       :grid-settings="gridSettings"
       :queryOptions="queryOptions"
+      @on-change="handleOnChange"
     ></ref-entity-select>
   <div v-else :class="{'bvue-select-group-append':showBtn&&append}">
     <slot name="btn" v-if="showBtn">
@@ -29,6 +30,7 @@
                 :modal-height="innerModalHeight"
                 :grid-settings="gridSettings"
                 :queryOptions="queryOptions"
+                @on-change="handleOnChange"
             ></ref-entity-select>
         </div>
         <div slot="footer">
@@ -122,6 +124,9 @@ export default {
     },
     getSelectedItem(){
       return this.$refs.selectRef.selectedItem;
+    },
+    handleOnChange(selectedItem){
+      this.$emit('on-change',selectedItem);
     }
   },
   components:{

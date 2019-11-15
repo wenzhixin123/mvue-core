@@ -84,6 +84,11 @@ export default {
             preprocessed:false
         };
     },
+    watch:{
+        selectedItem:function(){
+            this.$emit('on-change',this.selectedItem);
+        }
+    },
     mounted(){
         this.preprocess();
     },

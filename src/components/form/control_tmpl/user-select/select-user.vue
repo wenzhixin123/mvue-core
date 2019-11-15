@@ -101,6 +101,9 @@
                     this.pageQueryUserByKeyword();
                   }
                 }
+            },
+            selectedUsers:function(){
+                this.$emit('on-change',this.selectedUsers);
             }
         },
         data() {
@@ -118,7 +121,7 @@
                 currentPage: 1,
                 pageSize: 10,
                 total: 0,
-                selectedUsers:[],
+                selectedUsers:{},
                 queryKeyword: ''
             };
         },

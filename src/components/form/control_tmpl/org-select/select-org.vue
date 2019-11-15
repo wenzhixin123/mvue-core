@@ -99,6 +99,9 @@
                 handler() {
                     this.buildRootOrgByKeyword();
                 }
+            },
+            selectedOrgDetails:function(){
+                this.$emit('on-change',this.selectedOrgDetails);
             }
         },
         mounted() {
@@ -118,19 +121,22 @@
                         this.selectedOrgDetails = {};
                     }
                 } else {//多选去重
+                    let selectedOrgDetails=_.cloneDeep(this.selectedOrgDetails);
                     _.each(dataItems, item => {
                         var id = item.id;
                         if (!_.includes(this.selectedIds, id)) {
                             this.selectedIds.push(id);
-                            this.selectedOrgDetails[id] = item;
+                            selectedOrgDetails[id] = item;
                         }
-                    })
+                    });
+                    this.selectedOrgDetails=selectedOrgDetails;
                 }
             },
             delOrg(index) {
                 var toDeletedId = this.selectedIds[index];
                 this.selectedIds.splice(index, 1);
                 delete this.selectedOrgDetails[toDeletedId];
+                this.selectedOrgDetails=_.cloneDeep(this.selectedOrgDetails);
             },
             handleQueryClear() {
                 this.queryKeyword = '';

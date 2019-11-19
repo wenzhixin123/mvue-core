@@ -95,11 +95,8 @@
             },
             queryKeyword: {
                 handler() {
-                  if(!this.queryKeyword){
-                    this.pageQueryUserByOrg();
-                  }else{
-                    this.pageQueryUserByKeyword();
-                  }
+                    this.currentPage=1;
+                    this.doQuery();
                 }
             },
             selectedUsers:function(){
@@ -132,6 +129,13 @@
             }
         },
         methods: {
+            doQuery(){
+                if(!this.queryKeyword){
+                    this.pageQueryUserByOrg();
+                }else{
+                    this.pageQueryUserByKeyword();
+                }
+            },
             //选择部门树节点后，查询此部门的用户数据
             handleOrgSelectChange(data) {
                 var orgIds = [];
@@ -182,10 +186,11 @@
                 }
             },
             handleCurrentPageChange() {
-                this.pageQueryUserByOrg();
+                this.doQuery();
             },
             handleQueryClear() {
                 this.queryKeyword = '';
+                this.currentPage=1;
             },
             handleQueryChange(val) {
                 this.queryKeyword = val;

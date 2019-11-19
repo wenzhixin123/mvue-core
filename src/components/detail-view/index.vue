@@ -41,7 +41,7 @@
                     </template>
                 </Menu>
             </Sider>
-            <Content>
+            <Content v-if="(!lazy)||(lazy&&preprocessed)">
                 <Card v-if="showCard" :bordered="false" :class="marginCls">
                     <router-view></router-view>
                 </Card>
@@ -96,6 +96,10 @@
             },
             header:{
                 type:Object
+            },
+            lazy:{//设置为true：表示等待store中设置了主实体数据后渲染界面
+                type:Boolean,
+                default:false
             }
         },
         data: function () {
@@ -104,7 +108,7 @@
                 opens.push(menu.id);
             });
             return {
-                isShow: true,
+                preprocessed: false,
                 localMenus: _.cloneDeep(this.menus),
                 openNames: opens,
                 activeName: "",
@@ -215,9 +219,11 @@
                 if(this.entity!=null){
                     this.$store.commit("core/setEntity",
                         {entityName: this.entityName, entity: this.entity});
+                    this.preprocessed=true;
                     return ;
                 }
                 if (_.isEmpty(this.entityName) || _.isEmpty(this.recordId)) {
+                    this.preprocessed=true;
                     return Promise.resolve(null);
                 }
 
@@ -230,6 +236,7 @@
                     this.entity=data;
                     this.$store.commit("core/setEntity",
                         {entityName: this.entityName, entity: data});
+                    this.preprocessed=true;
                     return data;
                 });
             },

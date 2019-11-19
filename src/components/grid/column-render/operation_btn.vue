@@ -24,10 +24,12 @@ export default {
   },
   methods: {
         showBtn(btn){
-            if(btn.toggle===false){
+            let toggle=btn.toggle;
+            if(toggle===false){
                 return false;
-            }else if(_.isFunction(btn.toggle)){
-                return btn.toggle(this.context,this.item);
+            }else if(_.isFunction(toggle)){
+                let context=this.getWidgetContext();
+                return toggle(context,this.item);
             }
             return true;
         },

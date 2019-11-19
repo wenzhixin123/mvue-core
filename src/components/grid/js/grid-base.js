@@ -208,6 +208,7 @@ export default{
             }else if(_.isFunction(btn.disabled)){
                 var ctx={
                     isGrid:true,
+                    grid:this,
                     metaEntity:this.metaEntity,
                     selectedItems:this.selectedItems
                 };
@@ -215,6 +216,7 @@ export default{
             }
             return false;
         },
+        //在按钮渲染之前过滤掉show为false的按钮
         showBtn(btn){
             if(btn.show===false){
                 return false;

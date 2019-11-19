@@ -3,7 +3,7 @@
              :wrapper-class="wrapperClass"
              :columns="innerColumns"
              :query="innerQuery"
-             :toolbar="toolbar"
+             :toolbar="innerToolbar"
              :filters="filters"
              :default-sort="innerSort"
              :cur-page="curPage"

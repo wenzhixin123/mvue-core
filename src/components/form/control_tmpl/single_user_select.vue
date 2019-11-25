@@ -57,6 +57,7 @@
                             :query-placeholder="selectPlaceholder"
                             :tree-expand-level="treeExpandLevel"
                             :tree-leaf-key="treeLeafKey"
+                            :select-current-user-org="!!formItem.componentParams.selectCurrentUserOrg"
                             :query-methods="queryMethods"></select-user>
                         </div>
                         <div slot="footer">

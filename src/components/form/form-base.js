@@ -639,9 +639,10 @@ export default {
             } else if (_.isFunction(btn.disabled)) {
                 var ctx = {
                     isForm: true,
+                    form:this,
                     entity: this.entity
                 };
-                return btn.disabled(ctx);
+                return btn.disabled(ctx,btn);
             }
             return false;
         },

@@ -75,6 +75,10 @@
             queryPlaceholder: {
                 type: String,
                 default:"请输入用户姓名"
+            },
+            selectCurrentUserOrg:{//是否默认查询当前用户所在部门
+                type:Boolean,
+                default:false
             }
         },
         watch: {
@@ -104,10 +108,18 @@
             }
         },
         data() {
+            let selectedOrgIds=[];
+            //如果指定默认选中当前用户所在部门
+            if(this.selectCurrentUserOrg){
+                let curUserOrgId=this.$session.getCurrentUser().org_id;
+                if(!_.isNil(curUserOrgId)){
+                    selectedOrgIds.push(curUserOrgId);
+                }
+            }
             return {
                 transferTitles:["用户列表","已选用户"],
                 changedQueue: [],
-                selectedOrgIds: [],
+                selectedOrgIds: selectedOrgIds,
                 selectedIds: [],
                 sourceUsers: [],
                 selectedKeys: [],

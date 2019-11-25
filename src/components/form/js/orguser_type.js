@@ -1,9 +1,17 @@
 import entityType from './entity_type';
 import _types from './_types';
+
+let selectCurrentUserOrgProp={
+    id:'selectCurrentUserOrg',
+    inputType:_types.inputType.Boolean,
+    default:false,
+    store:_types.store.MetaFieldInputParams,
+    title:'默认查本部门用户'
+};
 const props={
-    SingleUserSelect:_types.merge(_types.placeholder,_types.defaultValue),
+    SingleUserSelect:_types.merge(_types.placeholder,selectCurrentUserOrgProp,_types.defaultValue),
     SingleOrgSelect:_types.merge(_types.placeholder,_types.defaultValue),
-    MultiUserSelect:_types.merge(_types.placeholder),
+    MultiUserSelect:_types.merge(_types.placeholder,selectCurrentUserOrgProp),
     MultiOrgSelect:_types.merge(_types.placeholder)
 };
 var orgUserTypes={

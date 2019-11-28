@@ -25,7 +25,7 @@ function initUserPerm() {
             return sc.hasPerm(op, metaEntity);
         };
         currentUser["hasRowPerm"] = function (entityData,ops) {
-            return sc.hasPerm(entityData,ops);
+            return sc.hasRowPerm(entityData,ops);
         }
     });
 }

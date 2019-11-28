@@ -23,6 +23,9 @@ function initUserPerm() {
         var currentUser = context.getMvueToolkit().session.getCurrentUser();
         currentUser["hasPerm"] = function (op, metaEntity) {
             return sc.hasPerm(op, metaEntity);
+        };
+        currentUser["hasRowPerm"] = function (entityData,ops) {
+            return sc.hasPerm(entityData,ops);
         }
     });
 }

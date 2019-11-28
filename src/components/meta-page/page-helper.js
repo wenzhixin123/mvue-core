@@ -213,7 +213,7 @@ function buildEventListener(options,eventInfo,context) {
     let actions=[];
     if(_.isArray(options)
         && !_.isEmpty(options)){
-        //最初的无if和do模式   
+        //最初的无if和do模式
         if(!_.has(options[0],'do')){
             _.forEach(options,(param)=>{
                 let action=buildAction(param,eventInfo);
@@ -546,6 +546,13 @@ function buildPageContext(page) {
     Object.defineProperty(pageContext,"$route",{
         get: function () {
             return page.$route;
+        },
+        enumerable: true
+    });contextHelper
+    //增加工具类
+    Object.defineProperty(pageContext,"$utils",{
+        get: function () {
+            return contextHelper;
         },
         enumerable: true
     });

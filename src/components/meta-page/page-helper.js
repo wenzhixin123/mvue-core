@@ -548,7 +548,7 @@ function buildPageContext(page) {
             return page.$route;
         },
         enumerable: true
-    });contextHelper
+    });
     //增加工具类
     Object.defineProperty(pageContext,"$utils",{
         get: function () {

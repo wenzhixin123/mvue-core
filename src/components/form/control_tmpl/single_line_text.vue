@@ -49,7 +49,7 @@ export default {
       }
     },
     mounted:function(){
-        
+        this.updateValue();
     },
     methods: {
         convertedValue(){

@@ -14,6 +14,7 @@
             :title="modalTitle"
             :scrollable="true"
             :mask-closable="false"
+            @on-visible-change="handleOnVisibleChange"
             >
             <div class="modal-inner-widget" v-if="popupWidgetModal" :style="{height:innerModalHeight+'px',overflow:'auto'}">
                 <component v-if="!isLayout" @popup-close="close" :widget-context="widgetContext" :operation="operation" :is="operation.widget">
@@ -136,6 +137,9 @@ export default {
                 settings= metaLayoutConvertor.convert(settings,this,{isPopup:true});
                 this.layoutSettings=settings.layout;
             }
+        },
+        handleOnVisibleChange(visible){
+            this.$emit('on-visible-change',visible);
         }
     }
 }

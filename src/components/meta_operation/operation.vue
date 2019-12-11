@@ -1,6 +1,12 @@
 <template>
     <div class="widget-operation div-inline-block"  >
-        <component v-if="hasPermission"  @triggered="triggered" @successed="successed" :is="operationComponent" :operation="extendedOperation" :widget-context="extendedWidgetContext">
+        <component v-if="hasPermission"  
+            @on-visible-change="handleOnVisibleChange"
+            @triggered="triggered" 
+            @successed="successed" 
+            :is="operationComponent" 
+            :operation="extendedOperation" 
+            :widget-context="extendedWidgetContext">
             <slot :operation="extendedOperation"></slot>
         </component>
         <slot v-else name="onDeny"></slot>
@@ -134,6 +140,9 @@ export default {
                 hasPerm=sc.hasPerm(optNeedPerm);
             }
             return hasPerm;
+        },
+        handleOnVisibleChange(visible){
+            this.$emit('on-visible-change',visible);
         }
     },
     components:{

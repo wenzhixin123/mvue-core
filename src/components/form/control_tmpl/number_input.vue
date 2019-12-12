@@ -6,6 +6,7 @@
         <template v-else>
             <InputNumber 
                 v-model="valueObj" 
+                :active-change="formItem.componentParams.activeChange?true:false"
                 @on-change="updateValue" 
                 :precision="precision" 
                 :disabled="disabled"

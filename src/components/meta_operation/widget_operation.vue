@@ -1,6 +1,10 @@
 <template>
 <div>
-    <component :widget-context="widgetContext" :operation="operation" :is="operation.widget">
+    <component 
+        :widget-context="widgetContext" 
+        :operation="operation" 
+        :is="operation.widget"
+        @on-close="close">
         <slot>
         </slot>
     </component>
@@ -22,6 +26,13 @@ export default {
         return {
 
         };
+    },
+    methods:{
+        close(){//如果部件提供了on-close回调，在grid上的操作后要刷新grid
+            if(this.widgetContext.grid){
+                this.widgetContext.grid.reload();
+            }
+        }
     }
 }
 </script>

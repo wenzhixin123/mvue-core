@@ -228,13 +228,11 @@ import TransferDom from './components/form/js/transfer_dom';
 import operationManager from "./libs/operation/operations";
 import formControlManager from './components/form/control-manager';
 import topEntityService from "./services/store/top-entity";
-
-
 import interceptorManager from "./libs/interceptor/interceptors";
-
-
 import ufs from "./libs/ufs";
 import locale from './locale/index';
+import entityResource from "./libs/metadata/entity-resource";
+
 //关闭浏览器tab时，标记当前会话sid对应的localStorage数据可能过期
 window.onbeforeunload = function clearAfterWindowClose(){
     topEntityService.setMayExpired();
@@ -259,6 +257,7 @@ let MvueCore={
     locale,
     topEntityService,
     permissionService,
+    entityResource,
     initAfterAppCtxCreated:(appCtx)=>{
         context.initAfterAppCtxCreated(appCtx);
     },

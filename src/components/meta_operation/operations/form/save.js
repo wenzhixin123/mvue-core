@@ -37,7 +37,8 @@ function impl(context,$optInst){
         }
         if(form.completedAction=="close"&&(!res.createAnother)){
             if(isInPopup){
-                form.$emit("popup-close");
+                //form.$emit("popup-close");
+                form.getParentPopup().popupWidgetModal=false;
             }else{
                 contextHelper.getRouter().go(-1);
             }

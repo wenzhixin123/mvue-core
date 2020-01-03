@@ -241,7 +241,7 @@ export default {
                     return ;
                 }
                 let targetMetaEntity=relation.targetEntity;
-                let parentEntity=this.$store.state.core.currentRouteData[targetMetaEntity.name.toLowerCase()];
+                let parentEntity=this.$store.state.core.currentRouteData[targetMetaEntity.toLowerCase()];
                 if(parentEntity!=null){
                     matched={
                         entity:targetMetaEntity

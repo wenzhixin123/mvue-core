@@ -93,6 +93,7 @@ export default{
         },
         notifySelectedItemChanged(selectedOption){
             let newSelectedItem=selectedOption;
+            this.selectedItem=newSelectedItem;
             this.addHistoryItems(newSelectedItem);
             this.dispatch&&this.dispatch("mForm","on-ref-selected-changed",[this,newSelectedItem]);
             if(_.isArray(newSelectedItem)){
@@ -215,6 +216,7 @@ export default{
                 sid=newSelectedItem[idField];
             }
             this.$emit('input',sid);
+            this.$emit("on-change",newSelectedItem);
             this.dispatch&&this.dispatch('FormItem', 'on-form-change', sid);
         },
         //多选
@@ -227,6 +229,7 @@ export default{
                 sIds.push(sid);
             });
             this.$emit('input',sIds);
+            this.$emit("on-change",newSelectedItem);
             this.dispatch&&this.dispatch('FormItem', 'on-form-change', sIds);
         },
         //查询指定ids的数据并初始化选中值
@@ -308,6 +311,7 @@ export default{
                         this.historyItems.splice(0,0,item);
                     }
                 });
+                //this.ensureHistoryItems(sItems);
             }
         },
         //保证历史选项合并到新的items选项中

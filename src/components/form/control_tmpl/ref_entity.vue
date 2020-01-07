@@ -40,9 +40,9 @@
                         <span :class="{'deleted-ref':!!option[rowMetaFakeKey]}">{{option[getTitleField()]}}</span>
                     </template>
                 </Multiselect>
-                <m-entity-select 
+                <m-entity-select
                     :entity-name="formItem.componentParams.entityId"
-                    :value="selectedItem" 
+                    :value="selectedItem"
                     :append="true"
                     :disabled="disabled"
                     :query-options="innerQueryOptions"
@@ -66,10 +66,12 @@ export default {
     },
     data: function(){
         var entityResource=null;
+        let metaEntity=this.$metaBase.findMetaEntity(this.formItem.componentParams.entityId);
         if(this.formItem.componentParams&&this.formItem.componentParams.entityResourceUrl){
             entityResource= context.buildResource(this.formItem.componentParams.entityResourceUrl);
+        }else{
+            entityResource= metaEntity.dataResource();
         }
-        let metaEntity=this.$metaBase.findMetaEntity(this.formItem.componentParams.entityId);
         let hasReadPerm=sc.hasReadPerm(this.formItem.componentParams.entityId);
         return {
             hasReadPerm:hasReadPerm,

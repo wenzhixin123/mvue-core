@@ -4,13 +4,13 @@
         <Menu  ref="topMenus" v-if="mode=='horizontal'"
                :theme="theme" mode="horizontal"
                :active-name="activeName" @on-select="onMenuSelected">
-            <template v-for="level0 in localMenus">
+            <template v-for="level0 in localMenus" v-if="level0.showIf">
                 <Submenu v-if="level0.children&& level0.children.length>0" :key="level0.id" :name="level0.id">
                     <template slot="title">
                         <Icon v-if="level0.icon" :type="level0.icon"></Icon>
                         <span>{{level0.title}}</span>
                     </template>
-                    <MenuItem v-for="level1 in level0.children" :key="level1.id" :name="level1.id">
+                    <MenuItem v-for="level1 in level0.children" v-if="level1.showIf" :key="level1.id" :name="level1.id">
                         <span>{{level1.title}}</span>
                     </MenuItem>
                 </Submenu>
@@ -24,13 +24,13 @@
             <Sider hide-trigger v-if="mode=='vertical'" :width="siderWidth">
                 <Menu ref="leftMenus" width="auto" :theme="theme"
                       :open-names="openNames" :active-name="activeName" @on-select="onMenuSelected">
-                    <template v-for="level0 in localMenus">
+                    <template v-for="level0 in localMenus" v-if="level0.showIf">
                         <Submenu v-if="level0.children&& level0.children.length>0" :key="level0.id" :name="level0.id">
                             <template slot="title">
                                 <Icon v-if="level0.icon" :type="level0.icon"></Icon>
                                 <span>{{level0.title}}</span>
                             </template>
-                            <MenuItem v-for="level1 in level0.children" :key="level1.id" :name="level1.id">
+                            <MenuItem v-for="level1 in level0.children" v-if="level1.showIf" :key="level1.id" :name="level1.id">
                                 <span>{{level1.title}}</span>
                             </MenuItem>
                         </Submenu>
@@ -55,6 +55,7 @@
     import context from "../../libs/context";
     import  paths from "../../libs/paths";
     import entityResource from "../../libs/metadata/entity-resource";
+    import  pathHelper from "../meta-page/page-helper";
     var pathToRegexp = require('path-to-regexp');
 
     export default {
@@ -109,7 +110,7 @@
             });
             return {
                 preprocessed: false,
-                localMenus: _.cloneDeep(this.menus),
+                localMenus: [],
                 openNames: opens,
                 activeName: "",
                 menuMappings: {},
@@ -149,10 +150,9 @@
                 this.setEntityToContext();
             }
         },
-        mounted() {
-            this.setEntityToContext();
-            this.localMenus = _.cloneDeep(this.menus);
-            if (this.localMenus.length < 1) {
+        async mounted() {
+            await this.setEntityToContext();
+            if (this.menus.length < 1) {
                 return;
             }
             this.prepare();
@@ -170,6 +170,7 @@
             this.setActiveMenu(matchedMenu);
         },
         methods: {
+
             calComponentInRoute() {
                 let routeInfo = context.componentInRouteInfo(this);
                 if (routeInfo) {
@@ -215,7 +216,7 @@
                     return this.$refs.leftMenus;
                 }
             },
-            setEntityToContext() {
+            async setEntityToContext() {
                 if(this.entity!=null){
                     this.$store.commit("core/setEntity",
                         {entityName: this.entityName, entity: this.entity});
@@ -228,7 +229,7 @@
                 }
 
                 let metaEntity = this.$metaBase.findMetaEntity(this.entityName);
-                entityResource.find(metaEntity,this.recordId).then((data) => {
+                await entityResource.find(metaEntity,this.recordId).then((data) => {
                     let titleField = metaEntity.firstTitleField();
                     if(!this.innerHeader.title){
                         this.innerHeader.title = (titleField == null ? metaEntity.title : data[titleField.name]);
@@ -249,18 +250,29 @@
                     }
                     var toPath = paths.relativeToAbsolute(this.basePath, selectedMenu.url);
                     this.activeName = selectedMenu.id;
-                   
+
                     //这里全部修改为replace为true，菜单切换不作为回退历史记录
                     this.$router.replace({path: toPath, query: this.$route.query});
                 }
             },
             prepare: function () {
-                var _this = this;
-                if (!(_this.localMenus && _this.localMenus.length)) {//如果菜单为空
+                let _this = this;
+                if (!(_this.menus && _this.menus.length)) {//如果菜单为空
                     return;
                 }
+                let context=pathHelper.buildPageContext(_this);
+                context["entity"]=this.entity;
+
+                this.localMenus=_.cloneDeep(_this.menus);
                 _this.visitTree(_this.localMenus, function (menu) {
-                    var menuId = menu.id;
+                    if(_.has(menu,"showIf")){
+                        let ifShow=pathHelper.evalExpr(menu["showIf"],context,false);
+                        menu["showIf"]=ifShow;
+                    }else{
+                        menu["showIf"]=true;
+                    }
+
+                    let menuId = menu.id;
                     if (menu.url && menu.url.indexOf("#") > 0) {
                         menu["path"] = menu.url.substring(menu.url.indexOf("#") + 1);
                     } else {

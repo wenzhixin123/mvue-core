@@ -130,7 +130,7 @@ export default {
     }
   },
   components:{
-    refEntitySelect:require('../form/control_tmpl/ref-entity-select')
+    refEntitySelect:require('../form/control_tmpl/ref-entity-select').default
   }
 }
 </script>

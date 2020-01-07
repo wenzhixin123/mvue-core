@@ -169,8 +169,8 @@ export default {
         }
     },
     components:{
-        topEntitySelect:require('./top-entity-select'),
-        advForm:require('./adv-search/form')
+        topEntitySelect:require('./top-entity-select').default,
+        advForm:require('./adv-search/form').default
     },
     data:function(){
         this.setAccessModeIfNecessary();

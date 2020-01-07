@@ -28,7 +28,7 @@ const firstNullItem={
 };
 export default {
   components:{
-    refInput:require('./ref-input')
+    refInput:require('./ref-input').default
   },
   props:{
     value:{

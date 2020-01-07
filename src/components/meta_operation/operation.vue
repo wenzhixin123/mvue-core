@@ -146,14 +146,14 @@ export default {
         }
     },
     components:{
-        commonOperation:require('./common_operation'),
-        widgetOperation:require('./widget_operation'),
-        toPageOperation:require('./to_page_operation'),
-        popupOperation:require('./popup_operation'),
-        scriptOperation:require('./script_operation'),
-        groupOperation:require('./group-operation'),
-        selectEntityOperation:require('./select-entity-operation'),
-        httpOperation:require('./http-operation')
+        commonOperation:require('./common_operation').default,
+        widgetOperation:require('./widget_operation').default,
+        toPageOperation:require('./to_page_operation').default,
+        popupOperation:require('./popup_operation').default,
+        scriptOperation:require('./script_operation').default,
+        groupOperation:require('./group-operation').default,
+        selectEntityOperation:require('./select-entity-operation').default,
+        httpOperation:require('./http-operation').default
     }
 }
 </script>

@@ -362,7 +362,7 @@ export default {
         }
     },
     components:{
-        infoTip:require('./info-tip')
+        infoTip:require('./info-tip').default
     }
 }
 </script>

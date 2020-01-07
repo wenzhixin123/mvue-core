@@ -14,7 +14,7 @@ export default {
     }
   },
   components:{
-    renderHtml:require('../grid/column-render/render_html')
+    renderHtml:require('../grid/column-render/render_html').default
   }
 }
 </script>

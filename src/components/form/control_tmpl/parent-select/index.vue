@@ -47,7 +47,7 @@ import queryMethodsBuilder from './query-methods';
 export default {
     mixins: [controlBase,selectModal,entitySelect],
     components:{
-        'entity-select-tree':require('./entity-select-tree')
+        'entity-select-tree':require('./entity-select-tree').default
     },
     props: {
         'value':{type:[String,Number],default:null},

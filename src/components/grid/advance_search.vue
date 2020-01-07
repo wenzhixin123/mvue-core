@@ -69,7 +69,7 @@ export default {
         }
     },
     components:{
-        advForm:require('./adv-search/form')
+        advForm:require('./adv-search/form').default
     }
 }
 </script>

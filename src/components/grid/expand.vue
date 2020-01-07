@@ -18,7 +18,7 @@
 import controlTypeService from '../form/js/control_type_service';
 export default {
   components:{
-    expandItem:require('./expand-item')
+    expandItem:require('./expand-item').default
   },
   props:{
     item:{

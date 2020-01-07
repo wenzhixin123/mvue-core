@@ -112,7 +112,7 @@ export default {
         }
     },
     components:{
-        'ref-entity-select':require('../form/control_tmpl/ref-entity-select')
+        'ref-entity-select':require('../form/control_tmpl/ref-entity-select').default
     }
 }
 </script>

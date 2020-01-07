@@ -342,8 +342,8 @@
             }
         },
         components:{
-            metaEntityTree:require("../entity-tree/index"),
-            metaGrid:require("../grid/iview_grid")
+            metaEntityTree:require("../entity-tree/index").default,
+            metaGrid:require("../grid/iview_grid").default
         }
     }
 </script>

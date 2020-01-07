@@ -36,14 +36,14 @@ export default {
         }
     },
     components:{
-        'm-page-default':require('./default'),
-        'm-page-form':require('./form'),
-        'm-page-list':require('./list'),
-        'm-page-sub-page':require('./sub-page'),
-        'm-page-sub-page-relation':require('./sub-page-relation'),
-        'm-page-third-page':require('./third-page'),
-        'm-page-third-page-relation':require('./third-page-relation'),
-        'm-page-dync-page':require('./dync-page')
+        'm-page-default':require('./default').default,
+        'm-page-form':require('./form').default,
+        'm-page-list':require('./list').default,
+        'm-page-sub-page':require('./sub-page').default,
+        'm-page-sub-page-relation':require('./sub-page-relation').default,
+        'm-page-third-page':require('./third-page').default,
+        'm-page-third-page-relation':require('./third-page-relation').default,
+        'm-page-dync-page':require('./dync-page').default
     }
 }
 </script>

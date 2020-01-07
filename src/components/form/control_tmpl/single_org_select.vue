@@ -146,7 +146,7 @@ export default {
         }
     },
     components:{
-        selectOrg:require('./org-select/select-org')
+        selectOrg:require('./org-select/select-org').default
     }
 }
 </script>

@@ -2,14 +2,16 @@ var path = require('path')
 var utils = require('./utils')
 var config = require('../config')
 var vueLoaderConfig = require('./vue-loader.conf')
+const VueLoaderPlugin = require('vue-loader/lib/plugin')
 
 function resolve (dir) {
   return path.join(__dirname, '..', dir)
 }
 
 module.exports = {
+    mode: 'development',
+    target: 'web',
     entry: {
-        docs: './src/docs.js',
         ['index']: './src/index.js'
     },
     output: {
@@ -71,5 +73,8 @@ module.exports = {
                 }
             }
         ]
-    }
+    },
+    plugins: [
+        new VueLoaderPlugin()
+    ]
 }

@@ -14,7 +14,7 @@ import batchEditorSupport from './batch-editor-support';
 export default {
     mixins:[batchEditorSupport],
     components:{
-        ufsImage:require('../../form/control_tmpl/upload/ufs-image')
+        ufsImage:require('../../form/control_tmpl/upload/ufs-image').default
     },
     props:{
         uploadUrl:{

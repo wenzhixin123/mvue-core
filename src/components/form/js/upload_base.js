@@ -232,6 +232,6 @@ export default {
         }
     },
     components:{
-        ufsImage:require('../control_tmpl/upload/ufs-image')
+        ufsImage:require('../control_tmpl/upload/ufs-image').default
     }
 }

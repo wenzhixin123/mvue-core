@@ -29,7 +29,7 @@ import entitySelect from '../../mixins/entity-select';
 export default {
     mixins: [controlBase,entitySelect],
     components:{
-        orderedRef:require('./ordered-ref')
+        orderedRef:require('./ordered-ref').default
     },
     props: {
         "value":{

@@ -306,6 +306,6 @@ export default{
         }
     },
     components:{
-        advanceSearch:require("../advance_search")
+        advanceSearch:require("../advance_search").default
     }
 }

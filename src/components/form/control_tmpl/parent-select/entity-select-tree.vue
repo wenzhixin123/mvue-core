@@ -144,7 +144,7 @@
             }
         },
         components: {
-            search: require('../user-select/search')
+            search: require('../user-select/search').default
         }
     };
 </script>

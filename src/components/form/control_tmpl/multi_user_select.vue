@@ -162,7 +162,7 @@ export default {
         }
     },
     components:{
-        selectUser:require('./user-select/select-user')
+        selectUser:require('./user-select/select-user').default
     }
 }
 </script>

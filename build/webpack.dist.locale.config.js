@@ -5,6 +5,8 @@ const entry = require('./locale');
 process.env.NODE_ENV = 'production';
 
 module.exports = {
+    mode: 'development',
+    target: 'web',
     devtool: 'source-map',
     entry,
     module: {
@@ -34,12 +36,5 @@ module.exports = {
             commonjs2: 'vue',
             amd: 'vue'
         }
-    },
-    plugins: [
-        new webpack.DefinePlugin({
-            'process.env': {
-                NODE_ENV: '"production"'
-            }
-        })
-    ]
+    }
 };

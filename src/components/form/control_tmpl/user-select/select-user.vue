@@ -227,7 +227,7 @@
             }
         },
         components: {
-            search: require('./search')
+            search: require('./search').default
         }
     };
 </script>

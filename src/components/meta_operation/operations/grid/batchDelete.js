@@ -71,9 +71,10 @@ function impl(context,$optInst){
         }
     }
     var handler=gridUtils.buildDeleteHandler($optInst.operation,context.grid,metaEntity);
+    let confirmContent=$optInst && $optInst.operation && $optInst.operation.confirmContent;
     contextHelper.confirm({
         title: '提示',
-        content: unpermedInfo||'确定删除吗?',
+        content: unpermedInfo||confirmContent||'确定删除吗?',
         onOk: () => {
             _.each(permedItems,function(row){
                 let id=row[idField.name];

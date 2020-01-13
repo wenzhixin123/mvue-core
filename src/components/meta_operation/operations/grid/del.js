@@ -36,10 +36,10 @@ function impl(context,$optInst) {
     }
     var metaEntity = context.metaEntity;
     var handler = gridUtils.buildDeleteHandler($optInst.operation, context.grid, metaEntity);
-
+    let confirmContent=$optInst && $optInst.operation && $optInst.operation.confirmContent;
     contextHelper.confirm({
         title: '提示',
-        content: '确定删除吗?',
+        content: confirmContent||'确定删除吗?',
         onOk: () => {
             //,cascade_delete:true
             handler({id: id}, null, {

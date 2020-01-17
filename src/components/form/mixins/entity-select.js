@@ -150,9 +150,20 @@ export default{
                         this.initOnFirstLoaded(items);
                     }
                     this.ensureHistoryItems(items);
+                    //如果需要默认选中某个值，先使用接口中有_default_selected_标记的那条，否则使用第一条，作为选中值
                     if(this.selectedItem==null && this.preselectFirst
                         && items && items.length>0){
-                        this.selectedItem=items[0];
+                        let defaultSelected=null;
+                        _.forEach(items,item=>{
+                            if(item._default_selected_){
+                                defaultSelected=item;
+                                return false;;
+                            }
+                        });
+                        if(!defaultSelected){
+                            defaultSelected=items[0];
+                        }
+                        this.selectedItem=defaultSelected;
                         this.commitRefData(this.selectedItem);
                     }
                     if(this.onEntitySelectInited){

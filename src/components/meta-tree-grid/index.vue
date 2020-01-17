@@ -40,21 +40,22 @@
         </Sider>
         <Content>
             <meta-grid ref="gridList"
-                       v-bind="gridSettings"
-                       :query="innerQuery"
-                       :create-params="createParams"
-                       @on-current-change="handleOnCurrentChange"
-                       @on-select="handleOnSelect"
-                       @on-select-cancel="handleOnSelectCancel"
-                       @on-select-all="handleOnSelectAll"
-                       @on-select-all-cancel="handleOnSelectAllCancel"
-                       @on-selection-change="handleOnSelectionChange"
-                       @on-sort-change="handleSortChange"
-                       @on-filter-change="handleOnFilterChange"
-                       @on-row-click="handleOnRowClick"
-                       @on-row-dblclick="handleOnRowDblclick"
-                       @on-row-delete="handleOnRowDelete"
-                       @on-expand="handleOnExpand">
+                v-bind="gridSettings"
+                :query="innerQuery"
+                :create-params="createParams"
+                :context="treeGridContext"
+                @on-current-change="handleOnCurrentChange"
+                @on-select="handleOnSelect"
+                @on-select-cancel="handleOnSelectCancel"
+                @on-select-all="handleOnSelectAll"
+                @on-select-all-cancel="handleOnSelectAllCancel"
+                @on-selection-change="handleOnSelectionChange"
+                @on-sort-change="handleSortChange"
+                @on-filter-change="handleOnFilterChange"
+                @on-row-click="handleOnRowClick"
+                @on-row-dblclick="handleOnRowDblclick"
+                @on-row-delete="handleOnRowDelete"
+                @on-expand="handleOnExpand">
             </meta-grid>
         </Content>
     </Layout>
@@ -151,7 +152,11 @@
                 realTreeSettings:null,
                 preselectFirst:this.category&&this.category.mustSelect,
                 entityResource:this.category&&this.category.entityResource,
-                oldTreeFilters:(this.treeSettings.queryOptions)?_.cloneDeep(this.treeSettings.queryOptions.filters):''
+                oldTreeFilters:(this.treeSettings.queryOptions)?_.cloneDeep(this.treeSettings.queryOptions.filters):'',
+                treeGridContext:{
+                    category:{},
+                    tree:{}
+                }
             }
         },
         mounted:function () {
@@ -201,7 +206,8 @@
                 }else{
                     this.selectedTreeNode=null;
                 }
-
+                //树节点点击时附加选中节点的数据
+                this.treeGridContext.tree.selectedItem=this.selectedTreeNode;
                 //设置topEntity
                 if(this.treeSettings.topEntity && this.treeSettings.entityName){
                     if(data && data.length>0){
@@ -303,6 +309,8 @@
                 return "name";
             },
             onCategoryChange(value,id){
+                //分类变化时设置已选的category
+                this.treeGridContext.category.selectedItem=this.selectedItem;
                 if(!this.isCategoryEnable() || !this.entitySelectInited){
                     return;
                 }

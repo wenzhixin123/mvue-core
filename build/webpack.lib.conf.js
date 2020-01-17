@@ -6,8 +6,6 @@ var merge = require('webpack-merge')
 var baseWebpackConfig = require('./webpack.base.conf')
 var nodeExternals = require('webpack-node-externals')
 
-const VueLoaderPlugin = require('vue-loader/lib/plugin')
-
 var env = process.env.NODE_ENV === 'testing'
   ? require('../config/test.env')
   : config.lib.env

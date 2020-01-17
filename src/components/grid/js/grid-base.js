@@ -152,24 +152,23 @@ export default{
         //end 单击行
         getWidgetContext(){
             //获取操作需要的一些参数
-            let _self = this, context;
+            let _self = this, context=null;
+            let idField=_self.metaEntity.getIdField().name;
+            context = {
+                grid: _.extend(_self, {checked: _self.selectedItems}),
+                metaEntity: _self.metaEntity,
+                selectedIds: _self.selectedItems.map(function (obj) {
+                    return obj[idField]
+                }),
+                selectedItems: _self.selectedItems
+            };
+            if(_self.selectedItems&&_self.selectedItems.length==1){
+                context.selectedId=_self.selectedItems[0][idField];
+                context.selectedItem=_self.selectedItems[0];
+            }
+            //合并外部传入的属性
             if(this.context){
-                //是否-传入了上下文内容
-                context = this.context
-            }else {
-                let idField=_self.metaEntity.getIdField().name;
-                context = {
-                    grid: _.extend(_self, {checked: _self.selectedItems}),
-                    metaEntity: _self.metaEntity,
-                    selectedIds: _self.selectedItems.map(function (obj) {
-                        return obj[idField]
-                    }),
-                    selectedItems: _self.selectedItems
-                };
-                if(_self.selectedItems&&_self.selectedItems.length==1){
-                    context.selectedId=_self.selectedItems[0][idField];
-                    context.selectedItem=_self.selectedItems[0];
-                }
+                Object.assign(context,this.context);
             }
             Object.defineProperty(context,"parentItem", {
                 get: function () {

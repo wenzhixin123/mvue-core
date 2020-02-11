@@ -354,7 +354,12 @@ export default{
                 queryOptions.id=ids;
             }
             if(!this.multiple){
-                queryOptions.expand=this.buildQueryExpand();
+                //queryOptions.expand=this.buildQueryExpand();
+                let _queryOpts=this.innerQueryOptions;
+                //如果自定义了expand，用自定义的
+                if(_queryOpts && _.has(_queryOpts,'expand')){
+                    queryOptions.expand = _queryOpts.expand;
+                }
             }
             if(this.entityResource){
                 this.entityResource.query(queryOptions).then(({data})=>{

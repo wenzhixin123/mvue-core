@@ -4,7 +4,7 @@
       <Col span="4" v-for="(metaField,index) in metaFields" :key="'title_'+index"><center>{{metaField.title}}</center></Col>
       <Col span="2"></Col>
     </Row>
-    <Row v-for="(entity,rowIndex) in value" :key="'entity'+iterKey+'_'+rowItem">
+    <Row v-for="(entity,rowIndex) in value" :key="'entity'+iterKey+'_'+rowIndex">
     <m-form
             class="m-embedded-json-array"
           :localModel="entity"
